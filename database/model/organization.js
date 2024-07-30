@@ -2,11 +2,6 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 
-const addfieldSchema = new Schema({
-  label: { type: String },
-  value: { type: String },
-}, { _id: false });
-
 const organizationSchema = new Schema({
 
   organizationId: { type: String },
@@ -16,7 +11,6 @@ const organizationSchema = new Schema({
   primaryContactName: { type: String },
   primaryContactNum: { type: String },
   
-
   organizationCountry: { type: String },
   organizationIndustry: { type: String },
 
@@ -34,31 +28,29 @@ const organizationSchema = new Schema({
   fiscalYear: { type: String },
   reportBasis: { type: String },
 
-  language: { type: String },
   timeZone: { type: String },
   dateFormat: { type: String },
   dateSplit: { type: String },
 
-  companyId: { type: String },
-  companyIdField: { type: String },
-  taxId: { type: String },
-  taxIdField: { type: String },
-
-  addfield: [addfieldSchema],
+  // companyId: { type: String },
+  // companyIdField: { type: String },
+  // taxId: { type: String },
+  // taxIdField: { type: String },
   
-  qrLocation: { type: String },
-  qrSignature: { type: String },
+  // qrLocation: { type: String },
+  // qrSignature: { type: String },
 
-  twitter: { type: String },
-  insta: { type: String },
-  linkedin: { type: String },
-  facebook: { type: String },
+  // twitter: { type: String },
+  // insta: { type: String },
+  // linkedin: { type: String },
+  // facebook: { type: String },
 
   //bankfield
   accountHolderName: { type: String },
   bankName: { type: String },
   accNum: { type: String },
   ifsc: { type: String },
+
 }, { versionKey: false }); 
 
 const Organization = mongoose.model("Organization", organizationSchema);

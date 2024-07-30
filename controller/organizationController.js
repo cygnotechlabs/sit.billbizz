@@ -341,25 +341,7 @@ exports.getAdditionalData = (req, res) => {
             "yyyy MM dd"
           ]
         },
-        companyId: [
-          "ACN",
-          "BN",
-          "CN",
-          "CPR",
-          "CVR",
-          "DIW",
-          "KT",
-          "ORG",
-          "SEC",
-          "Company ID :"],
         dateSplit: ["-", "/", "."],
-        taxId: ["ABN",
-          "BN",
-          "CST",
-          "ORG",
-          "TAX",
-          "VST",
-          "Tax ID :"]
       }
     ];
 
