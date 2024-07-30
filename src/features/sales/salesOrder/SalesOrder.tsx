@@ -11,9 +11,11 @@ import SalesOrderCustomers from "../salesOrder/SalesOrderCustomers"
 import PlusCircle from "../../../assets/icons/PlusCircle";
 import SalesTable from "./SalesTable"
 import SearchBar from "./SearchBar";
+import { useNavigate } from "react-router-dom";
 type Props = {};
 
 const Sales = ({}: Props) => {
+  const navigate=useNavigate()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -75,7 +77,7 @@ const Sales = ({}: Props) => {
           </p>
         </div>
         <div className="ml-auto gap-3 flex items-center">
-          <Button variant="primary"  size="sm">
+          <Button onClick={()=>navigate("/sales/salesorder/new")} variant="primary"  size="sm">
             <PlusCircle color="white"/><p className="text-sm">New Sales Order</p>
           </Button>
 

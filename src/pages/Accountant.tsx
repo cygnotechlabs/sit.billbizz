@@ -1,12 +1,12 @@
-import ChartOfAccountant from "../features/accountant/chartOfAccountant/ChartOfAccountant";
+import AccountsDashboard from "../features/accountant/Dashboard/AccountsDashboard";
 
 type Props = {};
 
 const Accountant = ({}: Props) => {
   return (
-    <div>
-      <ChartOfAccountant />
-    </div>
+    <>
+      <AccountsDashboard />
+    </>
   );
 };
 
