@@ -322,23 +322,19 @@ exports.getAdditionalData = (req, res) => {
         ],
         dateFormat: {
           "short": [
-            "mm/dd/yy",
-            "dd/mm/yy",
-            "yy/mm/dd"
+            "mm/dd/yy (08/19/24)",
+            "dd/mm/yy (19/08/24)",
+            "yy/mm/dd (24/08/19)"
           ],
           "medium": [
-            "mm/dd/yyyy",
-            "dd/mm/yyyy",
-            "yyyy/mm/dd"
+            "mm/dd/yyyy (08/19/2024)",
+            "dd/mm/yyyy (19/08/2024)",
+            "yyyy/mm/dd (24/08/19)"
           ],
           "long": [
-            "dd MMM yyyy",
-            "dd MMMM yyyy",
-            "MMMM dd yyyy",
-            "EEE, MMMM dd, yyyy",
-            "EEEEEE, MMMM dd, yyyy",
-            "MMMM dd, yyyy",
-            "yyyy MM dd"
+            "dd/mmm/yyyy (19 June 2024)",
+            "mmm/dd/yyyy (June 19 2024)",
+            "yyyy/mmm/dd (2024 June 19)"
           ]
         },
         dateSplit: ["-", "/", "."],
@@ -380,21 +376,21 @@ exports.setupOrganization = async (req, res) => {
       baseCurrency,
       fiscalYear,
       reportBasis,
-      language,
+      //language,
       timeZone,
       dateFormat,
       dateSplit,
-      companyId,
-      companyIdField,
-      taxId,
-      taxIdField,
-      qrLocation,
-      qrSignature,
-      twitter,
-      insta,
-      linkedin,
-      facebook,
-      addfield,
+      //companyId,
+      //companyIdField,
+      //taxId,
+      //taxIdField,
+      //qrLocation,
+      //qrSignature,
+      //twitter,
+      //insta,
+      //linkedin,
+      //facebook,
+      //addfield,
       accountHolderName,
       bankName,
       accNum,
@@ -440,28 +436,28 @@ exports.setupOrganization = async (req, res) => {
     existingOrganization.baseCurrency = baseCurrency;
     existingOrganization.fiscalYear = fiscalYear;
     existingOrganization.reportBasis = reportBasis;
-    existingOrganization.language = language;
+    //existingOrganization.language = language;
     existingOrganization.timeZone = timeZone;
     existingOrganization.dateFormat = dateFormat;
     existingOrganization.dateSplit = dateSplit;
-    existingOrganization.companyId = companyId;
-    existingOrganization.companyIdField = companyIdField;
-    existingOrganization.taxId = taxId;
-    existingOrganization.taxIdField = taxIdField;
-    existingOrganization.qrLocation = qrLocation;
-    existingOrganization.qrSignature = qrSignature;
-    existingOrganization.twitter = twitter;
-    existingOrganization.insta = insta;
-    existingOrganization.linkedin = linkedin;
-    existingOrganization.facebook = facebook;
+    // existingOrganization.companyId = companyId;
+    // existingOrganization.companyIdField = companyIdField;
+    // existingOrganization.taxId = taxId;
+    // existingOrganization.taxIdField = taxIdField;
+    // existingOrganization.qrLocation = qrLocation;
+    // existingOrganization.qrSignature = qrSignature;
+    // existingOrganization.twitter = twitter;
+    // existingOrganization.insta = insta;
+    // existingOrganization.linkedin = linkedin;
+    // existingOrganization.facebook = facebook;
     existingOrganization.accountHolderName = accountHolderName;
     existingOrganization.bankName = bankName;
     existingOrganization.accNum = accNum;
     existingOrganization.ifsc = ifsc;
-    existingOrganization.addfield = Array.isArray(addfield) ? addfield.map((field) => ({
-      label: field.label,
-      value: field.value,
-    })) : [];
+    // existingOrganization.addfield = Array.isArray(addfield) ? addfield.map((field) => ({
+    //   label: field.label,
+    //   value: field.value,
+    // })) : [];
 
     const savedOrganization = await existingOrganization.save();
 
@@ -473,7 +469,7 @@ exports.setupOrganization = async (req, res) => {
     res.status(200).json({
       message: "Organization updated successfully."
     });
-    console.log("Organization updated successfully:", savedOrganization);
+    console.log("Organization updated successfully:");
 
     
     
