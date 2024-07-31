@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Button from "../../../Components/Button";
-import Cards from "../salesOrder/Cards";
+// import Cards from "../salesOrder/Cards";
 import Ellipsis from "../../../assets/icons/Ellipsis";
 import PlusCircle from "../../../assets/icons/PlusCircle";
 import ArrowDownIcon from "../../../assets/icons/ArrowDownIcon";
@@ -98,7 +98,7 @@ const SalesOrderHome = ({}: Props) => {
         </div>
       </div>
       <div className="pl-5 pr-5 w-[100%]">
-        <Cards />
+        {/* <Cards /> */}
       </div>
       <div className="p-5">
       <div className="w-[100%] p-3 bg-gray-100">

@@ -62,17 +62,14 @@ const NewInvoiceTable = ({}: Props) => {
     };
   }, [openDropdownId]);
 
-
-
   const addNewItemRow = () => {
     setRows([...rows, rows.length]);
   };
-  
+
   const deleteRow = (index: number) => {
     setRows(rows.filter((_, rowIndex) => rowIndex !== index));
   };
-  
-  
+
   return (
     <div>
       <div className="rounded-lg border-2 border-tableBorder mt-5">
@@ -90,7 +87,7 @@ const NewInvoiceTable = ({}: Props) => {
             </tr>
           </thead>
           <tbody className="text-dropdownText text-center text-[13px] ">
-            {data.map((item,index) => (
+            {data.map((item) => (
               <tr key={item.id} className="relative">
                 <td className="flex items-center justify-center mt-4 gap-2">
                   <img src={item.img} alt="" className="h-8" />
@@ -170,9 +167,8 @@ const NewInvoiceTable = ({}: Props) => {
                           </button>
                         </div>
                       )}
-                   
-                    <TrashCan  color="red" />
-                   
+
+                    <TrashCan color="red" />
                   </div>
                 </td>
               </tr>
@@ -190,65 +186,72 @@ const NewInvoiceTable = ({}: Props) => {
                       <CehvronDown color="currentColor" />
                     </div>
                   </div>
-                  {openDropdownId === row && openDropdownType === "searchProduct" && (
-                    <div
-                      ref={dropdownRef}
-                      className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 -m-9 w-[40%] space-y-1"
-                    >
-                      <SearchBar
-                        searchValue={searchValue}
-                        onSearchChange={setSearchValue}
-                        placeholder="Select Supplier"
-                      />
+                  {openDropdownId === row &&
+                    openDropdownType === "searchProduct" && (
+                      <div
+                        ref={dropdownRef}
+                        className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 -m-9 w-[40%] space-y-1"
+                      >
+                        <SearchBar
+                          searchValue={searchValue}
+                          onSearchChange={setSearchValue}
+                          placeholder="Select Supplier"
+                        />
 
-                      <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
-                        <div className="col-span-2 flex  justify-center">
-                          <img
-                          className="rounded-full h-10"
-                            src="https://i.postimg.cc/0yHRXmds/b6d22208932ebdf7dafe3d8b00c5156a.jpg"
-                            alt=""
-                          />
+                        <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
+                          <div className="col-span-2 flex  justify-center">
+                            <img
+                              className="rounded-full h-10"
+                              src="https://i.postimg.cc/0yHRXmds/b6d22208932ebdf7dafe3d8b00c5156a.jpg"
+                              alt=""
+                            />
+                          </div>
+                          <div className="col-span-10 flex">
+                            <div className="text-start">
+                              <p className="font-bold text-sm text-black">
+                                Boat Airpodes 148,Black
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Rate: RS.2000.00
+                              </p>
+                            </div>
+                            <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
+                              &times;
+                            </div>
+                          </div>
                         </div>
-                        <div className="col-span-10 flex">
-                          <div className="text-start">
-                            <p className="font-bold text-sm text-black">Boat Airpodes 148,Black</p>
-                            <p className="text-xs text-gray-500">
-                              Rate: RS.2000.00
-                            </p>
-                          </div>
-                          <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
-                            &times;
-                          </div>
+                        <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-2">
+                          <button className="w-full grid grid-cols-12  px-4  items-center justify-center">
+                            <div className="col-span-1 flex">
+                              <CirclePlus color="darkRed" size="18" />
+                            </div>
+                            <div className="col-span-10  text-sm flex  items-center">
+                              <p className="text-darkRed">
+                                <b>Add new Item</b>
+                              </p>
+                            </div>
+                            <div className=" col-span-1 text-end text-2xl cursor-pointer relative ">
+                              &times;
+                            </div>
+                          </button>
                         </div>
                       </div>
-                      <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-2">
-                        <button
-                          className="w-full grid grid-cols-12  px-4  items-center justify-center"
-                        >
-                          <div className="col-span-1 flex">
-                            <CirclePlus color="darkRed" size="18" />
-                          </div>
-                          <div  className="col-span-10  text-sm flex  items-center">
-                            <p className="text-darkRed">
-                              <b>Add new Item</b>
-                            </p>
-                          </div>
-                          <div className=" col-span-1 text-end text-2xl cursor-pointer relative ">
-                            &times;
-                          </div>
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                    )}
                 </td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">0.0</td>
-                <td className="py-2.5 px-4 border-y border-tableBorder">0.00</td>
+                <td className="py-2.5 px-4 border-y border-tableBorder">
+                  0.00
+                </td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <div className="flex items-center justify-center gap-2">
                     0
                     <div className="border border-neutral-300 flex rounded-lg text-xs p-1">
                       %{" "}
-                      <CehvronDown color="currentColor" width={15} height={15} />
+                      <CehvronDown
+                        color="currentColor"
+                        width={15}
+                        height={15}
+                      />
                     </div>
                   </div>
                 </td>
@@ -257,11 +260,17 @@ const NewInvoiceTable = ({}: Props) => {
                     0
                     <div className="border border-neutral-300 flex rounded-lg text-xs p-1">
                       %{" "}
-                      <CehvronDown color="currentColor" width={15} height={15} />
+                      <CehvronDown
+                        color="currentColor"
+                        width={15}
+                        height={15}
+                      />
                     </div>
                   </div>
                 </td>
-                <td className="py-2.5 px-4 border-y border-tableBorder ">0.00</td>
+                <td className="py-2.5 px-4 border-y border-tableBorder ">
+                  0.00
+                </td>
                 <td className="cursor-pointer py-2.5 px-4 border-y border-tableBorder">
                   <div className="flex items-center justify-center gap-3">
                     <div onClick={() => toggleDropdown(row, "editProduct")}>
@@ -287,7 +296,8 @@ const NewInvoiceTable = ({}: Props) => {
                             </div>
                             <p className="text-xs mt-1">Bal Stock</p>
                             <p className="text-lg font-bold text-textColor">
-                              20 <span className="text-sm font-normal">Pcs</span>
+                              20{" "}
+                              <span className="text-sm font-normal">Pcs</span>
                             </p>
                           </div>
                           <button className="border w-full rounded-lg py-2 mt-1">
@@ -295,8 +305,8 @@ const NewInvoiceTable = ({}: Props) => {
                           </button>
                         </div>
                       )}
-                      <div onClick={()=>deleteRow(index)}> 
-                    <TrashCan color="red" />
+                    <div onClick={() => deleteRow(index)}>
+                      <TrashCan color="red" />
                     </div>
                   </div>
                 </td>
@@ -304,14 +314,13 @@ const NewInvoiceTable = ({}: Props) => {
             ))}
           </tbody>
         </table>
-        
       </div>
       <button onClick={addNewItemRow} className="mt-1">
-              <p className="text-darkRed my-3 text-sm flex gap-2 items-center">
-                <PlusCircle color="darkRed" />
-                <b> Add Item</b>
-              </p>
-        </button>
+        <p className="text-darkRed my-3 text-sm flex gap-2 items-center">
+          <PlusCircle color="darkRed" />
+          <b> Add Item</b>
+        </p>
+      </button>
     </div>
   );
 };

@@ -25,7 +25,7 @@ function SupplierHome({}: Props) {
         </div>
         <div className="ml-auto gap-3 flex items-center">
          
-          <NewSupplierModal />
+          <NewSupplierModal  />
           <Dropdown />
         </div>
       </div>

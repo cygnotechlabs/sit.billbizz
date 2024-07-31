@@ -8,7 +8,7 @@ import PlusCircle from "../../../assets/icons/PlusCircle";
 import toast, { Toaster } from "react-hot-toast";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
-import BankHome from "./BankHome";
+// import BankHome from "./BankHome";
 import { BankResponseContext } from "../../../context/ContextShare";
 
 type Props = {};
@@ -31,7 +31,7 @@ const initialBankAccount = {
 const NewBankModal = ({}: Props) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [bankAccount, setBankAccount] = useState(initialBankAccount);
-const {setBankResponse}=useContext(BankResponseContext)!;
+  const { setBankResponse } = useContext(BankResponseContext)!;
   const { request: CreateAccount } = useApi("post", 5001);
 
   const openModal = () => {
@@ -42,7 +42,9 @@ const {setBankResponse}=useContext(BankResponseContext)!;
     setModalOpen(false);
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setBankAccount((prevBankAccount) => ({
       ...prevBankAccount,
@@ -63,7 +65,7 @@ const {setBankResponse}=useContext(BankResponseContext)!;
           ...prevBankResponse,
           ...body,
         }));
-        setBankAccount(initialBankAccount); 
+        setBankAccount(initialBankAccount);
       } else {
         toast.error(error.response.data.message);
       }
@@ -74,10 +76,8 @@ const {setBankResponse}=useContext(BankResponseContext)!;
 
   return (
     <div>
-
       <Button onClick={openModal} variant="primary" size="xl">
         <PlusCircle color="white" />{" "}
-
         <p className="text-sm font-medium">Create Account</p>
       </Button>
 
@@ -92,12 +92,17 @@ const {setBankResponse}=useContext(BankResponseContext)!;
               }}
             ></div>
             <div className="relative z-10">
-              <h3 className="text-xl font-bold text-textColor">Create Bank Account</h3>
+              <h3 className="text-xl font-bold text-textColor">
+                Create Bank Account
+              </h3>
               <p className="text-dropdownText font-semibold text-sm mt-2">
                 Open a new bank account swiftly and securely.
               </p>
             </div>
-            <div className="ms-auto text-3xl cursor-pointer relative z-10" onClick={closeModal}>
+            <div
+              className="ms-auto text-3xl cursor-pointer relative z-10"
+              onClick={closeModal}
+            >
               &times;
             </div>
           </div>
@@ -108,7 +113,9 @@ const {setBankResponse}=useContext(BankResponseContext)!;
             </div>
             <div className="col-span-9">
               <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">Account Name</label>
+                <label className="block text-sm mb-1 text-labelColor">
+                  Account Name
+                </label>
                 <input
                   type="text"
                   name="accountName"
@@ -120,7 +127,9 @@ const {setBankResponse}=useContext(BankResponseContext)!;
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">Account Code</label>
+                <label className="block text-sm mb-1 text-labelColor">
+                  Account Code
+                </label>
                 <input
                   type="text"
                   name="accountCode"
@@ -132,7 +141,9 @@ const {setBankResponse}=useContext(BankResponseContext)!;
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm mb-1 text-labelColor">Account Number</label>
+                  <label className="block text-sm mb-1 text-labelColor">
+                    Account Number
+                  </label>
                   <input
                     type="text"
                     name="bankAccNum"
@@ -143,7 +154,9 @@ const {setBankResponse}=useContext(BankResponseContext)!;
                   />
                 </div>
                 <div>
-                  <label className="block text-sm mb-1 text-labelColor">IFSC</label>
+                  <label className="block text-sm mb-1 text-labelColor">
+                    IFSC
+                  </label>
                   <input
                     type="text"
                     name="bankIfsc"
@@ -154,7 +167,9 @@ const {setBankResponse}=useContext(BankResponseContext)!;
                   />
                 </div>
                 <div>
-                  <label className="block text-sm mb-1 text-labelColor">Currency</label>
+                  <label className="block text-sm mb-1 text-labelColor">
+                    Currency
+                  </label>
                   <div className="relative">
                     <div className="relative w-full">
                       <select
@@ -178,7 +193,9 @@ const {setBankResponse}=useContext(BankResponseContext)!;
                 </div>
               </div>
               <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">Description</label>
+                <label className="block text-sm mb-1 text-labelColor">
+                  Description
+                </label>
                 <textarea
                   name="description"
                   value={bankAccount.description}
@@ -194,7 +211,6 @@ const {setBankResponse}=useContext(BankResponseContext)!;
                 </Button>
 
                 <Button variant="primary" size="lg">
-
                   Save
                 </Button>
               </div>

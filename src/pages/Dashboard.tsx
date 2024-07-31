@@ -1,6 +1,4 @@
 
-import React from 'react'
-
 type Props = {}
 
 function Dashboard({}: Props) {

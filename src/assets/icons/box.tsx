@@ -1,4 +1,4 @@
-type Props = { color: string };
+type Props = { color?: string };
 
 const box = ({ color }: Props) => {
   return (
