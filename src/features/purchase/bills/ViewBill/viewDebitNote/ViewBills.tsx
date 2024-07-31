@@ -4,7 +4,7 @@ import PdfView from "./PdfView";
 import OderView from "./NormalView";
 import CheveronLeftIcon from "../../../../../assets/icons/CheveronLeftIcon";
 import Button from "../../../../../Components/Button";
-import MailIcon from "../../../../../assets/icons/MailIcon";
+// import MailIcon from "../../../../../assets/icons/MailIcon";
 import Pen from "../../../../../assets/icons/Pen";
 
 type Props = {};

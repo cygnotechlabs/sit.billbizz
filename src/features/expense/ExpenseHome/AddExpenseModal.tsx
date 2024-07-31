@@ -11,7 +11,7 @@ import UserRound from "../../../assets/icons/UserRound";
 
 type Props = {};
 
-const AddExpenseModal = (props: Props) => {
+const AddExpenseModal = ({}: Props) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const openModal = () => {
@@ -98,7 +98,7 @@ const AddExpenseModal = (props: Props) => {
                   </div>
 
                   <div className="text-darkRed text-sm flex mt-3 gap-1 font-semibold items-center ">
-                    <UserRound color="darkRed"/>
+                    <UserRound color="darkRed" />
                     Add category
                   </div>
                 </div>

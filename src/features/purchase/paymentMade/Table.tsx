@@ -1,7 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CustomiseColmn from "./CustomiseColmn";
-import Button from "../../../Components/Button";
-import { Link, useNavigate } from "react-router-dom";
 
 interface Column {
   id: string;
@@ -10,7 +9,7 @@ interface Column {
 }
 
 const Table = () => {
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const initialColumns: Column[] = [
     { id: "date", label: "Date", visible: true },
     { id: "payment", label: "Payment#", visible: true },
@@ -65,7 +64,6 @@ const Table = () => {
                   <th
                     key={col.id}
                     className="py-2 px-4 font-medium border-b border-tableBorder"
-                   
                   >
                     {col.label}
                   </th>
@@ -73,7 +71,10 @@ const Table = () => {
             )}
             <th className="py-2.5 px-4 border-y border-tableBorder">
               {/* Add CustomiseColmn component here */}
-              <CustomiseColmn columns={columns} setColumns={handleColumnChange} />
+              <CustomiseColmn
+                columns={columns}
+                setColumns={handleColumnChange}
+              />
             </th>
           </tr>
         </thead>
@@ -89,7 +90,7 @@ const Table = () => {
                     <td
                       key={col.id}
                       className="py-2.5 px-4 border-y border-tableBorder cursor-pointer"
-                      onClick={()=>navigate('/purchase/payment-made/view')}
+                      onClick={() => navigate("/purchase/payment-made/view")}
                     >
                       {item[col.id as keyof typeof item]}
                     </td>

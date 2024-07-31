@@ -1,13 +1,13 @@
 import { useState } from "react";
 import OrderCards from "./OrderCards";
-import ArrowUpIcon from "../../../assets/icons/ArrowUpIcon";
+// import ArrowUpIcon from "../../../assets/icons/ArrowUpIcon";
 import Boxes from "../../../assets/icons/box";
 
 type Props = {};
 
 const Cards = ({}: Props) => {
-  const [activeCard, setActiveCard] = useState<rating | null>(0);
-  const handleCardClick = (index: rating) => {
+  const [activeCard, setActiveCard] = useState<number | null>(0);
+  const handleCardClick = (index: number) => {
     setActiveCard(index);
   };
 
@@ -73,9 +73,6 @@ const Cards = ({}: Props) => {
       rating: "20 Orders",
     },
   ];
-
-
-  
 
   return (
     <div>

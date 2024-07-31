@@ -1,28 +1,31 @@
-import React from "react";
+// import React from "react";
 
 type Props = {};
 
 function ManualPDFView({}: Props) {
   return (
     <div className="flex items-center justify-center text-sm text-textColor p-5">
-      <div className="p-5 " style={{ width: "595px" ,boxShadow: "-1px 1px 15px -8px black"}}>
+      <div
+        className="p-5 "
+        style={{ width: "595px", boxShadow: "-1px 1px 15px -8px black" }}
+      >
         <div className=" bg-lightPink p-5 rounded-lg ">
           <div className="flex mb-7">
             <p className="font-bold text-2xl"> JOURNAL</p>
             <p className="ml-auto">#0001</p>
           </div>
-         <div className="space-y-2 mb-5">
+          <div className="space-y-2 mb-5">
             <p className="mt-5">
               Billed to :<b className="ms-4"> 25/05/2024</b>
             </p>
             <p>
               Amount : <b className="ms-4">20000.00</b>
             </p>
-  
-            <p >
+
+            <p>
               Reference Number: <b className="ms-4">500000</b>
             </p>
-         </div>
+          </div>
         </div>
 
         <table className="w-full table-auto border-collapse my-7 ">
