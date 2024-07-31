@@ -32,19 +32,6 @@ const organizationSchema = new Schema({
   dateFormat: { type: String },
   dateSplit: { type: String },
 
-  // companyId: { type: String },
-  // companyIdField: { type: String },
-  // taxId: { type: String },
-  // taxIdField: { type: String },
-  
-  // qrLocation: { type: String },
-  // qrSignature: { type: String },
-
-  // twitter: { type: String },
-  // insta: { type: String },
-  // linkedin: { type: String },
-  // facebook: { type: String },
-
   //bankfield
   accountHolderName: { type: String },
   bankName: { type: String },

@@ -136,13 +136,12 @@ exports.getOneOrganization = async (req, res) => {
 
 // Edit organizations
 exports.updateOrganization = async (req, res) => {
-  console.log("Received request to update organization:", req.body);
-  
+  console.log("Received request to update organization:", req.body);  
   try {
-      const { organizationId } = req.params;
       const {
+          organizationId,
           organizationLogo,
-          organizationName,
+          // organizationName,
           organizationCountry,
           organizationIndustry,
           addline1,
@@ -155,21 +154,9 @@ exports.updateOrganization = async (req, res) => {
           baseCurrency,
           fiscalYear,
           reportBasis,
-          language,
           timeZone,
           dateFormat,
           dateSplit,
-          companyId,
-          companyIdField,
-          taxId,
-          taxIdField,
-          qrLocation,
-          qrSignature,
-          twitter,
-          insta,
-          linkedin,
-          facebook,
-          addfield,
           accountHolderName,
           bankName,
           accNum,
@@ -184,7 +171,7 @@ exports.updateOrganization = async (req, res) => {
           {
               organizationId,
               organizationLogo,
-              organizationName,
+              // organizationName,
               organizationCountry,
               organizationIndustry,
               addline1,
@@ -197,21 +184,9 @@ exports.updateOrganization = async (req, res) => {
               baseCurrency,
               fiscalYear,
               reportBasis,
-              language,
               timeZone,
               dateFormat,
               dateSplit,
-              companyId,
-              companyIdField,
-              taxId,
-              taxIdField,
-              qrLocation,
-              qrSignature,
-              twitter,
-              insta,
-              linkedin,
-              facebook,
-              addfield,
               accountHolderName,
               bankName,
               accNum,
@@ -238,9 +213,8 @@ exports.updateOrganization = async (req, res) => {
 
 // Delete Organization
 exports.deleteOrganization = async (req, res) => {
-    console.log("Delete Organization by id:", req.params.id);
     try {
-      const { organizationId } = req.params;
+      const { organizationId } = req.body;
   
       // Check if the organization exists
       const organization = await Organization.findOne({organizationId});
@@ -376,21 +350,9 @@ exports.setupOrganization = async (req, res) => {
       baseCurrency,
       fiscalYear,
       reportBasis,
-      //language,
       timeZone,
       dateFormat,
       dateSplit,
-      //companyId,
-      //companyIdField,
-      //taxId,
-      //taxIdField,
-      //qrLocation,
-      //qrSignature,
-      //twitter,
-      //insta,
-      //linkedin,
-      //facebook,
-      //addfield,
       accountHolderName,
       bankName,
       accNum,
@@ -436,20 +398,9 @@ exports.setupOrganization = async (req, res) => {
     existingOrganization.baseCurrency = baseCurrency;
     existingOrganization.fiscalYear = fiscalYear;
     existingOrganization.reportBasis = reportBasis;
-    //existingOrganization.language = language;
     existingOrganization.timeZone = timeZone;
     existingOrganization.dateFormat = dateFormat;
     existingOrganization.dateSplit = dateSplit;
-    // existingOrganization.companyId = companyId;
-    // existingOrganization.companyIdField = companyIdField;
-    // existingOrganization.taxId = taxId;
-    // existingOrganization.taxIdField = taxIdField;
-    // existingOrganization.qrLocation = qrLocation;
-    // existingOrganization.qrSignature = qrSignature;
-    // existingOrganization.twitter = twitter;
-    // existingOrganization.insta = insta;
-    // existingOrganization.linkedin = linkedin;
-    // existingOrganization.facebook = facebook;
     existingOrganization.accountHolderName = accountHolderName;
     existingOrganization.bankName = bankName;
     existingOrganization.accNum = accNum;
