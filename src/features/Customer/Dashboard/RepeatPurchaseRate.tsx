@@ -88,7 +88,7 @@ const RepeatPurchaseRate: React.FC = () => {
           <Tooltip content={renderCustomTooltip} cursor={{ fill: 'transparent' }} />
           <Bar shape={<CustomBar />} barSize={30} dataKey="value" fill="#8884d8">
             <LabelList dataKey="name" position="right" fontSize={10} />
-            {data.map((entry, index) => (
+            {data.map((_, index) => (
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
             ))}
           </Bar>
