@@ -1,8 +1,8 @@
-import React from "react";
+// import React from "react";
 
 type Props = {};
 
-const CircleDollerSign = (props: Props) => {
+const CircleDollerSign = ({}: Props) => {
   return (
     <div>
       <svg
