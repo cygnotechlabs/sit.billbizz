@@ -435,10 +435,10 @@ exports.createOrganizationAndClient = async (req, res) => {
     
 
     res.status(201).json({
-      message: "Organization, Prefix, Client, and User created successfully.",
+      message: "Client created successfully.",
       organizationId: organizationId,
     });
-    console.log("Organization, Client, and User created successfully:", { organizationId });
+    console.log("Organization, Client, User, Prefix, Currency, Role created successfully:", { organizationId });
   } catch (error) {
     console.error("Error creating Organization, Client, and User:", error);
     res.status(500).json({ message: "Internal server error." });

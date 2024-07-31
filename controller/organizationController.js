@@ -469,7 +469,7 @@ exports.setupOrganization = async (req, res) => {
     res.status(200).json({
       message: "Organization updated successfully."
     });
-    console.log("Organization updated successfully:");
+    console.log("Organization updated successfully");
 
     
     
