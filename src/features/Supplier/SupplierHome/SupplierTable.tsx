@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SupplierColumn from "./SupplierColumn";
 import Button from "../../../Components/Button";
 import { Link } from "react-router-dom";
+import { endponits } from "../../../Services/apiEndpoints";
+import useApi from "../../../Hooks/useApi";
 
 interface Column {
   id: string;
@@ -10,14 +12,16 @@ interface Column {
 }
 
 const SupplierTable = () => {
+  const [suppliersList,setSuppliersList] = useState<any[]>([]);
+  const { request: AllSuppliers } = useApi("put", 5002);
   const initialColumns: Column[] = [
     { id: "name", label: "Name", visible: true },
     { id: "companyName", label: "Company Name", visible: true },
     { id: "contact", label: "Contact", visible: true },
     { id: "email", label: "Email", visible: true },
+    { id: "supplierDetails", label: "Supplier details", visible: true },
     { id: "payables", label: "Payables(BCY)", visible: true },
     { id: "unused", label: "Unused Credit(BCY)", visible: true },
-    { id: "supplierDetails", label: "Supplier details", visible: true },
   ];
 
   const [columns, setColumns] = useState<Column[]>(initialColumns);
@@ -56,8 +60,11 @@ const SupplierTable = () => {
     if (colId === "supplierDetails") {
       return (
         <div className="flex justify-center">
-          <Link to={`/customer/view/${item.id}`}>
-            <Button variant="fourthiary" className="font-medium rounded-lg text-[9.5px]">
+          <Link to={"/supplier/view"}>
+            <Button
+              variant="secondary"
+              className="font-medium rounded-lg h-[1rem] text-[9.5px]"
+            >
               See details
             </Button>
           </Link>
@@ -66,6 +73,24 @@ const SupplierTable = () => {
     }
     return item[colId as keyof typeof item];
   };
+
+  const fetchAllSuppliers = async () => {
+    try {
+      const url = `${endponits.GET_ALL_SUPPLIER}`;
+      const body = { organizationId: "INDORG0001" };
+      const { response, error } = await AllSuppliers(url, body);
+      if (!error && response) {
+        setSuppliersList(response.data);
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllSuppliers();
+  }, []);
 
   return (
     <div className="overflow-x-auto">

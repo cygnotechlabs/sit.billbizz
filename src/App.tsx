@@ -49,6 +49,7 @@ import Supplier from "./pages/Supplier";
 import ViewSalesQuote from "./features/sales/quote/viewSalesQuote/ViewSalesQuote";
 import NewSalesOrder from "./features/sales/salesOrder/NewSalesOrder";
 import NewSalesQuote from "./features/sales/quote/NewSalesQuote";
+import SeeSupplierDetails from "./features/Supplier/SupplierHome/ViewSupplier/SeeSupplierDetails";
 
 
 function App() {
@@ -82,6 +83,7 @@ function App() {
           ></Route>
           <Route path="/supplier" element={<Supplier />} />
           <Route path="/supplier/home" element={<SupplierHome />}></Route>
+          <Route path="/supplier/view" element={<SeeSupplierDetails />}></Route>
           <Route path="/customer" element={<Customer />}></Route>
           <Route path="/customer/home" element={<CustomerHome />}></Route>
           <Route path="/customer/view" element={<SeeCustomerDetails />} />
