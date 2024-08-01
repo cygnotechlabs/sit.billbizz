@@ -92,7 +92,7 @@ const navlist = [
     subhead: [
       {
         headName: "Dashboard",
-        subRoute: "/accountant/chart-OF-accountant",
+        subRoute: "/accountant",
       },
       {
         headName: "Chart Of Account",

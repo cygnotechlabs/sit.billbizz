@@ -32,7 +32,7 @@ const NewCustomerModal = ({ page }: Props) => {
 
   return (
     <div>
-      {page && page == "purchase" ? (
+      {page && page == "purchase" || page=="sales"? (
           <div
           className="w-full flex col-span-10  px-4  justify-between"
           onClick={openModal}

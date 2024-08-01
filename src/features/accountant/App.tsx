@@ -3,6 +3,7 @@ import "./App.css";
 import Root from "./Root";
 import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
+
 import CustomerHome from "./features/Customer/CustomerHome/CustomerHome";
 import SeeCustomerDetails from "./features/Customer/CustomerHome/SeeCustomerDetails";
 import SupplierHome from "./features/Supplier/SupplierHome/SupplierHome";
@@ -47,10 +48,6 @@ import Organization from "./pages/Organization";
 import Purchase from "./pages/Purchase";
 import Supplier from "./pages/Supplier";
 import ViewSalesQuote from "./features/sales/quote/viewSalesQuote/ViewSalesQuote";
-import NewSalesOrder from "./features/sales/salesOrder/NewSalesOrder";
-import NewSalesQuote from "./features/sales/quote/NewSalesQuote";
-import SeeSupplierDetails from "./features/Supplier/SupplierHome/ViewSupplier/SeeSupplierDetails";
-
 
 function App() {
   return (
@@ -60,9 +57,12 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/accountant" element={<Accountant />} />
+
+          <Route path="/sales/salesorder" element={<SalesOrder />} />
           <Route path="/organization" element={<Organization />}></Route>
           <Route path="/accountant/cash" element={<Cash />}></Route>
           <Route path="/accountant/cashView" element={<CashTableView />}></Route>
+
           <Route
             path="/accountant/manualjournal"
             element={<ManualHome />}
@@ -83,7 +83,6 @@ function App() {
           ></Route>
           <Route path="/supplier" element={<Supplier />} />
           <Route path="/supplier/home" element={<SupplierHome />}></Route>
-          <Route path="/supplier/view" element={<SeeSupplierDetails />}></Route>
           <Route path="/customer" element={<Customer />}></Route>
           <Route path="/customer/home" element={<CustomerHome />}></Route>
           <Route path="/customer/view" element={<SeeCustomerDetails />} />
@@ -136,6 +135,11 @@ function App() {
             path="/purchase/payment-made/view"
             element={<PaymentView />}
           ></Route>
+
+          <Route
+            path="/sales/viewsalesorder"
+            element={<ViewSalesOrder />}
+          ></Route>
           <Route path="/purchase" element={<Purchase />} />
           <Route path="/purchase/purchase-order" element={<PurchaseOrder />} />
           <Route
@@ -148,16 +152,9 @@ function App() {
           ></Route>
 
           {/* Sales */}
-          <Route path="/sales/salesorder" element={<SalesOrder />} />
-          <Route
-            path="/sales/viewsalesorder"
-            element={<ViewSalesOrder />}
-          ></Route>
-          <Route path="/sales/salesorder/new" element={<NewSalesOrder />} />
           <Route path="/sales/invoice" element={<InvoiceHome />}></Route>
           <Route path="/sales/quote" element={<QuoteHome />} />\
           <Route path="/sales/quote/view" element={<ViewSalesQuote/>}/>
-          <Route path="/sales/quote/new" element={<NewSalesQuote/>}/>
           <Route path="/sales/invoice/view" element={<ViewInvoice />} />
           <Route path="/sales/invoice/new" element={<NewInvoice />} />
           <Route

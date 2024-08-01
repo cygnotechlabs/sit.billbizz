@@ -10,10 +10,12 @@ import PlusCircle from "../../../assets/icons/PlusCircle";
 import QuoteCustomers from "./QuoteCustomers";
 import QuoteTable from "./QuoteTable";
 import SearchBar from "../../../Components/SearchBar";
+import { useNavigate } from "react-router-dom";
 
 type Props = {};
 
 const QuoteHome = ({}: Props) => {
+  const navigate=useNavigate()
   const [searchValue, setSearchValue] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -82,7 +84,7 @@ const QuoteHome = ({}: Props) => {
           </p>
         </div>
         <div className="ml-auto gap-3 flex items-center relative">
-          <Button variant="primary" size="sm">
+          <Button onClick={()=>navigate("/sales/quote/new")} variant="primary" size="sm">
             <PlusCircle color="white" />
             <p className="text-sm">New Quote</p>
           </Button>
