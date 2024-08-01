@@ -8,7 +8,7 @@ pipeline {
         IMAGE_NAME = 'frontend-billbizz'
         AWS_CREDENTIALS_ID = '2157424a-b8a7-45c0-90c2-bc0d407f6cea'
         SONARQUBE_PROJECT_KEY = 'billbizz_cygnoz'
-        SONARQUBE_SCANNER_CREDENTIALS_ID = 'sonartoken' // Jenkins credentials ID for SonarQube token
+        SONARQUBE_SCANNER_CREDENTIALS_ID = 'sonar_token' // Jenkins credentials ID for SonarQube token
     }
 
     stages {
@@ -19,7 +19,10 @@ pipeline {
                     scannerHome = tool 'sonarqube' // Replace with your SonarQube Scanner tool name
                 }
                 withSonarQubeEnv('APIND_Sonarqube') { // Replace with your SonarQube server name
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} -Dsonar.sources=. -Dsonar.host.url=http://3.109.27.100 -Dsonar.login=${SONARQUBE_SCANNER_CREDENTIALS_ID}"
+                    // Use the SonarQube Scanner
+                    withCredentials([string(credentialsId: "${SONARQUBE_SCANNER_CREDENTIALS_ID}", variable: 'SONAR_TOKEN')]) {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${SONARQUBE_PROJECT_KEY} -Dsonar.sources=. -Dsonar.login=${SONAR_TOKEN}"
+                    }
                 }
             }
         }
@@ -64,4 +67,3 @@ pipeline {
         }
     }
 }
-
