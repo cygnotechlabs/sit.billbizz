@@ -6,10 +6,9 @@ import Modal from "../../../Components/model/Modal";
 import PlusCircle from "../../../assets/icons/PlusCircle";
 import CirclePlus from "../../../assets/icons/circleplus";
 
+type Props = { page?: String };
 
-type Props = {page:String};
-
-const AddSupplierModal = ({page}: Props) => {
+const AddSupplierModal = ({ page }: Props) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("otherDetails");
   const openModal = () => {
@@ -33,13 +32,13 @@ const AddSupplierModal = ({page}: Props) => {
   return (
     <div>
       {page && page == "purchase" ? (
-          <div
+        <div
           className="w-[100%] flex col-span-10  px-4  justify-between"
           onClick={openModal}
         >
           <div className="flex items-center  space-x-1">
             <CirclePlus color="darkRed" size="18" />
-        
+
             <p className="text-[#820000] text-sm">
               <b>Add new Supplier</b>
             </p>
@@ -48,19 +47,17 @@ const AddSupplierModal = ({page}: Props) => {
             &times;
           </div>
         </div>
-     
       ) : (
         <Button
-        onClick={openModal}
-        variant="primary"
-        className="flex items-center"
+          onClick={openModal}
+          variant="primary"
+          className="flex items-center"
           size="xl"
-      >
-        <PlusCircle color="white"  />{" "}
-        <p className="text-sm font-medium">Add Supplier</p>
-      </Button>
+        >
+          <PlusCircle color="white" />{" "}
+          <p className="text-sm font-medium">Add Supplier</p>
+        </Button>
       )}
-      
 
       <Modal
         open={isModalOpen}
@@ -593,16 +590,15 @@ const AddSupplierModal = ({page}: Props) => {
             </form>
           </div>
 
-            <div className="flex justify-end gap-2 mb-3 m-5">
-                 
-                 <Button variant="primary" size="lg">
-                   Save
-                 </Button>
-                  <Button onClick={closeModal} variant="secondary" size="lg">
-                   Cancel
-                 </Button>
-               </div>
-    </>
+          <div className="flex justify-end gap-2 mb-3 m-5">
+            <Button variant="primary" size="lg">
+              Save
+            </Button>
+            <Button onClick={closeModal} variant="secondary" size="lg">
+              Cancel
+            </Button>
+          </div>
+        </>
       </Modal>
     </div>
   );

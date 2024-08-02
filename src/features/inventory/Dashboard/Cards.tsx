@@ -1,13 +1,13 @@
 import { useState } from "react";
 import OrderCards from "./OrderCards";
-import ArrowUpIcon from "../../../assets/icons/ArrowUpIcon";
+// import ArrowUpIcon from "../../../assets/icons/ArrowUpIcon";
 import Boxes from "../../../assets/icons/box";
 
 type Props = {};
 
 const Cards = ({}: Props) => {
-  const [activeCard, setActiveCard] = useState<rating | null>(0);
-  const handleCardClick = (index: rating) => {
+  const [activeCard, setActiveCard] = useState<number | null>(0);
+  const handleCardClick = (index: number) => {
     setActiveCard(index);
   };
 
@@ -15,7 +15,7 @@ const Cards = ({}: Props) => {
     {
       icon: (
         <div>
-          <Boxes />
+          <Boxes color={""} />
           <i className="fa-solid fa-cart-shopping text-xl text-black"></i>
         </div>
       ),
@@ -27,7 +27,7 @@ const Cards = ({}: Props) => {
     {
       icon: (
         <div>
-          <Boxes />
+          <Boxes color={""} />
           <i className="fa-solid fa-cogs text-xl text-black"></i>
         </div>
       ),
@@ -39,7 +39,7 @@ const Cards = ({}: Props) => {
     {
       icon: (
         <div>
-          <Boxes />
+          <Boxes color={""} />
           <i className="fa-solid fa-industry text-xl text-black"></i>
         </div>
       ),
@@ -51,7 +51,7 @@ const Cards = ({}: Props) => {
     {
       icon: (
         <div>
-          <Boxes />
+          <Boxes color={""} />
           <i className="fa-solid fa-truck text-xl text-black"></i>
         </div>
       ),
@@ -63,7 +63,7 @@ const Cards = ({}: Props) => {
     {
       icon: (
         <div>
-          <Boxes />
+          <Boxes color={""} />
           <i className="fa-solid fa-box text-xl text-black"></i>
         </div>
       ),
@@ -73,9 +73,6 @@ const Cards = ({}: Props) => {
       rating: "20 Orders",
     },
   ];
-
-
-  
 
   return (
     <div>

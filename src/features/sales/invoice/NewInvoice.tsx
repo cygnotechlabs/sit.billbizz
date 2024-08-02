@@ -8,7 +8,7 @@ import PrinterIcon from "../../../assets/icons/PrinterIcon";
 import SettingsIcons from "../../../assets/icons/SettingsIcon";
 import NewCustomerModal from "../../Customer/CustomerHome/NewCustomerModal";
 import NewInvoiceTable from "./NewInvoiceTable";
-import ManageSalesPerson from "./ManageSalesPerson";
+import ManageSalesPerson from "../SalesPerson/ManageSalesPerson";
 
 type Props = {};
 
