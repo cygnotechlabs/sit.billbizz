@@ -1,10 +1,9 @@
 import companyLogo from "../../../assets/Images/Vector@2x.png";
 
-import React, { useEffect, useRef, useState } from "react";
 
 type Props = {};
 
-const ReceiptPDFView = (props: Props) => {
+const ReceiptPDFView = ({}: Props) => {
    
     
   return (
