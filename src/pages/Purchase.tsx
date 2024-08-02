@@ -1,11 +1,10 @@
-import Dashboard from "../features/purchase/dashboard/Dashboard"
-
+import PurchaseDashboard from "../features/purchase/dashboard/PurchaseDashboard"
 type Props = {}
 
 function Purchase({}: Props) {
   return (
     <>
-    <Dashboard/>
+    <PurchaseDashboard/>
     </>
   )
 }

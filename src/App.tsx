@@ -47,6 +47,9 @@ import ExpenseView from "./features/expense/ExpenseHome/ExpenseView";
 import BillsHomes from "./features/purchase/bills/BillsHomes";
 import NewBills from "./features/purchase/bills/NewBills";
 import ViewBills from "./features/purchase/bills/ViewBill/viewDebitNote/ViewBills";
+import Staffs from "./pages/Staffs";
+import StaffHome from "./features/staffs/StaffHome";
+import StaffsOverview from "./features/staffs/staffsView/StaffsOverview";
 
 function App() {
   return (
@@ -166,6 +169,11 @@ function App() {
           <Route path="/expense" element={<Expense/>}></Route>
           <Route path="/expense/home" element={<ExpenseHome/>}></Route>
           <Route path="/expense/view" element={<ExpenseView/>}></Route>
+
+          {/* staffs */}
+          <Route path="/staffs" element={<Staffs/>}></Route>
+          <Route path="/staffs/home" element={<StaffHome/>}></Route>
+          <Route path="/staffs/view" element={<StaffsOverview/>}></Route>
 
         </Route>
       </Routes>
