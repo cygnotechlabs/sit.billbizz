@@ -1,5 +1,4 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, LabelList, Cell } from 'recharts';
+import { Bar, BarChart, Cell, LabelList, Tooltip, XAxis, YAxis } from 'recharts';
 import Tooltips from '../../../Components/tooltip/Tooltip';
 import BackgroundImage from '../../../assets/Images/Active clients.png';
 
@@ -28,7 +27,7 @@ const data = [
   },
 ];
 
-const renderCustomTooltip = ({ payload, label }: any) => {
+const renderCustomTooltip = ({ payload }: any) => {
   if (payload && payload.length) {
     return (
       <Tooltips
@@ -44,7 +43,7 @@ const renderCustomTooltip = ({ payload, label }: any) => {
 };
 
 const renderCustomizedLabel = (props: any) => {
-  const { x, y, width, height, value } = props;
+  const { x, y, width } = props;
   const radius = 10;
   const spacing = -10;
   return (
@@ -103,7 +102,7 @@ const TopCustomers = () => {
         <Tooltip content={renderCustomTooltip} cursor={{ fill: 'transparent' }} />
         <Bar shape={<CustomBar />} barSize={40} dataKey="value" fill="#8884d8">
           <LabelList dataKey="name" content={renderCustomizedLabel} />
-          {data.map((entry, index) => (
+          {data.map((_, index) => (
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
         </Bar>

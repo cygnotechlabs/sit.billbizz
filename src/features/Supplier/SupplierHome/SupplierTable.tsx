@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import SupplierColumn from "./SupplierColumn";
 import Button from "../../../Components/Button";
 import { Link } from "react-router-dom";
-import { endponits } from "../../../Services/apiEndpoints";
-import useApi from "../../../Hooks/useApi";
+// import { endponits } from "../../../Services/apiEndpoints";
+// import useApi from "../../../Hooks/useApi";
 
 interface Column {
   id: string;
@@ -12,8 +12,8 @@ interface Column {
 }
 
 const SupplierTable = () => {
-  const [suppliersList,setSuppliersList] = useState<any[]>([]);
-  const { request: AllSuppliers } = useApi("put", 5002);
+  // const [suppliersList,setSuppliersList] = useState<any[]>([]);
+  // const { request: AllSuppliers } = useApi("put", 5002);
   const initialColumns: Column[] = [
     { id: "name", label: "Name", visible: true },
     { id: "companyName", label: "Company Name", visible: true },
@@ -74,23 +74,23 @@ const SupplierTable = () => {
     return item[colId as keyof typeof item];
   };
 
-  const fetchAllSuppliers = async () => {
-    try {
-      const url = `${endponits.GET_ALL_SUPPLIER}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await AllSuppliers(url, body);
-      if (!error && response) {
-        setSuppliersList(response.data);
-        console.log(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching accounts:", error);
-    }
-  };
+  // const fetchAllSuppliers = async () => {
+  //   try {
+  //     const url = `${endponits.GET_ALL_SUPPLIER}`;
+  //     const body = { organizationId: "INDORG0001" };
+  //     const { response, error } = await AllSuppliers(url, body);
+  //     if (!error && response) {
+  //       setSuppliersList(response.data);
+  //       console.log(response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching accounts:", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchAllSuppliers();
-  }, []);
+  // useEffect(() => {
+  //   fetchAllSuppliers();
+  // }, []);
 
   return (
     <div className="overflow-x-auto">
