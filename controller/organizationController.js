@@ -92,7 +92,7 @@ const accountDocuments = accounts.map(account => {
 }
 
 
-// Get all organizations
+// Get all organizations - Internal
 exports.getAllOrganization = async (req, res) => {
   try {
     const allOrganizations = await Organization.find();
