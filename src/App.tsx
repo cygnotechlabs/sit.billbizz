@@ -43,6 +43,15 @@ import ViewSalesOrder from "./features/sales/salesOrder/viewSalesQuote/ViewSales
 import Accountant from "./pages/Accountant";
 import Customer from "./pages/Customer";
 import Expense from "./pages/Expense";
+import ExpenseHome from "./features/expense/ExpenseHome/ExpenseHome";
+import ExpenseView from "./features/expense/ExpenseHome/ExpenseView";
+import BillsHomes from "./features/purchase/bills/BillsHomes";
+import NewBills from "./features/purchase/bills/NewBills";
+import ViewBills from "./features/purchase/bills/ViewBill/viewDebitNote/ViewBills";
+import ReceiptHome from "./features/sales/Receipt/ReceiptHome";
+import ReceiptView from "./features/sales/Receipt/ReceiptView";
+import ViewInvoice from "./features/sales/invoice/ViewInvoice";
+import AddReceiptForm from "./features/sales/Receipt/AddReceiptForm";
 import Organization from "./pages/Organization";
 import Purchase from "./pages/Purchase";
 import Supplier from "./pages/Supplier";
@@ -160,12 +169,16 @@ function App() {
           <Route path="/sales/quote/new" element={<NewSalesQuote/>}/>
           <Route path="/sales/invoice/view" element={<ViewInvoice />} />
           <Route path="/sales/invoice/new" element={<NewInvoice />} />
+          <Route path="/sales/invoice/view" element={<ViewInvoice/>}></Route>
           <Route
             path="/sales/credit-note/new"
             element={<NewCreditNote />}
           ></Route>
           <Route path="/sales/credit-note" element={<CreditNote />} />
           <Route path="/sales/credit-note/view" element={<ViewCreditNote />} />
+          <Route path="/sales/receipt" element={<ReceiptHome/>}/>
+          <Route path="/sales/receipt/view" element={<ReceiptView/>}></Route>
+          <Route path="/slaes/receipt/new" element={<AddReceiptForm/>}></Route>
 
           {/* Expense */}
           <Route path="/expense" element={<Expense/>}></Route>

@@ -15,7 +15,7 @@ const Cards = ({}: Props) => {
     {
       icon: (
         <div>
-          <Boxes />
+          <Boxes color={""} />
           <i className="fa-solid fa-cart-shopping text-xl text-black"></i>
         </div>
       ),
@@ -27,7 +27,7 @@ const Cards = ({}: Props) => {
     {
       icon: (
         <div>
-          <Boxes />
+          <Boxes color={""} />
           <i className="fa-solid fa-cogs text-xl text-black"></i>
         </div>
       ),
@@ -39,7 +39,7 @@ const Cards = ({}: Props) => {
     {
       icon: (
         <div>
-          <Boxes />
+          <Boxes color={""} />
           <i className="fa-solid fa-industry text-xl text-black"></i>
         </div>
       ),
@@ -51,7 +51,7 @@ const Cards = ({}: Props) => {
     {
       icon: (
         <div>
-          <Boxes />
+          <Boxes color={""} />
           <i className="fa-solid fa-truck text-xl text-black"></i>
         </div>
       ),
@@ -63,7 +63,7 @@ const Cards = ({}: Props) => {
     {
       icon: (
         <div>
-          <Boxes />
+          <Boxes color={""} />
           <i className="fa-solid fa-box text-xl text-black"></i>
         </div>
       ),

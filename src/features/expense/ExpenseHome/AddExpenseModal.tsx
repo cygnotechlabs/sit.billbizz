@@ -36,6 +36,13 @@ const AddExpenseModal = ({}: Props) => {
 
         <Modal open={isModalOpen} onClose={closeModal} style={{ width: "45%" }}>
           <div className="p-5 mt-3">
+           <div className="flex"> <p className="font-bold text-lg mb-5">Add Expense</p>
+           <div
+                className="ms-auto text-3xl cursor-pointer relative z-10"
+                onClick={closeModal}
+              >
+                &times;
+              </div></div>
             <div className="mb-5 flex  rounded-xl bg-CreamBg relative overflow-hidden h-24">
               <div>
                 <img src={bgImage} alt="" className="relative top-0 left-0" />
@@ -50,12 +57,7 @@ const AddExpenseModal = ({}: Props) => {
                   </div>
                 </h3>
               </div>
-              <div
-                className="ms-auto text-3xl cursor-pointer relative z-10"
-                onClick={closeModal}
-              >
-                &times;
-              </div>
+             
             </div>
 
             <form className="">
