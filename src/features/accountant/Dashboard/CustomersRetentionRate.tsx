@@ -25,7 +25,7 @@ const data = [
   { name: 'Dec', value: 85 },
 ];
 
-const renderCustomTooltip = ({ payload, label }: any) => {
+const renderCustomTooltip = ({ payload }: any) => {
   if (payload && payload.length) {
     return (
       <Tooltips

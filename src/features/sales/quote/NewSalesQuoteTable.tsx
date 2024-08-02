@@ -91,7 +91,7 @@ const NewSalesQuoteTable = ({}: Props) => {
           </thead>
           <tbody className="text-dropdownText text-center text-[13px] ">
             {data.map((item,index) => (
-              <tr key={item.id} className="relative">
+              <tr key={index} className="relative">
                 <td className="flex items-center justify-center mt-4 gap-2">
                   <img src={item.img} alt="" className="h-8" />
                   {item.product}
@@ -265,7 +265,7 @@ const NewSalesQuoteTable = ({}: Props) => {
                 <td className="cursor-pointer py-2.5 px-4 border-y border-tableBorder">
                   <div className="flex items-center justify-center gap-3">
                     <div onClick={() => toggleDropdown(row, "editProduct")}>
-                      <Pen color="green" />
+                      <Pen  color="green" />
                     </div>
                     {openDropdownId === row &&
                       openDropdownType === "editProduct" && (

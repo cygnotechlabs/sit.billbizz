@@ -1,4 +1,4 @@
-type Props = { color: string,size:number };
+type Props = { color: string,size?:number };
 
 function TrashCan({ color,size }: Props) {
   return (
