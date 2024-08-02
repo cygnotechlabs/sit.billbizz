@@ -147,7 +147,17 @@ const navlist = [
   {
     nav: "Staff",
     icon: usersRound,
-    route: "/home",
+    route: "/staffs",
+    subhead:[
+      {
+        headName: "Dashboard",
+        subRoute: "/",
+      },
+      {
+        headName: "Staff",
+        subRoute: "/staffs/home",
+      },
+    ]
   },
   {
     nav: "Purchase",
