@@ -1,6 +1,7 @@
 type Props = { 
   color: string; 
   classname?: string; 
+  
   onClick?: () => void; // Add onClick as an optional property
 };
 
