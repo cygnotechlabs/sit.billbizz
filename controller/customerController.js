@@ -10,25 +10,37 @@ exports.addCustomer = async (req, res) => {
     const {
       organizationId,
       customerType,
+
       salutation,
       firstName,
       lastName,
       companyName,
+
       customerEmail,
       workPhone,
       mobile,
+
       dob,
       cardNumber,
+
+      //Other details
       pan,
       currency,
       openingBalance,
       paymentTerms,
       documents,
-      websiteURL,
       department,
-      twitter,
-      skypeNameNumber,
-      facebook,
+      designation,
+      websiteURL,
+
+      //Taxes
+      gstTreatment,
+      gstin_uin,
+      businessLegalName,
+      businessTradeName,
+      placeOfSupply,
+      
+      // Billing Address
       billingAttention,
       billingCountry,
       billingAddress,
@@ -37,6 +49,8 @@ exports.addCustomer = async (req, res) => {
       billingPinCode,
       billingPhone,
       billingFaxNumber,
+
+      // Billing Address
       shippingAttention,
       shippingCountry,
       shippingAddress,
@@ -45,7 +59,11 @@ exports.addCustomer = async (req, res) => {
       shippingPinCode,
       shippingPhone,
       shippingFaxNumber,
+
+      //Contact Person
       contactPerson,
+
+      //Remark
       remark,
     } = req.body;
 
@@ -357,5 +375,36 @@ exports.deleteCustomer = async (req, res) => {
   } catch (error) {
     console.error("Error deleting customer:", error);
     res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
+// Customer Additional data
+exports.getCustomerAdditionalData = (req, res) => {
+  try {
+    const additionalData = [
+      {
+        gstTreatment: [
+          "Registered Business -Regular",
+          "Registered Business -Composition",
+          "Unregistered Business",
+          "Consumer",
+          "Overseas",
+          "Special Economic Zone",
+          "Deemed Export",
+          "Tax Deductor",
+          "SEZ Developer",          
+          ],        
+      }
+    ];
+
+    if (additionalData.length > 0) {
+      res.status(200).json(additionalData);
+    } else {
+      res.status(404).json("No Additional Data found");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Internal server error");
   }
 };
