@@ -41,6 +41,7 @@ pipeline {
                 script {
                     // Authenticate Docker to the AWS ECR
                     withAWS(credentials: "${AWS_CREDENTIALS_ID}", region: "${AWS_REGION}") {
+                        def ecrLoginPassword = sh(script: 'aws ecr get-login-password --region ${AWS_REGION}', returnStdout: true).trim()
                         sh '$(aws ecr get-login --no-include-email --region ${AWS_REGION})'
                     }
                 }
