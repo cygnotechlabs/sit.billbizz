@@ -7,6 +7,7 @@ pipeline {
         ECR_REPOSITORY = 'billbizz_frontend'
         IMAGE_NAME = 'frontend-billbizz'
         AWS_CREDENTIALS_ID = '2157424a-b8a7-45c0-90c2-bc0d407f6cea'
+        AWS_ACCOUNT_ID = '654654462146' // Add your AWS account ID here
         SONARQUBE_PROJECT_KEY = 'billbizz_cygnoz'
         SONARQUBE_SCANNER_CREDENTIALS_ID = 'sonar_token' // Jenkins credentials ID for SonarQube token
     }
@@ -41,7 +42,9 @@ pipeline {
                 script {
                     // Authenticate Docker to the AWS ECR
                     withAWS(credentials: "${AWS_CREDENTIALS_ID}", region: "${AWS_REGION}") {
-                        sh '$(aws ecr get-login --no-include-email --region ${AWS_REGION})'
+                        sh '''
+                            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                        '''
                     }
                 }
             }
@@ -67,3 +70,4 @@ pipeline {
         }
     }
 }
+
