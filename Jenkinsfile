@@ -39,9 +39,13 @@ pipeline {
         stage('Login to ECR') {
             steps {
                 script {
+                    // Retrieve AWS account ID
+                    def awsAccountId = sh(script: 'aws sts get-caller-identity --query Account --output text', returnStdout: true).trim()
+
                     // Authenticate Docker to the AWS ECR
                     withAWS(credentials: "${AWS_CREDENTIALS_ID}", region: "${AWS_REGION}") {
-                        sh '$(aws ecr get-login --no-include-email --region ${AWS_REGION})'
+                        def ecrLoginPassword = sh(script: 'aws ecr get-login-password --region ${AWS_REGION}', returnStdout: true).trim()
+                        sh "docker login --username AWS --password ${ecrLoginPassword} ${awsAccountId}.dkr.ecr.${AWS_REGION}.amazonaws.com"
                     }
                 }
             }
@@ -50,9 +54,12 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
+                    // Retrieve AWS account ID
+                    def awsAccountId = sh(script: 'aws sts get-caller-identity --query Account --output text', returnStdout: true).trim()
+
                     // Tag and push Docker image to ECR
-                    sh 'docker tag $IMAGE_NAME:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:latest'
-                    sh 'docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:latest'
+                    sh 'docker tag $IMAGE_NAME:latest ${awsAccountId}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:latest'
+                    sh 'docker push ${awsAccountId}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:latest'
                 }
             }
         }
@@ -67,3 +74,4 @@ pipeline {
         }
     }
 }
+
