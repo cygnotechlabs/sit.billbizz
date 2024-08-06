@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        // Define environment variables for AWS ECR
+        // Define environment variables for AWS ECR and ECS
         AWS_REGION = 'ap-south-1'
         ECR_REPOSITORY = 'billbizz_frontend'
         IMAGE_NAME = 'frontend-billbizz'
@@ -10,6 +10,9 @@ pipeline {
         AWS_ACCOUNT_ID = '654654462146' // Add your AWS account ID here
         SONARQUBE_PROJECT_KEY = 'billbizz_cygnoz'
         SONARQUBE_SCANNER_CREDENTIALS_ID = 'sonar_token' // Jenkins credentials ID for SonarQube token
+        ECS_CLUSTER_NAME = 'dev-billbizz' // Replace with your ECS cluster name
+        ECS_SERVICE_NAME = 'billbizz_frontend_service' // Replace with your ECS service name
+        ECS_TASK_DEFINITION_NAME = 'billbizz_frontend' // Replace with your ECS task definition name
     }
 
     stages {
@@ -56,6 +59,30 @@ pipeline {
                     // Tag and push Docker image to ECR
                     sh 'docker tag $IMAGE_NAME:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:latest'
                     sh 'docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:latest'
+                }
+            }
+        }
+
+        stage('Update ECS Service') {
+            steps {
+                script {
+                    // Update ECS Service with the latest task definition revision
+                    sh '''
+                        # Fetch the latest task definition revision
+                        LATEST_TASK_DEFINITION=$(aws ecs describe-task-definition \
+                            --region ${AWS_REGION} \
+                            --task-definition ${ECS_TASK_DEFINITION_NAME} \
+                            --query 'taskDefinition.taskDefinitionArn' \
+                            --output text)
+
+                        # Update ECS Service to use the latest task definition
+                        aws ecs update-service \
+                            --region ${AWS_REGION} \
+                            --cluster ${ECS_CLUSTER_NAME} \
+                            --service ${ECS_SERVICE_NAME} \
+                            --force-new-deployment \
+                            --task-definition ${LATEST_TASK_DEFINITION}
+                    '''
                 }
             }
         }
