@@ -66,23 +66,27 @@ pipeline {
         stage('Update ECS Service') {
             steps {
                 script {
-                    // Update ECS Service with the latest task definition revision
-                    sh '''
-                        # Fetch the latest task definition revision
-                        LATEST_TASK_DEFINITION=$(aws ecs describe-task-definition \
-                            --region ${AWS_REGION} \
-                            --task-definition ${ECS_TASK_DEFINITION_NAME} \
-                            --query 'taskDefinition.taskDefinitionArn' \
-                            --output text)
+                    // Wrap AWS CLI commands with `withAWS` to ensure credentials are available
+                    withAWS(credentials: "${AWS_CREDENTIALS_ID}", region: "${AWS_REGION}") {
+                        // Fetch the latest task definition revision
+                        def latestTaskDefinition = sh(script: '''
+                            aws ecs describe-task-definition \
+                                --region ${AWS_REGION} \
+                                --task-definition ${ECS_TASK_DEFINITION_NAME} \
+                                --query 'taskDefinition.taskDefinitionArn' \
+                                --output text
+                        ''', returnStdout: true).trim()
 
-                        # Update ECS Service to use the latest task definition
-                        aws ecs update-service \
-                            --region ${AWS_REGION} \
-                            --cluster ${ECS_CLUSTER_NAME} \
-                            --service ${ECS_SERVICE_NAME} \
-                            --force-new-deployment \
-                            --task-definition ${LATEST_TASK_DEFINITION}
-                    '''
+                        // Update ECS Service to use the latest task definition
+                        sh '''
+                            aws ecs update-service \
+                                --region ${AWS_REGION} \
+                                --cluster ${ECS_CLUSTER_NAME} \
+                                --service ${ECS_SERVICE_NAME} \
+                                --force-new-deployment \
+                                --task-definition ${latestTaskDefinition}
+                        '''
+                    }
                 }
             }
         }
