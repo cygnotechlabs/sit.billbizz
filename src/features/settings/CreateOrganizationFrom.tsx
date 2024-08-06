@@ -63,7 +63,7 @@ const CreateOrganizationForm = () => {
 
   const { request: getAdditionalData } = useApi("get", 5004);
   const { request: createOrganization } = useApi("post", 5004);
-  const { request: getOneOrganization } = useApi("get", 5004);
+  const { request: getOneOrganization } = useApi("put", 5004);
   const [fields, setFields] = useState<{ label: string; value: string }[]>([
     { label: "", value: "" },
   ]);
@@ -125,14 +125,18 @@ const CreateOrganizationForm = () => {
 
   const getOrganization = async () => {
     try {
-      let apiResponse;
-      const url = `${endponits.GET_ONE_ORGANIZATION}/INDORG0001`;
-      apiResponse = await getOneOrganization(url);
+      const url = `${endponits.GET_ONE_ORGANIZATION}`;
+      const requestBody = {
+        organizationId: "INDORG0001",
+      };
+      const apiResponse = await getOneOrganization(url, requestBody);
       const { response, error } = apiResponse;
       if (!error && response?.data) {
         setOneOrganization(response.data);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching organization:", error);
+    }
   };
 
   useEffect(() => {
