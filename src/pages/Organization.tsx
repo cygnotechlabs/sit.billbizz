@@ -28,11 +28,7 @@ type Props = {};
 const Organization = ({}: Props) => {
   return (
     <>
-      <div className="grid grid-cols-12 gap-4">
-        <div
-          className=" col-span-3  border-neutral-300 text-textColor  border-2 px-8 "
-          style={{ height: "92vh" }}
-        >
+        <div className=" col-span-3  border-neutral-300 text-textColor h-[100vh]  border-2 px-8 ">
           <button className="border text-sm p-2 mt-4 rounded-lg flex border-gray-400">
             <ChevronLeft color="currentColor" />
             Back
@@ -188,8 +184,6 @@ const Organization = ({}: Props) => {
             </ul>
           </div>
         </div>
-        <div className="col-span-9 ">{/* <CreateOrganizationFrom /> */}</div>
-      </div>
     </>
   );
 };
