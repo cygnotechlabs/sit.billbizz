@@ -15,11 +15,12 @@ router.post('/setup-organization',organizationController.setupOrganization)
 
 router.get('/get-additional-data',organizationController.getAdditionalData)
 
+router.get('/get-countries-data',organizationController.getCountriesData)
+
 router.put('/get-one-organization',organizationController.getOneOrganization)
 
 router.delete('/delete-organization/:organizationId',organizationController.deleteOrganization)
 
-// router.put('/edit-organization/:id',verifyToken,checkPermission('Admin'),organizationController.updateOrganization)
 
 
 
@@ -28,6 +29,11 @@ router.delete('/delete-organization/:organizationId',organizationController.dele
 
 router.put('/get-currency',settingController.getCurrency)
 
+router.post('/add-currency',settingController.addCurrency)
+
+router.put('/edit-currency',settingController.editCurrency)
+
+router.delete('/delete-currency',settingController.deleteCurrency)
 
 
 

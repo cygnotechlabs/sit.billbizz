@@ -6,11 +6,12 @@ const Account = require("../database/model/account")
 const Currency = require("../database/model/currency")
 const Journal = require("../database/model/journal");
 const TrialBalance = require("../database/model/trialBalance");
+const PaymentTerms = require("../database/model/paymentTerm");
 const Role = require('../database/model/role');
 const bcrypt = require('bcrypt');
 
 
-
+// Auto create Roles
 const createRolesForOrganization = async (organizationId) => {
   try {
     
@@ -82,154 +83,150 @@ const createRolesForOrganization = async (organizationId) => {
         //Dashboard
         "TotalPayables","TotalReceivables","CashFlow","IncomeAndExpenses","YourTopExpense","Projects","BankAndCreditCards","AccountWatchlist",
 
-        //REPORT
+        // //REPORT
 
-        //Business Overview
-        //Profit And Loss
-        "ProfitAndLossView","ProfitAndLossExport","ProfitAndLossSchedule","ProfitAndLossShare",
-        //Profit and Loss (Schedule III)
-        "ProfitAndLossScheduleView","ProfitAndLossScheduleExport","ProfitAndLossScheduleSchedule","ProfitAndLossScheduleShare",
-        //Horizontal Profit and Loss
-        "HorizontalProfitAndLossView","HorizontalProfitAndLossExport","HorizontalProfitAndLossSchedule","HorizontalProfitAndLossShare",
-        //Cash Flow Statement
-        "CashFlowStatementView","CashFlowStatementExport","CashFlowStatementSchedule","CashFlowStatementShare",
-        //Balance Sheet
-        "BalanceSheetView","BalanceSheetExport","BalanceSheetSchedule","BalanceSheetShare",
-        //Horizontal Balance Sheet
-        "HorizontalBalanceSheetView","HorizontalBalanceSheetExport","HorizontalBalanceSheetSchedule","HorizontalBalanceSheetShare",
-        //Balance Sheet (Schedule III)
-        "BalanceSheetScheduleView","BalanceSheetScheduleExport","BalanceSheetScheduleSchedule","BalanceSheetScheduleShare",
-        //Business Performance Ratios
-        "BusinessPerformanceRatiosView","BusinessPerformanceRatiosExport","BusinessPerformanceRatiosSchedule","BusinessPerformanceRatiosShare",
-        //Movement Of Equity
-        "MovementOfEquityView","MovementOfEquityExport","MovementOfEquitySchedule","MovementOfEquityShare",
+        // //Business Overview
+        // //Profit And Loss
+        // "ProfitAndLossView","ProfitAndLossExport","ProfitAndLossSchedule","ProfitAndLossShare",
+        // //Profit and Loss (Schedule III)
+        // "ProfitAndLossScheduleView","ProfitAndLossScheduleExport","ProfitAndLossScheduleSchedule","ProfitAndLossScheduleShare",
+        // //Horizontal Profit and Loss
+        // "HorizontalProfitAndLossView","HorizontalProfitAndLossExport","HorizontalProfitAndLossSchedule","HorizontalProfitAndLossShare",
+        // //Cash Flow Statement
+        // "CashFlowStatementView","CashFlowStatementExport","CashFlowStatementSchedule","CashFlowStatementShare",
+        // //Balance Sheet
+        // "BalanceSheetView","BalanceSheetExport","BalanceSheetSchedule","BalanceSheetShare",
+        // //Horizontal Balance Sheet
+        // "HorizontalBalanceSheetView","HorizontalBalanceSheetExport","HorizontalBalanceSheetSchedule","HorizontalBalanceSheetShare",
+        // //Balance Sheet (Schedule III)
+        // "BalanceSheetScheduleView","BalanceSheetScheduleExport","BalanceSheetScheduleSchedule","BalanceSheetScheduleShare",
+        // //Business Performance Ratios
+        // "BusinessPerformanceRatiosView","BusinessPerformanceRatiosExport","BusinessPerformanceRatiosSchedule","BusinessPerformanceRatiosShare",
+        // //Movement Of Equity
+        // "MovementOfEquityView","MovementOfEquityExport","MovementOfEquitySchedule","MovementOfEquityShare",
         
         
-        //Sales
-        //Sales by Customer
-        "SalesByCustomerView","SalesByCustomerExport","SalesByCustomerSchedule","SalesByCustomerShare",
-        //Sales by Item
-        "SalesByItemView","SalesByItemExport","SalesByItemSchedule","SalesByItemShare",
-        //Order Fulfillment By Item
-        "OrderFulfillmentByItemView","OrderFulfillmentByItemExport","OrderFulfillmentByItemSchedule","OrderFulfillmentByItemShare",
-        //Sales Return History
-        "SalesReturnHistoryView","SalesReturnHistoryExport","SalesReturnHistorySchedule","SalesReturnHistoryShare",
-        //Sales By Salesperson
-        "SalesBySalespersonView","SalesBySalespersonExport","SalesBySalespersonSchedule","SalesBySalespersonShare",
+        // //Sales
+        // //Sales by Customer
+        // "SalesByCustomerView","SalesByCustomerExport","SalesByCustomerSchedule","SalesByCustomerShare",
+        // //Sales by Item
+        // "SalesByItemView","SalesByItemExport","SalesByItemSchedule","SalesByItemShare",
+        // //Order Fulfillment By Item
+        // "OrderFulfillmentByItemView","OrderFulfillmentByItemExport","OrderFulfillmentByItemSchedule","OrderFulfillmentByItemShare",
+        // //Sales Return History
+        // "SalesReturnHistoryView","SalesReturnHistoryExport","SalesReturnHistorySchedule","SalesReturnHistoryShare",
+        // //Sales By Salesperson
+        // "SalesBySalespersonView","SalesBySalespersonExport","SalesBySalespersonSchedule","SalesBySalespersonShare",
 
 
-        //Inventory
-        //Inventory Summary Report
-        "InventorySummaryReportView","InventorySummaryReportExport","InventorySummaryReportSchedule","InventorySummaryReportShare",
-        //Committed Stock Details
-        "CommittedStockDetailsView","CommittedStockDetailsExport","CommittedStockDetailsSchedule","CommittedStockDetailsShare",
-        //Inventory Valuation Summary
-        "InventoryValuationSummaryView","InventoryValuationSummaryExport","InventoryValuationSummarySchedule","InventoryValuationSummaryShare",
-        //FIFO Cost Lot Tracking
-        "FIFOCostLotTrackingView","FIFOCostLotTrackingExport","FIFOCostLotTrackingSchedule","FIFOCostLotTrackingShare",        
-        //Inventory Aging Summary
-        "InventoryAgingSummaryView","InventoryAgingSummaryExport","InventoryAgingSummarySchedule","InventoryAgingSummaryShare",
-        //Product Sales Report
-        "ProductSalesReportView","ProductSalesReportExport","ProductSalesReportSchedule","ProductSalesReportShare",
-        //Product Purchase Report
-        "ProductPurchaseReportView","ProductPurchaseReportExport","ProductPurchaseReportSchedule","ProductPurchaseReportShare",
-        //Stock Summary Report
-        "StockSummaryReportView","StockSummaryReportExport","StockSummaryReportSchedule","StockSummaryReportShare",
-        //Landed Cost Summary
-        "LandedCostSummaryView","LandedCostSummaryExport","LandedCostSummarySchedule","LandedCostSummaryShare",
+        // //Inventory
+        // //Inventory Summary Report
+        // "InventorySummaryReportView","InventorySummaryReportExport","InventorySummaryReportSchedule","InventorySummaryReportShare",
+        // //Committed Stock Details
+        // "CommittedStockDetailsView","CommittedStockDetailsExport","CommittedStockDetailsSchedule","CommittedStockDetailsShare",
+        // //Inventory Valuation Summary
+        // "InventoryValuationSummaryView","InventoryValuationSummaryExport","InventoryValuationSummarySchedule","InventoryValuationSummaryShare",
+        // //FIFO Cost Lot Tracking
+        // "FIFOCostLotTrackingView","FIFOCostLotTrackingExport","FIFOCostLotTrackingSchedule","FIFOCostLotTrackingShare",        
+        // //Inventory Aging Summary
+        // "InventoryAgingSummaryView","InventoryAgingSummaryExport","InventoryAgingSummarySchedule","InventoryAgingSummaryShare",
+        // //Product Sales Report
+        // "ProductSalesReportView","ProductSalesReportExport","ProductSalesReportSchedule","ProductSalesReportShare",
+        // //Product Purchase Report
+        // "ProductPurchaseReportView","ProductPurchaseReportExport","ProductPurchaseReportSchedule","ProductPurchaseReportShare",
+        // //Stock Summary Report
+        // "StockSummaryReportView","StockSummaryReportExport","StockSummaryReportSchedule","StockSummaryReportShare",
+        // //Landed Cost Summary
+        // "LandedCostSummaryView","LandedCostSummaryExport","LandedCostSummarySchedule","LandedCostSummaryShare",
 
-        //Receivables
-        //Customer Balances
-        "CustomerBalancesView","CustomerBalancesExport", "CustomerBalancesSchedule", "CustomerBalancesShare",
-        //A/R Aging Summary
-        "ARAgingSummaryView","ARAgingSummaryExport","ARAgingSummarySchedule","ARAgingSummaryShare",
-        //A/R Aging Details
-        "ARAgingDetailsView","ARAgingDetailsExport","ARAgingDetailsSchedule","ARAgingDetailsShare",
-        //Invoice Details
-        "InvoiceDetailsView","InvoiceDetailsExport","InvoiceDetailsSchedule","InvoiceDetailsShare",
-        //Retainer Invoice Details
-        "RetainerInvoiceDetailsView","RetainerInvoiceDetailsExport","RetainerInvoiceDetailsSchedule","RetainerInvoiceDetailsShare",
-        //Sales Order Details
-        "SalesOrderDetailsView","SalesOrderDetailsExport","SalesOrderDetailsSchedule","SalesOrderDetailsShare",
-        //Delivery Challan Details
-        "DeliveryChallanDetailsView","DeliveryChallanDetailsExport","DeliveryChallanDetailsSchedule","DeliveryChallanDetailsShare",
-        //Quote Details
-        "QuoteDetailsView","QuoteDetailsExport","QuoteDetailsSchedule","QuoteDetailsShare",
-        //Customer Balance Summary
-        "CustomerBalanceSummaryView","CustomerBalanceSummaryExport","CustomerBalanceSummarySchedule","CustomerBalanceSummaryShare",
-        //Receivable Summary
-        "ReceivableSummaryView","ReceivableSummaryExport","ReceivableSummarySchedule","ReceivableSummaryShare",
-        //Receivable Details
-        "ReceivableDetailsView","ReceivableDetailsExport","ReceivableDetailsSchedule","ReceivableDetailsShare",
+        // //Receivables
+        // //Customer Balances
+        // "CustomerBalancesView","CustomerBalancesExport", "CustomerBalancesSchedule", "CustomerBalancesShare",
+        // //A/R Aging Summary
+        // "ARAgingSummaryView","ARAgingSummaryExport","ARAgingSummarySchedule","ARAgingSummaryShare",
+        // //A/R Aging Details
+        // "ARAgingDetailsView","ARAgingDetailsExport","ARAgingDetailsSchedule","ARAgingDetailsShare",
+        // //Invoice Details
+        // "InvoiceDetailsView","InvoiceDetailsExport","InvoiceDetailsSchedule","InvoiceDetailsShare",
+        // //Retainer Invoice Details
+        // "RetainerInvoiceDetailsView","RetainerInvoiceDetailsExport","RetainerInvoiceDetailsSchedule","RetainerInvoiceDetailsShare",
+        // //Sales Order Details
+        // "SalesOrderDetailsView","SalesOrderDetailsExport","SalesOrderDetailsSchedule","SalesOrderDetailsShare",
+        // //Delivery Challan Details
+        // "DeliveryChallanDetailsView","DeliveryChallanDetailsExport","DeliveryChallanDetailsSchedule","DeliveryChallanDetailsShare",
+        // //Quote Details
+        // "QuoteDetailsView","QuoteDetailsExport","QuoteDetailsSchedule","QuoteDetailsShare",
+        // //Customer Balance Summary
+        // "CustomerBalanceSummaryView","CustomerBalanceSummaryExport","CustomerBalanceSummarySchedule","CustomerBalanceSummaryShare",
+        // //Receivable Summary
+        // "ReceivableSummaryView","ReceivableSummaryExport","ReceivableSummarySchedule","ReceivableSummaryShare",
+        // //Receivable Details
+        // "ReceivableDetailsView","ReceivableDetailsExport","ReceivableDetailsSchedule","ReceivableDetailsShare",
 
         
         
-        //Payments Received
-        //Payments Received
-        "PaymentsReceivedView","PaymentsReceivedExport","PaymentsReceivedSchedule","PaymentsReceivedShare",
-        //Time Taken to Get Paid
-        "TimeTakenToGetPaidView","TimeTakenToGetPaidExport","TimeTakenToGetPaidSchedule","TimeTakenToGetPaidShare",
-        //Credit Notes Details
-        "CreditNotesDetailsView","CreditNotesDetailsExport","CreditNotesDetailsSchedule","CreditNotesDetailsShare",
-        //Refund History
-        "RefundHistoryView","RefundHistoryExport","RefundHistorySchedule","RefundHistoryShare",
+        // //Payments Received
+        // //Payments Received
+        // "PaymentsReceivedView","PaymentsReceivedExport","PaymentsReceivedSchedule","PaymentsReceivedShare",
+        // //Time Taken to Get Paid
+        // "TimeTakenToGetPaidView","TimeTakenToGetPaidExport","TimeTakenToGetPaidSchedule","TimeTakenToGetPaidShare",
+        // //Credit Notes Details
+        // "CreditNotesDetailsView","CreditNotesDetailsExport","CreditNotesDetailsSchedule","CreditNotesDetailsShare",
+        // //Refund History
+        // "RefundHistoryView","RefundHistoryExport","RefundHistorySchedule","RefundHistoryShare",
 
 
-        //Recurring Invoices
-        //Recurring Invoice Details
-        "RecurringInvoiceDetailsView","RecurringInvoiceDetailsExport","RecurringInvoiceDetailsSchedule","RecurringInvoiceDetailsShare",
-        // Recurring Invoice - Payment Failure Report
-        "RecurringInvoicePaymentFailureReportView","RecurringInvoicePaymentFailureReportExport","RecurringInvoicePaymentFailureReportSchedule","RecurringInvoicePaymentFailureReportShare",
-        // Recurring Invoice - Payment Retry Report
-        "RecurringInvoicePaymentRetryReportView","RecurringInvoicePaymentRetryReportExport","RecurringInvoicePaymentRetryReportSchedule","RecurringInvoicePaymentRetryReportShare",
-        // Recurring Invoice - Card Expiry Report
-        "RecurringInvoiceCardExpiryReportView","RecurringInvoiceCardExpiryReportExport","RecurringInvoiceCardExpiryReportSchedule","RecurringInvoiceCardExpiryReportShare"
-
-
-
-
+        // //Recurring Invoices
+        // //Recurring Invoice Details
+        // "RecurringInvoiceDetailsView","RecurringInvoiceDetailsExport","RecurringInvoiceDetailsSchedule","RecurringInvoiceDetailsShare",
+        // // Recurring Invoice - Payment Failure Report
+        // "RecurringInvoicePaymentFailureReportView","RecurringInvoicePaymentFailureReportExport","RecurringInvoicePaymentFailureReportSchedule","RecurringInvoicePaymentFailureReportShare",
+        // // Recurring Invoice - Payment Retry Report
+        // "RecurringInvoicePaymentRetryReportView","RecurringInvoicePaymentRetryReportExport","RecurringInvoicePaymentRetryReportSchedule","RecurringInvoicePaymentRetryReportShare",
+        // // Recurring Invoice - Card Expiry Report
+        // "RecurringInvoiceCardExpiryReportView","RecurringInvoiceCardExpiryReportExport","RecurringInvoiceCardExpiryReportSchedule","RecurringInvoiceCardExpiryReportShare"
 
         ] },
-      { organizationId, description: 'Staff',roleName: 'Staff', permissions: [
-        //Customers
-        "CustomersView","CustomersCreate","CustomersEdit","CustomersDelete",
-        //Vendors
-        "VendorsView","VendorsCreate","VendorsEdit","VendorsDelete",
-        //Item
-        "ItemView","ItemCreate","ItemEdit","ItemDelete",
-        //Inventory Adjustments
-        "InventoryAdjustmentsView","InventoryAdjustmentsCreate","InventoryAdjustmentsDelete",
-        //Price List
-        "PriceListView","PriceListCreate","PriceListEdit","PriceListDelete",
-        //Banking
-        "BankingView","BankingCreate","BankingEdit","BankingDelete",
-        //Invoices
-        "InvoicesView","InvoicesCreate","InvoicesEdit","InvoicesDelete",
-        //Customer Payments
-        "CustomerPaymentsView","CustomerPaymentsCreate","CustomerPaymentsEdit","CustomerPaymentsDelete",
-        //Quotes
-        "QuotesView","QuotesCreate",'QuotesEdit',"QuotesDelete",
-        //Delivery Challan
-        "DeliveryChallanView","DeliveryChallanCreate","DeliveryChallanEdit","DeliveryChallanDelete",
-        //Sales Orders
-        "SalesOrdersView","SalesOrdersCreate","SalesOrdersEdit","SalesOrdersDelete",
-        //Credit Notes
-        "CreditNotesView","CreditNotesCreate","CreditNotesEdit","CreditNotesDelete",
-        //Bills
-        "BillsView","BillsCreate","BillsEdit",'BillsDelete',
-        //Vendor Payments
-        "VendorPaymentsView","VendorPaymentsCreate","VendorPaymentsEdit","VendorPaymentsDelete",
-        //Expenses
-        'ExpensesView',"ExpensesCreate",'ExpensesEdit','ExpensesDelete',
-        //Purchase Orders
-        'PurchaseOrdersView','PurchaseOrdersCreate','PurchaseOrdersEdit','PurchaseOrdersDelete',
-        //Vendor Credits
-        'VendorCreditsView','VendorCreditsCreate','VendorCreditsEdit','VendorCreditsDelete',        
-        //Projects
-        'ProjectsView',
-        //Documents
-        "DocumentsViewDocuments","DocumentsUploadDocuments","DocumentsDeleteDocuments","DocumentsManageFolder"
-      ] }
+      // { organizationId, description: 'Staff',roleName: 'Staff', permissions: [
+      //   //Customers
+      //   "CustomersView","CustomersCreate","CustomersEdit","CustomersDelete",
+      //   //Vendors
+      //   "VendorsView","VendorsCreate","VendorsEdit","VendorsDelete",
+      //   //Item
+      //   "ItemView","ItemCreate","ItemEdit","ItemDelete",
+      //   //Inventory Adjustments
+      //   "InventoryAdjustmentsView","InventoryAdjustmentsCreate","InventoryAdjustmentsDelete",
+      //   //Price List
+      //   "PriceListView","PriceListCreate","PriceListEdit","PriceListDelete",
+      //   //Banking
+      //   "BankingView","BankingCreate","BankingEdit","BankingDelete",
+      //   //Invoices
+      //   "InvoicesView","InvoicesCreate","InvoicesEdit","InvoicesDelete",
+      //   //Customer Payments
+      //   "CustomerPaymentsView","CustomerPaymentsCreate","CustomerPaymentsEdit","CustomerPaymentsDelete",
+      //   //Quotes
+      //   "QuotesView","QuotesCreate",'QuotesEdit',"QuotesDelete",
+      //   //Delivery Challan
+      //   "DeliveryChallanView","DeliveryChallanCreate","DeliveryChallanEdit","DeliveryChallanDelete",
+      //   //Sales Orders
+      //   "SalesOrdersView","SalesOrdersCreate","SalesOrdersEdit","SalesOrdersDelete",
+      //   //Credit Notes
+      //   "CreditNotesView","CreditNotesCreate","CreditNotesEdit","CreditNotesDelete",
+      //   //Bills
+      //   "BillsView","BillsCreate","BillsEdit",'BillsDelete',
+      //   //Vendor Payments
+      //   "VendorPaymentsView","VendorPaymentsCreate","VendorPaymentsEdit","VendorPaymentsDelete",
+      //   //Expenses
+      //   'ExpensesView',"ExpensesCreate",'ExpensesEdit','ExpensesDelete',
+      //   //Purchase Orders
+      //   'PurchaseOrdersView','PurchaseOrdersCreate','PurchaseOrdersEdit','PurchaseOrdersDelete',
+      //   //Vendor Credits
+      //   'VendorCreditsView','VendorCreditsCreate','VendorCreditsEdit','VendorCreditsDelete',        
+      //   //Projects
+      //   'ProjectsView',
+      //   //Documents
+      //   "DocumentsViewDocuments","DocumentsUploadDocuments","DocumentsDeleteDocuments","DocumentsManageFolder"
+      // ] }
     ];
 
     await Role.insertMany(roles);
@@ -242,7 +239,7 @@ const createRolesForOrganization = async (organizationId) => {
   }
 };
 
-
+// Auto create Currency
 const createCurrencyForOrganization = async (organizationId) => {
   try {
     
@@ -280,7 +277,35 @@ const createCurrencyForOrganization = async (organizationId) => {
   }
 };
 
+//Auto create Payment terms
+const createPaymentTermForOrganization = async (organizationId) => {
+  try {
+    
+    // Check if the roles already exist for the organization
+    const existingpaymentTerm = await PaymentTerms.find({ organizationId:organizationId });
+    
+    if (existingpaymentTerm.length > 0) {
+      console.log("Payment Terms already exist for this organization.");
+      return { success: true, message: "Payment Terms already exist for this organization." };
+    }
 
+    // Create admin and staff roles
+    const paymentTerm = [
+      { organizationId, name: 'Net 15',days: '15'},
+      { organizationId, name: 'Net 30',days: '30'},
+      { organizationId, name: 'Net 45',days: '45'},
+      { organizationId, name: 'Net 60',days: '60'},            
+    ];
+
+    await PaymentTerms.insertMany(paymentTerm);
+    console.log("Payment Terms created successfully for organization:", organizationId);
+    return { success: true, message: "Payment Terms created successfully." };
+
+  } catch (error) {
+    console.error("Error creating roles:", error);
+    return { success: false, message: "Failed to create roles." };
+  }
+};
 
 // Create New Client, Organization, Prefix, Role
 exports.createOrganizationAndClient = async (req, res) => {
@@ -304,6 +329,16 @@ exports.createOrganizationAndClient = async (req, res) => {
       });
     }
 
+    const clientExists = await Client.findOne({
+      email:email,
+    });
+    if (clientExists) {
+      return res.status(404).json({
+        message: "Client Exists",
+      });
+    }
+    
+
     // Count existing organizations to generate the next organizationId
     const organizationCount = await Organization.countDocuments({});
     const nextIdNumber = organizationCount + 1;
@@ -326,17 +361,19 @@ exports.createOrganizationAndClient = async (req, res) => {
 
     // Create roles for the organization
     const roleCreationResult = await createRolesForOrganization(organizationId);
-    
-
     if (!roleCreationResult.success) {
       return res.status(500).json({ message: roleCreationResult.message });
     }
 
     // Create Currency for the organization
     const currencyCreationResult = await createCurrencyForOrganization(organizationId);
-    
-
     if (!currencyCreationResult.success) {
+      return res.status(500).json({ message: roleCreationResult.message });
+    }
+
+    // Create Payment Term for the organization
+    const paymentTermCreationResult = await createPaymentTermForOrganization(organizationId);
+    if (!paymentTermCreationResult.success) {
       return res.status(500).json({ message: roleCreationResult.message });
     }
 

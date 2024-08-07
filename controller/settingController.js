@@ -24,6 +24,69 @@ exports.getCurrency = async (req, res) => {
   }
 };
 
+// add currency
+exports.addCurrency = async (req, res) => {
+  try {
+    const { organizationId, currencyCode, currencySymbol, currencyName, decimalPlaces, format } = req.body;
+
+    const newCurrency = new Currency({
+      organizationId,
+      currencyCode,
+      currencySymbol,
+      currencyName,
+      decimalPlaces,
+      format
+    });
+
+    const savedCurrency = await newCurrency.save();
+
+    res.status(201).json("Currency added successfully");
+  } catch (error) {
+    console.error("Error adding Currency:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// edit currency
+exports.editCurrency = async (req, res) => {
+  try {
+    const { currencyId, organizationId, currencyCode, currencySymbol, currencyName, decimalPlaces, format } = req.body;
+
+    const updatedCurrency = await Currency.findByIdAndUpdate(
+      currencyId,
+      { organizationId, currencyCode, currencySymbol, currencyName, decimalPlaces, format },
+      { new: true }
+    );
+
+    if (updatedCurrency) {
+      res.status(200).json("Currency updated successfully");
+    } else {
+      res.status(404).json({ message: "Currency not found" });
+    }
+  } catch (error) {
+    console.error("Error editing Currency:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// delete currency 
+exports.deleteCurrency = async (req, res) => {
+  try {
+    const { currencyId } = req.body;
+
+    const deletedCurrency = await Currency.findByIdAndDelete(currencyId);
+
+    if (deletedCurrency) {
+      res.status(200).json({ message: "Currency deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Currency not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting Currency:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 
 

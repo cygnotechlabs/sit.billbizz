@@ -312,11 +312,119 @@ exports.getAdditionalData = (req, res) => {
           ]
         },
         dateSplit: ["-", "/", "."],
+        timezones: [
+          { zone: "GMT-12:00", description: "Baker Island (no permanent population)" },
+          { zone: "GMT-11:00", description: "Niue, Samoa" },
+          { zone: "GMT-10:00", description: "Hawaii-Aleutian Standard Time (Hawaii)" },
+          { zone: "GMT-09:30", description: "Marquesas Islands (French Polynesia)" },
+          { zone: "GMT-09:00", description: "Alaska Time (Alaska)" },
+          { zone: "GMT-08:00", description: "Pacific Time (Los Angeles, Vancouver)" },
+          { zone: "GMT-07:00", description: "Mountain Time (Denver, Calgary)" },
+          { zone: "GMT-06:00", description: "Central Time (Chicago, Mexico City)" },
+          { zone: "GMT-05:00", description: "Eastern Time (New York, Toronto)" },
+          { zone: "GMT-04:00", description: "Atlantic Time (Halifax, Caracas)" },
+          { zone: "GMT-03:30", description: "Newfoundland Time (Newfoundland)" },
+          { zone: "GMT-03:00", description: "Argentina Time, Brasília Time" },
+          { zone: "GMT-02:00", description: "South Georgia and the South Sandwich Islands" },
+          { zone: "GMT-01:00", description: "Azores, Cape Verde" },
+          { zone: "GMT+00:00", description: "Greenwich Mean Time (GMT), Western European Time (WET)" },
+          { zone: "GMT+01:00", description: "Central European Time (CET), West Africa Time (WAT)" },
+          { zone: "GMT+02:00", description: "Eastern European Time (EET), Central Africa Time (CAT)" },
+          { zone: "GMT+03:00", description: "Moscow Time (MSK), East Africa Time (EAT)" },
+          { zone: "GMT+03:30", description: "Iran Standard Time (IRST)" },
+          { zone: "GMT+04:00", description: "Gulf Standard Time (GST), Azerbaijan Time (AZT)" },
+          { zone: "GMT+04:30", description: "Afghanistan Time (AFT)" },
+          { zone: "GMT+05:00", description: "Pakistan Standard Time (PKT), Yekaterinburg Time (YEKT)" },
+          { zone: "GMT+05:30", description: "Indian Standard Time (IST), Sri Lanka Time (SLT)" },
+          { zone: "GMT+06:00", description: "Bangladesh Standard Time (BST), Novosibirsk Time (NOVT)" },
+          { zone: "GMT+06:30", description: "Cocos Islands Time (CCT)" },
+          { zone: "GMT+07:00", description: "Indochina Time (ICT), Krasnoyarsk Time (KRAT)" },
+          { zone: "GMT+08:00", description: "China Standard Time (CST), Singapore Time (SGT)" },
+          { zone: "GMT+08:45", description: "Australian Central Western Standard Time (ACWST)" },
+          { zone: "GMT+09:00", description: "Japan Standard Time (JST), Korea Standard Time (KST)" },
+          { zone: "GMT+09:30", description: "Australian Central Standard Time (ACST)" },
+          { zone: "GMT+10:00", description: "Australian Eastern Standard Time (AEST), Papua New Guinea Time (PGT)" },
+          { zone: "GMT+10:30", description: "Lord Howe Island Time (LHST)" },
+          { zone: "GMT+11:00", description: "Solomon Islands Time (SBT), Vanuatu Time (VUT)" },
+          { zone: "GMT+12:00", description: "Fiji Time (FJT), New Zealand Standard Time (NZST)" }
+        ]
       }
     ];
 
     if (additionalData.length > 0) {
       res.status(200).json(additionalData);
+    } else {
+      res.status(404).json("No Additional Data found");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Internal server error");
+  }
+};
+
+
+
+// Countries data
+exports.getCountriesData = (req, res) => {
+  try {
+    const countriesData = [
+      {
+        countries: [
+          {
+            name: "United States",
+            states: ["California", "Texas", "New York", "Florida"],
+            phoneNumberCode: "+1"
+          },
+          {
+            name: "Canada",
+            states: ["Ontario", "Quebec", "British Columbia", "Alberta"],
+            phoneNumberCode: "+1"
+          },
+          {
+            name: "United Kingdom",
+            states: ["England", "Scotland", "Wales", "Northern Ireland"],
+            phoneNumberCode: "+44"
+          },
+          {
+            name: "Australia",
+            states: ["New South Wales", "Victoria", "Queensland", "Western Australia"],
+            phoneNumberCode: "+61"
+          },
+          {
+            name: "India",
+            states: ["Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Lakshadweep", "Delhi", "Puducherry", "Ladakh", "Jammu and Kashmir"],
+            phoneNumberCode: "+91"
+          },
+          {
+            name: "Saudi Arabia",
+            states: ["Al Bahah", "Al Jawf", "Al Madinah", "Al-Qassim", "Eastern Province", "Hail", "Jizan", "Makkah", "Najran", "Northern Borders", "Riyadh", "Tabuk"],
+            phoneNumberCode: "+966"
+          },
+          {
+            name: "United Arab Emirates",
+            states: ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al-Quwain", "Fujairah", "Ras Al Khaimah"],
+            phoneNumberCode: "+971"
+          },
+          {
+            name: "Germany",
+            states: ["Bavaria", "Berlin", "Hesse", "North Rhine-Westphalia"],
+            phoneNumberCode: "+49"
+          },
+          {
+            name: "France",
+            states: ["Île-de-France", "Provence-Alpes-Côte d'Azur", "Nouvelle-Aquitaine", "Occitanie"],
+            phoneNumberCode: "+33"
+          },
+          {
+            name: "Japan",
+            states: ["Tokyo", "Osaka", "Kyoto", "Hokkaido"],
+            phoneNumberCode: "+81"
+          }
+        ]
+      }
+    ];
+    if (countriesData.length > 0) {
+      res.status(200).json(countriesData);
     } else {
       res.status(404).json("No Additional Data found");
     }
@@ -337,7 +445,6 @@ exports.setupOrganization = async (req, res) => {
     const {
       organizationId,
       organizationLogo,
-      // organizationName,
       organizationCountry,
       organizationIndustry,
       addline1,
@@ -368,24 +475,8 @@ exports.setupOrganization = async (req, res) => {
       });
     }
     
-
-    // Check if an organization with the same organizationName already exists (excluding the current organization)
-    // const existingOrganizationName = await Organization.findOne({
-    //   organizationName,
-    //   _id: { $ne: existingOrganization._id }
-    // });
-
-    // if (existingOrganizationName) {
-    //   return res.status(409).json({
-    //     message: "Organization with the provided name already exists.",
-    //   });
-    // }
-
-
-
     // Update the existing organization's fields
     existingOrganization.organizationLogo = organizationLogo;
-    // existingOrganization.organizationName = organizationName;
     existingOrganization.organizationCountry = organizationCountry;
     existingOrganization.organizationIndustry = organizationIndustry;
     existingOrganization.addline1 = addline1;
