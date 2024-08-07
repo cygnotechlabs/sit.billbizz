@@ -5,6 +5,7 @@ import Upload from "../../../assets/icons/Upload";
 import Modal from "../../../Components/model/Modal";
 import PlusCircle from "../../../assets/icons/PlusCircle";
 import CirclePlus from "../../../assets/icons/circleplus";
+import Globe from "../../../assets/icons/Globe";
 
 type Props = { page: string };
 
@@ -12,6 +13,17 @@ const NewCustomerModal = ({ page }: Props) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("otherDetails");
+  const [rows, setRows] = useState([
+    { salutation: "", firstName: "", lastName: "", email: "", mobile: "" },
+  ]);
+
+  const addRow = () => {
+    setRows([
+      ...rows,
+      { salutation: "", firstName: "", lastName: "", email: "", mobile: "" },
+    ]);
+  };
+
   const openModal = () => {
     setModalOpen(true);
   };
@@ -32,14 +44,14 @@ const NewCustomerModal = ({ page }: Props) => {
 
   return (
     <div>
-      {page && page == "purchase" || page=="sales"? (
-          <div
+      {(page && page == "purchase") || page == "sales" ? (
+        <div
           className="w-full flex col-span-10  px-4  justify-between"
           onClick={openModal}
         >
           <div className="flex items-center  space-x-1">
             <CirclePlus color="darkRed" size="18" />
-        
+
             <p className="text-[#820000] text-sm">
               <b>Add new Customer</b>
             </p>
@@ -48,11 +60,11 @@ const NewCustomerModal = ({ page }: Props) => {
             &times;
           </div>
         </div>
-     
       ) : (
-        <Button onClick={openModal}  variant="primary" size="sm">
-        <PlusCircle color="white" /> <p className="text-sm font-medium">Add Customer</p>
-      </Button>
+        <Button onClick={openModal} variant="primary" size="sm">
+          <PlusCircle color="white" />{" "}
+          <p className="text-sm font-medium">Add Customer</p>
+        </Button>
       )}
 
       <Modal
@@ -80,7 +92,7 @@ const NewCustomerModal = ({ page }: Props) => {
               className="text-slate-600 text-sm overflow-scroll hide-scrollbar space-y-5 p-2"
               style={{ height: "480px" }}
             >
-                 <div>
+              <div>
                 <label
                   className="block text-sm mb-1 text-labelColor"
                   htmlFor=""
@@ -111,7 +123,10 @@ const NewCustomerModal = ({ page }: Props) => {
                         }`}
                       />
                     </div>
-                    <label htmlFor="business" className="text-start font-medium">
+                    <label
+                      htmlFor="business"
+                      className="text-start font-medium"
+                    >
                       Business
                     </label>
                   </div>
@@ -138,7 +153,10 @@ const NewCustomerModal = ({ page }: Props) => {
                         }`}
                       />
                     </div>
-                    <label htmlFor="indvidual" className="text-start font-medium">
+                    <label
+                      htmlFor="indvidual"
+                      className="text-start font-medium"
+                    >
                       Indvidual
                     </label>
                   </div>
@@ -150,6 +168,9 @@ const NewCustomerModal = ({ page }: Props) => {
                   <label htmlFor="">Salutation</label>
                   <div className="relative w-full">
                     <select className="block appearance-none w-full h-9 mt-1 text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                      <option value="" className="text-gray">
+                        Value
+                      </option>
                       <option value="" className="text-gray">
                         {" "}
                         Mr
@@ -179,7 +200,7 @@ const NewCustomerModal = ({ page }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="pl-9 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                      className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                       placeholder="Name"
                     />
                   </div>
@@ -190,7 +211,7 @@ const NewCustomerModal = ({ page }: Props) => {
                     </label>
                     <input
                       type="text"
-                      className="pl-9 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                      className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                       placeholder="Value"
                     />
                   </div>
@@ -199,7 +220,7 @@ const NewCustomerModal = ({ page }: Props) => {
                     <label htmlFor="">Company Name </label>
                     <input
                       type="text"
-                      className="pl-9 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                      className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                       placeholder="Value"
                     />
                   </div>
@@ -211,7 +232,7 @@ const NewCustomerModal = ({ page }: Props) => {
                   <label htmlFor="">Customer Email</label>
                   <input
                     type="text"
-                    className="pl-9 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                    className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                     placeholder="Value"
                   />
                 </div>
@@ -219,7 +240,7 @@ const NewCustomerModal = ({ page }: Props) => {
                   <label htmlFor="">Work Phone</label>
                   <input
                     type="text"
-                    className="pl-9 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                    className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                     placeholder="Value"
                   />
                 </div>
@@ -227,38 +248,41 @@ const NewCustomerModal = ({ page }: Props) => {
                   <label htmlFor="">Mobile</label>
                   <input
                     type="text"
-                    className="pl-9 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                    className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                     placeholder="Value"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mt-4">
-                <div className="">
-                  <label htmlFor="">Date Of Birth</label>
-                  <div className="relative w-full">
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div className="w-full">
+                  <label
+                    htmlFor="date-of-birth"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Date of birth
+                  </label>
+                  <div className="relative pl-2 text-sm w-full mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2">
+                    {/* <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-2 text-gray-700">
+          <Calender color="currentColor" height={18} width={18} />
+        </div> */}
                     <input
+                      id="date-of-birth"
+                      placeholder="Select Date"
                       type="date"
-                      className="pl-9 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                      className="w-full h-full pl-2 pr-8 text-sm bg-white border-none focus:outline-none focus:ring-0 text-gray"
                     />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <CehvronDown color="gray" />
+                    </div>
                   </div>
                 </div>
-
-                <div>
-                  <label htmlFor="">Phone Number</label>
-                  <input
-                    type="text"
-                    className="pl-9 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                    placeholder="Value"
-                  />
-                </div>
-
                 <div>
                   <label htmlFor="">Card Number</label>
                   <input
                     type="text"
-                    className="pl-9 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                    placeholder="Value"
+                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                    placeholder="XXX"
                   />
                 </div>
               </div>
@@ -273,6 +297,14 @@ const NewCustomerModal = ({ page }: Props) => {
                       onClick={() => setActiveTab("otherDetails")}
                     >
                       Other Details
+                    </li>
+                    <li
+                      className={`${getTabClassName(
+                        "taxes"
+                      )} border-r-4 ${getBorderClassName("taxes")} p-2`}
+                      onClick={() => setActiveTab("taxes")}
+                    >
+                      Taxes
                     </li>
                     <li
                       className={`${getTabClassName(
@@ -294,23 +326,23 @@ const NewCustomerModal = ({ page }: Props) => {
                     </li>
                     <li
                       className={`${getTabClassName(
-                        "customFields1"
-                      )} border-r-4 ${getBorderClassName("customFields1")} p-2`}
-                      //   onClick={() => setActiveTab('customFields1')}
+                        "remarks"
+                      )} border-r-4 ${getBorderClassName("remarks")} p-2`}
+                      onClick={() => setActiveTab("remarks")}
                     >
-                      Custom fields
+                      Remarks
                     </li>
-                    <li
+                    {/* <li
                       className={`${getTabClassName(
                         "customFields2"
                       )} border-r-4 ${getBorderClassName("customFields2")} p-2`}
                       //   onClick={() => setActiveTab('customFields2')}
                     >
                       Custom fields
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
-                <div className="w-3/4 px-20 p-2">
+                <div className=" w-full p-2 ps-16">
                   {activeTab === "otherDetails" && (
                     <div className="space-y-4  p-4 ">
                       <div className="grid grid-cols-2 gap-4">
@@ -328,7 +360,7 @@ const NewCustomerModal = ({ page }: Props) => {
                               Currency
                             </label>
                             <div className="relative w-full">
-                              <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                              <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                                 <option value="" className="text-gray">
                                   {" "}
                                   INR - Indian Rupee
@@ -357,14 +389,7 @@ const NewCustomerModal = ({ page }: Props) => {
                           />
                         </div>
                       </div>
-                      <div className="mt-4">
-                        <label className="inline-flex items-center">
-                          <input type="checkbox" className="form-checkbox " />
-                          <span className="ml-2">
-                            Allow portal access for this customer
-                          </span>
-                        </label>
-                      </div>
+
                       <div className="mt-4">
                         <label className="block mb-1">Documents</label>
                         <div className="border-dashed border border-neutral-300 p-2 rounded flex gap-2">
@@ -374,6 +399,120 @@ const NewCustomerModal = ({ page }: Props) => {
                         <p className="text-xs mt-1 text-gray-600">
                           You Can Upload a Maximum of 10 Files, 10 MB each
                         </p>
+                      </div>
+
+                      <div>
+                        <label className="block mb-1">Derpartment</label>
+                        <input
+                          type="text"
+                          className=" text-sm w-[49%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                          placeholder="Value"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block mb-1">Designation</label>
+
+                        <input
+                          type="text"
+                          className=" text-sm w-[49%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                          placeholder="Value"
+                        />
+                      </div>
+
+                      <div className="">
+                        <label htmlFor="" className="block mb-1">
+                          Website
+                        </label>
+                        <div className="relative w-full">
+                          <div className="pointer-events-none absolute inset-y-0  flex items-center px-2 text-gray-700 w-[50%]">
+                            <Globe />
+                          </div>
+                          <input
+                            type="text"
+                            className=" text-sm w-[49%] ps-9 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                            placeholder="Value"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === "taxes" && (
+                    <div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="relative w-full">
+                          <label htmlFor="" className="block mb-1">
+                            GST Treatement
+                          </label>
+                          <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                            <option value="" className="text-gray">
+                              {" "}
+                              Select GST Treatment
+                            </option>
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
+                            <CehvronDown color="gray" />
+                          </div>
+                        </div>
+                        <div className="relative w-full">
+                          <label htmlFor="" className="block mb-1">
+                            Source of supply
+                          </label>
+                          <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                            <option value="" className="text-gray">
+                              {" "}
+                              Value
+                            </option>
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
+                            <CehvronDown color="gray" />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block mb-1">GST Treatment</label>
+                          <input
+                            type="text"
+                            className=" text-sm w-full  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                            placeholder="GSTIN/UIN"
+                          />
+                        </div>
+                        <div></div>
+                        <div>
+                          <label className="block mb-1">MSME Registred?</label>
+                          <div className="flex items-center gap-3">
+                           
+                             <input type="checkbox" className="accent-[#97998E] bg-white h-6 w-5 mx-1" id="checkbox3"/>
+                            <label htmlFor="">
+                              The Vendor is MSME Registred
+                            </label>
+                          </div>
+                        </div>
+                        <div></div>
+                        <div className="relative w-full">
+                          <label htmlFor="" className="block mb-1">
+                            MSME/Udyam Registration Type
+                          </label>
+                          <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                            <option value="" className="text-gray">
+                              {" "}
+                              Select a Registration Type
+                            </option>
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
+                            <CehvronDown color="gray" />
+                          </div>
+                        </div>
+                        <div className="relative w-full">
+                          <label htmlFor="" className="block mb-1">
+                            MSME/Udyam Registration Number
+                          </label>
+                          <input
+                            type="text"
+                            className=" text-sm  ps-2 rounded-md text-start bg-white border border-slate-300  h-9 p-2 w-full"
+                            placeholder="Enter the Registration Numebr"
+                          />{" "}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -390,7 +529,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <label className="block mb-1">Attention</label>
                             <input
                               type="text"
-                              className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                               placeholder="Value"
                             />
                           </div>
@@ -398,7 +537,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <label htmlFor="" className="mb-1 block">
                               Country/Region
                             </label>
-                            <select className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                            <select className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                               <option value="" className="text-gray">
                                 {" "}
                                 Select
@@ -413,7 +552,7 @@ const NewCustomerModal = ({ page }: Props) => {
                           <label className="block mb-1">Attention</label>
                           <textarea
                             rows={2}
-                            className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  p-2"
+                            className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  p-2"
                             placeholder="Value"
                           />
                         </div>
@@ -422,7 +561,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <label className="block mb-1">City</label>
                             <input
                               type="text"
-                              className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                               placeholder="Value"
                             />
                           </div>
@@ -447,7 +586,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <label className="block mb-1">Pincode</label>
                             <input
                               type="text"
-                              className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                               placeholder="Value"
                             />
                           </div>
@@ -455,7 +594,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <label className="block mb-1">Phone</label>
                             <input
                               type="text"
-                              className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                               placeholder="Value"
                             />
                           </div>
@@ -487,7 +626,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <label className="block mb-1">Attention</label>
                             <input
                               type="text"
-                              className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-10 p-2"
+                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-10 p-2"
                               placeholder="Value"
                             />
                           </div>
@@ -510,7 +649,7 @@ const NewCustomerModal = ({ page }: Props) => {
                           <label className="block mb-1">Attention</label>
                           <textarea
                             rows={2}
-                            className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  p-2"
+                            className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  p-2"
                             placeholder="Value"
                           />
                         </div>
@@ -519,7 +658,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <label className="block mb-1">City</label>
                             <input
                               type="text"
-                              className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                               placeholder="Value"
                             />
                           </div>
@@ -544,7 +683,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <label className="block mb-1">Pincode</label>
                             <input
                               type="text"
-                              className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                               placeholder="Value"
                             />
                           </div>
@@ -552,7 +691,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <label className="block mb-1">Phone</label>
                             <input
                               type="text"
-                              className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                               placeholder="Value"
                             />
                           </div>
@@ -575,58 +714,114 @@ const NewCustomerModal = ({ page }: Props) => {
                     </>
                   )}
                   {activeTab === "contactPersons" && (
-                    <div className="space-y-4  p-4 ">
-                      <div className="grid grid-cols-3 gap-4">
-                        <div>
-                          <div className="relative w-full">
-                            <label htmlFor="" className="mb-1 block">
-                              Salutation
-                            </label>
-                            <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                              <option value="" className="text-gray">
-                                {" "}
-                                Select
-                              </option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
-                              <CehvronDown color="gray" />
-                            </div>
-                          </div>
-                        </div>
-                        <div>
-                          <label className="block mb-1">First Name</label>
-                          <input
-                            type="text"
-                            className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                            placeholder="Value"
-                          />
-                        </div>
-                        <div>
-                          <label className="block mb-1">Last Name</label>
-                          <input
-                            type="text"
-                            className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                            placeholder="Value"
-                          />
-                        </div>
+                    <>
+                      <div className="rounded-lg border-2 border-tableBorder mt-5">
+                        <table className="min-w-full bg-white rounded-lg relative mb-4 border-dropdownText ">
+                          <thead className="text-[12px] text-center text-dropdownText">
+                            <tr className="bg-lightPink ">
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                Salutation
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                FirstName
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                LastName
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                Email Address
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                Mobile
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-dropdownText text-center text-[13px] ">
+                            {rows.map((_, index) => (
+                              <tr className="relative text-center" key={index}>
+                                <td className="py-2.5 px- border-y border-tableBorder justify-center mt-4 gap-2 items-center flex-1">
+                                  <div className="relative w-full">
+                                    <select className="block relative appearance-none w-full h-9 focus:border-none text-zinc-400 bg-white text-sm text-center border-none rounded-md leading-tight">
+                                      <option value="" className="text-gray">
+                                        {" "}
+                                        Select
+                                      </option>
+                                      <option value="Mr" className="text-gray">
+                                        {" "}
+                                        Mr
+                                      </option>
+                                      <option value="Mrs" className="text-gray">
+                                        {" "}
+                                        Mrs
+                                      </option>
+                                      <option
+                                        value="Miss"
+                                        className="text-gray"
+                                      >
+                                        {" "}
+                                        Miss
+                                      </option>
+                                      <option value="Dr" className="text-gray">
+                                        {" "}
+                                        Dr
+                                      </option>
+                                    </select>
+                                    <div className="pointer-events-none absolute inset-y-0 -right-8 flex items-center px-2 text-gray-700">
+                                      <CehvronDown color="gray" />
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder">
+                                  <input
+                                    type="text"
+                                    className="text-sm w-[100%] text-center rounded-md bg-white h-9 p-2"
+                                    placeholder="Value"
+                                  />
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder flex-1">
+                                  <input
+                                    type="text"
+                                    className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
+                                    placeholder="Value"
+                                  />
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder relative">
+                                  <input
+                                    type="text"
+                                    className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
+                                    placeholder="Value"
+                                  />
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder relative">
+                                  <input
+                                    type="text"
+                                    className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
+                                    placeholder="Value"
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block mb-1">Email Address</label>
-                          <input
-                            type="text"
-                            className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                            placeholder="Value"
-                          />
-                        </div>
-                        <div>
-                          <label className="block mb-1">Mobile</label>
-                          <input
-                            type="text"
-                            className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                            placeholder="Value"
-                          />
-                        </div>
+                      <div
+                        className="flex gap-2 text-darkRed font-bold items-center my-4 cursor-pointer"
+                        onClick={addRow}
+                      >
+                        <PlusCircle color={"darkRed"} />
+                        Add Contact Person
+                      </div>
+                    </>
+                  )}
+                  {activeTab === "remarks" && (
+                    <div>
+                      <div>
+                        <label className="block mb-1">Remarks</label>
+                        <textarea
+                          rows={3}
+                          className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300   p-2"
+                          placeholder="Value"
+                        />
                       </div>
                     </div>
                   )}
@@ -636,10 +831,10 @@ const NewCustomerModal = ({ page }: Props) => {
           </div>
 
           <div className="flex justify-end gap-2 mb-3 m-5">
-            <Button variant="primary" size="lg">
+            <Button variant="primary" size="sm">
               Save
             </Button>
-            <Button onClick={closeModal} variant="secondary" size="lg">
+            <Button onClick={closeModal} variant="secondary" size="sm">
               Cancel
             </Button>
           </div>
