@@ -1,6 +1,6 @@
-type Props = { color: string };
+type Props = { color: string ,classname?:string};
 
-const Plus = ({ color }: Props) => {
+const Plus = ({ color ,classname}: Props) => {
   return (
     <div>
       <svg
@@ -9,11 +9,12 @@ const Plus = ({ color }: Props) => {
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        className={classname}
       >
         <path
           d="M5 12H19M12 5V19"
           stroke={color}
-          stroke-width="2"
+          stroke-width="3"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
