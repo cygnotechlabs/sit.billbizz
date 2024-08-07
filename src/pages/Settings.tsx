@@ -1,65 +1,82 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 interface Setting {
   title: string;
   description: string;
   imageUrl: string;
+  route: string;
 }
 
 const settingsData: Setting[] = [
   {
     title: "Organization",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    description: "Manage organization settings",
     imageUrl: "url-to-organization-image",
+    route: "/settings/organization",
   },
   {
     title: "Taxes & Compliance",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    description: "Manage taxes and compliance settings",
     imageUrl: "url-to-taxes-image",
+    route: "/settings/taxes-compliance",
   },
   {
     title: "Users & Roles",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    description: "Manage users and roles settings",
     imageUrl: "url-to-users-image",
+    route: "/settings/users-roles",
   },
   {
     title: "Preferences",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    description: "Manage system preferences",
     imageUrl: "url-to-preferences-image",
+    route: "/settings/preferences",
   },
   {
     title: "Sales",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    description: "Manage sales settings",
     imageUrl: "url-to-sales-image",
+    route: "/settings/sales",
   },
   {
     title: "Purchases",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    description: "Manage purchases settings",
     imageUrl: "url-to-purchases-image",
+    route: "/settings/purchases",
   },
   {
     title: "Items",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    description: "Manage item settings",
     imageUrl: "url-to-items-image",
+    route: "/settings/items",
   },
   {
     title: "Online Payments",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    description: "Manage online payment settings",
     imageUrl: "url-to-online-payments-image",
+    route: "/settings/online-payments",
   },
   {
     title: "Customization",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    description: "Manage customization settings",
     imageUrl: "url-to-customization-image",
+    route: "/settings/customization",
   },
   {
     title: "Reminder & Notification",
-    description: "Lorem ipsum dolor sit amet consectetur.",
+    description: "Manage reminder and notification settings",
     imageUrl: "url-to-reminder-image",
+    route: "/settings/reminder-notification",
   },
 ];
 
-const SettingCard: React.FC<Setting> = ({ title, description, imageUrl }) => (
+const SettingCard: React.FC<Setting> = ({
+  title,
+  description,
+  imageUrl,
+  route,
+}) => (
   <div className="bg-white rounded-lg shadow-md p-4 text-center">
     <img
       src={imageUrl}
@@ -68,9 +85,11 @@ const SettingCard: React.FC<Setting> = ({ title, description, imageUrl }) => (
     />
     <h3 className="mt-4 text-lg font-semibold">{title}</h3>
     <p className="text-gray-500">{description}</p>
-    <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-      See Details
-    </button>
+    <Link to={route}>
+      <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+        See Details
+      </button>
+    </Link>
   </div>
 );
 
