@@ -89,7 +89,7 @@ const CreateOrganizationForm = () => {
         }));
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching organization:", error);
     }
   };
 
