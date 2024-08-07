@@ -18,7 +18,9 @@ const SettingsLayout = ({}: Props) => {
         <Header />
         <div className="flex">
           {location.pathname !== "/settings" && <Organization />}
+          <div className="w-full">
           <Outlet />
+          </div>
         </div>
       </div>
     </div>
