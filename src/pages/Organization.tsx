@@ -22,7 +22,6 @@ import Users from "../assets/icons/Users";
 import Wallet from "../assets/icons/Wallet";
 import CreateOrganizationFrom from "../features/settings/CreateOrganizationFrom";
 
-
 CreateOrganizationFrom;
 type Props = {};
 
@@ -35,9 +34,7 @@ const Organization = ({}: Props) => {
           style={{ height: "92vh" }}
         >
           <button className="border text-sm p-2 mt-4 rounded-lg flex border-gray-400">
-
-            <ChevronLeft color="currentColor"/>
-
+            <ChevronLeft color="currentColor" />
             Back
           </button>
           <div className=" relative mt-8">
@@ -143,7 +140,7 @@ const Organization = ({}: Props) => {
             </ul>
 
             <div className="relative flex items-center text-lg mt-8 gap-3  rounded-lg">
-              <Packet color="currentColor"/>
+              <Packet color="currentColor" />
 
               <b>Items</b>
             </div>
@@ -167,8 +164,6 @@ const Organization = ({}: Props) => {
             </ul>
 
             <div className="relative flex items-center text-lg mt-8 gap-3  rounded-lg">
-             
-
               <PaintBucket color="currentColor" />
 
               <b>Customisation</b>
@@ -181,8 +176,7 @@ const Organization = ({}: Props) => {
             </ul>
 
             <div className="relative flex items-center text-lg mt-8 gap-3  rounded-lg">
-        
-              <Bell color="currentColor"/>
+              <Bell color="currentColor" />
 
               <b>Reminder & Notification</b>
             </div>
@@ -194,9 +188,7 @@ const Organization = ({}: Props) => {
             </ul>
           </div>
         </div>
-        <div className="col-span-9 ">
-          <CreateOrganizationFrom />
-        </div>
+        <div className="col-span-9 ">{/* <CreateOrganizationFrom /> */}</div>
       </div>
     </>
   );

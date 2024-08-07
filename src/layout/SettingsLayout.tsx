@@ -1,14 +1,14 @@
 import { useState } from "react";
 import Header from "./Header/Header";
 import SideBar from "./SideBar/SideBar";
-import SubHeader from "./SubHeader/SubHeader";
 import { Outlet } from "react-router-dom";
+import Organization from "../pages/Organization";
 
 type Props = {
   children: React.ReactNode;
 };
 
-const Layout = ({}: Props) => {
+const SettingsLayout = ({}: Props) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
@@ -16,11 +16,11 @@ const Layout = ({}: Props) => {
       <SideBar activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
       <div className="w-[100%]">
         <Header />
-        <SubHeader activeIndex={activeIndex} />
+        {location.pathname !== "/settings" && <Organization />}
         <Outlet />
       </div>
     </div>
   );
 };
 
-export default Layout;
+export default SettingsLayout;
