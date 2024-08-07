@@ -1,14 +1,6 @@
-import {
-  customizationList,
-  itemsList,
-  onlinePaymentList,
-  organizationList,
-  preferencesList,
-  purchasesList,
-  ReminderList,
-  SalesList,
-  taxList,
-  usersAndRoleList,
+import { useState } from "react";
+import { customizationList,itemsList,  onlinePaymentList,  organizationList,preferencesList,purchasesList,
+ReminderList,SalesList,taxList,usersAndRoleList,
 } from "../assets/constants";
 import BarChart from "../assets/icons/BarChart";
 import Bell from "../assets/icons/Bell";
@@ -20,170 +12,87 @@ import PaintBucket from "../assets/icons/PaintBucket";
 import ShoppingBag from "../assets/icons/ShoppingBag";
 import Users from "../assets/icons/Users";
 import Wallet from "../assets/icons/Wallet";
-import CreateOrganizationFrom from "../features/settings/CreateOrganizationFrom";
+import SearchBar from "../Components/SearchBar";
+import Button from "../Components/Button";
 
-CreateOrganizationFrom;
+const mainList = [
+  { title: "Organization", icon: Building, subList: organizationList },
+  { title: "Items", icon: Packet, subList: itemsList },
+  { title: "Tax & Complaints", icon: Building, subList: taxList },
+  { title: "Sales", icon: BarChart, subList: SalesList },
+  { title: "Purchases", icon: ShoppingBag, subList: purchasesList },
+  { title: "Customisation", icon: PaintBucket, subList: customizationList },
+  { title: "Users & Roles", icon: Users, subList: usersAndRoleList },
+  { title: "Preferences", icon: ListFilter, subList: preferencesList },
+  { title: "Reminder & Notification", icon: Bell, subList: ReminderList },
+  { title: "Online Payments", icon: Wallet, subList: onlinePaymentList },
+];
+
 type Props = {};
 
 const Organization = ({}: Props) => {
+  const [search, setSearch] = useState("");
+  console.log(search);
+  
+  const [selectedMain, setSelectedMain] = useState<number | null>(null);
+  const [selectedSub, setSelectedSub] = useState<{ mainIndex: number | null; subIndex: number | null }>({ mainIndex: null, subIndex: null });
+
+  const handleMainClick = (index: number) => {
+    setSelectedMain(index);
+    setSelectedSub({ mainIndex: index, subIndex: null });
+  };
+
+  const handleSubClick = (mainIndex: number, subIndex: number) => {
+    setSelectedMain(mainIndex);
+    setSelectedSub({ mainIndex, subIndex });
+  };
+
   return (
     <>
-        <div className=" col-span-3  border-neutral-300 text-textColor h-[100vh]  border-2 px-8 ">
-          <button className="border text-sm p-2 mt-4 rounded-lg flex border-gray-400">
-            <ChevronLeft color="currentColor" />
-            Back
-          </button>
-          <div className=" relative mt-8">
-            <p className="text-xl ">
-              <b>Settings</b>
-            </p>
-            <div className="relative flex items-center my-5">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-4 absolute left-3 text-gray-500"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                />
-              </svg>
-
-              <input
-                className=" pl-9 text-sm w-[100%] rounded-md  text-start border-gray-600 text-gray-800 h-[39px] p-2"
-                style={{ backgroundColor: "rgba(28, 28, 28, 0.04)" }}
-                placeholder="Search"
-              />
-            </div>
-          </div>
-          <div
-            className="overflow-y-scroll hide-scrollbar"
-            style={{ height: "445px" }}
-          >
-            <div className="relative flex items-center text-lg gap-3 bg-organizationBg p-2 my-2 rounded-lg">
-              <Building color="currentColor" />
-
-              <b>Organization</b>
-            </div>
-
-            <ul>
-              {organizationList.map((i) => (
-                <li className="my-3 font-medium">{i.title}</li>
-              ))}
-            </ul>
-
-            <div className="relative flex items-center text-lg mt-8 gap-3 my-2  rounded-lg">
-              <Building color="currentColor" />
-
-              <b>Tax & Complaints</b>
-            </div>
-
-            <ul>
-              {taxList.map((i) => (
-                <li className="my-3 font-medium">{i.title}</li>
-              ))}
-            </ul>
-
-            <div className="relative flex items-center text-lg mt-8 gap-3  rounded-lg">
-              <Users color="currentColor" />
-
-              <b>Users & Roles</b>
-            </div>
-
-            <ul>
-              {usersAndRoleList.map((i) => (
-                <li className="my-3 font-medium">{i.title}</li>
-              ))}
-            </ul>
-
-            <div className="relative flex items-center text-lg mt-8  gap-3  rounded-lg">
-              <ListFilter color="currentColor" />
-              <b>Preferences</b>
-            </div>
-
-            <ul>
-              {preferencesList.map((i) => (
-                <li className="my-3 font-medium">{i.title}</li>
-              ))}
-            </ul>
-
-            <div className="relative flex items-center text-lg mt-8 gap-3  rounded-lg">
-              <BarChart color="currentColor" />
-
-              <b>Sales</b>
-            </div>
-
-            <ul>
-              {SalesList.map((i) => (
-                <li className="my-3 font-medium">{i.title}</li>
-              ))}
-            </ul>
-
-            <div className="relative flex items-center text-lg mt-8 gap-3  rounded-lg">
-              <ShoppingBag color="currentColor" />
-
-              <b>Purchases</b>
-            </div>
-
-            <ul>
-              {purchasesList.map((i) => (
-                <li className="my-3 font-medium">{i.title}</li>
-              ))}
-            </ul>
-
-            <div className="relative flex items-center text-lg mt-8 gap-3  rounded-lg">
-              <Packet color="currentColor" />
-
-              <b>Items</b>
-            </div>
-
-            <ul>
-              {itemsList.map((i) => (
-                <li className="my-3 font-medium">{i.title}</li>
-              ))}
-            </ul>
-
-            <div className="relative flex items-center text-lg mt-8 gap-3  rounded-lg">
-              <Wallet color="currentColor" />
-
-              <b>Online Payments</b>
-            </div>
-
-            <ul>
-              {onlinePaymentList.map((i) => (
-                <li className="my-3 font-medium">{i.title}</li>
-              ))}
-            </ul>
-
-            <div className="relative flex items-center text-lg mt-8 gap-3  rounded-lg">
-              <PaintBucket color="currentColor" />
-
-              <b>Customisation</b>
-            </div>
-
-            <ul>
-              {customizationList.map((i) => (
-                <li className="my-3 font-medium">{i.title}</li>
-              ))}
-            </ul>
-
-            <div className="relative flex items-center text-lg mt-8 gap-3  rounded-lg">
-              <Bell color="currentColor" />
-
-              <b>Reminder & Notification</b>
-            </div>
-
-            <ul>
-              {ReminderList.map((i) => (
-                <li className="my-3 font-medium">{i.title}</li>
-              ))}
-            </ul>
+      <div className="col-span-3 border-neutral-300 text-textColor h-[100vh] border-2 px-8 bg-white">
+        <Button variant="secondary" size="sm" className="mt-4 text-sm font-medium">
+          <ChevronLeft color="currentColor" className="h-5 w-5" strokeWidth="2" />
+          Back
+        </Button>
+        <div className="relative mt-6">
+          <p className="text-xl">
+            <b>Settings</b>
+          </p>
+          <div className="mt-4">
+            <SearchBar placeholder="Search" onSearchChange={setSearch} searchValue="" />
           </div>
         </div>
+
+        <div className="overflow-y-scroll mt-6 hide-scrollbar" style={{ height: "445px" }}>
+          {mainList.map((main, mainIndex) => (
+            <div key={main.title}>
+              <div
+                className={`relative flex items-center text-lg gap-3 p-2 my-2 rounded-lg cursor-pointer ${
+                  selectedMain === mainIndex || selectedSub.mainIndex === mainIndex ? "bg-[#F3E6E6]" : ""
+                }`}
+                onClick={() => handleMainClick(mainIndex)}
+              >
+                <main.icon color="currentColor" />
+                <p className="font-semibold text-base text-textColor">{main.title}</p>
+              </div>
+
+              <ul>
+                {main.subList.map((sub, subIndex) => (
+                  <li
+                    key={sub.title}
+                    className={`my-3 text-sm cursor-pointer ${
+                      selectedSub.mainIndex === mainIndex && selectedSub.subIndex === subIndex ? "text-[#820000] font-bold" : "font-semibold text-dropdownText"
+                    }`}
+                    onClick={() => handleSubClick(mainIndex, subIndex)}
+                  >
+                    {sub.title}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 };

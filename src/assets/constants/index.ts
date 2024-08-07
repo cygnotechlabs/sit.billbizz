@@ -232,17 +232,14 @@ export const paymentTermsList = [
 ];
  
 export const organizationList = [
-  { title: "Profile" },
-  { title: "Branding" },
-  { title: "Custom Domain" },
-  { title: "Branches" },
+  { title: "Profile" , route: "/inventory" },
+  { title: "Invoice" , route: "/inventory"},
   { title: "Currencies" },
-  { title: "Approvals" },
-  { title: "Opening Balance" },
-  { title: "Manage Subscription" },
 ];
  
-export const taxList = [{ title: "Tax" }, { title: "MSME Settings" }];
+export const taxList = [
+  { title: "Taxes" },
+];
  
 export const usersAndRoleList = [
   { title: "Users" },
@@ -252,32 +249,24 @@ export const usersAndRoleList = [
  
 export const preferencesList = [
   { title: "General" },
-  { title: "Customet & Vendor" },
-  { title: "AccountantProjects" },
-  { title: "TimeSheets" },
+  { title: "Customet & Vendors" },
+  { title: "Accountant" },
+  { title: "Projects" },
+  { title: "Timesheets" },
   { title: "Customer Portal" },
   { title: "Vendor Portal" },
 ];
 export const SalesList = [
-  { title: "Quotes" },
   { title: "Sales Order" },
-  { title: "Delivery Challans" },
+  { title: "Shipments" },
   { title: "Invoices" },
-  { title: "Recurring Invoices" },
-  { title: "Payment Recieved" },
+  { title: "Delivery Challans" },
   { title: "Credit Notes" },
-  { title: "Delivery Notes" },
-  { title: "Packing Slips" },
 ];
  
 export const purchasesList = [
-  { title: "Expenses" },
-  { title: "Recurring Expensess" },
-  { title: "Bills" },
-  { title: "Recurring Bills" },
-  { title: "Payment Mode" },
   { title: "Purchase Orders" },
-  { title: "Vendor Credit" },
+  { title: "Expense" },
 ];
  
 export const itemsList = [{ title: "Item" }, { title: "Inventory Adjustment" }];
