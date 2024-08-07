@@ -64,7 +64,8 @@ export default {
         backButton:"#F6F6F6",
         blk:"#0B1320",
         billingBorder:"#DADBDD",
-        membershipText:"#FCF8ED"
+        membershipText:"#FCF8ED",
+        inputBorder:"#CECECE"
       },
     },
   },

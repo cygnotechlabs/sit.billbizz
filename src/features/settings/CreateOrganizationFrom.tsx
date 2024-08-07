@@ -79,7 +79,7 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getOneOrganization(url, {
         organizationId: "INDORG0001",
       });
-  
+
       if (!error && response?.data) {
         setOneOrganization(response.data);
         setInputData((prevData) => ({
@@ -145,8 +145,6 @@ const CreateOrganizationForm = () => {
       console.log(error, "try");
     }
   };
-
-
 
   return (
     <div
@@ -233,7 +231,7 @@ const CreateOrganizationForm = () => {
                   onChange={handleInputChange}
                   name="organizationCountry"
                   id="Location"
-                  className="block appearance-none w-full   text-zinc-400 bg-white border border-slate-200 text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="">Select a country</option>
                   <option value="india">India</option>
@@ -254,7 +252,7 @@ const CreateOrganizationForm = () => {
                   onChange={handleInputChange}
                   name="organizationIndustry"
                   id="organizationIndustry"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-slate-200 text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="">Select Industry</option>
 
@@ -283,7 +281,7 @@ const CreateOrganizationForm = () => {
           <div className="grid grid-cols-2 gap-4 -mt-2 space-y-4 ">
             <div>
               <input
-                className="pl-3 text-sm w-[100%] mt-4 rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
+                className="pl-3 text-sm w-[100%] mt-4 rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2"
                 placeholder="Street 1"
                 name="addline1"
                 value={inputData.addline1}
@@ -293,7 +291,7 @@ const CreateOrganizationForm = () => {
 
             <div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
+                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2"
                 placeholder="Street 1"
                 name="addline2"
                 value={inputData.addline2}
@@ -301,9 +299,17 @@ const CreateOrganizationForm = () => {
               />{" "}
             </div>
             <div>
+              <div className="-mt-4">
+                <label
+                  className="text-slate-600 "
+                  htmlFor="organizationAddress"
+                >
+                  City
+                </label>
+              </div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
-                placeholder="City"
+                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2"
+                placeholder="Enter City"
                 value={inputData.city}
                 name="city"
                 onChange={handleInputChange}
@@ -311,9 +317,17 @@ const CreateOrganizationForm = () => {
             </div>
 
             <div>
+              <div className="-mt-4">
+                <label
+                  className="text-slate-600 "
+                  htmlFor="organizationAddress"
+                >
+                  Pin/ Zip/ Post Code
+                </label>
+              </div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
-                placeholder="Pincode"
+                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2"
+                placeholder=" Pin/ Zip/ Post Code"
                 type="text"
                 value={inputData.pincode}
                 name="pincode"
@@ -321,14 +335,22 @@ const CreateOrganizationForm = () => {
               />{" "}
             </div>
             <div className="relative ">
-              <div className="relative w-full">
+              <div className="-mt-4">
+                <label
+                  className="text-slate-600 "
+                  htmlFor="organizationAddress"
+                >
+                  Pin/ Zip/ Post Code
+                </label>
+              </div>
+              <div className="relative w-full mt-2">
                 <select
                   onChange={handleInputChange}
                   name="state"
                   id="state"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-slate-200 text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
-                  <option value="">Select a State</option>
+                  <option value="">Select a State / Region / County</option>
 
                   <option value="kerala" className="text-slate-300">
                     Kerala
@@ -344,14 +366,49 @@ const CreateOrganizationForm = () => {
             </div>
 
             <div>
-              <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
-                placeholder="Phone"
-                type="tel"
-                value={inputData.organizationPhNum}
-                name="organizationPhNum"
-                onChange={handleInputChange}
-              />{" "}
+              <div className="-mt-4">
+                <label
+                  className="text-slate-600 "
+                  htmlFor="organizationAddress"
+                >
+                  Phone
+                </label>
+              </div>
+              <div className="flex">
+              <div className="relative w-24  mt-2 " >
+                <select
+                  onChange={handleInputChange}
+                  name="state"
+                  id="state"
+                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                >
+                 
+
+                  <option value="kerala" className="text-slate-300">
+                   +91
+                  </option>
+                  <option value="kerala" className="text-slate-300">
+                   +971
+                  </option>
+                  <option value="kerala" className="text-slate-300">
+                  +1-809
+                  </option>
+                  
+                
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <CehvronDown color="gray" height={15} width={15} />
+                </div>
+              </div>
+                <input
+                  className="pl-3 text-sm w-[100%] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2"
+                  placeholder="Phone"
+                  type="tel"
+                  value={inputData.organizationPhNum}
+                  name="organizationPhNum"
+                  onChange={handleInputChange}
+                />{" "}
+              </div>
             </div>
           </div>
         </div>
@@ -366,7 +423,7 @@ const CreateOrganizationForm = () => {
           <input
             type="text"
             placeholder="Value"
-            className="pl-3 text-sm w-[100%] mt-3 rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
+            className="pl-3 text-sm w-[100%] mt-3 rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2"
             value={inputData.website}
             name="website"
             onChange={handleInputChange}
@@ -387,7 +444,7 @@ const CreateOrganizationForm = () => {
                   onChange={handleInputChange}
                   name="baseCurrency"
                   id="currency"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-slate-200 text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="">Select Currency</option>
 
@@ -417,7 +474,7 @@ const CreateOrganizationForm = () => {
                   onChange={handleInputChange}
                   name="fiscalYear"
                   id="fiscalYear"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-slate-200 text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="">Select Financial Year</option>
 
@@ -518,7 +575,7 @@ const CreateOrganizationForm = () => {
                   name="timeZone"
                   onChange={handleInputChange}
                   id="timeZone"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-slate-200 text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="">value</option>
 
@@ -532,8 +589,8 @@ const CreateOrganizationForm = () => {
             </div>
             <div className="col-span-4"></div>
           </div>
-          <div className="grid grid-cols-12 gap-4 mt-4">
-            <div className="relative col-span-8">
+          <div className="grid grid-cols-12 gap-4 mt-1">
+            <div className="relative col-span-8 ">
               <label htmlFor="dateformat" className="text-slate-600">
                 Date Format
               </label>
@@ -542,12 +599,12 @@ const CreateOrganizationForm = () => {
                   onChange={handleInputChange}
                   name="dateFormat"
                   id="dateFormat"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-slate-200 text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   {additionalData?.dateFormat?.short &&
                   additionalData?.dateFormat.short.length > 0 ? (
                     <>
-                      <optgroup label="Short">
+                      <optgroup label="Short" className="text-darkRed">
                         {additionalData.dateFormat.short.map(
                           (item: any, index: any) => (
                             <option key={`short-${index}`} value={item}>
@@ -564,7 +621,7 @@ const CreateOrganizationForm = () => {
                   {additionalData?.dateFormat?.medium &&
                   additionalData?.dateFormat.medium.length > 0 ? (
                     <>
-                      <optgroup label="Medium">
+                      <optgroup label="Medium" className="text-darkRed">
                         {additionalData.dateFormat.medium.map(
                           (item: any, index: any) => (
                             <option key={`medium-${index}`} value={item}>
@@ -581,7 +638,7 @@ const CreateOrganizationForm = () => {
                   {additionalData?.dateFormat?.long &&
                   additionalData?.dateFormat.long.length > 0 ? (
                     <>
-                      <optgroup label="Long">
+                      <optgroup label="Long" className="text-darkRed">
                         {additionalData.dateFormat.long.map(
                           (item: any, index: any) => (
                             <option key={`long-${index}`} value={item}>
@@ -607,7 +664,7 @@ const CreateOrganizationForm = () => {
                   onChange={handleInputChange}
                   name="dateSplit"
                   id="dateSplit"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-slate-200 text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   {additionalData?.dateSplit &&
                   additionalData?.dateSplit.length > 0 ? (
