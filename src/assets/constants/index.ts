@@ -4,7 +4,7 @@ import home from "../icons/home";
 import newspapper from "../icons/newspaper";
 import receiptIndianRupee from "../icons/receipt-indian-rupee";
 import shoppingBag from "../icons/shopping-bag";
-import shoppingCart from "../icons/shopping-cart";
+import shoppingCart from "../icons/ShoppingCart";
 import squreUserRound from "../icons/squre-user-round";
 import truck from "../icons/truck";
 import userRound from "../icons/user-round";
