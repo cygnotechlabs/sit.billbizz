@@ -1,6 +1,6 @@
 import { RouteObject } from "react-router-dom";
 import Settings from "../pages/Settings";
-import Organization from "../pages/Organization";
+import CreateOrganizationForm from "../features/settings/CreateOrganizationFrom";
 // import Taxes from "../features/settings/taxes/Taxes";
 // import Users from "../features/settings/users/Users";
 // import Preferences from "../features/settings/preferences/Preferences";
@@ -13,7 +13,7 @@ import Organization from "../pages/Organization";
 
 const SettingsRoutes: RouteObject[] = [
   { path: "/settings", element: <Settings /> },
-  { path: "/settings/organization", element: <Organization /> },
+  { path: "/settings/organization", element: <CreateOrganizationForm /> },
   //   { path: "/settings/taxes", element: <Taxes /> },
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },

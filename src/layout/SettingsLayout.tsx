@@ -16,8 +16,10 @@ const SettingsLayout = ({}: Props) => {
       <SideBar activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
       <div className="w-[100%]">
         <Header />
-        {location.pathname !== "/settings" && <Organization />}
-        <Outlet />
+        <div className="flex">
+          {location.pathname !== "/settings" && <Organization />}
+          <Outlet />
+        </div>
       </div>
     </div>
   );
