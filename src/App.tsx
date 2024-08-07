@@ -1,6 +1,5 @@
 import { useRoutes } from "react-router-dom";
 import "./App.css";
-import Root from "./Root";
 import Dashboard from "./pages/Dashboard";
 import AccountantRoutes from "./routes/AccountantRoutes";
 import CustomerRoutes from "./routes/CustomerRoutes";
@@ -11,12 +10,14 @@ import SalesRoutes from "./routes/SalesRoutes";
 import StaffRoutes from "./routes/StaffRoutes";
 import SupplierRoutes from "./routes/SupplierRoutes";
 import SettingsRoutes from "./routes/SettingsRoutes";
+import Layout from "./layout/Layout";
+import SettingsLayout from "./layout/SettingsLayout";
 
 function App() {
   const routes = [
     {
       path: "/",
-      element: <Root />,
+      element: <Layout children />,
       children: [
         { path: "dashboard", element: <Dashboard /> },
         ...AccountantRoutes,
@@ -27,6 +28,13 @@ function App() {
         ...ExpenseRoutes,
         ...StaffRoutes,
         ...SupplierRoutes,
+      ],
+    },
+    {
+      path: "/",
+      element: <SettingsLayout children />,
+      children: [
+        { path: "", },
         ...SettingsRoutes,
       ],
     },

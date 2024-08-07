@@ -1,9 +1,7 @@
-type Props = {}
+type Props = {};
 
 function Staffs({}: Props) {
-  return (
-    <div>Staffs</div>
-  )
+  return <div>Staffs</div>;
 }
 
-export default Staffs
+export default Staffs;
