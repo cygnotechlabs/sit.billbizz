@@ -1,11 +1,11 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import Button from "../../Components/Button";
-import useApi from "../../Hooks/useApi";
-import { endponits } from "../../Services/apiEndpoints";
+import Button from "../../../Components/Button";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
 import { toast, Toaster } from "react-hot-toast";
-import CehvronDown from "../../assets/icons/CehvronDown";
-import Plus from "../../assets/icons/Plus";
-import bgImage from "../../assets/Images/Group 37 (1).png";
+import CehvronDown from "../../../assets/icons/CehvronDown";
+import Plus from "../../../assets/icons/Plus";
+import bgImage from "../../../assets/Images/Group 37 (1).png";
 
 interface InputData {
   organizationId: string;
