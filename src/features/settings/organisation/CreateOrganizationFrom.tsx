@@ -185,8 +185,8 @@ const CreateOrganizationForm = () => {
 
   return (
     <div
-      className=" px-6 pt-3 overflow-y-scroll hide-scrollbar "
-      style={{ height: "100vh" }}
+      className=" px-6 pt-3 overflow-y-scroll hide-scrollbar h-auto"
+    
     >
       <div className="bg-[#F7E7CE] rounded-md  flex  h-[148px] ">
         <div className="ms-2 p-2   text-center mt-3   items-center flex">
