@@ -6,6 +6,7 @@ import { toast, Toaster } from "react-hot-toast";
 import CehvronDown from "../../../assets/icons/CehvronDown";
 import Plus from "../../../assets/icons/Plus";
 import bgImage from "../../../assets/Images/Group 37 (1).png";
+import Banner from "../banner/Banner";
 
 interface InputData {
   organizationId: string;
@@ -185,35 +186,10 @@ const CreateOrganizationForm = () => {
 
   return (
     <div
-      className=" px-6 pt-3 overflow-y-scroll hide-scrollbar h-auto"
-    
+      className=" m-4 overflow-y-scroll hide-scrollbar h-auto"
+      style={{ height: "92vh" }}
     >
-      <div className="bg-[#F7E7CE] rounded-md  flex  h-[148px] ">
-        <div className="ms-2 p-2   text-center mt-3   items-center flex">
-          <div>
-            <p className="bg-gray text-sm w-fit  text-yellow-50 rounded-md p-2">
-              Organization
-            </p>
-
-            <div className="flex mt-1">
-              <p className="mt-1 text-[#303F58]">
-                <b>
-                  {oneOrganization.organizationName || "Organization Profile"}
-                </b>
-              </p>{" "}
-              {
-                <div className="ms-3 bg-white rounded-md p-1 text-textColor">
-                  ID:{oneOrganization.organizationId || 852749}
-                </div>
-              }
-            </div>
-          </div>
-        </div>
-
-        <div className="flex ml-auto w-fit">
-          <img src={bgImage} className="bottom-0 top-8 mt-auto" alt="" />
-        </div>
-      </div>
+      <Banner isOrganisationDetails={true} oneOrganization={oneOrganization}/>
 
       {/* FORM */}
       <form className="text-slate-800 text-sm">

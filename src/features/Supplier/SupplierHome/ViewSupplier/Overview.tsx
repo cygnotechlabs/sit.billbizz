@@ -80,7 +80,7 @@ function Overview({}: Props) {
             </div>
         </div>
         <div className="grid grid-cols-3 gap-1 justify-between">
-         <div className="w-[290px] h-[200px]  space-y-3 p-[10px] rounded-lg bg-[#FDF8F0]">
+         <div className="w-[98%] h-[200px]  space-y-3 p-[10px] rounded-lg bg-[#FDF8F0]">
             <div className="flex justify-between items-center">
             <h3 className="font-bold text-[14px]">Billing Addresss</h3>
             <p><Pen color="#303F58"/></p>
@@ -94,7 +94,7 @@ function Overview({}: Props) {
               <p>Phone:96337968756</p>
             </div>
          </div>
-         <div className="w-[290px] h-[200px]  space-y-3 p-[10px] rounded-lg bg-[#FCFFED]">
+         <div className="w-[98%] h-[200px]  space-y-3 p-[10px] rounded-lg bg-[#FCFFED]">
             <div className="flex justify-between items-center">
             <h3 className="font-bold text-[14px]">Shipping Addresss</h3>
             <p><Pen color="#303F58"/></p>
@@ -108,7 +108,7 @@ function Overview({}: Props) {
               <p>Phone:96337968756</p>
             </div>
          </div>
-         <div className="w-[298px] h-[200px]  space-y-3 p-[10px] rounded-lg bg-[#F6F6F6]">
+         <div className="w-[100%] h-[200px]  space-y-3 p-[10px] rounded-lg bg-[#F6F6F6]">
           
             <h3 className="font-bold text-[14px]">Other Details</h3>
           
