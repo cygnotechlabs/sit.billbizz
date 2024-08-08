@@ -5,7 +5,7 @@ import home from "../icons/home";
 import newspapper from "../icons/newspaper";
 import receiptIndianRupee from "../icons/receipt-indian-rupee";
 import shoppingBag from "../icons/shopping-bag";
-import shoppingCart from "../icons/shopping-cart";
+import shoppingCart from "../icons/ShoppingCart";
 import squreUserRound from "../icons/squre-user-round";
 import truck from "../icons/truck";
 import userRound from "../icons/user-round";
@@ -235,7 +235,7 @@ export const paymentTermsList = [
 ];
 
 export const organizationList = [
-  { title: "Profile", route: "/settings/organization" },
+  { title: "Profile", route: "/settings/organization/profile" },
   { title: "Invoice", route: "/settings/invoice" },
   { title: "Currencies", route: "/settings/currencies" },
 ];
@@ -321,7 +321,7 @@ export const settingsList = [
     nav: "Organization",
     icon: userRound,
     subhead: [
-      { headName: "Profile", subRoute: "/settings/organization" },
+      { headName: "Profile", subRoute: "/settings/organization/profile" },
       { headName: "Invoice", subRoute: "/settings/invoice" },
       { headName: "Currencies", subRoute: "/settings/currencies" },
     ],

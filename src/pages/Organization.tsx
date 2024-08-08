@@ -35,7 +35,7 @@ const Organization = ({}: Props) => {
 
   return (
     <>
-      <div className="col-span-3 border-neutral-300 text-textColor h-[100vh] py-2 border-2 px-8 bg-white">
+      <div className="overflow-y-scroll pt-6 hide-scrollbar col-span-3 border-neutral-300 text-textColor h-auto border-r-2 px-7 bg-white w-[27%]">
         <Button onClick={handleBackClick} variant="secondary" size="sm">
           <ChevronLeft
             color="currentColor"
@@ -58,8 +58,7 @@ const Organization = ({}: Props) => {
         </div>
 
         <div
-          className="overflow-y-scroll mt-6 hide-scrollbar"
-          style={{ height: "445px" }}
+          className=" h-[100vh]"
         >
           {settingsList.map((main, mainIndex) => (
             <div key={main.nav}>

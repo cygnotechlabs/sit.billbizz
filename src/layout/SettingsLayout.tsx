@@ -12,13 +12,13 @@ const SettingsLayout = ({}: Props) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
-    <div className="flex">
+    <div className="flex ">
       <SideBar activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
       <div className="w-[100%]">
         <Header />
         <div className="flex">
           {location.pathname !== "/settings" && <Organization />}
-          <div className="w-full">
+          <div className="w-full bg-[#F3F3F3]">
           <Outlet />
           </div>
         </div>
