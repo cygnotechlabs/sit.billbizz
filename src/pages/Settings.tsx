@@ -13,7 +13,7 @@ const settingsData: Setting[] = [
     title: "Organization",
     description: "Manage organization settings",
     imageUrl: "url-to-organization-image",
-    route: "/settings/organization",
+    route: "/settings/organization/profile",
   },
   {
     title: "Taxes & Compliance",

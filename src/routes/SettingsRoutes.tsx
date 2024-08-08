@@ -2,6 +2,9 @@ import { RouteObject } from "react-router-dom";
 import Settings from "../pages/Settings";
 import CreateOrganizationForm from "../features/settings/organisation/CreateOrganizationFrom";
 import InvoiceSettings from "../features/settings/organisation/InvoiceSettings";
+import Taxes from "../features/settings/taxes/Taxes";
+import GSTComponent from "../features/settings/taxes/gst/GSTComponent";
+import VATComponent from "../features/settings/taxes/vat/VATComponent";
 
 
 // import Users from "../features/settings/users/Users";
@@ -17,6 +20,9 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings", element: <Settings /> },
   { path: "/settings/organization/profile", element: <CreateOrganizationForm /> },
   { path: "/settings/organization/invoice", element: <InvoiceSettings/> },
+  { path: "/settings/taxes", element: <Taxes /> },
+  { path: "/settings/taxes/GST", element: <GSTComponent /> },
+  { path: "/settings/taxes/VAT", element: <VATComponent /> },
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },
   //   { path: "/settings/sales", element: <Sales /> },
