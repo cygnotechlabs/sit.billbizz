@@ -20,7 +20,7 @@ import PaintBucket from "../assets/icons/PaintBucket";
 import ShoppingBag from "../assets/icons/ShoppingBag";
 import Users from "../assets/icons/Users";
 import Wallet from "../assets/icons/Wallet";
-import CreateOrganizationFrom from "../features/settings/CreateOrganizationFrom";
+import CreateOrganizationFrom from "../features/settings/organisation/CreateOrganizationFrom";
 
 CreateOrganizationFrom;
 type Props = {};

@@ -1,19 +1,19 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import Button from "../../Components/Button";
-import QrCode from "../../assets/Images/qr-code.svg";
-import Qrsign from "../../assets/Images/sign.svg";
-import instagramLogo from "../../assets/Images/instagram logo.svg";
-import twitterLogo from "../../assets/Images/twitter logo.svg";
-import linkedinlog from "../../assets/Images/linkedin logo.svg";
-import facebooklogo from "../../assets/Images/facebook logo.svg";
-import xMark from "../../assets/Images/x.svg";
-import { paymentTermsList } from "../../assets/constants/index";
-import useApi from "../../Hooks/useApi";
-import { endponits } from "../../Services/apiEndpoints";
+import Button from "../../../Components/Button";
+import QrCode from "../../../assets/Images/qr-code.svg";
+import Qrsign from "../../../assets/Images/sign.svg";
+import instagramLogo from "../../../assets/Images/instagram logo.svg";
+import twitterLogo from "../../../assets/Images/twitter logo.svg";
+import linkedinlog from "../../../assets/Images/linkedin logo.svg";
+import facebooklogo from "../../../assets/Images/facebook logo.svg";
+import xMark from "../../../assets/Images/x.svg";
+import { paymentTermsList } from "../../../assets/constants/index";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
 import { toast, Toaster } from "react-hot-toast";
-import CehvronDown from "../../assets/icons/CehvronDown";
-import Plus from "../../assets/icons/Plus";
-import PlusCircle from "../../assets/icons/PlusCircle";
+import CehvronDown from "../../../assets/icons/CehvronDown";
+import Plus from "../../../assets/icons/Plus";
+import PlusCircle from "../../../assets/icons/PlusCircle";
 
 interface InputData {
   organizationId: string;

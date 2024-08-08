@@ -12,7 +12,7 @@ function CheveronLeftIcon({}: Props) {
       <path
         d="M15 6L9 12L15 18"
         stroke="black"
-        stroke-width="2"
+        stroke-width="4"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

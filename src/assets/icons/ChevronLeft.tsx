@@ -14,7 +14,7 @@ const ChevronLeft = ({ color }: Props) => {
         <path
           d="M15 18L9 12L15 6"
           stroke={color}
-          stroke-width="1"
+          stroke-width="2"
           strokeLinecap="round"
         strokeLinejoin="round"
         />
