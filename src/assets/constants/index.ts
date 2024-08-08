@@ -322,7 +322,7 @@ export const settingsList = [
     icon: userRound,
     subhead: [
       { headName: "Profile", subRoute: "/settings/organization/profile" },
-      { headName: "Invoice", subRoute: "/settings/invoice" },
+      { headName: "Invoice", subRoute: "/settings/organization/invoice" },
       { headName: "Currencies", subRoute: "/settings/currencies" },
     ],
   },

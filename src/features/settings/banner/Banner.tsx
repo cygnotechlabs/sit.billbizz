@@ -1,34 +1,35 @@
+import bgImage from "../../../assets/Images/Group 37 (1).png";
+type Props = {
+  isOrganisationDetails?:boolean;
+  oneOrganization?:object
+}
 
-type Props = {}
-
-function Banner({}: Props) {
+function Banner({isOrganisationDetails,oneOrganization}: Props) {
   return (
-    <div className="bg-softBeige rounded-md h-28 grid grid-cols-12 gap-4 ">
-        <div className="ms-2 p-2 col-span-5 text-center mt-3">
-          <div className="">
-            <p className="bg-gray p-1 text-yellow-50 rounded-md w-28">
+    <div className="bg-[#F7E7CE] rounded-md  flex  h-[148px] ">
+        {isOrganisationDetails&&<div className="ms-2 p-2   text-center mt-3   items-center flex">
+          <div>
+            <p className="bg-gray text-sm w-fit  text-yellow-50 rounded-md p-2">
               Organization
             </p>
-          </div>
 
-          <div className="flex mt-3">
-            <p className="mt-1">
-              <b>Tech Electronics</b>
-            </p>{" "}
-            {
-              <div className="ms-3 bg-white rounded-md p-1">
-                ID:
-              </div>
-            }
+            <div className="flex mt-1">
+              <p className="mt-1 text-[#303F58]">
+                <b>
+                  {oneOrganization?.organizationName || "Organization Profile"}
+                </b>
+              </p>{" "}
+              {
+                <div className="ms-3 bg-white rounded-md p-1 text-textColor">
+                  ID:{oneOrganization?.organizationId || 852749}
+                </div>
+              }
+            </div>
           </div>
-        </div>
+        </div>}
 
-        <div className="col-span-7 flex items-end justify-end">
-          <img
-            src="https://i.postimg.cc/SxSLnWZR/Group-37.png"
-            className="h-28"
-            alt=""
-          />
+        <div className="flex ml-auto w-fit">
+          <img src={bgImage} className="bottom-0 top-8 mt-auto" alt="" />
         </div>
       </div>
   )

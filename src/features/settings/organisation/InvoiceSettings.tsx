@@ -113,8 +113,8 @@ function InvoiceSettings({}: Props) {
   }, [paymentTerms]);
 
   return (
-    <div className='mx-5 my-3 '>
-      <Banner/>
+    <div className='m-4 '>
+      <Banner isOrganisationDetails={true}/>
       {/* Org Adresss format */}
       <div className='space-y-4 text-sm text-[#303F58]'>
       <div className='grid  grid-cols-12 mt-5 '>
