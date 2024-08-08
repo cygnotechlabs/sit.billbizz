@@ -1,16 +1,31 @@
 import { useState } from "react";
 import Button from "../../../Components/Button";
-import CehvronDown from "../../../assets/icons/CehvronDown";
+
 import Upload from "../../../assets/icons/Upload";
 import Modal from "../../../Components/model/Modal";
 import PlusCircle from "../../../assets/icons/PlusCircle";
 import CirclePlus from "../../../assets/icons/circleplus";
+import CehvronDown from "../../../assets/icons/CehvronDown";
 
-type Props = { page?: String };
+
+type Props = { page?: string };
 
 const AddSupplierModal = ({ page }: Props) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
+ 
   const [activeTab, setActiveTab] = useState<string>("otherDetails");
+
+  const [rows, setRows] = useState([
+    { salutation: "", firstName: "", lastName: "", email: "", mobile: "" },
+  ]);
+
+  const addRow = () => {
+    setRows([
+      ...rows,
+      { salutation: "", firstName: "", lastName: "", email: "", mobile: "" },
+    ]);
+  };
+  
   const openModal = () => {
     setModalOpen(true);
   };
@@ -19,13 +34,13 @@ const AddSupplierModal = ({ page }: Props) => {
     setModalOpen(false);
   };
 
-  const getTabClassName = (tabName: any) => {
+  const getTabClassName = (tabName: string) => {
     return activeTab === tabName
       ? " cursor-pointer font-bold text-darkRed"
       : " cursor-pointer font-bold";
   };
 
-  const getBorderClassName = (tabName: any) => {
+  const getBorderClassName = (tabName: string) => {
     return activeTab === tabName ? "border-darkRed" : "border-neutral-300";
   };
 
@@ -94,9 +109,9 @@ const AddSupplierModal = ({ page }: Props) => {
                 <label htmlFor="" className="font-semibold">
                   Business
                 </label>
-                <input type="radio" value="Indvidual" className="m-2" />{" "}
+                <input type="radio" value="Individual" className="m-2" />{" "}
                 <label htmlFor="" className="font-semibold">
-                  Indvidual
+                  Individual
                 </label>
               </label>
 
@@ -231,6 +246,14 @@ const AddSupplierModal = ({ page }: Props) => {
                     </li>
                     <li
                       className={`${getTabClassName(
+                        "taxes"
+                      )} border-r-4 ${getBorderClassName("taxes")} p-2 `}
+                      onClick={() => setActiveTab("taxes")}
+                    >
+                      Taxes
+                    </li>
+                    <li
+                      className={`${getTabClassName(
                         "address"
                       )} border-r-4 ${getBorderClassName("address")} p-2`}
                       onClick={() => setActiveTab("address")}
@@ -250,18 +273,19 @@ const AddSupplierModal = ({ page }: Props) => {
                     <li
                       className={`${getTabClassName(
                         "customFields1"
-                      )} border-r-4 ${getBorderClassName("customFields1")} p-2`}
-                      //   onClick={() => setActiveTab('customFields1')}
+                      )} border-r-4 ${getBorderClassName("customFields")} p-2`}
+                      onClick={() => setActiveTab('customFields')}
                     >
                       Custom fields
                     </li>
                     <li
                       className={`${getTabClassName(
                         "customFields2"
-                      )} border-r-4 ${getBorderClassName("customFields2")} p-2`}
-                      //   onClick={() => setActiveTab('customFields2')}
+                      )} border-r-4 ${getBorderClassName("remarks")} p-2`}
+                         onClick={() => setActiveTab('remarks')}
                     >
-                      Custom fields
+                      
+                    Remarks
                     </li>
                   </ul>
                 </div>
@@ -311,15 +335,24 @@ const AddSupplierModal = ({ page }: Props) => {
                             placeholder="Due on Receipt"
                           />
                         </div>
+                        <div className="">
+                            <label htmlFor="" className="block mb-1">
+                              TDS
+                            </label>
+                            <div className="relative w-full">
+                              <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                <option value="" className="text-gray">
+                                  {" "}
+                                  Select a Tax
+                                </option>
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <CehvronDown color="gray" />
+                              </div>
+                            </div>
+                          </div>
                       </div>
-                      <div className="mt-4">
-                        <label className="inline-flex items-center">
-                          <input type="checkbox" className="form-checkbox " />
-                          <span className="ml-2">
-                            Allow portal access for this Supplier
-                          </span>
-                        </label>
-                      </div>
+                     
                       <div className="mt-4">
                         <label className="block mb-1">Documents</label>
                         <div className="border-dashed border border-neutral-300 p-2 rounded flex gap-2">
@@ -330,7 +363,118 @@ const AddSupplierModal = ({ page }: Props) => {
                           You Can Upload a Maximum of 10 Files, 10 MB each
                         </p>
                       </div>
+                      <div>
+                          <label className="block mb-1">Website URL</label>
+                          <input
+                            type="text"
+                            className=" text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-p p-2"
+                            placeholder="Value"
+                          />
+                        </div>
+                      <div>
+                          <label className="block mb-1">Department</label>
+                          <input
+                            type="text"
+                            className=" text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-p p-2"
+                            placeholder="Value"
+                          />
+                        </div>
+                        <div>
+                          <label className="block mb-1">Designation</label>
+                          <input
+                            type="text"
+                            className=" text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-p p-2"
+                            placeholder="Value"
+                          />
+                        </div>
                     </div>
+                  )}
+                    {activeTab === "taxes" && (
+                    <>
+                    
+                      <div className="space-y-3 p-5  text-sm">
+                       
+
+                        <div className="grid grid-cols-2 gap-4">
+                        
+
+                        <div className="">
+                            <label htmlFor="" className="block mb-1">
+                              GST Treatment
+                            </label>
+                            <div className="relative w-full">
+                              <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                <option value="" className="text-gray">
+                                  {" "}
+                                  Select a GST treatment
+                                </option>
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <CehvronDown color="gray" />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="">
+                            <label htmlFor="" className="block mb-1">
+                              Source of Supply
+                            </label>
+                            
+                            <div className="relative w-full">
+                              <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                                <option value="" className="text-gray">
+                                  {" "}
+                                  Value
+                                </option>
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <CehvronDown color="gray" />
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                          <label className="block mb-1">GST Treatment</label>
+                          <input
+                            type="text"
+                            className=" text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                            placeholder="GSTIN/UIN"
+                          />
+                        </div>
+
+                          
+                          
+                          <div className="relative w-full">
+                            <label htmlFor="" className="mb-1 block">
+                              MSME/Udyam Registration Type
+                            </label>
+                            <select className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                              <option value="" className="text-gray">
+                                {" "}
+                                Select the Registration Type
+                              </option>
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
+                              <CehvronDown color="gray" />
+                            </div>
+                          </div>
+                          <div className="relative w-full">
+                            <label htmlFor="" className="mb-1 block">
+                              MSME/Udyam Registration Number
+                            </label>
+                            <select className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                              <option value="" className="text-gray">
+                                {" "}
+                              Enter the Registration Number
+                              </option>
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
+                              <CehvronDown color="gray" />
+                            </div>
+                          </div>
+                        </div>
+           
+                      </div>
+
+                    </>
                   )}
                   {activeTab === "address" && (
                     <>
@@ -399,7 +543,7 @@ const AddSupplierModal = ({ page }: Props) => {
 
                         <div className="grid grid-cols-3 gap-4">
                           <div>
-                            <label className="block mb-1">Pincode</label>
+                            <label className="block mb-1">Pin code</label>
                             <input
                               type="text"
                               className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
@@ -434,7 +578,7 @@ const AddSupplierModal = ({ page }: Props) => {
                       {/* shipping address */}
                       <div className="space-y-3 p-5  text-sm">
                         <p>
-                          <b>Shippping Address</b>
+                          <b>Shipping Address</b>
                         </p>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -496,7 +640,7 @@ const AddSupplierModal = ({ page }: Props) => {
 
                         <div className="grid grid-cols-3 gap-4">
                           <div>
-                            <label className="block mb-1">Pincode</label>
+                            <label className="block mb-1">Pin code</label>
                             <input
                               type="text"
                               className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
@@ -530,72 +674,130 @@ const AddSupplierModal = ({ page }: Props) => {
                     </>
                   )}
                   {activeTab === "contactPersons" && (
-                    <div className="space-y-4  p-4 ">
-                      <div className="grid grid-cols-3 gap-4">
-                        <div>
-                          <div className="relative w-full">
-                            <label htmlFor="" className="mb-1 block">
-                              Salutation
-                            </label>
-                            <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                              <option value="" className="text-gray">
-                                {" "}
-                                Select
-                              </option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
-                              <CehvronDown color="gray" />
-                            </div>
-                          </div>
-                        </div>
-                        <div>
-                          <label className="block mb-1">First Name</label>
-                          <input
-                            type="text"
-                            className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                            placeholder="Value"
-                          />
-                        </div>
-                        <div>
-                          <label className="block mb-1">Last Name</label>
-                          <input
-                            type="text"
-                            className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                            placeholder="Value"
-                          />
-                        </div>
+                    <>
+                      <div className="rounded-lg border-2 border-tableBorder mt-5">
+                        <table className="min-w-full bg-white rounded-lg relative mb-4 border-dropdownText ">
+                          <thead className="text-[12px] text-center text-dropdownText">
+                            <tr className="bg-lightPink ">
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                Salutation
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                FirstName
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                LastName
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                Email Address
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                Mobile
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-dropdownText text-center text-[13px] ">
+                            {rows.map((_, index) => (
+                              <tr className="relative text-center" key={index}>
+                                <td className="py-2.5 px- border-y border-tableBorder justify-center mt-4 gap-2 items-center flex-1">
+                                  <div className="relative w-full">
+                                    <select className="block relative appearance-none w-full h-9 focus:border-none text-zinc-400 bg-white text-sm text-center border-none rounded-md leading-tight">
+                                      <option value="" className="text-gray">
+                                        {" "}
+                                        Select
+                                      </option>
+                                      <option value="Mr" className="text-gray">
+                                        {" "}
+                                        Mr
+                                      </option>
+                                      <option value="Mrs" className="text-gray">
+                                        {" "}
+                                        Mrs
+                                      </option>
+                                      <option
+                                        value="Miss"
+                                        className="text-gray"
+                                      >
+                                        {" "}
+                                        Miss
+                                      </option>
+                                      <option value="Dr" className="text-gray">
+                                        {" "}
+                                        Dr
+                                      </option>
+                                    </select>
+                                    <div className="pointer-events-none absolute inset-y-0 -right-8 flex items-center px-2 text-gray-700">
+                                      <CehvronDown color="gray" />
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder">
+                                  <input
+                                    type="text"
+                                    className="text-sm w-[100%] text-center rounded-md bg-white h-9 p-2"
+                                    placeholder="Value"
+                                  />
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder flex-1">
+                                  <input
+                                    type="text"
+                                    className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
+                                    placeholder="Value"
+                                  />
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder relative">
+                                  <input
+                                    type="text"
+                                    className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
+                                    placeholder="Value"
+                                  />
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder relative">
+                                  <input
+                                    type="text"
+                                    className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
+                                    placeholder="Value"
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block mb-1">Email Address</label>
-                          <input
-                            type="text"
-                            className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                            placeholder="Value"
-                          />
-                        </div>
-                        <div>
-                          <label className="block mb-1">Mobile</label>
-                          <input
-                            type="text"
-                            className="pl-9 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                            placeholder="Value"
-                          />
-                        </div>
+                      <div
+                        className="flex gap-2 text-darkRed font-bold items-center my-4 cursor-pointer"
+                        onClick={addRow}
+                      >
+                        <PlusCircle color={"darkRed"} />
+                        Add Contact Person
+                      </div>
+                    </>
+                  )}
+                  {activeTab === "remarks" && (
+                    <div>
+                      <div>
+                        <label className="block mb-1">Remarks</label>
+                        <textarea
+                          rows={3}
+                          className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300   p-2"
+                          placeholder="Value"
+                        />
                       </div>
                     </div>
                   )}
+                
                 </div>
+                
               </div>
             </form>
           </div>
 
           <div className="flex justify-end gap-2 mb-3 m-5">
+          <Button onClick={closeModal} variant="secondary" size="lg">
+              Cancel
+            </Button>
             <Button variant="primary" size="lg">
               Save
-            </Button>
-            <Button onClick={closeModal} variant="secondary" size="lg">
-              Cancel
             </Button>
           </div>
         </>

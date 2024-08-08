@@ -17,7 +17,6 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings", element: <Settings /> },
   { path: "/settings/organization/profile", element: <CreateOrganizationForm /> },
   { path: "/settings/organization/invoice", element: <InvoiceSettings/> },
-    // { path: "/settings/taxes", element: <Taxes /> },
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },
   //   { path: "/settings/sales", element: <Sales /> },
