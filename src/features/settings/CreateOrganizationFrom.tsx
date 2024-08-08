@@ -60,7 +60,6 @@ const CreateOrganizationForm = () => {
     dateFormat: "",
     dateSplit: "",
   });
-  console.log(inputData.state);
 
   // console.log(inputData);
 
@@ -70,7 +69,7 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setAdditionalData(response.data[0]);
-        console.log(response);
+        // console.log(response);
       }
     } catch (error) {
       console.log("Error in fetching Additional data", error);
@@ -83,7 +82,7 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setcountryData(response.data[0].countries);
-        console.log(response.data[0].countries), "Country Data";
+        // console.log(response.data[0].countries), "Country Data";
       }
     } catch (error) {
       console.log("Error in fetching country data", error);
@@ -123,10 +122,6 @@ const CreateOrganizationForm = () => {
     }
   };
 
-
-
-
-
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -138,7 +133,6 @@ const CreateOrganizationForm = () => {
     e: ChangeEvent<HTMLInputElement>,
     key: "organizationLogo"
   ) => {
-    console.log("enter into function");
 
     const file = e.target.files?.[0];
     if (file) {
@@ -157,7 +151,7 @@ const CreateOrganizationForm = () => {
     try {
       const url = `${endponits.CREATE_ORGANIZATION}`;
       const apiResponse = await createOrganization(url, inputData);
-      console.log(apiResponse, "api response");
+      // console.log(apiResponse, "api response");
 
       const { response, error } = apiResponse;
       if (!error && response) {
@@ -174,7 +168,7 @@ const CreateOrganizationForm = () => {
     getDropdownList();
     getOrganization();
     getCountryData();
-    getcurrencyData()
+    getcurrencyData();
   }, []);
 
   useEffect(() => {
@@ -183,10 +177,8 @@ const CreateOrganizationForm = () => {
         (c: any) => c.name === inputData.organizationCountry
       );
       if (country) {
-        console.log(country);
         setStateList(country.states || []);
         setPhoneCodeList(country.phoneNumberCode);
-        console.log(phoneCodeList, "phone");
       }
     }
   }, [inputData.organizationCountry, countryData]);
@@ -413,7 +405,7 @@ const CreateOrganizationForm = () => {
                     <></>
                   )}
                 </select>
-                
+
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <CehvronDown color="gray" />
                 </div>
@@ -432,14 +424,14 @@ const CreateOrganizationForm = () => {
               <div className="flex">
                 <div className="relative w-24  mt-2 ">
                   <input
-                  disabled
-                className="pl-3 text-sm w-[100%] rounded-l-md  text-start text-slate-400 bg-white border border-inputBorder  h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                placeholder="+91"
-                type="text"
-                value={phoneCodeList}
-                name="pincode"
-                onChange={handleInputChange}
-              />{" "}
+                    disabled
+                    className="pl-3 text-sm w-[100%] rounded-l-md  text-start text-slate-400 bg-white border border-inputBorder  h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    placeholder="+91"
+                    type="text"
+                    value={phoneCodeList}
+                    name="pincode"
+                    onChange={handleInputChange}
+                  />{" "}
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <CehvronDown color="gray" height={15} width={15} />
                   </div>
@@ -492,15 +484,29 @@ const CreateOrganizationForm = () => {
                 >
                   <option value="">Select Currency</option>
 
-                  <option value="USD" className="text-slate-300 ">
-                    USD
-                  </option>
-                  <option value="EUR" className="text-slate-300 ">
-                    EUR
-                  </option>
-                  <option value="INR" className="text-slate-300 ">
-                    INR
-                  </option>
+                  {currencyData && currencyData.length > 0 ? (
+                    currencyData.map((item: any, index: number) => (
+                      <option
+                        key={index}
+                        value={item}
+                        className="text-slate-300"
+                      >
+                        {item}
+                      </option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="USD" className="text-slate-300">
+                        USD
+                      </option>
+                      <option value="EUR" className="text-slate-300">
+                        EUR
+                      </option>
+                      <option value="INR" className="text-slate-300">
+                        INR
+                      </option>
+                    </>
+                  )}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <CehvronDown color="gray" />
@@ -541,9 +547,7 @@ const CreateOrganizationForm = () => {
               </div>
             </div>
           </div>
-          <div>
-           
-          </div>
+          <div></div>
         </div>
         <p className="mt-4">
           <b>Preferences</b>
@@ -595,7 +599,7 @@ const CreateOrganizationForm = () => {
                   {additionalData?.dateFormat?.short &&
                   additionalData?.dateFormat.short.length > 0 ? (
                     <>
-                      <optgroup label="Short" >
+                      <optgroup label="Short">
                         {additionalData.dateFormat.short.map(
                           (item: any, index: any) => (
                             <option key={`short-${index}`} value={item}>

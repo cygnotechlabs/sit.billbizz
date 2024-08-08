@@ -6,6 +6,7 @@ import SearchBar from "../../../Components/SearchBar";
 import Items from "./Items";
 import ItemSort from "./ItemSort";
 import ItemTable from "./ItemTable";
+import { Link } from "react-router-dom";
 type Props = {};
 
 function ItemHome({}: Props) {
@@ -20,10 +21,12 @@ function ItemHome({}: Props) {
             egestas consectetur amet.
           </p>
         </div>
-        <Button variant="primary" size="xl">
-          <PlusCircle color="white" />
-          <p className="text-sm font-medium">Add Item</p>
-        </Button>
+       <Link to={"/inventory/Item/new"}>
+          <Button variant="primary" size="xl">
+            <PlusCircle color="white" />
+            <p className="text-sm font-medium">Add Item</p>
+          </Button>
+       </Link>
       </div>
       <div className="flex flex-col mt-4 gap-2 bg-white rounded-lg p-6">
         <div>
