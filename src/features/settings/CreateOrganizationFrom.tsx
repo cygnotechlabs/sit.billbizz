@@ -383,7 +383,7 @@ const CreateOrganizationForm = () => {
                   id="state"
                   className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
-                  <option value="">Select a State / Region / County</option>
+                  <option value="">State / Region / County</option>
                   {stateList.length > 0 ? (
                     stateList.map((item: any, index: number) => (
                       <option key={index} value={item}>
