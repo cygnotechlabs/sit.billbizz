@@ -1,3 +1,4 @@
+import Bell from "../icons/Bell";
 import box from "../icons/box";
 import circleDollar from "../icons/circle-dollar-sign";
 import home from "../icons/home";
@@ -9,7 +10,7 @@ import squreUserRound from "../icons/squre-user-round";
 import truck from "../icons/truck";
 import userRound from "../icons/user-round";
 import usersRound from "../icons/users-round";
- 
+
 const navlist = [
   {
     nav: "Home",
@@ -124,31 +125,31 @@ const navlist = [
     nav: "Supplier",
     icon: truck,
     route: "/supplier",
-    subhead:[
+    subhead: [
       {
         headName: "Dashboard",
         subRoute: "/supplier",
       },
       {
-        headName:"Supplier",
-        subRoute:"/supplier/home"
-      }
-    ]
+        headName: "Supplier",
+        subRoute: "/supplier/home",
+      },
+    ],
   },
   {
     nav: "Expense",
     icon: circleDollar,
     route: "/expense",
-    subhead:[
-     { headName:"Dashbord",subRoute:"/"},
-     {headName:"Expense",subRoute:"/expense/home"}
-    ]
+    subhead: [
+      { headName: "Dashbord", subRoute: "/" },
+      { headName: "Expense", subRoute: "/expense/home" },
+    ],
   },
   {
     nav: "Staff",
     icon: usersRound,
     route: "/staffs",
-    subhead:[
+    subhead: [
       {
         headName: "Dashboard",
         subRoute: "/",
@@ -157,7 +158,7 @@ const navlist = [
         headName: "Staff",
         subRoute: "/staffs/home",
       },
-    ]
+    ],
   },
   {
     nav: "Purchase",
@@ -186,7 +187,7 @@ const navlist = [
       },
     ],
   },
- 
+
   {
     nav: "Payroll",
     icon: receiptIndianRupee,
@@ -198,7 +199,9 @@ const navlist = [
     route: "/home",
   },
 ];
- 
+
+export default navlist;
+
 export const paymentTermsList = [
   {
     title: "Net 30",
@@ -230,95 +233,200 @@ export const paymentTermsList = [
     text: ": Payment is due on the 15th day of the month following the invoice date",
   },
 ];
- 
+
 export const organizationList = [
-  { title: "Profile" },
-  { title: "Branding" },
-  { title: "Custom Domain" },
-  { title: "Branches" },
-  { title: "Currencies" },
-  { title: "Approvals" },
-  { title: "Opening Balance" },
-  { title: "Manage Subscription" },
+  { title: "Profile", route: "/settings/organization" },
+  { title: "Invoice", route: "/settings/invoice" },
+  { title: "Currencies", route: "/settings/currencies" },
 ];
- 
-export const taxList = [{ title: "Tax" }, { title: "MSME Settings" }];
- 
+
+export const taxList = [{ title: "Taxes", route: "/settings/taxes" }];
+
 export const usersAndRoleList = [
-  { title: "Users" },
-  { title: "Roles" },
-  { title: "User Preferences" },
+  { title: "Users", route: "/settings/users" },
+  { title: "Roles", route: "/settings/roles" },
+  { title: "User Preferences", route: "/settings/user-preferences" },
 ];
- 
+
 export const preferencesList = [
-  { title: "General" },
-  { title: "Customet & Vendor" },
-  { title: "AccountantProjects" },
-  { title: "TimeSheets" },
-  { title: "Customer Portal" },
-  { title: "Vendor Portal" },
+  { title: "General", route: "/settings/general" },
+  { title: "Customer & Vendors", route: "/settings/customer-vendors" },
+  { title: "Accountant", route: "/settings/accountant" },
+  { title: "Projects", route: "/settings/projects" },
+  { title: "Timesheets", route: "/settings/timesheets" },
+  { title: "Customer Portal", route: "/settings/customer-portal" },
+  { title: "Vendor Portal", route: "/settings/vendor-portal" },
 ];
+
 export const SalesList = [
-  { title: "Quotes" },
-  { title: "Sales Order" },
-  { title: "Delivery Challans" },
-  { title: "Invoices" },
-  { title: "Recurring Invoices" },
-  { title: "Payment Recieved" },
-  { title: "Credit Notes" },
-  { title: "Delivery Notes" },
-  { title: "Packing Slips" },
+  { title: "Sales Order", route: "/settings/sales-order" },
+  { title: "Shipments", route: "/settings/shipments" },
+  { title: "Invoices", route: "/settings/invoices" },
+  { title: "Delivery Challans", route: "/settings/delivery-challans" },
+  { title: "Credit Notes", route: "/settings/credit-notes" },
 ];
- 
+
 export const purchasesList = [
-  { title: "Expenses" },
-  { title: "Recurring Expensess" },
-  { title: "Bills" },
-  { title: "Recurring Bills" },
-  { title: "Payment Mode" },
-  { title: "Purchase Orders" },
-  { title: "Vendor Credit" },
+  { title: "Purchase Orders", route: "/settings/purchase-orders" },
+  { title: "Expense", route: "/settings/expense" },
 ];
- 
-export const itemsList = [{ title: "Item" }, { title: "Inventory Adjustment" }];
- 
+
+export const itemsList = [
+  { title: "Item", route: "/settings/item" },
+  { title: "Inventory Adjustment", route: "/settings/inventory-adjustment" },
+];
+
 export const onlinePaymentList = [
-  { title: "Customer Payments" },
-  { title: "vendor Payments" },
+  { title: "Customer Payments", route: "/settings/customer-payments" },
+  { title: "Vendor Payments", route: "/settings/vendor-payments" },
 ];
- 
+
 export const customizationList = [
-  { title: "Reporting Tags" },
-  { title: "Web Tabs" },
-  { title: "Digital Signature" },
-  { title: "Transaction rating Series" },
-  { title: "PDF Templates" },
+  { title: "Reporting Tags", route: "/settings/reporting-tags" },
+  { title: "Web Tabs", route: "/settings/web-tabs" },
+  { title: "Digital Signature", route: "/settings/digital-signature" },
+  {
+    title: "Transaction Rating Series",
+    route: "/settings/transaction-rating-series",
+  },
+  { title: "PDF Templates", route: "/settings/pdf-templates" },
 ];
- 
+
 export const ReminderList = [
-  { title: "Reminders" },
-  { title: "Email Notification" },
-  { title: "SMS Notification" },
+  { title: "Reminders", route: "/settings/reminders" },
+  { title: "Email Notification", route: "/settings/email-notification" },
+  { title: "SMS Notification", route: "/settings/sms-notification" },
 ];
- 
-export const newPurchaseOrderTableHead=[
+
+export const newPurchaseOrderTableHead = [
   "Product",
   "Quantity",
   "Rate",
   "Tax",
   "Discount",
   "Amount",
-   "Actions"
- 
-]
+  "Actions",
+];
 
-export const bankAccountviewTableHaed=[
+export const bankAccountviewTableHaed = [
   "Date",
   "Transaction Details",
   "Type",
   "Debit",
-  "Credit"
-]
+  "Credit",
+];
 
- 
-export default navlist;
+export const settingsList = [
+  {
+    nav: "Organization",
+    icon: userRound,
+    subhead: [
+      { headName: "Profile", subRoute: "/settings/organization" },
+      { headName: "Invoice", subRoute: "/settings/invoice" },
+      { headName: "Currencies", subRoute: "/settings/currencies" },
+    ],
+  },
+  {
+    nav: "Items",
+    icon: box,
+    subhead: [
+      { headName: "Item", subRoute: "/settings/item" },
+      {
+        headName: "Inventory Adjustment",
+        subRoute: "/settings/inventory-adjustment",
+      },
+    ],
+  },
+  {
+    nav: "Tax & Complaints",
+    icon: circleDollar,
+    subhead: [{ headName: "Taxes", subRoute: "/settings/taxes" }],
+  },
+  {
+    nav: "Sales",
+    icon: shoppingCart,
+    subhead: [
+      { headName: "Sales Order", subRoute: "/settings/sales-order" },
+      { headName: "Shipments", subRoute: "/settings/shipments" },
+      { headName: "Invoices", subRoute: "/settings/invoices" },
+      {
+        headName: "Delivery Challans",
+        subRoute: "/settings/delivery-challans",
+      },
+      { headName: "Credit Notes", subRoute: "/settings/credit-notes" },
+    ],
+  },
+  {
+    nav: "Purchases",
+    icon: shoppingBag,
+    subhead: [
+      { headName: "Purchase Orders", subRoute: "/settings/purchase-orders" },
+      { headName: "Expense", subRoute: "/settings/expense" },
+    ],
+  },
+  {
+    nav: "Customization",
+    icon: squreUserRound,
+    subhead: [
+      { headName: "Reporting Tags", subRoute: "/settings/reporting-tags" },
+      { headName: "Web Tabs", subRoute: "/settings/web-tabs" },
+      {
+        headName: "Digital Signature",
+        subRoute: "/settings/digital-signature",
+      },
+      {
+        headName: "Transaction Rating Series",
+        subRoute: "/settings/transaction-rating-series",
+      },
+      { headName: "PDF Templates", subRoute: "/settings/pdf-templates" },
+    ],
+  },
+  {
+    nav: "Users & Roles",
+    icon: usersRound,
+    subhead: [
+      { headName: "Users", subRoute: "/settings/users" },
+      { headName: "Roles", subRoute: "/settings/roles" },
+      { headName: "User Preferences", subRoute: "/settings/user-preferences" },
+    ],
+  },
+  {
+    nav: "Preferences",
+    icon: newspapper,
+    subhead: [
+      { headName: "General", subRoute: "/settings/general" },
+      {
+        headName: "Customer & Vendors",
+        subRoute: "/settings/customer-vendors",
+      },
+      { headName: "Accountant", subRoute: "/settings/accountant" },
+      { headName: "Projects", subRoute: "/settings/projects" },
+      { headName: "Timesheets", subRoute: "/settings/timesheets" },
+      { headName: "Customer Portal", subRoute: "/settings/customer-portal" },
+      { headName: "Vendor Portal", subRoute: "/settings/vendor-portal" },
+    ],
+  },
+  {
+    nav: "Reminder & Notification",
+    icon: Bell,
+    subhead: [
+      { headName: "Reminders", subRoute: "/settings/reminders" },
+      {
+        headName: "Email Notification",
+        subRoute: "/settings/email-notification",
+      },
+      { headName: "SMS Notification", subRoute: "/settings/sms-notification" },
+    ],
+  },
+  {
+    nav: "Online Payments",
+    icon: receiptIndianRupee,
+    subhead: [
+      {
+        headName: "Customer Payments",
+        subRoute: "/settings/customer-payments",
+      },
+      { headName: "Vendor Payments", subRoute: "/settings/vendor-payments" },
+    ],
+  },
+];
