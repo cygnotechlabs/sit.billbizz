@@ -33,7 +33,9 @@ const CreateOrganizationForm = () => {
   const [additionalData, setAdditionalData] = useState<any | null>([]);
   const [oneOrganization, setOneOrganization] = useState<any | []>([]);
   const [selected, setSelected] = useState<string | null>(null);
-
+  const [countryData, setcountryData] = useState<any | []>([]);
+  const [stateList, setStateList] = useState<any | []>([]);
+  const [phoneCodeList, setPhoneCodeList] = useState<any | []>([]);
   const { request: getAdditionalData } = useApi("get", 5004);
   const { request: createOrganization } = useApi("post", 5004);
   const { request: getOneOrganization } = useApi("put", 5004);
@@ -57,8 +59,9 @@ const CreateOrganizationForm = () => {
     dateFormat: "",
     dateSplit: "",
   });
+  console.log(inputData.state);
 
-  console.log(inputData);
+  // console.log(inputData);
 
   const getDropdownList = async () => {
     try {
@@ -69,7 +72,20 @@ const CreateOrganizationForm = () => {
         console.log(response);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error in fetching Additional data", error);
+    }
+  };
+
+  const getCountryData = async () => {
+    try {
+      const url = `${endponits.GET_COUNTRY_DATA}`;
+      const { response, error } = await getAdditionalData(url);
+      if (!error && response) {
+        setcountryData(response.data[0].countries);
+        console.log(response.data[0].countries), "Country Data";
+      }
+    } catch (error) {
+      console.log("Error in fetching country data", error);
     }
   };
 
@@ -96,7 +112,22 @@ const CreateOrganizationForm = () => {
   useEffect(() => {
     getDropdownList();
     getOrganization();
+    getCountryData();
   }, []);
+
+  useEffect(() => {
+    if (inputData.organizationCountry) {
+      const country = countryData.find(
+        (c: any) => c.name === inputData.organizationCountry
+      );
+      if (country) {
+        console.log(country);
+        setStateList(country.states || []);
+        setPhoneCodeList(country.phoneNumberCode);
+        console.log(phoneCodeList, "phone");
+      }
+    }
+  }, [inputData.organizationCountry, countryData]);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -124,11 +155,6 @@ const CreateOrganizationForm = () => {
 
   const handleCreateOrganization = async (e: any) => {
     e.preventDefault();
-    const formData: any = new FormData();
-
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
 
     try {
       const url = `${endponits.CREATE_ORGANIZATION}`;
@@ -234,8 +260,15 @@ const CreateOrganizationForm = () => {
                   className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="">Select a country</option>
-                  <option value="india">India</option>
-                  <option value="argentina">Argentina</option>
+                  {countryData && countryData.length > 0 ? (
+                    countryData.map((item: any, index: number) => (
+                      <option key={index} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>No countries available</option>
+                  )}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <CehvronDown color="gray" />
@@ -340,7 +373,7 @@ const CreateOrganizationForm = () => {
                   className="text-slate-600 "
                   htmlFor="organizationAddress"
                 >
-                  Pin/ Zip/ Post Code
+                  State/ Region/ County
                 </label>
               </div>
               <div className="relative w-full mt-2">
@@ -351,14 +384,17 @@ const CreateOrganizationForm = () => {
                   className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
                   <option value="">Select a State / Region / County</option>
-
-                  <option value="kerala" className="text-slate-300">
-                    Kerala
-                  </option>
-                  <option value="tamilNadu" className="text-slate-300">
-                    TamilNadu
-                  </option>
+                  {stateList.length > 0 ? (
+                    stateList.map((item: any, index: number) => (
+                      <option key={index} value={item}>
+                        {item}
+                      </option>
+                    ))
+                  ) : (
+                    <></>
+                  )}
                 </select>
+                
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <CehvronDown color="gray" />
                 </div>
@@ -375,31 +411,20 @@ const CreateOrganizationForm = () => {
                 </label>
               </div>
               <div className="flex">
-              <div className="relative w-24  mt-2 " >
-                <select
-                  onChange={handleInputChange}
-                  name="state"
-                  id="state"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                >
-                 
-
-                  <option value="kerala" className="text-slate-300">
-                   +91
-                  </option>
-                  <option value="kerala" className="text-slate-300">
-                   +971
-                  </option>
-                  <option value="kerala" className="text-slate-300">
-                  +1-809
-                  </option>
-                  
-                
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <CehvronDown color="gray" height={15} width={15} />
+                <div className="relative w-24  mt-2 ">
+                  <input
+                  disabled
+                className="pl-3 text-sm w-[100%] rounded-l-md  text-start text-slate-400 bg-white border border-inputBorder  h-[39px] p-2 "
+                placeholder="+91"
+                type="text"
+                value={phoneCodeList}
+                name="pincode"
+                onChange={handleInputChange}
+              />{" "}
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <CehvronDown color="gray" height={15} width={15} />
+                  </div>
                 </div>
-              </div>
                 <input
                   className="pl-3 text-sm w-[100%] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2"
                   placeholder="Phone"
@@ -498,67 +523,7 @@ const CreateOrganizationForm = () => {
             </div>
           </div>
           <div>
-            <div className="flex gap-1 items-center space-y-2 py-5">
-              <label className="mt-2 text-slate-600" htmlFor="reportBasis">
-                Report Basis
-              </label>
-              <div className="grid place-items-center justify-center ms-5">
-                <input
-                  id="accrual"
-                  type="radio"
-                  name="reportBasis"
-                  value="accrual"
-                  className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${
-                    selected === "accrual"
-                      ? "border-8 border-neutral-400"
-                      : "border-1 border-neutral-400"
-                  }`}
-                  onChange={(e) => {
-                    setSelected("accrual");
-                    handleInputChange(e);
-                  }}
-                  checked={selected === "accrual"}
-                />
-                <div
-                  className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
-                    selected === "accrual" ? "bg-neutral-100" : "bg-transparent"
-                  }`}
-                />
-              </div>
-              <label htmlFor="accrual" className="text-slate-600">
-                <span className="font-semibold">Accrual</span> (You owe tax as
-                of invoice date)
-              </label>
-              <div className="flex gap-1 justify-center items-center -mt-2">
-                <div className="grid place-items-center ms-5">
-                  <input
-                    id="cash"
-                    type="radio"
-                    name="reportBasis"
-                    value="cash"
-                    className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${
-                      selected === "cash"
-                        ? "border-8 border-neutral-400"
-                        : "border-1 border-neutral-400"
-                    }`}
-                    onChange={(e) => {
-                      setSelected("cash");
-                      handleInputChange(e);
-                    }}
-                    checked={selected === "cash"}
-                  />
-                  <div
-                    className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
-                      selected === "cash" ? "bg-neutral-100" : "bg-transparent"
-                    }`}
-                  />
-                </div>
-                <label htmlFor="cash" className="text-slate-600">
-                  <span className="font-semibold">Cash</span> (You owe tax upon
-                  payment receipt)
-                </label>
-              </div>
-            </div>
+           
           </div>
         </div>
         <p className="mt-4">
@@ -577,10 +542,17 @@ const CreateOrganizationForm = () => {
                   id="timeZone"
                   className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 >
-                  <option value="">value</option>
-
-                  <option value="IST">IST</option>
-                  <option value="UTC">UTC</option>
+                  <option value="">Select Time Zone</option>
+                  {additionalData.timezones &&
+                  additionalData.timezones.length > 0 ? (
+                    additionalData.timezones.map((item: any, index: any) => (
+                      <option key={index} value={item.zone}>
+                        {item.zone} - {item.description}
+                      </option>
+                    ))
+                  ) : (
+                    <></>
+                  )}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <CehvronDown color="gray" />
@@ -604,7 +576,7 @@ const CreateOrganizationForm = () => {
                   {additionalData?.dateFormat?.short &&
                   additionalData?.dateFormat.short.length > 0 ? (
                     <>
-                      <optgroup label="Short" className="text-darkRed">
+                      <optgroup label="Short" >
                         {additionalData.dateFormat.short.map(
                           (item: any, index: any) => (
                             <option key={`short-${index}`} value={item}>
@@ -621,7 +593,7 @@ const CreateOrganizationForm = () => {
                   {additionalData?.dateFormat?.medium &&
                   additionalData?.dateFormat.medium.length > 0 ? (
                     <>
-                      <optgroup label="Medium" className="text-darkRed">
+                      <optgroup label="Medium">
                         {additionalData.dateFormat.medium.map(
                           (item: any, index: any) => (
                             <option key={`medium-${index}`} value={item}>
@@ -638,7 +610,7 @@ const CreateOrganizationForm = () => {
                   {additionalData?.dateFormat?.long &&
                   additionalData?.dateFormat.long.length > 0 ? (
                     <>
-                      <optgroup label="Long" className="text-darkRed">
+                      <optgroup label="Long">
                         {additionalData.dateFormat.long.map(
                           (item: any, index: any) => (
                             <option key={`long-${index}`} value={item}>

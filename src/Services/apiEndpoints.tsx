@@ -2,6 +2,7 @@ export const endponits = {
   GET_ADDITIONAL_DATA: `get-additional-data`,
   CREATE_ORGANIZATION: `setup-organization`,
   GET_ONE_ORGANIZATION: `get-one-organization`,
+  GET_COUNTRY_DATA:`get-countries-data`,
 
   // Accountant
   Get_ALL_Acounts: "get-all-account",
