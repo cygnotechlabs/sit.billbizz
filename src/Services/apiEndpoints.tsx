@@ -12,6 +12,7 @@ export const endponits = {
 
   //customer
   GET_ALL_CUSTOMER : "get-all-customer",
+  ADD_CUSTOMER:"add-customer",
 
   // Supplier
   GET_ALL_SUPPLIER:""

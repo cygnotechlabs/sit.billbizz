@@ -235,7 +235,7 @@ export const paymentTermsList = [
 ];
 
 export const organizationList = [
-  { title: "Profile", route: "/settings/organization" },
+  { title: "Profile", route: "/settings/organization/profile" },
   { title: "Invoice", route: "/settings/invoice" },
   { title: "Currencies", route: "/settings/currencies" },
 ];
@@ -321,7 +321,7 @@ export const settingsList = [
     nav: "Organization",
     icon: userRound,
     subhead: [
-      { headName: "Profile", subRoute: "/settings/organization" },
+      { headName: "Profile", subRoute: "/settings/organization/profile" },
       { headName: "Invoice", subRoute: "/settings/invoice" },
       { headName: "Currencies", subRoute: "/settings/currencies" },
     ],
