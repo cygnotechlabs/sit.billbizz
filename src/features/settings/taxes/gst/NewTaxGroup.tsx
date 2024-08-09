@@ -47,7 +47,11 @@ function NewTaxGroup({}: Props) {
         <PlusCircle color="#565148" /> New Tax Group
       </Button>
 
-      <Modal open={isModalOpen} onClose={closeModal} className="p-8 w-[55.5%]">
+      <Modal
+        open={isModalOpen}
+        onClose={closeModal}
+        className="px-8 py-4 w-[55.5%]"
+      >
         <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
           <div
             className="absolute top-0 -right-8 w-[178px] h-[89px]"
@@ -90,8 +94,12 @@ function NewTaxGroup({}: Props) {
                 {taxes.map((tax) => (
                   <tr key={tax.id} className="h-10 border-b border-[#EAECF0]">
                     <td className="w-6 pr-9">
-                    <input type="checkbox" className="form-checkbox w-5 h-5"  checked={selectedTaxes.includes(tax.id)}
-                        onChange={() => handleCheckboxChange(tax.id)} />
+                      <input
+                        type="checkbox"
+                        className="form-checkbox w-5 h-5"
+                        checked={selectedTaxes.includes(tax.id)}
+                        onChange={() => handleCheckboxChange(tax.id)}
+                      />
                     </td>
                     <td className="text-left">{tax.label}</td>
                     <td className="w-1/3 text-right">{tax.percentage}</td>
