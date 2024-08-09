@@ -5,7 +5,6 @@ import { endponits } from "../../../Services/apiEndpoints";
 import { toast, Toaster } from "react-hot-toast";
 import CehvronDown from "../../../assets/icons/CehvronDown";
 import Plus from "../../../assets/icons/Plus";
-import bgImage from "../../../assets/Images/Group 37 (1).png";
 import Banner from "../banner/Banner";
 
 interface InputData {
@@ -193,8 +192,8 @@ const CreateOrganizationForm = () => {
 
       {/* FORM */}
       <form className="text-slate-800 text-sm">
-        <label>
-          <div className="h-56 p-3 border-dashed border-neutral-400  rounded-md mt-5 border bg-white text-textColor w-[403px]">
+          <div className="h-56 p-3 border-dashed border-neutral-400  rounded-md mt-5 border bg-white text-textColor w-[403px]">        <label>
+
             <div className="bg-lightPink flex h-28 justify-center items-center rounded-md">
               {logo ? (
                 <img src={URL.createObjectURL(logo)} alt="" className="h-24" />
@@ -219,15 +218,16 @@ const CreateOrganizationForm = () => {
                 <br />
                 Maximum File size 1MB
               </p>
-            </div>
-          </div>
-          <input
+            </div> 
+             <input
             accept="image/*"
             type="file"
             className="hidden"
             onChange={(e) => handleFileChange(e, "organizationLogo")}
           />
         </label>
+          </div>
+        
         <p className="mt-4 text-textColor">
           <b>Organizational Details</b>
         </p>

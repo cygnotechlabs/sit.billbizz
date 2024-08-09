@@ -24,7 +24,7 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings/taxes", element: <Taxes /> },
   { path: "/settings/taxes/GST", element: <GSTComponent /> },
   { path: "/settings/taxes/VAT", element: <VATComponent /> },
-  { path: "/settings/item",element:<Items/>}
+  { path: "/settings/items/item",element:<Items/>}
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },
   //   { path: "/settings/sales", element: <Sales /> },
