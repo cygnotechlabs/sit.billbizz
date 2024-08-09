@@ -330,7 +330,7 @@ export const settingsList = [
     nav: "Items",
     icon: box,
     subhead: [
-      { headName: "Item", subRoute: "/settings/item" },
+      { headName: "Item", subRoute: "/settings/items/item" },
       {
         headName: "Inventory Adjustment",
         subRoute: "/settings/inventory-adjustment",

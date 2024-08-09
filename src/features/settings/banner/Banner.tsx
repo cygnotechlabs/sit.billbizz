@@ -1,38 +1,58 @@
+import { useEffect, useState } from "react";
 import bgImage from "../../../assets/Images/Group 37 (1).png";
-type Props = {
-  isOrganisationDetails?:boolean;
-  oneOrganization?:object
-}
+import { endponits } from "../../../Services/apiEndpoints";
+import useApi from "../../../Hooks/useApi";
 
-function Banner({isOrganisationDetails,oneOrganization}: Props) {
+type Props = {};
+
+function Banner({  }: Props) {
+  const [oneOrganization, setOneOrganization] = useState<any | []>([]);
+
+  const { request: getOneOrganization } = useApi("put", 5004);
+
+  const getOrganization = async () => {
+    try {
+      const url = `${endponits.GET_ONE_ORGANIZATION}`;
+      const { response, error } = await getOneOrganization(url, {
+        organizationId: "INDORG0001",
+      });
+
+      if (!error && response?.data) {
+        setOneOrganization(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching organization:", error);
+    }
+  };
+
+  useEffect(()=>{
+    getOrganization();
+  },[])
+
   return (
-    <div className="bg-[#F7E7CE] rounded-md  flex  h-[148px] ">
-        {isOrganisationDetails&&<div className="ms-2 p-2   text-center mt-3   items-center flex">
+    <div className="bg-[#F7E7CE] rounded-md flex h-[148px]">
+      {oneOrganization && (
+        <div className="ms-2 p-2 text-center mt-3 items-center flex">
           <div>
-            <p className="bg-gray text-sm w-fit  text-yellow-50 rounded-md p-2">
+            <p className="bg-gray text-sm w-fit text-yellow-50 rounded-md p-2">
               Organization
             </p>
-
             <div className="flex mt-1">
               <p className="mt-1 text-[#303F58]">
-                <b>
-                  {oneOrganization?.organizationName || "Organization Profile"}
-                </b>
-              </p>{" "}
-              {
-                <div className="ms-3 bg-white rounded-md p-1 text-textColor">
-                  ID:{oneOrganization?.organizationId || 852749}
-                </div>
-              }
+                <b>{oneOrganization?.organizationName || "Organization Profile"}</b>
+              </p>
+              <div className="ms-3 bg-white rounded-md p-1 text-textColor">
+                ID: {oneOrganization?.organizationId || "852749"}
+              </div>
             </div>
           </div>
-        </div>}
-
-        <div className="flex ml-auto w-fit">
-          <img src={bgImage} className="bottom-0 top-8 mt-auto" alt="" />
         </div>
+      )}
+      <div className="flex ml-auto w-fit">
+        <img src={bgImage} className="bottom-0 top-8 mt-auto" alt="" />
       </div>
-  )
+    </div>
+  );
 }
 
-export default Banner
+export default Banner;

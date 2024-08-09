@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import {  useState } from "react";
 import CehvronDown from "../../../assets/icons/CehvronDown";
 import Banner from "../banner/Banner";
 import Button from "../../../Components/Button";
@@ -41,7 +41,7 @@ function Items({}: Props) {
   })
   return (
     <div className="m-4 text-[#303F58]">
-      <Banner />
+      <Banner/>
       
         <p className="text-[20px] font-bold mt-3">Item</p>
         <div className="space-y-4 mt-2">
