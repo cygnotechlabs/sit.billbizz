@@ -323,7 +323,7 @@ export const settingsList = [
     subhead: [
       { headName: "Profile", subRoute: "/settings/organization/profile" },
       { headName: "Invoice", subRoute: "/settings/organization/invoice" },
-      { headName: "Currencies", subRoute: "/settings/currencies" },
+      { headName: "Currencies", subRoute: "/settings/organization/currencies" },
     ],
   },
   {
@@ -353,7 +353,7 @@ export const settingsList = [
         headName: "Delivery Challans",
         subRoute: "/settings/sales/deliverychallans",
       },
-      { headName: "Credit Notes", subRoute: "/settings/credit-notes" },
+      { headName: "Credit Notes", subRoute: "/settings/sales/CreditNotes" },
     ],
   },
   {

@@ -133,7 +133,6 @@ const CreateOrganizationForm = () => {
     e: ChangeEvent<HTMLInputElement>,
     key: "organizationLogo"
   ) => {
-
     const file = e.target.files?.[0];
     if (file) {
       if (key === "organizationLogo") setLogo(file);
@@ -188,12 +187,13 @@ const CreateOrganizationForm = () => {
       className=" m-4 overflow-y-scroll hide-scrollbar h-auto"
       style={{ height: "92vh" }}
     >
-      <Banner/>
+      <Banner seeOrgDetails />
 
       {/* FORM */}
       <form className="text-slate-800 text-sm">
-          <div className="h-56 p-3 border-dashed border-neutral-400  rounded-md mt-5 border bg-white text-textColor w-[403px]">        <label>
-
+        <div className="h-56 p-3 border-dashed border-neutral-400  rounded-md mt-5 border bg-white text-textColor w-[403px]">
+          {" "}
+          <label>
             <div className="bg-lightPink flex h-28 justify-center items-center rounded-md">
               {logo ? (
                 <img src={URL.createObjectURL(logo)} alt="" className="h-24" />
@@ -218,16 +218,16 @@ const CreateOrganizationForm = () => {
                 <br />
                 Maximum File size 1MB
               </p>
-            </div> 
-             <input
-            accept="image/*"
-            type="file"
-            className="hidden"
-            onChange={(e) => handleFileChange(e, "organizationLogo")}
-          />
-        </label>
-          </div>
-        
+            </div>
+            <input
+              accept="image/*"
+              type="file"
+              className="hidden"
+              onChange={(e) => handleFileChange(e, "organizationLogo")}
+            />
+          </label>
+        </div>
+
         <p className="mt-4 text-textColor">
           <b>Organizational Details</b>
         </p>
@@ -662,12 +662,10 @@ const CreateOrganizationForm = () => {
             size="sm"
             onClick={(e) => handleCreateOrganization(e)}
           >
-            {" "}
             Save
           </Button>
 
           <Button variant="secondary" size="sm">
-            {" "}
             Cancel
           </Button>
         </div>
