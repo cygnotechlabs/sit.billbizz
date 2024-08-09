@@ -22,7 +22,7 @@ function SeeSupplierDetails({}: Props) {
   }
   return (
     <div className="px-6">
-      <div className="flex  flex-col bg-white rounded-md text-textColor  p-5 space-y-4">
+      <div className="flex  flex-col bg-white h-auto rounded-md text-textColor  p-5 space-y-4">
         {/* header */}
         <div className="flex w-full justify-between">
         <div className="flex gap-5 items-center">

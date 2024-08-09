@@ -13,7 +13,7 @@ const settingsData: Setting[] = [
     title: "Organization",
     description: "Manage organization settings",
     imageUrl: "url-to-organization-image",
-    route: "/settings/organization",
+    route: "/settings/organization/profile",
   },
   {
     title: "Taxes & Compliance",
@@ -49,7 +49,7 @@ const settingsData: Setting[] = [
     title: "Items",
     description: "Manage item settings",
     imageUrl: "url-to-items-image",
-    route: "/settings/items",
+    route: "/settings/items/item",
   },
   {
     title: "Online Payments",

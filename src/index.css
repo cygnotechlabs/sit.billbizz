@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
@@ -23,6 +24,39 @@ h1 {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+#customCheckbox {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  -webkit-appearance: none;
+  appearance: none;
+  border: 1px solid 
+  #97998E;
+  border-radius: 3px;
+  background-color: white;
+  cursor: pointer;
+}
+
+/* Customize the color when the checkbox is checked */
+#customCheckbox:checked {
+  background-color: 
+  #97998E;
+}
+
+/* Add a check mark when the checkbox is checked */
+#customCheckbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 7px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
 
 
 

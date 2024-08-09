@@ -5,7 +5,7 @@ import home from "../icons/home";
 import newspapper from "../icons/newspaper";
 import receiptIndianRupee from "../icons/receipt-indian-rupee";
 import shoppingBag from "../icons/shopping-bag";
-import shoppingCart from "../icons/shopping-cart";
+import shoppingCart from "../icons/ShoppingCart";
 import squreUserRound from "../icons/squre-user-round";
 import truck from "../icons/truck";
 import userRound from "../icons/user-round";
@@ -235,7 +235,7 @@ export const paymentTermsList = [
 ];
 
 export const organizationList = [
-  { title: "Profile", route: "/settings/organization" },
+  { title: "Profile", route: "/settings/organization/profile" },
   { title: "Invoice", route: "/settings/invoice" },
   { title: "Currencies", route: "/settings/currencies" },
 ];
@@ -260,9 +260,9 @@ export const preferencesList = [
 
 export const SalesList = [
   { title: "Sales Order", route: "/settings/sales-order" },
-  { title: "Shipments", route: "/settings/shipments" },
+  { title: "Shipments", route: "/settings/sales/shipments" },
   { title: "Invoices", route: "/settings/invoices" },
-  { title: "Delivery Challans", route: "/settings/delivery-challans" },
+  { title: "Delivery Challans", route: "/settings/sales/deliverychallans" },
   { title: "Credit Notes", route: "/settings/credit-notes" },
 ];
 
@@ -321,8 +321,8 @@ export const settingsList = [
     nav: "Organization",
     icon: userRound,
     subhead: [
-      { headName: "Profile", subRoute: "/settings/organization" },
-      { headName: "Invoice", subRoute: "/settings/invoice" },
+      { headName: "Profile", subRoute: "/settings/organization/profile" },
+      { headName: "Invoice", subRoute: "/settings/organization/invoice" },
       { headName: "Currencies", subRoute: "/settings/currencies" },
     ],
   },
@@ -330,7 +330,7 @@ export const settingsList = [
     nav: "Items",
     icon: box,
     subhead: [
-      { headName: "Item", subRoute: "/settings/item" },
+      { headName: "Item", subRoute: "/settings/items/item" },
       {
         headName: "Inventory Adjustment",
         subRoute: "/settings/inventory-adjustment",
@@ -347,11 +347,11 @@ export const settingsList = [
     icon: shoppingCart,
     subhead: [
       { headName: "Sales Order", subRoute: "/settings/sales-order" },
-      { headName: "Shipments", subRoute: "/settings/shipments" },
+      { headName: "Shipments", subRoute: "/settings/sales/shipments" },
       { headName: "Invoices", subRoute: "/settings/invoices" },
       {
         headName: "Delivery Challans",
-        subRoute: "/settings/delivery-challans",
+        subRoute: "/settings/sales/deliverychallans",
       },
       { headName: "Credit Notes", subRoute: "/settings/credit-notes" },
     ],
