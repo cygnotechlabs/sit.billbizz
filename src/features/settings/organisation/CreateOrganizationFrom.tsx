@@ -133,6 +133,7 @@ const CreateOrganizationForm = () => {
     e: ChangeEvent<HTMLInputElement>,
     key: "organizationLogo"
   ) => {
+
     const file = e.target.files?.[0];
     if (file) {
       if (key === "organizationLogo") setLogo(file);
@@ -254,7 +255,7 @@ const CreateOrganizationForm = () => {
                       </option>
                     ))
                   ) : (
-                    <option disabled>No countries available</option>
+                    <option disabled></option>
                   )}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -342,12 +343,12 @@ const CreateOrganizationForm = () => {
                   className="text-slate-600 "
                   htmlFor="organizationAddress"
                 >
-                  Pin/ Zip/ Post Code
+                  Pin / Zip / Post code
                 </label>
               </div>
               <input
                 className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                placeholder=" Pin/ Zip/ Post Code"
+                placeholder=" Pin / Zip / Post code"
                 type="text"
                 value={inputData.pincode}
                 name="pincode"
@@ -360,7 +361,7 @@ const CreateOrganizationForm = () => {
                   className="text-slate-600 "
                   htmlFor="organizationAddress"
                 >
-                  State/ Region/ County
+                  State / Region / County
                 </label>
               </div>
               <div className="relative w-full mt-2">
@@ -399,15 +400,15 @@ const CreateOrganizationForm = () => {
               </div>
               <div className="flex">
                 <div className="relative w-24  mt-2 ">
-                  <input
-                    disabled
-                    className="pl-3 text-sm w-[100%] rounded-l-md  text-start text-slate-400 bg-white border border-inputBorder  h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                    placeholder="+91"
-                    type="text"
-                    value={phoneCodeList}
-                    name="pincode"
+                  <select
                     onChange={handleInputChange}
-                  />{" "}
+                    name="phoneCode"
+                    id="phoneCode"
+                    className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  >
+                    <option value="">{phoneCodeList.length>0?phoneCodeList:"+91"}</option>
+                  </select>
+
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <CehvronDown color="gray" height={15} width={15} />
                   </div>
@@ -430,7 +431,7 @@ const CreateOrganizationForm = () => {
         </p>
         <div className="bg-white border-slate-200  border-2 rounded-md  mt-4 p-5">
           <label htmlFor="websit" className="text-slate-600">
-            Website URL
+          Website URL
           </label>
           <input
             type="text"
@@ -445,7 +446,7 @@ const CreateOrganizationForm = () => {
           <b>Financial Settings</b>
         </p>
         <div className="bg-white  border-slate-200  border-2 rounded-md mt-4 p-5">
-          <div className="grid grid-cols-2 gap-4 mt-4">
+          <div className="grid grid-cols-2 gap-4 ">
             <div className="relative ">
               <label htmlFor="currency" className="text-slate-600">
                 Base Currency
@@ -529,7 +530,7 @@ const CreateOrganizationForm = () => {
           <b>Preferences</b>
         </p>
         <div className="bg-white  border-slate-200  border-2 rounded-md mt-4 p-5">
-          <div className="grid grid-cols-12 gap-4 mt-4">
+          <div className="grid grid-cols-12 gap-4 ">
             <div className="relative col-span-8">
               <label htmlFor="timeZone" className="text-slate-600">
                 Time Zone
@@ -572,6 +573,7 @@ const CreateOrganizationForm = () => {
                   id="dateFormat"
                   className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
+                  <option value="">Select Date Format</option>
                   {additionalData?.dateFormat?.short &&
                   additionalData?.dateFormat.short.length > 0 ? (
                     <>
@@ -637,6 +639,8 @@ const CreateOrganizationForm = () => {
                   id="dateSplit"
                   className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
+                                    <option value="">Select Date Split</option>
+
                   {additionalData?.dateSplit &&
                   additionalData?.dateSplit.length > 0 ? (
                     additionalData?.dateSplit.map((item: any, index: any) => (
