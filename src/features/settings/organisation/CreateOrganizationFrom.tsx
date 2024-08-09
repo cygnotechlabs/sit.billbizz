@@ -31,7 +31,7 @@ interface InputData {
 const CreateOrganizationForm = () => {
   const [logo, setLogo] = useState<File | null>(null);
   const [additionalData, setAdditionalData] = useState<any | null>([]);
-  const [oneOrganization, setOneOrganization] = useState<any | []>([]);
+  // const [oneOrganization, setOneOrganization] = useState<any | []>([]);
   const [countryData, setcountryData] = useState<any | []>([]);
   const [currencyData, setcurrencyData] = useState<any | []>([]);
   const [stateList, setStateList] = useState<any | []>([]);
@@ -61,7 +61,7 @@ const CreateOrganizationForm = () => {
     dateSplit: "",
   });
 
-  // console.log(inputData);
+  console.log(inputData);
 
   const getDropdownList = async () => {
     try {
@@ -110,7 +110,7 @@ const CreateOrganizationForm = () => {
       });
 
       if (!error && response?.data) {
-        setOneOrganization(response.data);
+        // setOneOrganization(response.data);
         setInputData((prevData) => ({
           ...prevData,
           organizationId: response.data.organizationId,
@@ -188,7 +188,7 @@ const CreateOrganizationForm = () => {
       className=" m-4 overflow-y-scroll hide-scrollbar h-auto"
       style={{ height: "92vh" }}
     >
-      <Banner isOrganisationDetails={true} oneOrganization={oneOrganization}/>
+      <Banner/>
 
       {/* FORM */}
       <form className="text-slate-800 text-sm">
