@@ -8,17 +8,36 @@ import Button from "../../../Components/Button";
 import SearchBar from "../../../Components/SearchBar";
 import BrandModal from "../Brand/BrandModal";
 import SettingsIcons from "../../../assets/icons/SettingsIcon";
+import Category from "../Category/Category";
+import RackModal from "../Rack/RackModal";
+import NewManufacture from "../Manufature/NewManufacture";
 
 type Props = {};
 
+const items = [
+  "BOX-box",
+  "CMS-cm",
+  "DOZ-dz",
+  "GMS-gm",
+  "INC-in",
+  "KGS-kg",
+  "FTS-ft",
+  "GMS-gm",
+];
+
 const AddItem = ({}: Props) => {
-const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
   const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
   const [isService, setIsService] = useState<boolean>(false);
+  const [isRackModalOpen, setIsRackModalOpen] = useState(false);
   const [searchValue, setSearchValue] = useState<string>("");
-  const [openDropdownIndex, setOpenDropdownIndex] = useState<string | null>(null);
+  const [openDropdownIndex, setOpenDropdownIndex] = useState<string | null>(
+    null
+  );
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isManufatureModalOpen, setIsManufatureModalOpen] = useState(false);
 
   const toggleDropdown = (key: string | null) => {
     setOpenDropdownIndex(key === openDropdownIndex ? null : key);
@@ -45,17 +64,6 @@ const [selected, setSelected] = useState<string | null>(null);
     };
   }, [openDropdownIndex]);
 
-  const openBrandModal = () => {
-    setIsBrandModalOpen(true);
-  };
-
-  const closeBrandModal = () => {
-    setIsBrandModalOpen(false);
-  };
-
-
-  
-
   return (
     <>
       <div className="bg-white mx-5 p-6 rounded-lg h-[80vh] overflow-scroll hide-scrollbar">
@@ -73,22 +81,25 @@ const [selected, setSelected] = useState<string | null>(null);
         <div className="grid grid-cols-12 gap-4 my-6">
           <div className="col-span-2 border border-inputBorder border-dashed rounded-lg  items-center justify-center flex text-center p-6 ">
             <div>
-              <div className="bg-lightPink flex items-center justify-center h-24 w-44 rounded-lg">
-                <div className="flex gap-4">
-                  <div className="bg-darkRed rounded-full flex h-6 w-6 items-center justify-center">
-                    <Plus color={"white"} classname="h-5 " />
+              <label htmlFor="image">
+                <div className="bg-lightPink flex items-center justify-center h-24 w-44 rounded-lg">
+                  <div className="flex gap-4">
+                    <div className="bg-darkRed rounded-full flex h-6 w-6 items-center justify-center">
+                      <Plus color={"white"} classname="h-5 " />
+                    </div>
+                    <p>Add Image</p>
                   </div>
-                  <p>Add Image</p>
                 </div>
-              </div>
-              <div>
-                <p className="text-base font-extrabold text-textColor mt-2">
-                  Upload Item Image
-                </p>
-                <p className="text-xs text-[#818894] mt-1">
-                  Support : JPG, PNG
-                </p>
-              </div>
+                <div>
+                  <p className="text-base font-extrabold text-textColor mt-2">
+                    Upload Item Image
+                  </p>
+                  <p className="text-xs text-[#818894] mt-1">
+                    Support : JPG, PNG
+                  </p>
+                </div>
+                <input type="file" id="image" className="hidden" />
+              </label>
             </div>
           </div>
           <div className="col-span-10">
@@ -98,7 +109,13 @@ const [selected, setSelected] = useState<string | null>(null);
               </label>
               <div className="flex items-center space-x-4 text-textColor text-sm">
                 <div className="flex gap-2 justify-center items-center ">
-                  <div className="grid place-items-center mt-1">
+                  <div
+                    className="grid place-items-center mt-1"
+                    onClick={() => {
+                      setSelected("goods");
+                      setIsService(false);
+                    }}
+                  >
                     <input
                       id="goods"
                       type="radio"
@@ -108,10 +125,6 @@ const [selected, setSelected] = useState<string | null>(null);
                           ? "border-8 border-[#97998E]"
                           : "border-1 border-[#97998E]"
                       }`}
-                      onChange={() => {
-                        setSelected("goods");
-                        setIsService(false);
-                      }}
                       checked={selected === "goods"}
                     />
                     <div
@@ -128,7 +141,12 @@ const [selected, setSelected] = useState<string | null>(null);
                   </label>
                 </div>
                 <div className="flex gap-2  justify-center items-center">
-                  <div className="grid place-items-center mt-1">
+                  <div
+                    className="grid place-items-center mt-1"
+                    onClick={() => {
+                      setSelected("service"), setIsService(true);
+                    }}
+                  >
                     <input
                       id="service"
                       type="radio"
@@ -138,9 +156,6 @@ const [selected, setSelected] = useState<string | null>(null);
                           ? "border-8 border-[#97998E]"
                           : "border-1 border-[#97998E]"
                       }`}
-                      onChange={() => {
-                        setSelected("service"), setIsService(true);
-                      }}
                       checked={selected === "service"}
                     />
                     <div
@@ -159,34 +174,36 @@ const [selected, setSelected] = useState<string | null>(null);
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 mt-3 ">
-              <div className="col-span-4">
-                <label
-                  className="text-slate-600 text-sm"
-                  htmlFor="organizationAddress"
-                >
-                  Name
+            <div className="grid grid-cols-12 gap-4">
+              <div className="grid grid-cols-2 gap-4 mt-3 col-span-9">
+                <div className="">
+                  <label
+                    className="text-slate-600 text-sm"
+                    htmlFor="organizationAddress"
+                  >
+                    Name
+                    <input
+                      className="pl-3 text-sm w-[100%]  rounded-md text-start mt-1.5 bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                      placeholder="Name"
+                    />{" "}
+                  </label>
+                </div>
+                <div className="">
+                  <label
+                    className="text-slate-600 flex items-center gap-2"
+                    htmlFor="organizationAddress"
+                  >
+                    SKU
+                    <CircleHelp />
+                  </label>
                   <input
-                    className="pl-3 text-sm w-[100%]  rounded-md text-start mt-1.5 bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                    placeholder="Name"
+                    className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    placeholder="Select or add a customer"
+                    name=""
                   />{" "}
-                </label>
+                </div>
               </div>
-              <div className="col-span-4">
-                <label
-                  className="text-slate-600 flex items-center gap-2"
-                  htmlFor="organizationAddress"
-                >
-                  SKU
-                  <CircleHelp />
-                </label>
-                <input
-                  className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  placeholder="Select or add a customer"
-                  name=""
-                />{" "}
-              </div>
-              <div className="relative col-span-4">
+              <div className="relative col-span-3  mt-3">
                 <label
                   htmlFor="location"
                   className="text-slate-600 flex items-center gap-2"
@@ -194,19 +211,41 @@ const [selected, setSelected] = useState<string | null>(null);
                   Unit <CircleHelp />
                 </label>
                 <div className="relative w-full mt-1.5">
-                  <select
-                    name="organizationCountry"
-                    id="Location"
-                    className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  <div
+                    onClick={() => toggleDropdown("unit")}
+                    className="cursor-pointer appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   >
-                    <option value="">Select unit</option>
-
-                    <option></option>
-                  </select>
+                    <p>Select Unit</p>
+                  </div>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <CehvronDown color="gray" />
                   </div>
                 </div>
+                {openDropdownIndex === "unit" && (
+                  <div
+                    ref={dropdownRef}
+                    className="absolute z-10 bg-white    rounded-md mt-1 p-2  space-y-1 border border-inputBorder"
+                  >
+                    {items.map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex p-2 hover:bg-gray-100 cursor-pointe border-b border-slate-300 text-sm w-[268px] text-textColor "
+                      >
+                        {item}
+
+                        <div className="ml-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
+                          &times;
+                        </div>
+                      </div>
+                    ))}
+                    <div
+                      className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer"
+                    >
+                      <SettingsIcons color="darkRed" bold={2} />{" "}
+                      <p className="mt-0.5">Manage Unit</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -355,11 +394,11 @@ const [selected, setSelected] = useState<string | null>(null);
                 <div className="relative w-full mt-1.5">
                   <div
                     onClick={() => toggleDropdown("Manufacturer")}
-                    className=" appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    className="cursor-pointer appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   >
                     <p>Select or add Manufacturer</p>
                   </div>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <div className=" cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <CehvronDown color="gray" />
                   </div>
                 </div>
@@ -383,17 +422,19 @@ const [selected, setSelected] = useState<string | null>(null);
                       <div className="col-span-10 flex">
                         <div>
                           <p className="font-bold text-sm">Soney Corporation</p>
-                          <p className="text-xs text-gray-500">
-                           Lorem ipusm
-                          </p>
+                          <p className="text-xs text-gray-500">Lorem ipusm</p>
                         </div>
                         <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
                           &times;
                         </div>
                       </div>
                     </div>
-                    <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4">
-                      
+                    <div
+                      onClick={() => setIsManufatureModalOpen(true)}
+                      className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer"
+                    >
+                      <SettingsIcons color="darkRed" bold={2} />{" "}
+                      <p className="mt-0.5">Manage Manufacturer</p>
                     </div>
                   </div>
                 )}
@@ -407,9 +448,9 @@ const [selected, setSelected] = useState<string | null>(null);
                   Brand
                 </label>
                 <div className="relative w-full mt-1.5">
-                <div
+                  <div
                     onClick={() => toggleDropdown("Brand")}
-                    className=" appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    className="cursor-pointer appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   >
                     <p>Select or add Brand</p>
                   </div>
@@ -437,18 +478,19 @@ const [selected, setSelected] = useState<string | null>(null);
                       <div className="col-span-10 flex">
                         <div>
                           <p className="font-bold text-sm">Soney Corporation</p>
-                          <p className="text-xs text-gray-500">
-                           Lorem ipusm
-                          </p>
+                          <p className="text-xs text-gray-500">Lorem ipusm</p>
                         </div>
                         <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
                           &times;
                         </div>
                       </div>
                     </div>
-                    <div   onClick={openBrandModal} 
-                     className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold">
-                     <SettingsIcons color="darkRed" bold={2}/> <p className="mt-0.5">Manage Brand</p>
+                    <div
+                      onClick={() => setIsBrandModalOpen(true)}
+                      className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer"
+                    >
+                      <SettingsIcons color="darkRed" bold={2} />{" "}
+                      <p className="mt-0.5">Manage Brand</p>
                     </div>
                   </div>
                 )}
@@ -464,51 +506,52 @@ const [selected, setSelected] = useState<string | null>(null);
               Category
             </label>
             <div className="relative w-full mt-1.5">
-            <div
-                    onClick={() => toggleDropdown("category")}
-                    className=" appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  >
-                    <p>Select or add Manufacturer</p>
-                  </div>
+              <div
+                onClick={() => toggleDropdown("category")}
+                className="cursor-pointer appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+              >
+                <p>Select or add Category</p>
+              </div>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <CehvronDown color="gray" />
               </div>
             </div>
             {openDropdownIndex === "category" && (
-                  <div
-                    ref={dropdownRef}
-                    className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  w-[50%] space-y-1"
-                  >
-                    <SearchBar
-                      searchValue={searchValue}
-                      onSearchChange={setSearchValue}
-                      placeholder="Select Supplier"
+              <div
+                ref={dropdownRef}
+                className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  w-[50%] space-y-1"
+              >
+                <SearchBar
+                  searchValue={searchValue}
+                  onSearchChange={setSearchValue}
+                  placeholder="Select Supplier"
+                />
+                <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
+                  <div className="col-span-2 flex items-center justify-center">
+                    <img
+                      src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
+                      alt=""
                     />
-                    <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
-                      <div className="col-span-2 flex items-center justify-center">
-                        <img
-                          src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="col-span-10 flex">
-                        <div>
-                          <p className="font-bold text-sm">Soney Corporation</p>
-                          <p className="text-xs text-gray-500">
-                           Lorem ipusm
-                          </p>
-                        </div>
-                        <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
-                          &times;
-                        </div>
-                      </div>
+                  </div>
+                  <div className="col-span-10 flex">
+                    <div>
+                      <p className="font-bold text-sm">Soney Corporation</p>
+                      <p className="text-xs text-gray-500">Lorem ipusm</p>
                     </div>
-                    <div   onClick={openBrandModal} 
-                     className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold">
-                     <SettingsIcons color="darkRed" bold={2}/> <p className="mt-0.5">Manage Category</p>
+                    <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
+                      &times;
                     </div>
                   </div>
-                )}
+                </div>
+                <div
+                  onClick={() => setIsCategoryModalOpen(true)}
+                  className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer"
+                >
+                  <SettingsIcons color="darkRed" bold={2} />{" "}
+                  <p className="mt-0.5">Manage Category</p>
+                </div>
+              </div>
+            )}
           </div>
 
           {!isService ? (
@@ -519,16 +562,52 @@ const [selected, setSelected] = useState<string | null>(null);
               >
                 Rack
               </label>
-              <div className="relative w-full mt-1.5">
-                <select className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
-                  <option value="">Select or add Rack</option>
+              <div
+                onClick={() => toggleDropdown("Rack")}
+                className="cursor-pointer appearance-none w-full mt-1.5 items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+              >
+                <p>Select or add Rack</p>
 
-                  <option></option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 mt-6">
                   <CehvronDown color="gray" />
                 </div>
               </div>
+              {openDropdownIndex === "Rack" && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  w-[50%] space-y-1"
+                >
+                  <SearchBar
+                    searchValue={searchValue}
+                    onSearchChange={setSearchValue}
+                    placeholder="Select Supplier"
+                  />
+                  <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
+                    <div className="col-span-2 flex items-center justify-center">
+                      <img
+                        src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
+                        alt=""
+                      />
+                    </div>
+                    <div className="col-span-10 flex">
+                      <div>
+                        <p className="font-bold text-sm">Soney Corporation</p>
+                        <p className="text-xs text-gray-500">Lorem ipusm</p>
+                      </div>
+                      <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
+                        &times;
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    onClick={() => setIsRackModalOpen(true)}
+                    className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer"
+                  >
+                    <SettingsIcons color="darkRed" bold={2} />{" "}
+                    <p className="mt-0.5">Manage Rack</p>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div></div>
@@ -802,7 +881,22 @@ const [selected, setSelected] = useState<string | null>(null);
         </Button>
       </div>
       {isBrandModalOpen && (
-        <BrandModal ref={modalRef} onClose={closeBrandModal} />
+        <BrandModal ref={modalRef} onClose={() => setIsBrandModalOpen(false)} />
+      )}
+      {isCategoryModalOpen && (
+        <Category
+          isOpen={isCategoryModalOpen}
+          onClose={() => setIsCategoryModalOpen(false)}
+        />
+      )}
+      {isRackModalOpen && (
+        <RackModal ref={modalRef} onClose={() => setIsRackModalOpen(false)} />
+      )}
+      {isManufatureModalOpen && (
+        <NewManufacture
+          ref={modalRef}
+          onClose={() => setIsManufatureModalOpen(false)}
+        />
       )}
     </>
   );
