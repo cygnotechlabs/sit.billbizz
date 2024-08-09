@@ -260,9 +260,9 @@ export const preferencesList = [
 
 export const SalesList = [
   { title: "Sales Order", route: "/settings/sales-order" },
-  { title: "Shipments", route: "/settings/shipments" },
+  { title: "Shipments", route: "/settings/sales/shipments" },
   { title: "Invoices", route: "/settings/invoices" },
-  { title: "Delivery Challans", route: "/settings/delivery-challans" },
+  { title: "Delivery Challans", route: "/settings/sales/deliverychallans" },
   { title: "Credit Notes", route: "/settings/credit-notes" },
 ];
 
@@ -347,11 +347,11 @@ export const settingsList = [
     icon: shoppingCart,
     subhead: [
       { headName: "Sales Order", subRoute: "/settings/sales-order" },
-      { headName: "Shipments", subRoute: "/settings/shipments" },
+      { headName: "Shipments", subRoute: "/settings/sales/shipments" },
       { headName: "Invoices", subRoute: "/settings/invoices" },
       {
         headName: "Delivery Challans",
-        subRoute: "/settings/delivery-challans",
+        subRoute: "/settings/sales/deliverychallans",
       },
       { headName: "Credit Notes", subRoute: "/settings/credit-notes" },
     ],

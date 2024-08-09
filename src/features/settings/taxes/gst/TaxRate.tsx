@@ -2,10 +2,10 @@ import BookIcon from "../../../../assets/icons/BookIcon";
 import BookXIcon from "../../../../assets/icons/BookXIcon";
 import NewspaperIcon from "../../../../assets/icons/NewspaperIcon";
 import OpenedBookIcon from "../../../../assets/icons/OpenedBookIcon";
-import PlusCircle from "../../../../assets/icons/PlusCircle"
-import Button from "../../../../Components/Button"
 import { useState } from "react";
 import TaxRateTable from "./TaxRateTable";
+import NewTaxGroup from "./NewTaxGroup";
+import CreateNewTax from "./CreateNewTax";
 
 type Props = {}
 
@@ -39,8 +39,8 @@ function TaxRate({ }: Props) {
             <div className="flex justify-between">
                 <p className="text-textColor font-bold">Tax Rate</p>
                 <div className="flex gap-4">
-                    <Button variant="secondary" className="text-sm font-medium" size="sm"><PlusCircle color="#565148" /> New Tax Group</Button>
-                    <Button  className="text-sm font-medium" size="sm"><PlusCircle color="white" /> New Tax</Button>
+                    <NewTaxGroup/>
+                 <CreateNewTax/>
                 </div>
             </div>
 

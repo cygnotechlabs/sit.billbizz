@@ -1,8 +1,7 @@
 import BookIcon from "../../../../assets/icons/BookIcon";
-import PlusCircle from "../../../../assets/icons/PlusCircle"
-import Button from "../../../../Components/Button"
 import { useState } from "react";
 import TaxRateVatTable from "./TaxRateVatTable";
+import CreateNewTaxVat from "./CreateNewTaxVat";
 
 type Props = {}
 
@@ -19,7 +18,7 @@ function TaxRateVat({}: Props) {
         <div className="flex justify-between">
                 <p className="text-textColor font-bold">Tax Rate</p>
                 <div className="flex gap-4">
-                    <Button  className="text-sm font-medium" size="sm"><PlusCircle color="white" /> New Tax</Button>
+                   <CreateNewTaxVat/>
                 </div>
             </div>
 
