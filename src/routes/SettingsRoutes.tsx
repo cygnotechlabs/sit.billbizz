@@ -1,6 +1,9 @@
 import { RouteObject } from "react-router-dom";
 import Settings from "../pages/Settings";
 import CreateOrganizationForm from "../features/settings/CreateOrganizationFrom";
+import Currencies from "../features/settings/organization/Currencies/Currencies";
+import ExchangeRates from "../features/settings/organization/Currencies/ExchangeRates";
+
 // import Taxes from "../features/settings/taxes/Taxes";
 // import Users from "../features/settings/users/Users";
 // import Preferences from "../features/settings/preferences/Preferences";
@@ -14,6 +17,8 @@ import CreateOrganizationForm from "../features/settings/CreateOrganizationFrom"
 const SettingsRoutes: RouteObject[] = [
   { path: "/settings", element: <Settings /> },
   { path: "/settings/organization", element: <CreateOrganizationForm /> },
+  { path: "/settings/organization/currencies", element: <Currencies /> },
+  {path:"/settings/currencies/exchange-rates",element:<ExchangeRates/>},
   //   { path: "/settings/taxes", element: <Taxes /> },
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },
