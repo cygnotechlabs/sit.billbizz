@@ -133,6 +133,7 @@ const CreateOrganizationForm = () => {
     e: ChangeEvent<HTMLInputElement>,
     key: "organizationLogo"
   ) => {
+
     const file = e.target.files?.[0];
     if (file) {
       if (key === "organizationLogo") setLogo(file);
@@ -187,7 +188,7 @@ const CreateOrganizationForm = () => {
       className=" m-4 overflow-y-scroll hide-scrollbar h-auto"
       style={{ height: "92vh" }}
     >
-      <Banner />
+      <Banner seeOrgDetails />
 
       {/* FORM */}
       <form className="text-slate-800 text-sm">
@@ -254,7 +255,7 @@ const CreateOrganizationForm = () => {
                       </option>
                     ))
                   ) : (
-                    <option disabled>No countries available</option>
+                    <option disabled></option>
                   )}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -360,7 +361,7 @@ const CreateOrganizationForm = () => {
                   className="text-slate-600 "
                   htmlFor="organizationAddress"
                 >
-                  State/ Region/ County
+                  State / Region / County
                 </label>
               </div>
               <div className="relative w-full mt-2">
@@ -405,7 +406,7 @@ const CreateOrganizationForm = () => {
                     id="phoneCode"
                     className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   >
-                    <option value="">+91</option>
+                    <option value="">{phoneCodeList.length>0?phoneCodeList:"+91"}</option>
                   </select>
 
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -665,12 +666,10 @@ const CreateOrganizationForm = () => {
             size="sm"
             onClick={(e) => handleCreateOrganization(e)}
           >
-            {" "}
             Save
           </Button>
 
           <Button variant="secondary" size="sm">
-            {" "}
             Cancel
           </Button>
         </div>
