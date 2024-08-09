@@ -346,7 +346,7 @@ export const settingsList = [
     nav: "Sales",
     icon: shoppingCart,
     subhead: [
-      { headName: "Sales Order", subRoute: "/settings/sales-order" },
+      { headName: "Sales Order", subRoute: "/settings/sales/salesOrder" },
       { headName: "Shipments", subRoute: "/settings/sales/shipments" },
       { headName: "Invoices", subRoute: "/settings/invoices" },
       {
