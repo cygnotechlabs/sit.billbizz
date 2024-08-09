@@ -7,6 +7,7 @@ import GSTComponent from "../features/settings/taxes/gst/GSTComponent";
 import VATComponent from "../features/settings/taxes/vat/VATComponent";
 import Shipments from "../features/settings/sales/shipments/Shipments";
 import DeliveryChallans from "../features/settings/sales/deliveryChallans/DeliveryChallans";
+import Items from "../features/settings/items/Items";
 
 
 // import Users from "../features/settings/users/Users";
@@ -27,6 +28,7 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings/taxes/VAT", element: <VATComponent /> },
   { path: "/settings/sales/shipments", element: <Shipments /> },
   { path: "/settings/sales/deliverychallans", element: <DeliveryChallans /> },
+  { path: "/settings/items/item",element:<Items/>}
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },
   //   { path: "/settings/sales", element: <Sales /> },

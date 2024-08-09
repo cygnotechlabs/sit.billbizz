@@ -113,7 +113,7 @@ function InvoiceSettings({}: Props) {
   }, [paymentTerms]);
 
   return (
-    <div className='mx-5 my-3 '>
+    <div className='m-4 '>
       <Banner/>
       {/* Org Adresss format */}
       <div className='space-y-4 text-sm text-[#303F58]'>

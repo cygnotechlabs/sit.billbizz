@@ -49,7 +49,7 @@ const settingsData: Setting[] = [
     title: "Items",
     description: "Manage item settings",
     imageUrl: "url-to-items-image",
-    route: "/settings/items",
+    route: "/settings/items/item",
   },
   {
     title: "Online Payments",

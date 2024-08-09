@@ -4,10 +4,11 @@ type Props = {
   color: string;
   height?: number;
   width?: number;
+  bold?:number;
   className?: string;
 };
 
-const CehvronDown: React.FC<Props> = ({ color, height, width, className }) => {
+const CehvronDown: React.FC<Props> = ({ color, height, width,bold, className }) => {
   return (
     <div>
       <svg
@@ -21,7 +22,7 @@ const CehvronDown: React.FC<Props> = ({ color, height, width, className }) => {
         <path
           d="M6 9L12 15L18 9"
           stroke={color}
-          strokeWidth="2"
+          strokeWidth={bold||"2"}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
