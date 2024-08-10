@@ -75,16 +75,16 @@ function Items({}: Props) {
             <p className="font-bold ">Duplicate Item Name</p>
             <div className='flex items-center space-x-2 mt-3'>
           <input onChange={(e)=>setEnableCheckBox({...enableCheckBox,allowDuplicateItem:e.target.checked})} type="checkbox" id='customCheckbox' />
-          <label className=' font-medium'>Allow duplicate item names</label>
+          <label className=' font-medium  '>Allow duplicate item names</label>
           </div>
-          <p >If you allow duplicate item names, all imports involving items will use SKU as the primary field for mapping</p>
+          <p className="text-[#818894]">If you allow duplicate item names, all imports involving items will use SKU as the primary field for mapping</p>
         </div>
         {/* HSN Code or SAC */}
         <div className="bg-white  w-full p-6 text-[14px] rounded-lg space-y-4">
             <p className="font-bold ">HSN Code or SAC </p>
             <div className='flex items-center space-x-2 mt-3'>
           <input type="checkbox" id='customCheckbox' onChange={(e)=>setEnableCheckBox({...enableCheckBox,hsnCode:e.target.checked})}/>
-          <label className=' font-medium'>Enable the HSN Code or SAC field</label>
+          <label >Enable the HSN Code or SAC field</label>
           </div>
           {enableCheckBox.hsnCode&&<>
             <div className="flex gap-1  items-center mt-3">
@@ -115,7 +115,7 @@ function Items({}: Props) {
                   <span className="font-semibold">4-Digit HSN Code or SAC</span> 
                 </label>
                </div>
-               <p className="w-[82%] text-[13px]">Select this option if your business’s annual turnover was less than 5crores in the previous year. The 4-digit HSN Code or SAC is mandatory 
+               <p className="w-[82%] text-[13px] text-[#818894]">Select this option if your business’s annual turnover was less than 5crores in the previous year. The 4-digit HSN Code or SAC is mandatory 
                for B2B,SEZ Export or Deemed Export tax invoices and optional for B2C tax invoices.</p>
               <div className="flex gap-1  items-center -mt-2">
                 <div onClick={() => {
@@ -145,7 +145,7 @@ function Items({}: Props) {
                   <span className="font-semibold">6-Digit HSN Code or SAC</span>
                 </label>
                </div>
-               <p className="text-[13px]">Select this option if your business’s annual turnover was more than 5crores in the previous year. The 6-digit HSN Code or SAC is mandatory invoices.</p>
+               <p className="text-[13px] text-[#818894]">Select this option if your business’s annual turnover was more than 5crores in the previous year. The 6-digit HSN Code or SAC is mandatory invoices.</p>
           </>}
         </div>
         {/* Price List */}
@@ -153,15 +153,15 @@ function Items({}: Props) {
             <p className="font-bold ">Price List</p>
             <div className='flex items-center space-x-2 mt-3'>
           <input onChange={(e)=>setEnableCheckBox({...enableCheckBox,priceList:e.target.checked})} type="checkbox" id='customCheckbox' />
-          <label className=' font-medium'>Enable Price List</label>
+          <label >Enable Price List</label>
           </div>
-          <p >Price Lists enables you to customise the rates of the items in your sales and purchase transactions</p>
+          <p className="text-[#818894]">Price Lists enables you to customise the rates of the items in your sales and purchase transactions</p>
           {enableCheckBox.priceList&&<>
           <div className='flex items-center space-x-2 mt-3'>
           <input onChange={(e)=>setEnableCheckBox({...enableCheckBox,applyPriceListLineTimeLevel:e.target.checked})} type="checkbox" id='customCheckbox' />
-          <label className=' font-medium'>Apply price list at line time level</label>
+          <label >Apply price list at line time level</label>
           </div>
-          <p >Select this option if you want to apply different price lists for each line item.</p>
+          <p className="text-[#818894]">Select this option if you want to apply different price lists for each line item.</p>
           </>}
         </div>
         {/* Composite Items */}
@@ -169,7 +169,7 @@ function Items({}: Props) {
             <p className="font-bold ">Composite Items</p>
             <div className='flex items-center space-x-2 mt-3'>
           <input onChange={(e)=>setEnableCheckBox({...enableCheckBox,compositeItems:e.target.checked})} type="checkbox" id='customCheckbox' />
-          <label className=' font-medium'>Enable Composite Items</label>
+          <label >Enable Composite Items</label>
           </div>
         </div>
         {/* Advanced Inventory Tracking */}
@@ -177,15 +177,15 @@ function Items({}: Props) {
             <p className="font-bold ">Advanced Inventory Tracking </p>
             <div className='flex items-center space-x-2 mt-3'>
           <input onChange={(e)=>setEnableCheckBox({...enableCheckBox,preventStock:e.target.checked})} type="checkbox" id='customCheckbox' />
-          <label className=' font-medium'>Prevent stock from going below zero</label>
+          <label >Prevent stock from going below zero</label>
             </div>
             <div className='flex items-center space-x-2 mt-3'>
           <input onChange={(e)=>setEnableCheckBox({...enableCheckBox,showOutOfStock:e.target.checked})} type="checkbox" id='customCheckbox' />
-          <label className=' font-medium'>Show an Out of Stock warning when an item's stock drops below zero </label>
+          <label >Show an Out of Stock warning when an item's stock drops below zero </label>
             </div>
             <div className='flex items-center space-x-2 mt-3'>
           <input onChange={(e)=>setEnableCheckBox({...enableCheckBox,quantityReachesReorderPoint:e.target.checked})} type="checkbox" id='customCheckbox' />
-          <label className=' font-medium'>Notify me if an item's quantity reaches the reorder point</label>
+          <label >Notify me if an item's quantity reaches the reorder point</label>
           
             </div>
             {enableCheckBox.quantityReachesReorderPoint&&<div className="mt-2 space-y-2">
@@ -212,7 +212,7 @@ function Items({}: Props) {
           </div>}
             <div className='flex items-center space-x-2 mt-3'>
           <input onChange={(e)=>setEnableCheckBox({...enableCheckBox,trackLandedCost:e.target.checked})} type="checkbox" id='customCheckbox' />
-          <label className=' font-medium'>Track landed cost on items</label>
+          <label >Track landed cost on items</label>
             </div>
         </div>
         <Button
