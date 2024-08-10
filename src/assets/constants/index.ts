@@ -260,9 +260,9 @@ export const preferencesList = [
 
 export const SalesList = [
   { title: "Sales Order", route: "/settings/sales-order" },
-  { title: "Shipments", route: "/settings/shipments" },
+  { title: "Shipments", route: "/settings/sales/shipments" },
   { title: "Invoices", route: "/settings/sales/invoices" },
-  { title: "Delivery Challans", route: "/settings/delivery-challans" },
+  { title: "Delivery Challans", route: "/settings/sales/deliverychallans" },
   { title: "Credit Notes", route: "/settings/credit-notes" },
 ];
 
@@ -323,7 +323,7 @@ export const settingsList = [
     subhead: [
       { headName: "Profile", subRoute: "/settings/organization/profile" },
       { headName: "Invoice", subRoute: "/settings/organization/invoice" },
-      { headName: "Currencies", subRoute: "/settings/currencies" },
+      { headName: "Currencies", subRoute: "/settings/organization/currencies" },
     ],
   },
   {
@@ -346,14 +346,14 @@ export const settingsList = [
     nav: "Sales",
     icon: shoppingCart,
     subhead: [
-      { headName: "Sales Order", subRoute: "/settings/sales-order" },
-      { headName: "Shipments", subRoute: "/settings/shipments" },
+      { headName: "Sales Order", subRoute: "/settings/sales/salesOrder" },
+      { headName: "Shipments", subRoute: "/settings/sales/shipments" },
       { headName: "Invoices", subRoute: "/settings/sales/invoices" },
       {
         headName: "Delivery Challans",
-        subRoute: "/settings/delivery-challans",
+        subRoute: "/settings/sales/deliverychallans",
       },
-      { headName: "Credit Notes", subRoute: "/settings/credit-notes" },
+      { headName: "Credit Notes", subRoute: "/settings/sales/CreditNotes" },
     ],
   },
   {

@@ -1,13 +1,19 @@
 import { RouteObject } from "react-router-dom";
 import Settings from "../pages/Settings";
+import Currencies from "../features/settings/organisation/Currencies/Currencies";
+import ExchangeRates from "../features/settings/organisation/Currencies/ExchangeRates";
 import CreateOrganizationForm from "../features/settings/organisation/CreateOrganizationFrom";
 import InvoiceSettings from "../features/settings/organisation/InvoiceSettings";
 import Taxes from "../features/settings/taxes/Taxes";
 import GSTComponent from "../features/settings/taxes/gst/GSTComponent";
 import VATComponent from "../features/settings/taxes/vat/VATComponent";
+import Shipments from "../features/settings/sales/shipments/Shipments";
+import DeliveryChallans from "../features/settings/sales/deliveryChallans/DeliveryChallans";
 import Items from "../features/settings/items/Items";
 import Invoices from "../features/settings/sales/invoice/Invoices";
 
+import SalesOrder from "../features/settings/sales/salesOrder/SalesOrder";
+import CreditNotes from "../features/settings/sales/creditnote/CreditNotes";
 
 // import Users from "../features/settings/users/Users";
 // import Preferences from "../features/settings/preferences/Preferences";
@@ -20,16 +26,33 @@ import Invoices from "../features/settings/sales/invoice/Invoices";
 
 const SettingsRoutes: RouteObject[] = [
   { path: "/settings", element: <Settings /> },
-  { path: "/settings/organization/profile", element: <CreateOrganizationForm /> },
-  { path: "/settings/organization/invoice", element: <InvoiceSettings/> },
+  {
+    path: "/settings/organization/profile",
+    element: <CreateOrganizationForm />,
+  },
+  { path: "/settings/organization/invoice", element: <InvoiceSettings /> },
+  { path: "/settings/organization", element: <CreateOrganizationForm /> },
+  { path: "/settings/organization/currencies", element: <Currencies /> },
+  { path: "/settings/currencies/exchange-rates", element: <ExchangeRates /> },
+  //   { path: "/settings/taxes", element: <Taxes /> },
+  {
+    path: "/settings/organization/profile",
+    element: <CreateOrganizationForm />,
+  },
+  { path: "/settings/organization/invoice", element: <InvoiceSettings /> },
   { path: "/settings/taxes", element: <Taxes /> },
   { path: "/settings/taxes/GST", element: <GSTComponent /> },
   { path: "/settings/taxes/VAT", element: <VATComponent /> },
   { path: "/settings/items/item",element:<Items/>},
-  { path: "/settings/sales/invoices",element:<Invoices/>}
+  { path: "/settings/sales/invoices",element:<Invoices/>},
+  { path: "/settings/sales/shipments", element: <Shipments /> },
+  { path: "/settings/sales/deliverychallans", element: <DeliveryChallans /> },
+  { path: "/settings/items/item", element: <Items /> },
+  { path: "/settings/sales/salesOrder", element: <SalesOrder /> },
+  { path: "/settings/sales/CreditNotes", element: <CreditNotes /> },
+  { path: "/settings/items/item", element: <Items /> },
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },
-  //   { path: "/settings/sales", element: <Sales /> },
   //   { path: "/settings/purchases", element: <Purchases /> },
   //   { path: "/settings/items", element: <Items /> },
   //   { path: "/settings/online-payments", element: <OnlinePayments /> },

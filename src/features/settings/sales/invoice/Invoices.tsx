@@ -29,7 +29,7 @@ function Invoices({}: Props) {
   return (
     <div className="m-4 pb-5 text-[#303F58]">
         <Banner />
-        <p className="text-[20px] font-bold mt-3">Item</p>
+        <p className="text-[20px] font-bold mt-3">Invoices</p>
         <div className="space-y-4 mt-2">
         <div className="bg-white  w-full p-6 text-[14px] rounded-lg space-y-3">
             <div className='flex items-center space-x-2 '>
@@ -210,10 +210,21 @@ function Invoices({}: Props) {
             <p>Enable and configure the QR code you want to display on the PDF copy of an Invoice. Your customers can scan the QR code using their device to access the URL or other information that you configure.</p>
             </div>
         </div>
-        {/*  */}
-        <div className="bg-white  w-full p-6 text-[14px] rounded-lg space-y-3">
-        <p className="font-bold ">Invoice QR Code</p>
-        
+        {/* Terms & Condition */}
+        <div className="bg-white  w-full p-6 text-[14px] rounded-lg space-y-2">
+        <p className="font-bold text-textColor text-sm ">Terms & Condition</p>
+        <textarea
+          className="w-full h-32 p-3 border focus:outline-none focus:border-[#820000] border-inputBorder rounded-lg resize-none"
+        />
+        <p className="text-[12px] text-[#8F99A9]">Payment should be pay before due date</p>
+        </div>
+        {/* Terms & Condition */}
+        <div className="bg-white  w-full p-6 text-[14px] rounded-lg space-y-2">
+        <p className="font-bold text-textColor text-sm ">Customer Notes</p>
+        <textarea
+          className="w-full h-32 p-3 border focus:outline-none focus:border-[#820000] border-inputBorder rounded-lg resize-none"
+        />
+        <p className="text-[12px] text-[#8F99A9]">Thank you for your payment.You just made our day</p>
         </div>
         </div>
     </div>
