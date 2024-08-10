@@ -261,7 +261,7 @@ export const preferencesList = [
 export const SalesList = [
   { title: "Sales Order", route: "/settings/sales-order" },
   { title: "Shipments", route: "/settings/shipments" },
-  { title: "Invoices", route: "/settings/invoices" },
+  { title: "Invoices", route: "/settings/sales/invoices" },
   { title: "Delivery Challans", route: "/settings/delivery-challans" },
   { title: "Credit Notes", route: "/settings/credit-notes" },
 ];
@@ -348,7 +348,7 @@ export const settingsList = [
     subhead: [
       { headName: "Sales Order", subRoute: "/settings/sales-order" },
       { headName: "Shipments", subRoute: "/settings/shipments" },
-      { headName: "Invoices", subRoute: "/settings/invoices" },
+      { headName: "Invoices", subRoute: "/settings/sales/invoices" },
       {
         headName: "Delivery Challans",
         subRoute: "/settings/delivery-challans",

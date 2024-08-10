@@ -53,7 +53,7 @@ const AddItem = ({}: Props) => {
               </label>
               <div className="flex items-center space-x-4 text-textColor text-sm">
                 <div className="flex gap-2 justify-center items-center ">
-                  <div className="grid place-items-center mt-1">
+                  <div  className="grid place-items-center mt-1">
                     <input
                       id="goods"
                       type="radio"
@@ -63,7 +63,7 @@ const AddItem = ({}: Props) => {
                           ? "border-8 border-[#97998E]"
                           : "border-1 border-[#97998E]"
                       }`}
-                      onChange={() => setSelected("goods")}
+                      
                       checked={selected === "goods"}
                     />
                     <div

@@ -3,9 +3,11 @@ import bgImage from "../../../assets/Images/Group 37 (1).png";
 import { endponits } from "../../../Services/apiEndpoints";
 import useApi from "../../../Hooks/useApi";
 
-type Props = {};
+type Props = {
+  seeOrgDetails?:boolean
+};
 
-function Banner({  }: Props) {
+function Banner({ seeOrgDetails }: Props) {
   const [oneOrganization, setOneOrganization] = useState<any | []>([]);
 
   const { request: getOneOrganization } = useApi("put", 5004);
@@ -31,7 +33,7 @@ function Banner({  }: Props) {
 
   return (
     <div className="bg-[#F7E7CE] rounded-md flex h-[148px]">
-      {oneOrganization && (
+      { seeOrgDetails&&oneOrganization&& (
         <div className="ms-2 p-2 text-center mt-3 items-center flex">
           <div>
             <p className="bg-gray text-sm w-fit text-yellow-50 rounded-md p-2">

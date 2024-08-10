@@ -188,7 +188,7 @@ const CreateOrganizationForm = () => {
       className=" m-4 overflow-y-scroll hide-scrollbar h-auto"
       style={{ height: "92vh" }}
     >
-      <Banner/>
+      <Banner seeOrgDetails/>
 
       {/* FORM */}
       <form className="text-slate-800 text-sm">

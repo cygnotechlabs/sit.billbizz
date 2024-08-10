@@ -6,6 +6,7 @@ import Taxes from "../features/settings/taxes/Taxes";
 import GSTComponent from "../features/settings/taxes/gst/GSTComponent";
 import VATComponent from "../features/settings/taxes/vat/VATComponent";
 import Items from "../features/settings/items/Items";
+import Invoices from "../features/settings/sales/invoice/Invoices";
 
 
 // import Users from "../features/settings/users/Users";
@@ -24,7 +25,8 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings/taxes", element: <Taxes /> },
   { path: "/settings/taxes/GST", element: <GSTComponent /> },
   { path: "/settings/taxes/VAT", element: <VATComponent /> },
-  { path: "/settings/items/item",element:<Items/>}
+  { path: "/settings/items/item",element:<Items/>},
+  { path: "/settings/sales/invoices",element:<Invoices/>}
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },
   //   { path: "/settings/sales", element: <Sales /> },
