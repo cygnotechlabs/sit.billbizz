@@ -7,7 +7,7 @@ import Banner from "../../banner/Banner";
 type Props = {}
 
 function Invoices({}: Props) {
-    const [isGstRegistered,setIsGstRegistered]=useState(false)
+    const [isInvoiceQR,setIsInvoiceQR]=useState(false)
     const [invoiceURLDropdown,setInvoiceURLDropdown]=useState(false)
     const [selectedRadio, setSelectedRadio] = useState({
         invoiceOrderNumber:"salesOrderNumber"
@@ -24,7 +24,7 @@ function Invoices({}: Props) {
         // quantityReachesReorderPoint:false,
         // trackLandedCost:false 
       })
-
+      
       
   return (
     <div className="m-4 pb-5 text-[#303F58]">
@@ -116,14 +116,14 @@ function Invoices({}: Props) {
             <p>Enable and configure the QR code you want to display on the PDF copy of an Invoice. Your customers can scan the QR code using their device to access the URL or other information that you configure.</p>
             <label className="flex items-center cursor-pointer">
             <div className="relative">
-              <input type="checkbox" className="sr-only" checked={isGstRegistered} onChange={()=>setIsGstRegistered(!isGstRegistered)} />
-              <div className={`w-9 h-5 rounded-full shadow-inner transition-colors ${isGstRegistered ? 'bg-checkBox' : 'bg-dropdownBorder'}`}></div>
-              <div className={`dot absolute w-3 h-3 bg-white rounded-full top-1 transition-transform ${isGstRegistered ? 'transform translate-x-full left-2' : 'left-1'}`}></div>
+              <input type="checkbox" className="sr-only" checked={isInvoiceQR} onChange={()=>setIsInvoiceQR(!isInvoiceQR)} />
+              <div className={`w-9 h-5 rounded-full shadow-inner transition-colors ${isInvoiceQR ? 'bg-checkBox' : 'bg-dropdownBorder'}`}></div>
+              <div className={`dot absolute w-3 h-3 bg-white rounded-full top-1 transition-transform ${isInvoiceQR ? 'transform translate-x-full left-2' : 'left-1'}`}></div>
             </div>
-            <div className="ml-2 text-textColor font-bold text-sm">{isGstRegistered ? 'Enabled' : 'Disabled'}</div>
+            <div className="ml-2 text-textColor font-bold text-sm">{isInvoiceQR ? 'Enabled' : 'Disabled'}</div>
           </label>        
         </div>
-        {isGstRegistered&&
+        {isInvoiceQR&&
             <div className="grid grid-cols-12 items-center gap-3">
                  <div className="relative col-span-4">
   <label htmlFor="qrCodeType" className="text-slate-600">
