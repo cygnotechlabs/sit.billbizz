@@ -1,7 +1,5 @@
-import Pen from "../../../../assets/icons/Pen";
-import Trash2 from "../../../../assets/icons/Trash2";
-import TrashCan from "../../../../assets/icons/TrashCan";
 import { Link } from "react-router-dom";
+import Trash2 from "../../../../assets/icons/Trash2";
  
  
  
