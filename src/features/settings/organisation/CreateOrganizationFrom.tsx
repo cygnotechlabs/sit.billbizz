@@ -237,7 +237,7 @@ const CreateOrganizationForm = () => {
           <div className="grid grid-cols-2 gap-4 ">
             <div className="relative ">
               <label htmlFor="location" className="text-slate-600">
-                Oganization Location
+                Organization Location
               </label>
               <div className="relative w-full mt-3">
                 <select
