@@ -2,21 +2,23 @@ import { useEffect, useState } from "react";
 import bgImage from "../../../assets/Images/Group 37 (1).png";
 import { endponits } from "../../../Services/apiEndpoints";
 import useApi from "../../../Hooks/useApi";
-
-type Props = {};
-
-function Banner({  }: Props) {
+ 
+type Props = {
+  seeOrgDetails?:boolean
+};
+ 
+function Banner({ seeOrgDetails }: Props) {
   const [oneOrganization, setOneOrganization] = useState<any | []>([]);
-
+ 
   const { request: getOneOrganization } = useApi("put", 5004);
-
+ 
   const getOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
       const { response, error } = await getOneOrganization(url, {
         organizationId: "INDORG0001",
       });
-
+ 
       if (!error && response?.data) {
         setOneOrganization(response.data);
       }
@@ -24,14 +26,14 @@ function Banner({  }: Props) {
       console.error("Error fetching organization:", error);
     }
   };
-
+ 
   useEffect(()=>{
     getOrganization();
   },[])
-
+ 
   return (
     <div className="bg-[#F7E7CE] rounded-md flex h-[148px]">
-      {oneOrganization && (
+      { seeOrgDetails&&oneOrganization&& (
         <div className="ms-2 p-2 text-center mt-3 items-center flex">
           <div>
             <p className="bg-gray text-sm w-fit text-yellow-50 rounded-md p-2">
@@ -54,5 +56,6 @@ function Banner({  }: Props) {
     </div>
   );
 }
-
+ 
 export default Banner;
+ 

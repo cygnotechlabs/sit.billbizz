@@ -8,6 +8,9 @@ import VATComponent from "../features/settings/taxes/vat/VATComponent";
 import Shipments from "../features/settings/sales/shipments/Shipments";
 import DeliveryChallans from "../features/settings/sales/deliveryChallans/DeliveryChallans";
 import Items from "../features/settings/items/Items";
+import Rewards from "../features/settings/rewards/Rewards";
+import RefferAndEarn from "../features/settings/rewards/RefferAndEarn";
+import MembershipCard from "../features/settings/rewards/MembershipCard";
 
 
 // import Users from "../features/settings/users/Users";
@@ -28,7 +31,10 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings/taxes/VAT", element: <VATComponent /> },
   { path: "/settings/sales/shipments", element: <Shipments /> },
   { path: "/settings/sales/deliverychallans", element: <DeliveryChallans /> },
-  { path: "/settings/items/item",element:<Items/>}
+  { path: "/settings/items/item",element:<Items/>},
+  { path: "/settings/rewards",element:<Rewards/>},
+  { path: "/settings/rewards/refferandearn",element:<RefferAndEarn/>},
+  { path: "/settings/rewards/membershipcard",element:<MembershipCard/>},
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },
   //   { path: "/settings/sales", element: <Sales /> },
