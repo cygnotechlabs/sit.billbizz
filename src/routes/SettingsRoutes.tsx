@@ -14,6 +14,7 @@ import Invoices from "../features/settings/sales/invoice/Invoices";
 
 import SalesOrder from "../features/settings/sales/salesOrder/SalesOrder";
 import CreditNotes from "../features/settings/sales/creditnote/CreditNotes";
+import PurchaseOrders from "../features/settings/Purcahse/PuchaseOrder";
 
 // import Users from "../features/settings/users/Users";
 // import Preferences from "../features/settings/preferences/Preferences";
@@ -43,6 +44,7 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings/items/item", element: <Items /> },
   { path: "/settings/sales/salesOrder", element: <SalesOrder /> },
   { path: "/settings/sales/CreditNotes", element: <CreditNotes /> },
+  { path: "/settings/purchase/puschaseOrder", element: <PurchaseOrders /> },
 
 
   //   { path: "/settings/users", element: <Users /> },

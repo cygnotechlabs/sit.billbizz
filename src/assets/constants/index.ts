@@ -360,7 +360,10 @@ export const settingsList = [
     nav: "Purchases",
     icon: shoppingBag,
     subhead: [
-      { headName: "Purchase Orders", subRoute: "/settings/purchase-orders" },
+      {
+        headName: "Purchase Orders",
+        subRoute: "/settings/purchase/puschaseOrder",
+      },
       { headName: "Expense", subRoute: "/settings/expense" },
     ],
   },
