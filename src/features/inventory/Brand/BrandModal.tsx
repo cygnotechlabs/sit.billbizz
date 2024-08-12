@@ -49,7 +49,7 @@ type BrandData = {
 
 const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
   ({ onClose }, ref) => {
-    const { request: fetchAllBrands } = useApi("get", 5004);
+    const { request: fetchAllBrands } = useApi("put", 5003);
     const { request: deleteBrandRequest } = useApi("delete", 5003);
     const { request: updateBrandRequest } = useApi("put", 5003);
     const { request: addBrandRequest } = useApi("post", 5003);
@@ -103,33 +103,27 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
       }
     };
 
-    const handleSave = async (data: {
-      _id?: string;
-      name: string;
-      description: string;
-    }) => {
+    const handleSave = async (data: { name: string; description: string }) => {
       try {
-        // Create a complete BrandData object
-        const brand: BrandData = {
-          _id: data._id || "",
+        const isEditing = Boolean(selectedBrand);
+        const brand: Partial<BrandData> = {
           name: data.name,
           description: data.description,
-          organizationId: selectedBrand?.organizationId || "default-org-id", // Replace with the actual logic to get this value
-          createdDate: selectedBrand?.createdDate || new Date().toISOString(), // Replace with appropriate value
-          updatedDate: new Date().toISOString(), // Update this as the current date
-          __v: selectedBrand?.__v || 0, // Handle versioning if needed
+          ...(isEditing && { _id: selectedBrand!._id }),
         };
 
-        const url = brand._id
-          ? `${endponits.UPDATE_BRAND(brand._id)}`
+        const url = isEditing
+          ? `${endponits.UPDATE_BRAND(selectedBrand!._id)}`
           : `${endponits.ADD_BRAND}`;
-        const apiCall = brand._id ? updateBrandRequest : addBrandRequest;
+        const apiCall = isEditing ? updateBrandRequest : addBrandRequest;
         const { response, error } = await apiCall(url, brand);
 
         if (!error && response) {
           setBrandData((prevData) =>
-            brand._id
-              ? prevData.map((b) => (b._id === brand._id ? brand : b))
+            isEditing
+              ? prevData.map((b) =>
+                  b._id === selectedBrand!._id ? { ...b, ...brand } : b
+                )
               : [...prevData, response.data]
           );
           closeEditModal();
