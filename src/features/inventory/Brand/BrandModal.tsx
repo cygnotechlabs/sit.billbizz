@@ -76,8 +76,9 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
             <div className="flex justify-end pr-3">
               <Button
                 onClick={openAddModal}
-                variant="secondary"
-                size="lg"
+                variant="primary"
+                className="text-sm"
+                size="sm"
                 style={{ height: "38px", padding: "14px" }}
               >
                 <PlusCircle color="white" />
@@ -109,8 +110,8 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
               ))}
             </div>
             <div className="flex justify-end pr-3">
-              <Button variant="secondary" size="xl">
-                <p className="p-7">Save</p>
+              <Button variant="primary" size="sm" className="text-sm">
+               Save
               </Button>
             </div>
           </div>

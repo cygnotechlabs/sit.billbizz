@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import bgImage from "../../../assets/Images/Group 37 (1).png";
 import { endponits } from "../../../Services/apiEndpoints";
 import useApi from "../../../Hooks/useApi";
- 
+
 type Props = {
-  seeOrgDetails?:boolean
+  seeOrgDetails?: boolean;
 };
- 
+
 function Banner({ seeOrgDetails }: Props) {
   const [oneOrganization, setOneOrganization] = useState<any | []>([]);
  
@@ -26,14 +26,14 @@ function Banner({ seeOrgDetails }: Props) {
       console.error("Error fetching organization:", error);
     }
   };
- 
-  useEffect(()=>{
+
+  useEffect(() => {
     getOrganization();
-  },[])
- 
+  }, []);
+
   return (
-    <div className="bg-[#F7E7CE] rounded-md flex h-[148px]">
-      { seeOrgDetails&&oneOrganization&& (
+    <div className="bg-[#F7E7CE] rounded-lg flex h-[148px]">
+      {seeOrgDetails && oneOrganization && (
         <div className="ms-2 p-2 text-center mt-3 items-center flex">
           <div>
             <p className="bg-gray text-sm w-fit text-yellow-50 rounded-md p-2">
@@ -41,7 +41,9 @@ function Banner({ seeOrgDetails }: Props) {
             </p>
             <div className="flex mt-1">
               <p className="mt-1 text-[#303F58]">
-                <b>{oneOrganization?.organizationName || "Organization Profile"}</b>
+                <b>
+                  {oneOrganization?.organizationName || "Organization Profile"}
+                </b>
               </p>
               <div className="ms-3 bg-white rounded-md p-1 text-textColor">
                 ID: {oneOrganization?.organizationId || "852749"}
