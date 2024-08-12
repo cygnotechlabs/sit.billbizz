@@ -32,11 +32,7 @@ const organizationSchema = new Schema({
   dateFormat: { type: String },
   dateSplit: { type: String },
 
-  //bankfield
-  accountHolderName: { type: String },
-  bankName: { type: String },
-  accNum: { type: String },
-  ifsc: { type: String },
+  
 
 }, { versionKey: false }); 
 

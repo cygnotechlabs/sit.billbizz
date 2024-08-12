@@ -8,7 +8,8 @@ const currencySchema = new Schema({
   currencySymbol: { type: String },
   currencyName: { type: String },
   decimalPlaces: { type: String },
-  format: { type: String },    
+  format: { type: String },
+  baseCurrency: { type: Boolean }    
 });
 
 const Currency = mongoose.model("Currency", currencySchema);

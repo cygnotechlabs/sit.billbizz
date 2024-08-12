@@ -9,36 +9,42 @@ const settingSchema = new Schema({
   organizationAddressFormat: { type: String },
 
   qrLocation: { type: String },
-  displayQrLocation: { type: String },
+  displayQrLocation: { type: Boolean },
 
   qrPayment: { type: String },
-  displayQrPayment: { type: String },
+  displayQrPayment: { type: Boolean },
 
-  digitalSignature,
-  displayDigitalSignature,
+  digitalSignature: { type: String },
+  displayDigitalSignature: { type: Boolean },
 
-  xLink,
-  displayXLink,
+  xLink: { type: String },
+  displayXLink: { type: Boolean },
 
-  instagramLink,
-  displayInstagramLink,
+  instagramLink: { type: String },
+  displayInstagramLink: { type: Boolean },
 
-  linkedinLink,
-  displayLinkedinLink,
+  linkedinLink: { type: String },
+  displayLinkedinLink: { type: Boolean },
 
-  facebookLink,
-  displayFacebookLink,
+  facebookLink: { type: String },
+  displayFacebookLink: { type: Boolean },
+  
+  //bankfield
+  accountHolderName: { type: String },
+  bankName: { type: String },
+  accNum: { type: String },
+  ifsc: { type: String },
 
   //Sales Order
-  salesOrderAddress,
-  salesOrderCustomerNote,
-  salesOrderTermsCondition,
+  salesOrderAddress: { type: String },
+  salesOrderCustomerNote: { type: String },
+  salesOrderTermsCondition: { type: String },
 
-  salesOrderClose,
-  restrictSalesOrderClose,
+  salesOrderClose: { type: String },
+  restrictSalesOrderClose: { type: String },
 
-  termCondition,
-  customerNote,
+  termCondition: { type: String },
+  customerNote: { type: String },
 
 
 

@@ -27,6 +27,7 @@ router.delete('/delete-organization/:organizationId',organizationController.dele
 
 // Setting
 
+// Currency
 router.put('/get-currency',settingController.getCurrency)
 
 router.post('/add-currency',settingController.addCurrency)
@@ -34,6 +35,51 @@ router.post('/add-currency',settingController.addCurrency)
 router.put('/edit-currency',settingController.editCurrency)
 
 router.delete('/delete-currency',settingController.deleteCurrency)
+
+
+// Invoice settings
+router.put('/add-invoice-settings',settingController.updateInvoiceSettings)
+
+router.put('/get-settings',settingController.getSettings)
+
+
+// Payment terms
+router.post('/add-payment-terms',settingController.addPaymentTerm)
+
+router.put('/edit-payment-terms/:id',settingController.editPaymentTerm)
+
+router.delete('/delete-payment-terms',settingController.deletePaymentTerm)
+
+router.get('/getAll-payment-terms',settingController.getAllPaymentTerms)
+
+
+//Tax
+router.post('/add-tax',settingController.addTax)
+
+router.put('/edit-tax',settingController.editTaxRate)
+
+router.put('/get-tax',settingController.getTax)
+
+
+//Prefix
+router.post('/add-prefix',settingController.addPrefix)
+
+router.put('/get-prefix',settingController.getPrefix)
+
+router.put('/edit-prefix',settingController.updatePrefix)
+
+router.delete('/delete-prefix',settingController.deletePrefix)
+
+router.put('/status-prefix',settingController.setPrfixSeriesStatusTrue)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -45,13 +91,15 @@ router.post('/create-client',clientController.createOrganizationAndClient)
 
 router.get('/get-all-client',clientController.getAllClient)
 
+
 router.get('/delete-all',clientController.deleteAll)
 
 
 
+//dev phase only
+router.get('/get-org-id',clientController.getOrganizationId)
 
-//Register
-// router.post('/register',userController.register)
+
 
 
 

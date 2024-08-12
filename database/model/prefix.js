@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 
-const prefixSchema = new Schema({
-  organizationId: { type: String },
-
+const seriesSchema = new Schema({
+  seriesName: { type: String },
+  status: { type: Boolean }, 
+  
   journal: { type: String },
   journalNum: { type: Number },
 
@@ -45,6 +46,12 @@ const prefixSchema = new Schema({
   deliveryChallan: { type: String },
   deliveryChallanNum: { type: Number },
 
+});
+
+const prefixSchema = new Schema({
+  
+  organizationId: { type: String },  
+  series: [seriesSchema],   
 
 });
 

@@ -6,8 +6,10 @@ const Account = require("../database/model/account")
 const Currency = require("../database/model/currency")
 const Journal = require("../database/model/journal");
 const TrialBalance = require("../database/model/trialBalance");
+const Setting = require("../database/model/settings");
 const PaymentTerms = require("../database/model/paymentTerm");
 const Role = require('../database/model/role');
+const Tax = require('../database/model/tax');
 const bcrypt = require('bcrypt');
 
 
@@ -239,11 +241,12 @@ const createRolesForOrganization = async (organizationId) => {
   }
 };
 
+
 // Auto create Currency
 const createCurrencyForOrganization = async (organizationId) => {
   try {
     
-    // Check if the roles already exist for the organization
+    // Check if the Currency already exist for the organization
     const existingRoles = await Currency.find({ organizationId:organizationId });
     
     if (existingRoles.length > 0) {
@@ -251,19 +254,19 @@ const createCurrencyForOrganization = async (organizationId) => {
       return { success: true, message: "Currency already exist for this organization." };
     }
 
-    // Create admin and staff roles
+    // Create Currency 
     const currencies = [
-      { organizationId, currencyCode: 'AED',currencySymbol: 'AED',currencyName: 'UAE Dirham',decimalPlaces: '2',format: '1,234,567.89'},
-      { organizationId, currencyCode: 'AUD',currencySymbol: '$',currencyName: 'Australian Dollar',decimalPlaces: '2',format: '1,234,567.89'},
-      { organizationId, currencyCode: 'CAD',currencySymbol: '$',currencyName: 'Canadian Dollar',decimalPlaces: '2',format: '1,234,567.89'},
-      { organizationId, currencyCode: 'CNY',currencySymbol: 'CNY',currencyName: 'Yuan Renminbi',decimalPlaces: '2',format: '1,234,567.89'},
-      { organizationId, currencyCode: 'EUR',currencySymbol: '€',currencyName: 'Euro',decimalPlaces: '2',format: '1,234,567.89'},
-      { organizationId, currencyCode: 'GBP',currencySymbol: '£',currencyName: 'Pound Sterling',decimalPlaces: '2',format: '1,234,567.89'},
-      { organizationId, currencyCode: 'INR',currencySymbol: '₹',currencyName: 'Indian Rupee',decimalPlaces: '2',format: '1,234,567.89'},
-      { organizationId, currencyCode: 'JPY',currencySymbol: '¥',currencyName: 'Japanese Yen',decimalPlaces: '2',format: '1,234,567.89'},
-      { organizationId, currencyCode: 'SAR',currencySymbol: 'SAR',currencyName: 'Saudi Riyal',decimalPlaces: '2',format: '1,234,567.89'},
-      { organizationId, currencyCode: 'USD',currencySymbol: '$',currencyName: 'United States Dollar',decimalPlaces: '2',format: '1,234,567.89'},
-      { organizationId, currencyCode: 'ZAR',currencySymbol: 'R',currencyName: 'South African Rand',decimalPlaces: '2',format: '1,234,567.89'}
+      { organizationId, currencyCode: 'AED',currencySymbol: 'AED',currencyName: 'UAE Dirham',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false},
+      { organizationId, currencyCode: 'AUD',currencySymbol: '$',currencyName: 'Australian Dollar',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false},
+      { organizationId, currencyCode: 'CAD',currencySymbol: '$',currencyName: 'Canadian Dollar',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false},
+      { organizationId, currencyCode: 'CNY',currencySymbol: 'CNY',currencyName: 'Yuan Renminbi',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false},
+      { organizationId, currencyCode: 'EUR',currencySymbol: '€',currencyName: 'Euro',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false},
+      { organizationId, currencyCode: 'GBP',currencySymbol: '£',currencyName: 'Pound Sterling',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false},
+      { organizationId, currencyCode: 'INR',currencySymbol: '₹',currencyName: 'Indian Rupee',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false},
+      { organizationId, currencyCode: 'JPY',currencySymbol: '¥',currencyName: 'Japanese Yen',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false},
+      { organizationId, currencyCode: 'SAR',currencySymbol: 'SAR',currencyName: 'Saudi Riyal',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false},
+      { organizationId, currencyCode: 'USD',currencySymbol: '$',currencyName: 'United States Dollar',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false},
+      { organizationId, currencyCode: 'ZAR',currencySymbol: 'R',currencyName: 'South African Rand',decimalPlaces: '2',format: '1,234,567.89',baseCurrency:false}
             
     ];
 
@@ -277,24 +280,28 @@ const createCurrencyForOrganization = async (organizationId) => {
   }
 };
 
+
 //Auto create Payment terms
 const createPaymentTermForOrganization = async (organizationId) => {
   try {
     
-    // Check if the roles already exist for the organization
-    const existingpaymentTerm = await PaymentTerms.find({ organizationId:organizationId });
+    // Check if the Payment terms already exist for the organization
+    const existingPaymentTerm = await PaymentTerms.find({ organizationId:organizationId });
     
-    if (existingpaymentTerm.length > 0) {
+    if (existingPaymentTerm.length > 0) {
       console.log("Payment Terms already exist for this organization.");
       return { success: true, message: "Payment Terms already exist for this organization." };
     }
 
-    // Create admin and staff roles
+    // Create Payment terms
     const paymentTerm = [
       { organizationId, name: 'Net 15',days: '15'},
       { organizationId, name: 'Net 30',days: '30'},
       { organizationId, name: 'Net 45',days: '45'},
-      { organizationId, name: 'Net 60',days: '60'},            
+      { organizationId, name: 'Net 60',days: '60'},
+      { organizationId, name: 'Due end of the month',days: ''},
+      { organizationId, name: 'Due end of next month',days: ''},
+      { organizationId, name: 'Due on Receipt',days: ''},            
     ];
 
     await PaymentTerms.insertMany(paymentTerm);
@@ -306,6 +313,119 @@ const createPaymentTermForOrganization = async (organizationId) => {
     return { success: false, message: "Failed to create roles." };
   }
 };
+
+
+//Auto create Prefix 
+const createPrefixForOrganization = async (organizationId) => {
+  try {
+    
+    // Check if the Prefix already exist for the organization
+    const existingPrefix = await Prefix.find({ organizationId:organizationId });
+    
+    if (existingPrefix.length > 0) {
+      console.log("Prefix already exist for this organization.");
+      return { success: true, message: "Prefix already exist for this organization." };
+    }
+
+    // Create Prefix
+    const prefix = [
+      { organizationId, series: [{
+        seriesName: 'Default Transaction Series',
+        status:true,
+        journal:"JN-",journalNum:1,        
+        creditNote: "CN-",creditNoteNum: 1,        
+        customerPayment: 'CP-',customerPaymentNum: 1,
+        purchaseOrder: "PO-",purchaseOrderNum: 1,        
+        salesOrder: "SO-",salesOrderNum: 1,
+        vendorPayment: "VP-",vendorPaymentNum: 1,
+        retainerInvoice: "RET-",retainerInvoiceNum: 1,
+        vendorCredits: "DN-",vendorCreditsNum: 1,
+        billOfSupply: "BOS-",billOfSupplyNum: 1,
+        debitNote: "CDN-",debitNoteNum: 1,
+        invoice:"INV-",invoiceNum: 1,
+        quote: "QT-",quoteNum: 1,        
+        deliveryChallan: "DC-",deliveryChallanNum: 1,  }]},            
+    ];
+
+    await Prefix.insertMany(prefix);
+    console.log("Prefix created successfully for organization:", organizationId);
+    return { success: true, message: "Prefix created successfully." };
+
+  } catch (error) {
+    console.error("Error creating roles:", error);
+    return { success: false, message: "Failed to create roles." };
+  }
+};
+
+
+//Auto create Tax 
+const createTaxForOrganization = async (organizationId) => {
+  try {
+    
+    // Check if the tax already exist for the organization
+    const existingTax = await Tax.find({ organizationId:organizationId });
+    
+    if (existingTax.length > 0) {
+      console.log("Tax already exist for this organization.");
+      return { success: true, message: "Tax already exist for this organization." };
+    }
+
+    // Create Tax
+    const tax = [
+      { organizationId,gstTaxRate:[
+        {taxName: " GST0",taxRate:0,cgst:0,sgst:0,igst:0},
+        {taxName: " GST5",taxRate:5,cgst:2.5,sgst:2.5,igst:5},
+        {taxName: " GST12",taxRate:12,cgst:6,sgst:6,igst:12},
+        {taxName: " GST18",taxRate:18,cgst:9,sgst:9,igst:18},
+        {taxName: " GST28",taxRate:28,cgst:14,sgst:14,igst:28},],
+        vatTaxRate:[
+          {taxName: "VAT0",taxRate:0,},
+          {taxName: "VAT5",taxRate:5,},
+          {taxName: "VAT10",taxRate:10,},
+          {taxName: "VAT15",taxRate:15,},
+          {taxName: "VAT20",taxRate:20,},
+        ]   
+    
+    }];
+
+    await Tax.insertMany(tax);
+    console.log("Tax created successfully for organization:", organizationId);
+    return { success: true, message: "Tax created successfully." };
+
+  } catch (error) {
+    console.error("Error creating roles:", error);
+    return { success: false, message: "Failed to create tax." };
+  }
+};
+
+
+// Auto create Settings
+const createSettingsOrganization = async (organizationId) => {
+  try {
+    
+    // Check if the Settings already exist for the organization
+    const existingSettings = await Setting.find({ organizationId:organizationId });
+    
+    if (existingSettings.length > 0) {
+      console.log("Settings already exist for this organization.");
+      return { success: true, message: "Settings already exist for this organization." };
+    }
+
+    // Create settings
+    const settings = [
+      {organizationId},     
+    ];
+
+    await Setting.insertMany(settings);
+    console.log("Settings created successfully for organization:", organizationId);
+    return { success: true, message: "Settings created successfully." };
+
+  } catch (error) {
+    console.error("Error creating roles:", error);
+    return { success: false, message: "Failed to create tax." };
+  }
+};
+
 
 // Create New Client, Organization, Prefix, Role
 exports.createOrganizationAndClient = async (req, res) => {
@@ -368,13 +488,27 @@ exports.createOrganizationAndClient = async (req, res) => {
     // Create Currency for the organization
     const currencyCreationResult = await createCurrencyForOrganization(organizationId);
     if (!currencyCreationResult.success) {
-      return res.status(500).json({ message: roleCreationResult.message });
+      return res.status(500).json({ message: currencyCreationResult.message });
     }
 
     // Create Payment Term for the organization
     const paymentTermCreationResult = await createPaymentTermForOrganization(organizationId);
     if (!paymentTermCreationResult.success) {
-      return res.status(500).json({ message: roleCreationResult.message });
+      return res.status(500).json({ message: paymentTermCreationResult.message });
+    }
+    
+    
+    // Create Settings for the organization
+    const settingsCreationResult = await createSettingsOrganization(organizationId);
+    if (!settingsCreationResult.success) {
+      return res.status(500).json({ message: settingsCreationResult.message });
+    }
+    
+
+    // Create Tax for the organization
+    const taxCreationResult = await createTaxForOrganization(organizationId);
+    if (!taxCreationResult.success) {
+      return res.status(500).json({ message: taxCreationResult.message });
     }
 
     // Hash the password before saving
@@ -417,57 +551,64 @@ exports.createOrganizationAndClient = async (req, res) => {
     }
 
 
-  
-      const newPrefix = new Prefix({
-        organizationId,
+    // Create Prefix for the organization
+    const prefixCreationResult = await createPrefixForOrganization(organizationId);
+    if (!prefixCreationResult.success) {
+      return res.status(500).json({ message: prefixCreationResult.message });
+    }
 
-        journal:"JN-",
-        journalNum:1,
-        
-        creditNote: "CN-",
-        creditNoteNum: 1,
-        
-        customerPayment: 'CP-',
-        customerPaymentNum: 1,
-
-        purchaseOrder: "PO-",
-        purchaseOrderNum: 1,
-        
-        salesOrder: "SO-",
-        salesOrderNum: 1,
-
-        vendorPayment: "VP-",
-        vendorPaymentNum: 1,
-
-        retainerInvoice: "RET-",
-        retainerInvoiceNum: 1,
-
-        vendorCredits: "DN-",
-        vendorCreditsNum: 1,
-
-        billOfSupply: "BOS-",
-        billOfSupplyNum: 1,
-
-        debitNote: "CDN-",
-        debitNoteNum: 1,
-
-        invoice:"INV-",
-        invoiceNum: 1,
-
-        quote: "QT-",
-        quoteNum: 1,
-        
-        deliveryChallan: "DC-",
-        deliveryChallanNum: 1,
-      });
 
   
-      const savedPrefix = await newPrefix.save();
+      // const newPrefix = new Prefix({
+      //   organizationId,
+
+      //   journal:"JN-",
+      //   journalNum:1,
+        
+      //   creditNote: "CN-",
+      //   creditNoteNum: 1,
+        
+      //   customerPayment: 'CP-',
+      //   customerPaymentNum: 1,
+
+      //   purchaseOrder: "PO-",
+      //   purchaseOrderNum: 1,
+        
+      //   salesOrder: "SO-",
+      //   salesOrderNum: 1,
+
+      //   vendorPayment: "VP-",
+      //   vendorPaymentNum: 1,
+
+      //   retainerInvoice: "RET-",
+      //   retainerInvoiceNum: 1,
+
+      //   vendorCredits: "DN-",
+      //   vendorCreditsNum: 1,
+
+      //   billOfSupply: "BOS-",
+      //   billOfSupplyNum: 1,
+
+      //   debitNote: "CDN-",
+      //   debitNoteNum: 1,
+
+      //   invoice:"INV-",
+      //   invoiceNum: 1,
+
+      //   quote: "QT-",
+      //   quoteNum: 1,
+        
+      //   deliveryChallan: "DC-",
+      //   deliveryChallanNum: 1,
+      // });
+
   
-      if (!savedPrefix) {
-        console.error("Prefix could not be saved.");
-        return res.status(500).json({ message: "Failed to create Prefix." });
-      }
+      // const savedPrefix = await newPrefix.save();
+  
+      // if (!savedPrefix) {
+      //   console.error("Prefix could not be saved.");
+      //   return res.status(500).json({ message: "Failed to create Prefix." });
+      // }
       
     
 
@@ -502,7 +643,7 @@ exports.getAllClient = async (req, res) => {
 
 
 
-// Get  OrganizationId
+// Dv phase only - Get  OrganizationId
 exports.getOrganizationId = (req, res) => {
   try {
     const organizationId = "INDORG0001";
@@ -543,6 +684,15 @@ exports.deleteAll = async (req, res) => {
 
     await Currency.deleteMany({});
     console.log("Currency data deleted.");
+
+    await PaymentTerms.deleteMany({});
+    console.log("Payment Terms data deleted.");
+
+    await Setting.deleteMany({});
+    console.log("Payment Terms data deleted.");
+
+    await Tax.deleteMany({});
+    console.log("Tax data deleted.");
 
 
     res.status(200).json("Database Flushed Successfully");

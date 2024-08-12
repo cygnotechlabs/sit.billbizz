@@ -1,5 +1,6 @@
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account")
+const Currency = require("../database/model/currency")
 const mongoose = require('mongoose');
 
 
@@ -133,84 +134,6 @@ exports.getOneOrganization = async (req, res) => {
 
 
 
-
-// Edit organizations
-exports.updateOrganization = async (req, res) => {
-  console.log("Received request to update organization:", req.body);  
-  try {
-      const {
-          organizationId,
-          organizationLogo,
-          // organizationName,
-          organizationCountry,
-          organizationIndustry,
-          addline1,
-          addline2,
-          city,
-          pincode,
-          state,
-          organizationPhNum,
-          website,
-          baseCurrency,
-          fiscalYear,
-          reportBasis,
-          timeZone,
-          dateFormat,
-          dateSplit,
-          accountHolderName,
-          bankName,
-          accNum,
-          ifsc,
-      } = req.body;
-      
-      // Log the ID being updated
-      console.log("Updating organization with ID:", organizationId);
-
-      const updatedOrganization = await Organization.findByIdAndUpdate(
-          organizationId,
-          {
-              organizationId,
-              organizationLogo,
-              // organizationName,
-              organizationCountry,
-              organizationIndustry,
-              addline1,
-              addline2,
-              city,
-              pincode,
-              state,
-              organizationPhNum,
-              website,
-              baseCurrency,
-              fiscalYear,
-              reportBasis,
-              timeZone,
-              dateFormat,
-              dateSplit,
-              accountHolderName,
-              bankName,
-              accNum,
-              ifsc
-          },
-          { new: true, runValidators: true }
-      );
-
-      if (!updatedOrganization) {
-          console.log("Organization not found with ID:", _id);
-          return res.status(404).json({ message: "Organization not found" });
-      }
-
-      res.status(200).json({ message: "Organization updated successfully" });
-      console.log("Organization updated successfully:", updatedOrganization);
-  } catch (error) {
-      console.error("Error updating organization:", error);
-      res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-
-
-
 // Delete Organization
 exports.deleteOrganization = async (req, res) => {
     try {
@@ -303,7 +226,7 @@ exports.getAdditionalData = (req, res) => {
           "medium": [
             "mm/dd/yyyy (08/19/2024)",
             "dd/mm/yyyy (19/08/2024)",
-            "yyyy/mm/dd (24/08/19)"
+            "yyyy/mm/dd (2024/08/19)"
           ],
           "long": [
             "dd/mmm/yyyy (19 June 2024)",
@@ -460,10 +383,6 @@ exports.setupOrganization = async (req, res) => {
       timeZone,
       dateFormat,
       dateSplit,
-      accountHolderName,
-      bankName,
-      accNum,
-      ifsc,
     } = req.body;
 
     // Check if an Organization already exists
@@ -491,16 +410,8 @@ exports.setupOrganization = async (req, res) => {
     existingOrganization.reportBasis = reportBasis;
     existingOrganization.timeZone = timeZone;
     existingOrganization.dateFormat = dateFormat;
-    existingOrganization.dateSplit = dateSplit;
-    existingOrganization.accountHolderName = accountHolderName;
-    existingOrganization.bankName = bankName;
-    existingOrganization.accNum = accNum;
-    existingOrganization.ifsc = ifsc;
-    // existingOrganization.addfield = Array.isArray(addfield) ? addfield.map((field) => ({
-    //   label: field.label,
-    //   value: field.value,
-    // })) : [];
-
+    existingOrganization.dateSplit = dateSplit; 
+    
     const savedOrganization = await existingOrganization.save();
 
     if (!savedOrganization) {
@@ -508,21 +419,28 @@ exports.setupOrganization = async (req, res) => {
       return res.status(500).json({ message: "Failed to update organization." });
     }
 
+    // Check and update baseCurrency in the currencies collection
+    if (baseCurrency) {
+      // Set all other currencies' baseCurrency to false for the same organizationId
+      await Currency.updateMany({ organizationId, baseCurrency: true }, { baseCurrency: false });
+
+      // Set the specific currency's baseCurrency to true
+      await Currency.updateOne({ organizationId, currencyCode: baseCurrency }, { baseCurrency: true });
+    }
+
     res.status(200).json({
       message: "Organization updated successfully."
     });
     console.log("Organization updated successfully");
 
-    
-    
-    const account = await Account.findOne({ organizationId:organizationId });
+    const account = await Account.findOne({ organizationId });
     if (!account) {
       insertAccounts(accounts, organizationId);
-        };
-
+    }
 
   } catch (error) {
     console.error("Error updating Organization:", error);
     res.status(500).json({ message: "Internal server error." });
   }
 };
+
