@@ -118,18 +118,19 @@ const NewCustomerModal = ({ page }: Props) => {
     shippingPinCode: "",
     shippingPhone: "",
     shippingFaxNumber: "",
-    contactPerson: [{
-      salutation: "",
-      firstName: "",
-      lastName: "",
-      companyName: "",
-      customerEmail: "",
-      workPhone: "",
-      mobile: ""
-    }],
-    remark: ""
+    contactPerson: [
+      {
+        salutation: "",
+        firstName: "",
+        lastName: "",
+        companyName: "",
+        customerEmail: "",
+        workPhone: "",
+        mobile: "",
+      },
+    ],
+    remark: "",
   };
-
 
   const closeModal = () => {
     setModalOpen(false);
@@ -151,42 +152,51 @@ const NewCustomerModal = ({ page }: Props) => {
     setIsMsmeRegistered(event.target.checked);
   };
 
-  const [customerdata, setCustomerData] = useState<CustomerData>(initialCustomerData);
+  const [customerdata, setCustomerData] =
+    useState<CustomerData>(initialCustomerData);
 
   console.log(customerdata);
-// data from input fields
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  // data from input fields
+  const handleChange = (
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = event.target;
-    setCustomerData(prevFormData => ({
+    setCustomerData((prevFormData) => ({
       ...prevFormData,
-      [name]: value
+      [name]: value,
     }));
   };
-// data from checkboxes
+  // data from checkboxes
   const handleRadioChange = (type: string) => {
     setSelected(type);
-    setCustomerData(prevFormData => ({
+    setCustomerData((prevFormData) => ({
       ...prevFormData,
-      customerType: type
+      customerType: type,
     }));
   };
-//data from table
-  const handleRowChange = (index: number, field: keyof typeof rows[number], value: string) => {
+  //data from table
+  const handleRowChange = (
+    index: number,
+    field: keyof (typeof rows)[number],
+    value: string
+  ) => {
     const updatedRows = [...rows];
     updatedRows[index][field] = value;
     setRows(updatedRows);
 
-    const updatedContactPerson = updatedRows.map(row => ({
+    const updatedContactPerson = updatedRows.map((row) => ({
       salutation: row.salutation,
       firstName: row.firstName,
       lastName: row.lastName,
-      companyName: "", 
+      companyName: "",
       customerEmail: row.email,
-      workPhone: "", 
+      workPhone: "",
       mobile: row.mobile,
     }));
 
-    setCustomerData(prevFormData => ({
+    setCustomerData((prevFormData) => ({
       ...prevFormData,
       contactPerson: updatedContactPerson,
     }));
@@ -204,7 +214,10 @@ const NewCustomerModal = ({ page }: Props) => {
         setCustomerData(initialCustomerData);
         setModalOpen(false);
       } else if (error) {
-        console.error("Error creating customer:", error.response?.data?.message || error.message);
+        console.error(
+          "Error creating customer:",
+          error.response?.data?.message || error.message
+        );
       }
     } catch (error) {
       console.error("Unexpected error:");
@@ -230,7 +243,8 @@ const NewCustomerModal = ({ page }: Props) => {
         </div>
       ) : (
         <Button onClick={() => setModalOpen(true)} variant="primary" size="sm">
-          <PlusCircle color="white" /> <p className="text-sm font-medium">Add Customer</p>
+          <PlusCircle color="white" />{" "}
+          <p className="text-sm font-medium">Add Customer</p>
         </Button>
       )}
 
@@ -268,7 +282,10 @@ const NewCustomerModal = ({ page }: Props) => {
                 </label>
                 <div className="flex items-center space-x-4 text-textColor text-sm">
                   <div className="flex gap-2 justify-center items-center ">
-                    <div className="grid place-items-center mt-1">
+                    <div
+                      className="grid place-items-center mt-1"
+                      onChange={() => handleRadioChange("business")}
+                    >
                       <input
                         id="business"
                         type="radio"
@@ -278,7 +295,6 @@ const NewCustomerModal = ({ page }: Props) => {
                             ? "border-8 border-neutral-400"
                             : "border-1 border-neutral-400"
                         }`}
-                        onChange={() => handleRadioChange("business")}
                         checked={selected === "business"}
                       />
                       <div
@@ -290,12 +306,18 @@ const NewCustomerModal = ({ page }: Props) => {
                         }`}
                       />
                     </div>
-                    <label htmlFor="business" className="text-start font-medium">
+                    <label
+                      htmlFor="business"
+                      className="text-start font-medium"
+                    >
                       Business
                     </label>
                   </div>
                   <div className="flex gap-2  justify-center items-center">
-                    <div className="grid place-items-center mt-1">
+                    <div
+                      className="grid place-items-center mt-1"
+                      onChange={() => handleRadioChange("individual")}
+                    >
                       <input
                         id="individual"
                         type="radio"
@@ -305,7 +327,6 @@ const NewCustomerModal = ({ page }: Props) => {
                             ? "border-8 border-neutral-400"
                             : "border-1 border-neutral-400"
                         }`}
-                        onChange={() => handleRadioChange("individual")}
                         checked={selected === "individual"}
                       />
                       <div
@@ -317,7 +338,10 @@ const NewCustomerModal = ({ page }: Props) => {
                         }`}
                       />
                     </div>
-                    <label htmlFor="individual" className="text-start font-medium">
+                    <label
+                      htmlFor="individual"
+                      className="text-start font-medium"
+                    >
                       Individual
                     </label>
                   </div>
@@ -328,7 +352,7 @@ const NewCustomerModal = ({ page }: Props) => {
                 <div className="col-span-2">
                   <label htmlFor="salutation">Salutation</label>
                   <div className="relative w-full">
-                    <select 
+                    <select
                       name="salutation"
                       className="block appearance-none w-full h-9 mt-1 text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                       value={customerdata.salutation}
@@ -345,7 +369,7 @@ const NewCustomerModal = ({ page }: Props) => {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 col-span-10 gap-4 ">
+                <div className="grid grid-cols-2 col-span-10 gap-4 ">
                   <div>
                     <label htmlFor="firstName" className="text-slate-600">
                       First Name
@@ -373,31 +397,52 @@ const NewCustomerModal = ({ page }: Props) => {
                       onChange={handleChange}
                     />
                   </div>
-
-                  <div>
-                    <label htmlFor="companyName">Company Name </label>
-                    <input
-                      type="text"
-                      name="companyName"
-                      className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                      placeholder="Value"
-                      value={customerdata.companyName}
-                      onChange={handleChange}
-                    />
-                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                  <label htmlFor="companyName">Company Name </label>
+                  <input
+                    type="text"
+                    name="companyName"
+                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                    placeholder="Enter Company Name"
+                    value={customerdata.companyName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="companyName">Customer Display Name </label>
+                  <input
+                    type="text"
+                    name="customerDispalyName"
+                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                    placeholder="Enter Display Name"
+                    // value={customerdata.customerDisplayName}
+                    onChange={handleChange}
+                  />
+                </div>
                 <div>
                   <label htmlFor="">Customer Email</label>
                   <input
                     type="text"
                     name="customerEmail"
                     className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                    placeholder="Value"
+                    placeholder="Enter Email"
                     value={customerdata.customerEmail}
-                      onChange={handleChange}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="">Card Number</label>
+                  <input
+                    type="text"
+                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
+                    placeholder="XXX"
+                    name="cardNumber"
+                    value={customerdata.cardNumber}
+                    onChange={handleChange}
                   />
                 </div>
                 <div>
@@ -408,7 +453,7 @@ const NewCustomerModal = ({ page }: Props) => {
                     className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                     placeholder="Value"
                     value={customerdata.workPhone}
-                      onChange={handleChange}
+                    onChange={handleChange}
                   />
                 </div>
                 <div>
@@ -419,13 +464,13 @@ const NewCustomerModal = ({ page }: Props) => {
                     className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                     placeholder="Value"
                     value={customerdata.mobile}
-                      onChange={handleChange}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-4">
-                <div className="w-full">
+                {/* <div className="w-full">
                   <label
                     htmlFor="date-of-birth"
                     className="block text-sm font-medium text-gray-700"
@@ -433,9 +478,9 @@ const NewCustomerModal = ({ page }: Props) => {
                     Date of birth
                   </label>
                   <div className="relative pl-2 text-sm w-full mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2">
-                    {/* <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-2 text-gray-700">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-2 text-gray-700">
           <Calender color="currentColor" height={18} width={18} />
-        </div> */}
+        </div>
                     <input
                       id="date-of-birth"
                       placeholder="Select Date"
@@ -449,18 +494,7 @@ const NewCustomerModal = ({ page }: Props) => {
                       <CehvronDown color="gray" />
                     </div>
                   </div>
-                </div>
-                <div>
-                  <label htmlFor="">Card Number</label>
-                  <input
-                    type="text"
-                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                    placeholder="XXX"
-                    name="cardNumber"
-                    value={customerdata.cardNumber}
-                    onChange={handleChange}
-                  />
-                </div>
+                </div> */}
               </div>
 
               <div className="flex mt-5 px-5">
@@ -527,11 +561,10 @@ const NewCustomerModal = ({ page }: Props) => {
                           <input
                             type="text"
                             className=" text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                            placeholder="Value"
+                            placeholder="Enter Pan Number"
                             name="pan"
                             value={customerdata.pan}
                             onChange={handleChange}
-                            
                           />
                         </div>
                         <div>
@@ -540,56 +573,129 @@ const NewCustomerModal = ({ page }: Props) => {
                               Currency
                             </label>
                             <div className="relative w-full">
-                            <select 
-                                 className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder 
+                              <select
+                                className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder 
                                  text-sm pl-2 pr-8 rounded-md leading-tight 
                                  focus:outline-none focus:bg-white focus:border-gray-500"
-                                 name="currency"
-                                 value={customerdata.currency}
-                                 onChange={handleChange}
-                               >
-                                 <option value="INR" className="text-gray">
-                                   INR - Indian Rupee
-                                 </option>
-                                 <option value="USD" className="text-gray">
-                                   USD - US Dollar
-                                 </option>
-                                 <option value="CAD" className="text-gray">
-                                   CAD - Canadian Dollar
-                                 </option>
-                               </select>
+                                name="currency"
+                                value={customerdata.currency}
+                                onChange={handleChange}
+                              >
+                                <option value="" className="text-gray">
+                                  Select Currency
+                                </option>
+                                <option value="INR" className="text-gray">
+                                  INR - Indian Rupee
+                                </option>
+                                <option value="USD" className="text-gray">
+                                  USD - US Dollar
+                                </option>
+                                <option value="CAD" className="text-gray">
+                                  CAD - Canadian Dollar
+                                </option>
+                              </select>
                               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                 <CehvronDown color="gray" />
                               </div>
                             </div>
                           </div>
                         </div>
-                        <div>
-                          <label className="block mb-1">Opening Balance</label>
-                          <input
-                            type="text"
-                            className=" text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-p p-2"
-                            placeholder="INR"
-                            name="openingBalance"
-                            value={customerdata.openingBalance}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div>
-                          <label className="block mb-1">Payment Terms</label>
-                          <input
-                            type="text"
-                            className=" text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                            placeholder="Due on Receipt"
-                            name="paymentTerms"
+                        <div className="relative w-full">
+                          <label htmlFor="" className="block mb-1">
+                            Payment Terms
+                          </label>
+                          <select
+                            className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder 
+                                 text-sm pl-2 pr-8 rounded-md leading-tight 
+                                 focus:outline-none focus:bg-white focus:border-gray-500"
+                            name="currency"
                             value={customerdata.paymentTerms}
                             onChange={handleChange}
+                          >
+                            <option value="" className="text-gray">
+                              Select Payment Terms
+                            </option>
+                            <option
+                              value="Payment On Due"
+                              className="text-gray"
+                            >
+                              Paymeny On due
+                            </option>
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0  mt-6 right-0 flex items-center px-2 text-gray-700">
+                            <CehvronDown color="gray" />
+                          </div>
+                        </div>
+                        <div className="relative w-full">
+                          <label htmlFor="" className="block mb-1">
+                            Place of Supply
+                          </label>
+                          <select
+                            className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder 
+                                 text-sm pl-2 pr-8 rounded-md leading-tight 
+                                 focus:outline-none focus:bg-white focus:border-gray-500"
+                            name="currency"
+                            value={customerdata.placeOfSupply}
+                            onChange={handleChange}
+                          >
+                            <option value="" className="text-gray">
+                              Select Place of Supply
+                            </option>
+                            <option
+                              value="Payment On Due"
+                              className="text-gray"
+                            >
+                              Paymeny On due
+                            </option>
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0  mt-6 right-0 flex items-center px-2 text-gray-700">
+                            <CehvronDown color="gray" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-lightPink p-5 rounded-lg space-y-5">
+                        <p className="font-bold text-">Enable Portal?</p>
+                        <div className="flex items-center mt-4 gap-1 text-textColor">
+                          <input
+                            type="checkbox"
+                            className="accent-[#97998E] bg-white h-6 w-5 mx-1"
+                            id=""
                           />
+                          <label htmlFor="" className="text-textColor text-sm ">
+                            Allow portal access to this customer
+                          </label>
+                        </div>
+                        <div className="relative w-[349px]">
+                          <label htmlFor="" className="block mb-1 ">
+                            Select Language
+                          </label>
+                          <select
+                            className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder 
+                                 text-sm pl-2 pr-8 rounded-md leading-tight 
+                                 focus:outline-none focus:bg-white focus:border-gray-500"
+                            name="currency"
+                            // value={customerdata}
+                            onChange={handleChange}
+                          >
+                            <option value="" className="text-gray">
+                              Select Language
+                            </option>
+                            <option
+                              value="Payment On Due"
+                              className="text-gray"
+                            >
+                              Paymeny On due
+                            </option>
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0  mt-6 right-0 flex items-center px-2 text-gray-700">
+                            <CehvronDown color="gray" />
+                          </div>
                         </div>
                       </div>
 
                       <div className="mt-4">
-                        <label className="block mb-1">Documents</label>
+                        <label className="block mb-1">Documents
                         <div className="border-dashed border border-neutral-300 p-2 rounded flex gap-2">
                           <Upload />
                           <span>Upload File</span>
@@ -597,6 +703,8 @@ const NewCustomerModal = ({ page }: Props) => {
                         <p className="text-xs mt-1 text-gray-600">
                           You Can Upload a Maximum of 10 Files, 10 MB each
                         </p>
+                        <input type="file" className="hidden" />
+                        </label>
                       </div>
 
                       <div>
@@ -606,9 +714,8 @@ const NewCustomerModal = ({ page }: Props) => {
                           className=" text-sm w-[49%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                           placeholder="Value"
                           name="department"
-                            value={customerdata.department}
-                            onChange={handleChange}
-                          
+                          value={customerdata.department}
+                          onChange={handleChange}
                         />
                       </div>
 
@@ -620,8 +727,8 @@ const NewCustomerModal = ({ page }: Props) => {
                           className=" text-sm w-[49%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                           placeholder="Value"
                           name="designation"
-                            value={customerdata.designation}
-                            onChange={handleChange}
+                          value={customerdata.designation}
+                          onChange={handleChange}
                         />
                       </div>
 
@@ -647,118 +754,128 @@ const NewCustomerModal = ({ page }: Props) => {
                   )}
 
                   {activeTab === "taxes" && (
-                  <div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="relative w-full">
-                      <label htmlFor="gstTreatment" className="block mb-1">
-                        GST Treatment
-                      </label>
-                      <select
-                        className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                        name="gstTreatment"
-                        value={customerdata.gstTreatment}
-                        onChange={handleChange}
-                      >
-                        <option value="" className="text-gray">
-                          Select GST Treatment
-                        </option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
-                        <CehvronDown color="gray" />
+                    <div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="relative w-full">
+                          <label htmlFor="gstTreatment" className="block mb-1">
+                            GST Treatment
+                          </label>
+                          <select
+                            className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            name="gstTreatment"
+                            value={customerdata.gstTreatment}
+                            onChange={handleChange}
+                          >
+                            <option value="" className="text-gray">
+                              Select GST Treatment
+                            </option>
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
+                            <CehvronDown color="gray" />
+                          </div>
+                        </div>
+                        <div>
+                          <label htmlFor="gstin_uin" className="block mb-1">
+                            GSTIN/UIN
+                          </label>
+                          <input
+                            type="text"
+                            name="gstin_uin"
+                            className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+                            placeholder="GSTIN/UIN"
+                            value={customerdata.gstin_uin}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="gstin_uin" className="block mb-1">
+                            Business Legal Name
+                          </label>
+                          <input
+                            type="text"
+                            name="gstin_uin"
+                            className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+                            placeholder=""
+                            // value={customerdata}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="gstin_uin" className="block mb-1">
+                            Business Trade Name
+                          </label>
+                          <input
+                            type="text"
+                            name="gstin_uin"
+                            className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+                            placeholder=""
+                            // value={customerdata}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        <div className="relative w-full">
+                          <label htmlFor="placeOfSupply" className="block mb-1">
+                            Place of supply
+                          </label>
+                          <select
+                            className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            name="placeOfSupply"
+                            value={customerdata.placeOfSupply}
+                            onChange={handleChange}
+                          >
+                            <option value="" className="text-gray">
+                              Value
+                            </option>
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
+                            <CehvronDown color="gray" />
+                          </div>
+                        </div>
+
+                        <div></div>
+
+                        <div></div>
+                        {isMsmeRegistered && (
+                          <>
+                            <div className="relative w-full">
+                              <label htmlFor="msmeType" className="block mb-1">
+                                MSME/Udyam Registration Type
+                              </label>
+                              <select
+                                className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                name="msmeType"
+                                value={customerdata.msmeType}
+                                onChange={handleChange}
+                              >
+                                <option value="" className="text-gray">
+                                  Select a Registration Type
+                                </option>
+                                {/* Add your other options here */}
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
+                                <CehvronDown color="gray" />
+                              </div>
+                            </div>
+                            <div className="relative w-full">
+                              <label
+                                htmlFor="msmeRegistrationNumber"
+                                className="block mb-1"
+                              >
+                                MSME/Udyam Registration Number
+                              </label>
+                              <input
+                                type="text"
+                                name="msmeNumber"
+                                className="text-sm ps-2 rounded-md text-start bg-white border border-slate-300 h-9 p-2 w-full"
+                                placeholder="Enter the Registration Number"
+                                value={customerdata.msmeNumber}
+                                onChange={handleChange}
+                              />
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
-                    <div className="relative w-full">
-                      <label htmlFor="placeOfSupply" className="block mb-1">
-                        Place of supply
-                      </label>
-                      <select
-                        className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                        name="placeOfSupply"
-                        value={customerdata.placeOfSupply}
-                        onChange={handleChange}
-                      >
-                        <option value="" className="text-gray">
-                          Value
-                        </option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
-                        <CehvronDown color="gray" />
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor="gstin_uin" className="block mb-1">
-                        GSTIN/UIN
-                      </label>
-                      <input
-                        type="text"
-                        name="gstin_uin"
-                        className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2"
-                        placeholder="GSTIN/UIN"
-                        value={customerdata.gstin_uin}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div></div>
-                    <div>
-        <label htmlFor="msmeRegistered" className="block mb-1">
-          MSME Registered?
-        </label>
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            className="accent-[#97998E] bg-white h-6 w-5 mx-1"
-            id="msmeRegistered"
-            name="msmeRegistered"
-            checked={isMsmeRegistered}
-            onChange={handleCheckboxChange}
-          />
-          <label htmlFor="msmeRegistered">
-            The Vendor is MSME Registered
-          </label>
-        </div>
-      </div>
-      <div></div>
-      {isMsmeRegistered && (
-        <>
-          <div className="relative w-full">
-            <label htmlFor="msmeType" className="block mb-1">
-              MSME/Udyam Registration Type
-            </label>
-            <select
-              className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              name="msmeType"
-              value={customerdata.msmeType}
-              onChange={handleChange}
-
-            >
-              <option value="" className="text-gray">
-                Select a Registration Type
-              </option>
-              {/* Add your other options here */}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
-              <CehvronDown color="gray" />
-            </div>
-          </div>
-          <div className="relative w-full">
-            <label htmlFor="msmeRegistrationNumber" className="block mb-1">
-              MSME/Udyam Registration Number
-            </label>
-            <input
-              type="text"
-              name="msmeNumber"
-              className="text-sm ps-2 rounded-md text-start bg-white border border-slate-300 h-9 p-2 w-full"
-              placeholder="Enter the Registration Number"
-              value={customerdata.msmeNumber}
-              onChange={handleChange}
-            />
-          </div>
-        </>
-      )}
-
-                  </div>
-                </div>
-                
                   )}
                   {activeTab === "address" && (
                     <>
@@ -784,10 +901,11 @@ const NewCustomerModal = ({ page }: Props) => {
                             <label htmlFor="" className="mb-1 block">
                               Country/Region
                             </label>
-                            <select className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            name="billingCountry"
-                            value={customerdata.billingCountry}
-                            onChange={handleChange}
+                            <select
+                              className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                              name="billingCountry"
+                              value={customerdata.billingCountry}
+                              onChange={handleChange}
                             >
                               <option value="" className="text-gray">
                                 Select
@@ -798,79 +916,127 @@ const NewCustomerModal = ({ page }: Props) => {
                             </div>
                           </div>
                         </div>
-                        <div>
-                          <label className="block mb-1">Address</label>
-                          <textarea
-                            rows={2}
-                            className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  p-2"
-                            placeholder="Value"
-                            name="billingAddress"
-                            value={customerdata.billingAddress}
-                            onChange={handleChange}
-                          />
+                        <div className="pt-3">
+                          <label
+                            className="text-slate-600 "
+                            htmlFor="organizationAddress"
+                          >
+                            Address
+                          </label>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4  ">
                           <div>
-                            <label className="block mb-1">City</label>
                             <input
-                              type="text"
-                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                              placeholder="Value"
-                              name="billingCity"
-                              value={customerdata.billingCity}
-                            onChange={handleChange}
-                            />
+                              className="pl-3 text-sm w-[100%]  rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                              placeholder="Street 1"
+                              name="addline1"
+                            />{" "}
                           </div>
-                          <div className="relative w-full">
-                            <label htmlFor="" className="mb-1 block">
-                              State
-                            </label>
-                            <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            name="billingState"
-                            value={customerdata.billingState}
-                            onChange={handleChange}
-                            >
-                              <option value="" className="text-gray">
-                                Select
-                              </option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
-                              <CehvronDown color="gray" />
-                            </div>
-                          </div>
-                        </div>
 
-                        <div className="grid grid-cols-3 gap-4">
                           <div>
-                            <label className="block mb-1">Pincode</label>
                             <input
-                              type="text"
-                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                              placeholder="Value"
-                              name="billingPinCode"
-                              value={customerdata.billingPinCode}
-                              onChange={handleChange}
-                            />
+                              className="pl-3 text-sm w-[100%]  rounded-md text-start bg-white border border-inputBorder h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                              placeholder="Street 2"
+                              name="addline2"
+                            />{" "}
                           </div>
                           <div>
-                            <label className="block mb-1">Phone</label>
+                            <div>
+                              <label className="text-slate-600 " htmlFor="">
+                                City
+                              </label>
+                            </div>
                             <input
-                              type="text"
-                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                              placeholder="Value"
-                              name="billingPhone"
-                              value={customerdata.billingPhone}
-                              onChange={handleChange}
-                            />
+                              className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                              placeholder="Enter City"
+                              name="city"
+                            />{" "}
                           </div>
+
+                          <div className="relative ">
+                            <div>
+                              <label
+                                className="text-slate-600 "
+                                htmlFor="organizationAddress"
+                              >
+                                State / Region / County
+                              </label>
+                            </div>
+                            <div className="relative w-full mt-2">
+                              <select
+                                name="state"
+                                id="state"
+                                className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white  focus:border-darkRed"
+                              >
+                                <option value="">
+                                  State / Region / County
+                                </option>
+                              </select>
+
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <CehvronDown color="gray" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4 pt-2">
+                          <div>
+                            <label
+                              className="text-slate-600 "
+                              htmlFor="organizationAddress"
+                            >
+                              Pin / Zip / Post code
+                            </label>
+                            <input
+                              className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                              placeholder=" Pin / Zip / Post code"
+                              type="text"
+                              name="pincode"
+                            />{" "}
+                          </div>
+                          <div>
+                            <label
+                              className="text-slate-600 "
+                              htmlFor="organizationAddress"
+                            >
+                              Phone
+                            </label>
+                            <div className="flex">
+                              <div className="relative w-24  mt-2 ">
+                                <select
+                                  name="phoneCode"
+                                  id="phoneCode"
+                                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                                >
+                                  <option value="">+91</option>
+                                </select>
+
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                  <CehvronDown
+                                    color="gray"
+                                    height={15}
+                                    width={15}
+                                  />
+                                </div>
+                              </div>
+                              <input
+                                className="pl-3 text-sm w-[100%] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                                placeholder="Phone"
+                                type="tel"
+                                name="organizationPhNum"
+                              />{" "}
+                            </div>
+                          </div>
+
                           <div className="relative w-full">
-                            <label htmlFor="" className="mb-1 block">
+                            <label htmlFor="" className="mb-2 block">
                               Fax Number
                             </label>
-                            <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            name="billingFaxNumber"
-                            value={customerdata.billingFaxNumber}
-                            onChange={handleChange}
+                            <select
+                              className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                              name="billingFaxNumber"
+                              value={customerdata.billingFaxNumber}
+                              onChange={handleChange}
                             >
                               <option value="" className="text-gray">
                                 Select
@@ -885,30 +1051,35 @@ const NewCustomerModal = ({ page }: Props) => {
 
                       {/* shipping address */}
                       <div className="space-y-3 p-5  text-sm">
-                        <p>
-                          <b>Shippping Address</b>
-                        </p>
+                      <div className="flex">
+                          <p>
+                            <b>Shipping Address</b>
+                          </p>
+
+                          <p className="ml-auto text-gray"><b>Copy Billing Address</b></p>
+                      </div>
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <label className="block mb-1">Attention</label>
                             <input
                               type="text"
-                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-10 p-2"
+                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
                               placeholder="Value"
-                              name="shippingAttention"
-                            value={customerdata.shippingAttention}
-                            onChange={handleChange}
+                              name="billingAttention"
+                              value={customerdata.shippingAttention}
+                              onChange={handleChange}
                             />
                           </div>
                           <div className="relative w-full">
                             <label htmlFor="" className="mb-1 block">
                               Country/Region
                             </label>
-                            <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            name="shippingCountry"
-                            value={customerdata.shippingCountry}
-                            onChange={handleChange}
+                            <select
+                              className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                              name="billingCountry"
+                              value={customerdata.shippingCountry}
+                              onChange={handleChange}
                             >
                               <option value="" className="text-gray">
                                 Select
@@ -919,79 +1090,125 @@ const NewCustomerModal = ({ page }: Props) => {
                             </div>
                           </div>
                         </div>
-                        <div>
-                          <label className="block mb-1">Address</label>
-                          <textarea
-                            rows={2}
-                            className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  p-2"
-                            placeholder="Value"
-                            name="shippingAddress"
-                            value={customerdata.shippingAddress}
-                            onChange={handleChange}
-                          />
+                        <div className="">
+                          <label
+                            className="text-slate-600 "
+                            htmlFor="organizationAddress"
+                          >
+                            Address
+                          </label>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4 ">
                           <div>
-                            <label className="block mb-1">City</label>
                             <input
-                              type="text"
-                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                              placeholder="Value"
-                              name="shippingCity"
-                              value={customerdata.shippingCity}
-                              onChange={handleChange}
-                            />
+                              className="pl-3 text-sm w-[100%]  rounded-md text-start bg-white  border border-inputBorder  h-9  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                              placeholder="Street 1"
+                              name="addline1"
+                            />{" "}
                           </div>
-                          <div className="relative w-full">
-                            <label htmlFor="" className="mb-1 block">
-                              State
-                            </label>
-                            <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                              name="shippingState"
-                              value={customerdata.shippingState}
-                              onChange={handleChange}
-                            >
-                              <option value="" className="text-gray">
-                                Select
-                              </option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
-                              <CehvronDown color="gray" />
-                            </div>
-                          </div>
-                        </div>
 
-                        <div className="grid grid-cols-3 gap-4">
                           <div>
-                            <label className="block mb-1">Pincode</label>
                             <input
-                              type="text"
-                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                              placeholder="Value"
-                              name="shippingPinCode"
-                              value={customerdata.shippingPinCode}
-                              onChange={handleChange}
-                            />
+                              className="pl-3 text-sm w-[100%]  rounded-md text-start bg-white border border-inputBorder h-9 p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                              placeholder="Street 2"
+                              name="addline2"
+                            />{" "}
                           </div>
                           <div>
-                            <label className="block mb-1">Phone</label>
+                              <label className="text-slate-600 " htmlFor="">
+                                City
+                              </label>
                             <input
-                              type="text"
-                              className="pl-2 text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2"
-                              placeholder="Value"
-                              name="shippingPhone"
-                              value={customerdata.shippingPhone}
-                              onChange={handleChange}
-                            />
+                              className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-9 p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                              placeholder="Enter City"
+                              name="city"
+                            />{" "}
                           </div>
+
+                          <div className="relative ">
+                            <div>
+                              <label
+                                className="text-slate-600 "
+                                htmlFor="organizationAddress"
+                              >
+                                State / Region / County
+                              </label>
+                            </div>
+                            <div className="relative w-full mt-2">
+                              <select
+                                name="state"
+                                id="state"
+                                className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-9 pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white  focus:border-darkRed"
+                              >
+                                <option value="">
+                                  State / Region / County
+                                </option>
+                              </select>
+
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <CehvronDown color="gray" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4 pt-2">
+                          <div className="">
+                            <label
+                              className="text-slate-600 "
+                              htmlFor="organizationAddress"
+                            >
+                              Pin / Zip / Post code
+                            </label>
+                            <input
+                              className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-9 p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                              placeholder=" Pin / Zip / Post code"
+                              type="text"
+                              name="pincode"
+                            />{" "}
+                          </div>
+                          <div>
+                            <label
+                              className="text-slate-600 "
+                              htmlFor="organizationAddress"
+                            >
+                              Phone
+                            </label>
+                            <div className="flex">
+                              <div className="relative w-24  mt-2 ">
+                                <select
+                                  name="phoneCode"
+                                  id="phoneCode"
+                                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-9 pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                                >
+                                  <option value="">+91</option>
+                                </select>
+
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                  <CehvronDown
+                                    color="gray"
+                                    height={15}
+                                    width={15}
+                                  />
+                                </div>
+                              </div>
+                              <input
+                                className="pl-3 text-sm w-[100%] rounded-r-md text-start bg-white border border-inputBorder  h-9 p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                                placeholder="Phone"
+                                type="tel"
+                                name="organizationPhNum"
+                              />{" "}
+                            </div>
+                          </div>
+
                           <div className="relative w-full">
-                            <label htmlFor="" className="mb-1 block">
+                            <label htmlFor="" className="mb-2 block">
                               Fax Number
                             </label>
-                            <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                             name="shippingFaxNumber"
-                             value={customerdata.shippingFaxNumber}
-                             onChange={handleChange}
+                            <select
+                              className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                              name="billingFaxNumber"
+                              value={customerdata.shippingFaxNumber}
+                              onChange={handleChange}
                             >
                               <option value="" className="text-gray">
                                 Select
@@ -1005,100 +1222,143 @@ const NewCustomerModal = ({ page }: Props) => {
                       </div>
                     </>
                   )}
-                     {activeTab === "contactPersons" && (
-        <>
-          <div className="rounded-lg border-2 border-tableBorder mt-5">
-            <table className="min-w-full bg-white rounded-lg relative mb-4 border-dropdownText">
-              <thead className="text-[12px] text-center text-dropdownText">
-                <tr className="bg-lightPink">
-                  <th className="py-2 px-5 font-medium border-b border-tableBorder relative">
-                    Salutation
-                  </th>
-                  <th className="py-2 px-5 font-medium border-b border-tableBorder relative">
-                    FirstName
-                  </th>
-                  <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
-                    LastName
-                  </th>
-                  <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
-                    Email Address
-                  </th>
-                  <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
-                    Mobile
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="text-dropdownText text-center text-[13px]">
-                {rows.map((row, index) => (
-                  <tr className="relative text-center" key={index}>
-                    <td className="py-2.5 px- border-y border-tableBorder justify-center mt-4 gap-2 items-center flex-1">
-                      <div className="relative w-full">
-                        <select
-                          className="block relative appearance-none w-full h-9 focus:border-none text-zinc-400 bg-white text-sm text-center border-none rounded-md leading-tight"
-                          value={row.salutation}
-                          onChange={(e) => handleRowChange(index, "salutation", e.target.value)}
-                        >
-                          <option value="" className="text-gray">Select</option>
-                          <option value="Mr" className="text-gray">Mr</option>
-                          <option value="Mrs" className="text-gray">Mrs</option>
-                          <option value="Miss" className="text-gray">Miss</option>
-                          <option value="Dr" className="text-gray">Dr</option>
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 -right-8 flex items-center px-2 text-gray-700">
-                          <CehvronDown color="gray" />
-                        </div>
+                  {activeTab === "contactPersons" && (
+                    <>
+                      <div className="rounded-lg border-2 border-tableBorder mt-5">
+                        <table className="min-w-full bg-white rounded-lg relative mb-4 border-dropdownText">
+                          <thead className="text-[12px] text-center text-dropdownText">
+                            <tr className="bg-lightPink">
+                              <th className="py-2 px-5 font-medium border-b border-tableBorder relative">
+                                Salutation
+                              </th>
+                              <th className="py-2 px-5 font-medium border-b border-tableBorder relative">
+                                FirstName
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                LastName
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                Email Address
+                              </th>
+                              <th className="py-2 px-4 font-medium border-b border-tableBorder relative">
+                                Mobile
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-dropdownText text-center text-[13px]">
+                            {rows.map((row, index) => (
+                              <tr className="relative text-center" key={index}>
+                                <td className="py-2.5 px- border-y border-tableBorder justify-center mt-4 gap-2 items-center flex-1">
+                                  <div className="relative w-full">
+                                    <select
+                                      className="block relative appearance-none w-full h-9 focus:border-none text-zinc-400 bg-white text-sm text-center border-none rounded-md leading-tight"
+                                      value={row.salutation}
+                                      onChange={(e) =>
+                                        handleRowChange(
+                                          index,
+                                          "salutation",
+                                          e.target.value
+                                        )
+                                      }
+                                    >
+                                      <option value="" className="text-gray">
+                                        Select
+                                      </option>
+                                      <option value="Mr" className="text-gray">
+                                        Mr
+                                      </option>
+                                      <option value="Mrs" className="text-gray">
+                                        Mrs
+                                      </option>
+                                      <option
+                                        value="Miss"
+                                        className="text-gray"
+                                      >
+                                        Miss
+                                      </option>
+                                      <option value="Dr" className="text-gray">
+                                        Dr
+                                      </option>
+                                    </select>
+                                    <div className="pointer-events-none absolute inset-y-0 -right-8 flex items-center px-2 text-gray-700">
+                                      <CehvronDown color="gray" />
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder">
+                                  <input
+                                    type="text"
+                                    value={row.firstName}
+                                    className="text-sm w-[100%] text-center rounded-md bg-white h-9 p-2"
+                                    placeholder="Value"
+                                    onChange={(e) =>
+                                      handleRowChange(
+                                        index,
+                                        "firstName",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder flex-1">
+                                  <input
+                                    type="text"
+                                    value={row.lastName}
+                                    className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
+                                    placeholder="Value"
+                                    onChange={(e) =>
+                                      handleRowChange(
+                                        index,
+                                        "lastName",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder relative">
+                                  <input
+                                    type="text"
+                                    value={row.email}
+                                    className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
+                                    placeholder="Value"
+                                    onChange={(e) =>
+                                      handleRowChange(
+                                        index,
+                                        "email",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </td>
+                                <td className="py-2.5 px-4 border-y border-tableBorder relative">
+                                  <input
+                                    type="text"
+                                    value={row.mobile}
+                                    className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
+                                    placeholder="Value"
+                                    onChange={(e) =>
+                                      handleRowChange(
+                                        index,
+                                        "mobile",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
-                    </td>
-                    <td className="py-2.5 px-4 border-y border-tableBorder">
-                      <input
-                        type="text"
-                        value={row.firstName}
-                        className="text-sm w-[100%] text-center rounded-md bg-white h-9 p-2"
-                        placeholder="Value"
-                        onChange={(e) => handleRowChange(index, "firstName", e.target.value)}
-                      />
-                    </td>
-                    <td className="py-2.5 px-4 border-y border-tableBorder flex-1">
-                      <input
-                        type="text"
-                        value={row.lastName}
-                        className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
-                        placeholder="Value"
-                        onChange={(e) => handleRowChange(index, "lastName", e.target.value)}
-                      />
-                    </td>
-                    <td className="py-2.5 px-4 border-y border-tableBorder relative">
-                      <input
-                        type="text"
-                        value={row.email}
-                        className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
-                        placeholder="Value"
-                        onChange={(e) => handleRowChange(index, "email", e.target.value)}
-                      />
-                    </td>
-                    <td className="py-2.5 px-4 border-y border-tableBorder relative">
-                      <input
-                        type="text"
-                        value={row.mobile}
-                        className="text-sm w-[100%] rounded-md text-center bg-white h-9 p-2"
-                        placeholder="Value"
-                        onChange={(e) => handleRowChange(index, "mobile", e.target.value)}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div
-            className="flex gap-2 text-darkRed font-bold items-center my-4 cursor-pointer"
-            onClick={addRow}
-          >
-            <PlusCircle color={"darkRed"} />
-            Add Contact Person
-          </div>
-        </>
-      )}
+                      <div
+                        className="flex gap-2 text-darkRed font-bold items-center my-4 cursor-pointer"
+                        onClick={addRow}
+                      >
+                        <PlusCircle color={"darkRed"} />
+                        Add Contact Person
+                      </div>
+                    </>
+                  )}
                   {activeTab === "remarks" && (
                     <div>
                       <div>
@@ -1120,9 +1380,9 @@ const NewCustomerModal = ({ page }: Props) => {
           </div>
 
           <div className="flex justify-end gap-2 mb-3 m-5">
-          <Button onClick={handleSubmit} variant="primary" size="sm">
-  Save
-</Button>
+            <Button onClick={handleSubmit} variant="primary" size="sm">
+              Save
+            </Button>
             <Button onClick={closeModal} variant="secondary" size="sm">
               Cancel
             </Button>
