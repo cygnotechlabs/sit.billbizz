@@ -2,10 +2,9 @@ import BookIcon from "../../../../assets/icons/BookIcon";
 import BookXIcon from "../../../../assets/icons/BookXIcon";
 import NewspaperIcon from "../../../../assets/icons/NewspaperIcon";
 import OpenedBookIcon from "../../../../assets/icons/OpenedBookIcon";
-import PlusCircle from "../../../../assets/icons/PlusCircle"
-import Button from "../../../../Components/Button"
 import { useState } from "react";
 import TaxRateTable from "./TaxRateTable";
+import CreateNewTax from "./CreateNewTaxGst";
 
 type Props = {}
 
@@ -27,11 +26,6 @@ function TaxRate({ }: Props) {
           icon: <NewspaperIcon color="#585953" />,
           title: "Expired",
         },
-        {
-          icon: <NewspaperIcon color="#585953" />,
-          title: "Tax Group",
-        },
-    
       ];
       const [selected, setSelected] = useState("All");
     return (
@@ -39,19 +33,18 @@ function TaxRate({ }: Props) {
             <div className="flex justify-between">
                 <p className="text-textColor font-bold">Tax Rate</p>
                 <div className="flex gap-4">
-                    <Button variant="secondary" className="text-sm font-medium" size="sm"><PlusCircle color="#565148" /> New Tax Group</Button>
-                    <Button  className="text-sm font-medium" size="sm"><PlusCircle color="white" /> New Tax</Button>
+                 <CreateNewTax/>
                 </div>
             </div>
 
 
             <div className="bg-white rounded-lg p-6 mt-3">
-            <div className="flex gap-3 justify-start">
+            <div className="flex gap-3 justify-between">
                  {TaxFilter.map((customer) => (
                    <button
                      key={customer.title}
                      onClick={() => setSelected(customer.title)}
-                     className={`flex items-center gap-2 p-2 w-[19%] justify-center  rounded ${
+                     className={`flex items-center gap-2 p-2 w-[100%] justify-center  rounded ${
                        selected === customer.title ? "bg-WhiteIce" : "bg-white"
                      }`}
                      style={{ border: "1px solid #DADBDD" }}
@@ -69,10 +62,8 @@ function TaxRate({ }: Props) {
                  <TaxRateTable/>
                  </div>
            </div>
-
-
-        </div>
-    )
+    </div>
+  );
 }
 
-export default TaxRate
+export default TaxRate;

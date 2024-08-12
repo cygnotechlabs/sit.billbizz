@@ -2,7 +2,7 @@ import { useState } from "react";
 import SearchBar from "../../../../Components/SearchBar";
 import Button from "../../../../Components/Button";
 import ListIcon from "../../../../assets/icons/ListIcon";
-import Eye from "../../../../assets/icons/Eye";
+import ViewTaxDetailsVat from "./ViewTaxDetailsVat";
 
 type TaxRate = {
   id: string;
@@ -18,12 +18,17 @@ type Props = {};
 
 function TaxRateVatTable({}: Props) {
   const [search, setSearch] = useState<string>("");
+  const [selectedVatRate, setSelectedVatRate] = useState<TaxRate | null>(null);
 
   const filteredVatRates = vatData.filter((vatRate) =>
     vatRate.name.toLowerCase().includes(search.toLowerCase())
   );
 
   const tableHeaders = ["", "Tax Name", "Rate(%)", "Actions"];
+
+  const handleViewClick = (vatRate: TaxRate) => {
+    setSelectedVatRate(vatRate);
+  };
 
   return (
     <div>
@@ -56,8 +61,8 @@ function TaxRateVatTable({}: Props) {
                 <td className="py-2.5 px-4 border-y border-tableBorder">{item.name}</td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">{item.rate} %</td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
-                  <div className="flex justify-center cursor-pointer">
-                    <Eye color="#4B5C79" />
+                  <div className="flex justify-center cursor-pointer" onClick={() => handleViewClick(item)}>
+                    <ViewTaxDetailsVat vatRate={selectedVatRate} />
                   </div>
                 </td>
               </tr>

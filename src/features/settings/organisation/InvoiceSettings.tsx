@@ -13,6 +13,7 @@ import xMark from "../../../assets/Images/x.svg";
 import Button from '../../../Components/Button';
 import Modal from '../../../Components/model/Modal';
 import Banner from '../banner/Banner';
+import Trash2 from '../../../assets/icons/Trash2';
 type Props = {}
 type PaymentTerm = {
   [key: string]: string;
@@ -67,7 +68,10 @@ function InvoiceSettings({}: Props) {
   const addNewRow = () => {
     setPaymentTerms([...paymentTerms, { title: '', description: '' }]);
   };
-
+  const deleteRow = (indexToDelete:number) => {
+    setPaymentTerms(paymentTerms.filter((_, index) => index !== indexToDelete));
+  };
+  
 
   const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>([
     { title: 'Net 30', description: 'Payment is due within 30 days from the invoice date' },
@@ -114,7 +118,7 @@ function InvoiceSettings({}: Props) {
 
   return (
     <div className='m-4 '>
-      <Banner isOrganisationDetails={true}/>
+      <Banner seeOrgDetails/>
       {/* Org Adresss format */}
       <div className='space-y-4 text-sm text-[#303F58]'>
       <div className='grid  grid-cols-12 mt-5 '>
@@ -234,8 +238,7 @@ function InvoiceSettings({}: Props) {
                        <b>Upload Payment Based QR Code</b>
                     </p>
                     <p>
-                      Upload or configure the location of your QR code on the
-                      invoice
+                    Upload Payment Based QR Code on the Invoice
                     </p>
                   </div>
                 </div>
@@ -277,8 +280,7 @@ function InvoiceSettings({}: Props) {
                       <b>Upload Organisation Digital Signature</b>
                     </p>
                     <p>
-                      Upload or configure the location of your QR code on the
-                      invoice
+                      Upload the digital signature of the person authorized to sign invoices
                     </p>
                   </div>
                 </div>
@@ -488,8 +490,8 @@ function InvoiceSettings({}: Props) {
           </div>
         </div>
         <div className="grid grid-cols-12 gap-2 h-[44px] items-center justify-center bg-[#FDF8F0] border-b border-b-slate-300 ">
-          <div className="col-span-5 text-center text-[14px]">Title</div>
-          <div className="col-span-7 text-center text-[14px]">Description</div>
+          <div className="col-span-4 text-center text-[14px]">Title</div>
+          <div className="col-span-8  text-center text-[14px]">Description</div>
         </div>
         {paymentTerms.map((term, index) => (
           <div className="grid grid-cols-12 border-b border-b-slate-300 gap-2" key={index}>
@@ -506,7 +508,7 @@ function InvoiceSettings({}: Props) {
                 }}
               />
             </div>
-            <div className="col-span-8 m-3">
+            <div className="col-span-8 m-3 gap-[10px] flex items-center">
               <textarea
                 value={term.description}
                 onChange={(e) => handleInputChange(index, 'description', e.target.value)}
@@ -518,7 +520,13 @@ function InvoiceSettings({}: Props) {
                   }
                 }}
               />
+              {
+                index>2?          
+              <div onClick={()=>deleteRow(index)} className="cursor-pointer"><Trash2 size={20} color='#820000'/></div>:
+              <div className='ms-5'></div>
+              }
             </div>
+           
           </div>
         ))}
         <Button onClick={addNewRow} variant="secondary" className="h-[30px] w-[80px] m-5 flex justify-center" size="sm">

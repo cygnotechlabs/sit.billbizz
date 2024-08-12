@@ -10,6 +10,7 @@ import squreUserRound from "../icons/squre-user-round";
 import truck from "../icons/truck";
 import userRound from "../icons/user-round";
 import usersRound from "../icons/users-round";
+import Wallet from "../icons/Wallet";
 
 const navlist = [
   {
@@ -260,9 +261,9 @@ export const preferencesList = [
 
 export const SalesList = [
   { title: "Sales Order", route: "/settings/sales-order" },
-  { title: "Shipments", route: "/settings/shipments" },
-  { title: "Invoices", route: "/settings/invoices" },
-  { title: "Delivery Challans", route: "/settings/delivery-challans" },
+  { title: "Shipments", route: "/settings/sales/shipments" },
+  { title: "Invoices", route: "/settings/sales/invoices" },
+  { title: "Delivery Challans", route: "/settings/sales/deliverychallans" },
   { title: "Credit Notes", route: "/settings/credit-notes" },
 ];
 
@@ -323,14 +324,14 @@ export const settingsList = [
     subhead: [
       { headName: "Profile", subRoute: "/settings/organization/profile" },
       { headName: "Invoice", subRoute: "/settings/organization/invoice" },
-      { headName: "Currencies", subRoute: "/settings/currencies" },
+      { headName: "Currencies", subRoute: "/settings/organization/currencies" },
     ],
   },
   {
     nav: "Items",
     icon: box,
     subhead: [
-      { headName: "Item", subRoute: "/settings/item" },
+      { headName: "Item", subRoute: "/settings/items/item" },
       {
         headName: "Inventory Adjustment",
         subRoute: "/settings/inventory-adjustment",
@@ -341,26 +342,39 @@ export const settingsList = [
     nav: "Tax & Complaints",
     icon: circleDollar,
     subhead: [{ headName: "Taxes", subRoute: "/settings/taxes" }],
-  },
-  {
+},
+{
+    nav: "Rewards Settings",
+    icon: Wallet,
+    subhead: [
+      { headName: "Rewards", subRoute: "/settings/rewards" },
+      { headName: "Refer & Earn", subRoute: "/settings/rewards/refferandearn" },
+      { headName: "Membership Card", subRoute: "/settings/rewards/membershipcard" },
+    ],
+},
+{
     nav: "Sales",
     icon: shoppingCart,
     subhead: [
-      { headName: "Sales Order", subRoute: "/settings/sales-order" },
-      { headName: "Shipments", subRoute: "/settings/shipments" },
-      { headName: "Invoices", subRoute: "/settings/invoices" },
+      { headName: "Sales Order", subRoute: "/settings/sales/salesOrder" },
+      { headName: "Shipments", subRoute: "/settings/sales/shipments" },
+      { headName: "Invoices", subRoute: "/settings/sales/invoices" },
       {
         headName: "Delivery Challans",
-        subRoute: "/settings/delivery-challans",
+        subRoute: "/settings/sales/deliverychallans",
       },
-      { headName: "Credit Notes", subRoute: "/settings/credit-notes" },
+      { headName: "Credit Notes", subRoute: "/settings/sales/CreditNotes" },
     ],
-  },
+},
+
   {
     nav: "Purchases",
     icon: shoppingBag,
     subhead: [
-      { headName: "Purchase Orders", subRoute: "/settings/purchase-orders" },
+      {
+        headName: "Purchase Orders",
+        subRoute: "/settings/purchase/puschaseOrder",
+      },
       { headName: "Expense", subRoute: "/settings/expense" },
     ],
   },

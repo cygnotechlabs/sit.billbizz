@@ -8,6 +8,7 @@ import DashboardHome from "../features/inventory/Dashboard/DashboardHome";
 import RackModal from "../features/inventory/Rack/RackModal";
 import Category from "../features/inventory/Category/Category";
 import BrandModal from "../features/inventory/Brand/BrandModal";
+import NewManufature from "../features/inventory/Manufature/NewManufacture";
 
 type Props = {};
 
@@ -16,6 +17,7 @@ const Inventory = ({}: Props) => {
   const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
   const [isRackModalOpen, setIsRackModalOpen] = useState(false);
   const [openCategoryModal, setOpenCategoryModal] = useState(false);
+  const [isManufatureModalOpen, setIsManudfatureModalOpen] = useState(false);
 
   const toggleCategoryModal = () => {
     setOpenCategoryModal(!openCategoryModal);
@@ -50,7 +52,7 @@ const Inventory = ({}: Props) => {
       icon: <HandShakeIcon color="#4B5C79" />,
       text: "View Manufacture",
       onClick: () => {
-        console.log("View Manufacture clicked");
+        setIsManudfatureModalOpen(true)
       },
     },
     {
@@ -74,6 +76,7 @@ const Inventory = ({}: Props) => {
         setOpenCategoryModal(true);
       },
     },
+    
   ];
 
   return (
@@ -117,6 +120,9 @@ const Inventory = ({}: Props) => {
       )}
       {isRackModalOpen && (
         <RackModal ref={modalRef} onClose={() => setIsRackModalOpen(false)} />
+      )}
+       {isManufatureModalOpen && (
+        <NewManufature ref={modalRef} onClose={() => setIsManudfatureModalOpen(false)} />
       )}
       <Category isOpen={openCategoryModal} onClose={toggleCategoryModal} />
       <DashboardHome />

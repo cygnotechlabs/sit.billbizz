@@ -1,25 +1,22 @@
-import { forwardRef, useState } from "react";
-import PencilEdit from "../../../assets/icons/PencilEdit";
-import PlusCircle from "../../../assets/icons/PlusCircle";
-import TrashCan from "../../../assets/icons/TrashCan";
+import { forwardRef, useState } from 'react';
+import Button from '../../../Components/Button';
+import Modal from '../../../Components/model/Modal';
+import PencilEdit from '../../../assets/icons/PencilEdit';
+import TrashCan from '../../../assets/icons/TrashCan';
+import PlusCircle from '../../../assets/icons/PlusCircle';
 import bgImage from "../../../assets/Images/6.png";
-import Button from "../../../Components/Button";
-import Modal from "../../../Components/model/Modal";
 
 type Props = {
   onClose: () => void;
 };
 
-const rackData = [
-  { title: "Rack A1", text: "Lorem ipsum dolor sit amet cons" },
-  { title: "Rack A1", text: "Lorem ipsum dolor sit amet cons" },
-  { title: "Rack A1", text: "Lorem ipsum dolor sit amet cons" },
-  { title: "Rack A1", text: "Lorem ipsum dolor sit amet cons" },
-  { title: "Rack A1", text: "Lorem ipsum dolor sit amet cons" },
-  { title: "Rack A1", text: "Lorem ipsum dolor sit amet cons" },
-];
+const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
+  const rackData = [
+    { title: "Samsung", text: "Lorem ipsum dolor sit amet cons" },
+    { title: "Apple Inc", text: "Lorem ipsum dolor sit amet cons" },
+    { title: "Sony Corporation", text: "Lorem ipsum dolor sit amet cons" },
+  ];
 
-const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const openModal = () => {
@@ -40,10 +37,9 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               style={{ backgroundImage: `url(${bgImage})` }}
             ></div>
             <div className="relative z-10">
-              <h3 className="text-xl font-bold text-textColor">Manage Rack</h3>
+              <h3 className="text-xl font-bold text-textColor">Manage Manufacturer</h3>
               <p className="text-dropdownText font-semibold text-sm mt-2">
-                Have an insight on the profit or loss incurred due to the change
-                in exchange rates
+              Have an insight on the profit or loss incurred due to the change in exchange rates
               </p>
             </div>
             <div
@@ -57,7 +53,8 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
           <div className="flex justify-end me-2 my-4">
             <Button variant="primary" size="sm" onClick={openModal} className="text-sm">
               <PlusCircle color="white" />
-              Add Rack
+             
+New Manufacturer
             </Button>
           </div>
 
@@ -91,9 +88,8 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
 
       <Modal open={isModalOpen} onClose={closeModal} style={{ width: "35%" }}>
         <div className="p-5 mt-3">
-          <div className=" flex p-4 rounded-xl  relative overflow-hidden">
-            <h3 className="text-xl font-bold text-textColor">Add Rack</h3>
-
+          <div className="flex p-4 rounded-xl relative overflow-hidden">
+            <h3 className="text-xl font-bold text-textColor">Add Manufacturer</h3>
             <div
               className="ms-auto text-3xl cursor-pointer relative z-10"
               onClick={closeModal}
@@ -102,39 +98,36 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
             </div>
           </div>
 
-          <form className="">
-            <div className="">
-              <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">
-                  Name
-                </label>
-                <input
-                  placeholder="Rack A1"
-                  type="text"
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10 "
-                />
-              </div>
+          <form>
+            <div className="mb-4">
+              <label className="block text-sm mb-1 text-labelColor">
+                Name
+              </label>
+              <input
+                placeholder="Sony Corporation"
+                type="text"
+                className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10"
+              />
+            </div>
 
-              <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">
-                  count
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder="Note"
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 "
-                />
-              </div>
+            <div className="mb-4">
+              <label className="block text-sm mb-1 text-labelColor">
+                Count
+              </label>
+              <textarea
+                rows={4}
+                placeholder="Note"
+                className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
+              />
+            </div>
 
-              <br />
-              <div className="flex justify-end gap-2 mb-3">
-                <Button variant="primary" size="sm">
-                  Save
-                </Button>
-                <Button onClick={closeModal} variant="primary" size="sm">
-                  Cancel
-                </Button>
-              </div>
+            <div className="flex justify-end gap-2 mb-3">
+              <Button variant="primary" size="sm">
+                Save
+              </Button>
+              <Button onClick={closeModal} variant="tertiary" size="sm">
+                Cancel
+              </Button>
             </div>
           </form>
         </div>
@@ -143,4 +136,4 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   );
 });
 
-export default RackModal;
+export default NewManufacture;
