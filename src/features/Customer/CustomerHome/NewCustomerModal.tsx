@@ -628,7 +628,7 @@ const NewCustomerModal = ({ page }: Props) => {
                         </div>
                         <div className="relative w-full">
                           <label htmlFor="" className="block mb-1">
-                            Place Of Supply
+                            Place of Supply
                           </label>
                           <select
                             className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder 
