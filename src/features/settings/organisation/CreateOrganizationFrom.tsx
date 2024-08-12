@@ -187,7 +187,6 @@ const CreateOrganizationForm = () => {
   return (
     <div
       className=" m-4 overflow-y-scroll hide-scrollbar h-auto"
-      style={{ height: "92vh" }}
     >
       <Banner isOrganisationDetails={true} oneOrganization={oneOrganization}/>
 
