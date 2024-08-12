@@ -469,20 +469,11 @@ const CreateOrganizationForm = () => {
                         value={item}
                         className="text-slate-300"
                       >
-                        {item}
+                        {item.currencyCode}
                       </option>
                     ))
                   ) : (
                     <>
-                      <option value="USD" className="text-slate-300">
-                        USD
-                      </option>
-                      <option value="EUR" className="text-slate-300">
-                        EUR
-                      </option>
-                      <option value="INR" className="text-slate-300">
-                        INR
-                      </option>
                     </>
                   )}
                 </select>
