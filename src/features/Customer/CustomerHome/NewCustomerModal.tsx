@@ -146,11 +146,6 @@ const NewCustomerModal = ({ page }: Props) => {
     return activeTab === tabName ? "border-darkRed" : "border-neutral-300";
   };
 
-  const [isMsmeRegistered, setIsMsmeRegistered] = useState<boolean>(false);
-
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsMsmeRegistered(event.target.checked);
-  };
 
   const [customerdata, setCustomerData] =
     useState<CustomerData>(initialCustomerData);
@@ -470,31 +465,7 @@ const NewCustomerModal = ({ page }: Props) => {
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-4">
-                {/* <div className="w-full">
-                  <label
-                    htmlFor="date-of-birth"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Date of birth
-                  </label>
-                  <div className="relative pl-2 text-sm w-full mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2">
-                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-2 text-gray-700">
-          <Calender color="currentColor" height={18} width={18} />
-        </div>
-                    <input
-                      id="date-of-birth"
-                      placeholder="Select Date"
-                      type="date"
-                      name="dob"
-                      value={customerdata.dob}
-                      onChange={handleChange}
-                      className="w-full h-full pl-2 pr-8 text-sm bg-white border-none focus:outline-none focus:ring-0 text-gray"
-                    />
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <CehvronDown color="gray" />
-                    </div>
-                  </div>
-                </div> */}
+               
               </div>
 
               <div className="flex mt-5 px-5">
@@ -835,45 +806,7 @@ const NewCustomerModal = ({ page }: Props) => {
                         <div></div>
 
                         <div></div>
-                        {isMsmeRegistered && (
-                          <>
-                            <div className="relative w-full">
-                              <label htmlFor="msmeType" className="block mb-1">
-                                MSME/Udyam Registration Type
-                              </label>
-                              <select
-                                className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                name="msmeType"
-                                value={customerdata.msmeType}
-                                onChange={handleChange}
-                              >
-                                <option value="" className="text-gray">
-                                  Select a Registration Type
-                                </option>
-                                {/* Add your other options here */}
-                              </select>
-                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
-                                <CehvronDown color="gray" />
-                              </div>
-                            </div>
-                            <div className="relative w-full">
-                              <label
-                                htmlFor="msmeRegistrationNumber"
-                                className="block mb-1"
-                              >
-                                MSME/Udyam Registration Number
-                              </label>
-                              <input
-                                type="text"
-                                name="msmeNumber"
-                                className="text-sm ps-2 rounded-md text-start bg-white border border-slate-300 h-9 p-2 w-full"
-                                placeholder="Enter the Registration Number"
-                                value={customerdata.msmeNumber}
-                                onChange={handleChange}
-                              />
-                            </div>
-                          </>
-                        )}
+                 
                       </div>
                     </div>
                   )}

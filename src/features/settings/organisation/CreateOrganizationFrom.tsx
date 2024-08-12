@@ -61,7 +61,7 @@ const CreateOrganizationForm = () => {
     dateSplit: "",
   });
 
-  console.log(inputData);
+  // console.log(inputData);
 
   const getDropdownList = async () => {
     try {
@@ -92,7 +92,9 @@ const CreateOrganizationForm = () => {
   const getcurrencyData = async () => {
     try {
       const url = `${endponits.GET_CURRENCY_LIST}`;
-      const { response, error } = await getCurrencyData(url);
+      const { response, error } = await getCurrencyData(url ,{
+        organizationId: "INDORG0001",
+      });
       if (!error && response) {
         setcurrencyData(response.data);
         console.log(response);
