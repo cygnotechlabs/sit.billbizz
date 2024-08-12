@@ -10,6 +10,9 @@ import VATComponent from "../features/settings/taxes/vat/VATComponent";
 import Shipments from "../features/settings/sales/shipments/Shipments";
 import DeliveryChallans from "../features/settings/sales/deliveryChallans/DeliveryChallans";
 import Items from "../features/settings/items/Items";
+import Rewards from "../features/settings/rewards/Rewards";
+import RefferAndEarn from "../features/settings/rewards/RefferAndEarn";
+import MembershipCard from "../features/settings/rewards/MembershipCard";
 import Invoices from "../features/settings/sales/invoice/Invoices";
 
 import SalesOrder from "../features/settings/sales/salesOrder/SalesOrder";
@@ -41,6 +44,10 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings/sales/invoices",element:<Invoices/>},
   { path: "/settings/sales/shipments", element: <Shipments /> },
   { path: "/settings/sales/deliverychallans", element: <DeliveryChallans /> },
+  { path: "/settings/items/item",element:<Items/>},
+  { path: "/settings/rewards",element:<Rewards/>},
+  { path: "/settings/rewards/refferandearn",element:<RefferAndEarn/>},
+  { path: "/settings/rewards/membershipcard",element:<MembershipCard/>},
   { path: "/settings/items/item", element: <Items /> },
   { path: "/settings/sales/salesOrder", element: <SalesOrder /> },
   { path: "/settings/sales/CreditNotes", element: <CreditNotes /> },

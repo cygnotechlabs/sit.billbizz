@@ -10,6 +10,7 @@ import squreUserRound from "../icons/squre-user-round";
 import truck from "../icons/truck";
 import userRound from "../icons/user-round";
 import usersRound from "../icons/users-round";
+import Wallet from "../icons/Wallet";
 
 const navlist = [
   {
@@ -341,8 +342,17 @@ export const settingsList = [
     nav: "Tax & Complaints",
     icon: circleDollar,
     subhead: [{ headName: "Taxes", subRoute: "/settings/taxes" }],
-  },
-  {
+},
+{
+    nav: "Rewards Settings",
+    icon: Wallet,
+    subhead: [
+      { headName: "Rewards", subRoute: "/settings/rewards" },
+      { headName: "Refer & Earn", subRoute: "/settings/rewards/refferandearn" },
+      { headName: "Membership Card", subRoute: "/settings/rewards/membershipcard" },
+    ],
+},
+{
     nav: "Sales",
     icon: shoppingCart,
     subhead: [
@@ -355,7 +365,8 @@ export const settingsList = [
       },
       { headName: "Credit Notes", subRoute: "/settings/sales/CreditNotes" },
     ],
-  },
+},
+
   {
     nav: "Purchases",
     icon: shoppingBag,
