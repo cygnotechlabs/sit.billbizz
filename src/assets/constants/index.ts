@@ -361,7 +361,7 @@ export const settingsList = [
     icon: shoppingBag,
     subhead: [
       { headName: "Purchase Orders", subRoute: "/settings/purchase-orders" },
-      { headName: "Expense", subRoute: "/settings/expense" },
+      { headName: "Expense", subRoute: "/settings/purchases/expenses" },
     ],
   },
   {
