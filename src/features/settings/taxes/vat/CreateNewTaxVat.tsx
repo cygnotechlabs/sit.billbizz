@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import PlusCircle from "../../../../assets/icons/PlusCircle";
 import Button from "../../../../Components/Button";
 import Modal from "../../../../Components/model/Modal";
@@ -6,6 +6,7 @@ import bgImage from "../../../../assets/Images/14.png";
 import TaxImage from "../../../../assets/Images/Tax-bro 1.png";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
+import { VatResponseContext } from "../../../../context/ContextShare";
 
 type Props = {};
 
@@ -21,6 +22,7 @@ function CreateNewTaxVat({}: Props) {
 
   const [taxVat, setTaxVat] = useState(initialTaxVat);
   const { request: CreateTaxVat } = useApi("post", 5004);
+  const { setVatResponse } = useContext(VatResponseContext)!;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -40,6 +42,10 @@ function CreateNewTaxVat({}: Props) {
       const body = taxVat;
       const { response, error } = await CreateTaxVat(url, body);
       if (!error && response) {
+        setVatResponse((prevVatResponse: any) => ({
+          ...prevVatResponse,
+          ...response.data,  
+        }));
         setTaxVat(initialTaxVat);
         closeModal();
       } else {

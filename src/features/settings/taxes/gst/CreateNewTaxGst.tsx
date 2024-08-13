@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import PlusCircle from "../../../../assets/icons/PlusCircle";
 import Button from "../../../../Components/Button";
 import Modal from "../../../../Components/model/Modal";
@@ -6,6 +6,7 @@ import bgImage from "../../../../assets/Images/14.png";
 import TaxImage from "../../../../assets/Images/Tax-bro 1.png";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
+import { GstResponseContext } from "../../../../context/ContextShare";
 
 type Props = {};
 
@@ -24,6 +25,8 @@ function CreateNewTax({}: Props) {
 
   const [taxGst, setTaxGst] = useState(initialTaxGst);
   const { request: CreateTaxGst } = useApi("post", 5004);
+  const { setGstResponse } = useContext(GstResponseContext)!;
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement>
   ) => {
@@ -41,7 +44,6 @@ function CreateNewTax({}: Props) {
       return updatedTaxGst;
     });
   };
-  
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -50,13 +52,17 @@ function CreateNewTax({}: Props) {
       const body = taxGst;
       const { response, error } = await CreateTaxGst(url, body);
       if (!error && response) {
+        setGstResponse((prevGstResponse: any) => ({
+          ...prevGstResponse,
+          ...response.data,  
+        }));
         setTaxGst(initialTaxGst);
         closeModal();
       } else {
         console.log("Error:", error);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error:", error);
     }
   };
 
