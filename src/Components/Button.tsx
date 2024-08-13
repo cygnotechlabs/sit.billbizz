@@ -5,6 +5,7 @@ type ButtonProps = React.HTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "tertiary" | "fourthiary";
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
+  type?: "button" | "submit" | "reset";
 };
 
 const buttonVariants = cva("flex text-center items-center", {
@@ -36,9 +37,10 @@ export default function Button({
   variant = "primary",
   size = "md",
   className = "p-4",
+  type = "button", // Default type is "button"
   ...props
 }: ButtonProps) {
   const combinedClassName = `${buttonVariants({ variant, size })} ${className}`;
 
-  return <button {...props} className={combinedClassName} />;
+  return <button type={type} {...props} className={combinedClassName} />;
 }
