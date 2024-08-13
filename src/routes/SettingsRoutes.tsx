@@ -18,6 +18,7 @@ import Invoices from "../features/settings/sales/invoice/Invoices";
 import SalesOrder from "../features/settings/sales/salesOrder/SalesOrder";
 import CreditNotes from "../features/settings/sales/creditnote/CreditNotes";
 import PurchaseOrders from "../features/settings/Purcahse/PuchaseOrder";
+import MsmeSettings from "../features/settings/taxes/msmeSettings/MsmeSettings";
 
 // import Users from "../features/settings/users/Users";
 // import Preferences from "../features/settings/preferences/Preferences";
@@ -41,6 +42,7 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings/taxes", element: <Taxes /> },
   { path: "/settings/taxes/GST", element: <GSTComponent /> },
   { path: "/settings/taxes/VAT", element: <VATComponent /> },
+  { path: "/settings/taxes/msme", element: <MsmeSettings /> },
   { path: "/settings/sales/invoices",element:<Invoices/>},
   { path: "/settings/sales/shipments", element: <Shipments /> },
   { path: "/settings/sales/deliverychallans", element: <DeliveryChallans /> },
