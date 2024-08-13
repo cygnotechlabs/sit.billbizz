@@ -12,6 +12,12 @@ exports.addItem = async (req, res) => {
         itemName,
         sku,
         unit,
+        length,
+        width,
+        height,
+        dimensionUnit,
+        weight,
+        weightUnit,
         manufacturer,
         brand,
         sellingPrice,
@@ -19,6 +25,10 @@ exports.addItem = async (req, res) => {
         salesDescription,
         categories,
         rack,
+        upc,
+        mpn,
+        ean,
+        isbn,
         costPrice,
         purchaseAccount,
         purchaseDescription,
@@ -26,28 +36,21 @@ exports.addItem = async (req, res) => {
         mrp,
         taxPreference,
         hsnCode,
-        cess,
-        intraStateTaxRate,
-        interStateTaxRate,
-        alterUnit,
-        quantityAlertLevel,
+        sac,
+        taxRate,
+        inventoryAccount,
+        openingStock,
+        openingStockRatePerUnit,
+        reorderPOint,
         productUsage,
         createdDate,
-        // updatedDate,
         barcodePrefix,
         warranty,
+        trackInventory,
         itemImage,
+        currentStock,
         status
       } = req.body;
-  
-    //   // Check if an item with the same organizationId already exists
-    //   const existingItem = await Item.findOne({ _id });
-  
-    //   if (existingItem) {
-    //     return res.status(409).json({
-    //       message: "This item already exists.",
-    //     });
-    //   }
 
     const currentDate = new Date();
     const day = String(currentDate.getDate()).padStart(2, '0');
@@ -57,11 +60,17 @@ exports.addItem = async (req, res) => {
   
       // Create a new item
       const newItem = new Item({
-        organizationId,
+        organizationId,   
         itemType,
         itemName,
         sku,
         unit,
+        length,
+        width,
+        height,
+        dimensionUnit,
+        weight,
+        weightUnit,
         manufacturer,
         brand,
         sellingPrice,
@@ -69,6 +78,10 @@ exports.addItem = async (req, res) => {
         salesDescription,
         categories,
         rack,
+        upc,
+        mpn,
+        ean,
+        isbn,
         costPrice,
         purchaseAccount,
         purchaseDescription,
@@ -76,17 +89,19 @@ exports.addItem = async (req, res) => {
         mrp,
         taxPreference,
         hsnCode,
-        cess,
-        intraStateTaxRate,
-        interStateTaxRate,
-        alterUnit,
-        quantityAlertLevel,
+        sac,
+        taxRate,
+        inventoryAccount,
+        openingStock,
+        openingStockRatePerUnit,
+        reorderPOint,
         productUsage,
-        createdDate: formattedDate,
-        // updatedDate,
+        createdDate:formattedDate,
         barcodePrefix,
         warranty,
+        trackInventory,
         itemImage,
+        currentStock,
         status: status || 'Active' // Default to 'Active' if not provided
       });
       await newItem.save();
@@ -105,24 +120,36 @@ exports.addItem = async (req, res) => {
 
 // Get all item
 exports.getAllItem = async (req, res) => {
-    try {
-        const allItem = await Item.find()
-        if (allItem.length > 0) {
-          res.status(200).json(allItem);
-        } else {
-          res.status(404).json("No Items found");
-        }
-    } catch (error) {
-        console.error("Error fetching Items:", error);
-        res.status(500).json({ message: "Internal server error." });
+  try {
+    const { organizationId } = req.body;
+
+    const allItem = await Item.find({ organizationId: organizationId })
+    if (allItem.length > 0) {
+      res.status(200).json(allItem);
+    } else {
+      res.status(404).json("No Items found");
     }
+} catch (error) {
+    console.error("Error fetching Items:", error);
+    res.status(500).json({ message: "Internal server error." });
+}
 };
 
 
 // Get a Item (particular Item)
 exports.getAItem = async(req,res)=>{
     const itemId = req.params.id
+    const { organizationId } = req.body;
+
     try {
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
+    
+        if (!existingOrganization) {
+          return res.status(404).json({
+            message: "No Organization Found.",
+          });
+        }
         const item = await Item.findById({_id: itemId})
         if (item) {
           res.status(200).json(item)
@@ -143,11 +170,17 @@ exports.updateItem = async (req, res) => {
   try {
       const {
           _id,
-          organizationId,
+          organizationId,   
           itemType,
           itemName,
           sku,
           unit,
+          length,
+          width,
+          height,
+          dimensionUnit,
+          weight,
+          weightUnit,
           manufacturer,
           brand,
           sellingPrice,
@@ -155,6 +188,10 @@ exports.updateItem = async (req, res) => {
           salesDescription,
           categories,
           rack,
+          upc,
+          mpn,
+          ean,
+          isbn,
           costPrice,
           purchaseAccount,
           purchaseDescription,
@@ -162,17 +199,19 @@ exports.updateItem = async (req, res) => {
           mrp,
           taxPreference,
           hsnCode,
-          cess,
-          intraStateTaxRate,
-          interStateTaxRate,
-          alterUnit,
-          quantityAlertLevel,
+          sac,
+          taxRate,
+          inventoryAccount,
+          openingStock,
+          openingStockRatePerUnit,
+          reorderPOint,
           productUsage,
-          // createdDate,
           updatedDate,
           barcodePrefix,
           warranty,
+          trackInventory,
           itemImage,
+          currentStock,
           status
       } = req.body;
 
@@ -188,37 +227,50 @@ exports.updateItem = async (req, res) => {
       const updatedItem = await Item.findByIdAndUpdate(
         _id,
           {
-              organizationId,
-              itemType,
-              itemName,
-              sku,
-              unit,
-              manufacturer,
-              brand,
-              sellingPrice,
-              salesAccount,
-              salesDescription,
-              categories,
-              rack,
-              costPrice,
-              purchaseAccount,
-              purchaseDescription,
-              preferredVendor,
-              mrp,
-              taxPreference,
-              hsnCode,
-              cess,
-              intraStateTaxRate,
-              interStateTaxRate,
-              alterUnit,
-              quantityAlertLevel,
-              productUsage,
-              // createdDate,
-              updatedDate: formattedDate,
-              barcodePrefix,
-              warranty,
-              itemImage,
-              status
+            organizationId,   
+            itemType,
+            itemName,
+            sku,
+            unit,
+            length,
+            width,
+            height,
+            dimensionUnit,
+            weight,
+            weightUnit,
+            manufacturer,
+            brand,
+            sellingPrice,
+            salesAccount,
+            salesDescription,
+            categories,
+            rack,
+            upc,
+            mpn,
+            ean,
+            isbn,
+            costPrice,
+            purchaseAccount,
+            purchaseDescription,
+            preferredVendor,
+            mrp,
+            taxPreference,
+            hsnCode,
+            sac,
+            taxRate,
+            inventoryAccount,
+            openingStock,
+            openingStockRatePerUnit,
+            reorderPOint,
+            productUsage,
+          
+            updatedDate: formattedDate ,
+            barcodePrefix,
+            warranty,
+            trackInventory,
+            itemImage,
+            currentStock,
+            status
           },
           { new: true, runValidators: true }
       );

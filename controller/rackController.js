@@ -75,12 +75,19 @@ exports.getAllRack = async (req, res) => {
 //3. get one rack
 exports.getOneRack = async (req, res) => {
   try {
-    const { _id } = req.params;
+    const rackId = req.params.id;
+    const { organizationId } = req.body;
 
-    // Log the ID being fetched
-    console.log("Fetching rack with ID:", _id);
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
 
-    const rack = await Rack.findById(_id);
+    const rack = await Rack.findById({_id: rackId});
 
     if (rack) {
       res.status(200).json(rack);

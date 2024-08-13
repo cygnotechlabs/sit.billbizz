@@ -8,21 +8,20 @@ exports.addManufacturer = async (req, res) => {
         organizationId,
         name,
         description,
-        createdDate,
-        
+        createdDate
+
     } = req.body;
 
     try {
-        // Check if a manufacturer with the same manfId already exists within the same organization
-        const existingManufacturerById = await manufacturer.findOne({  organizationId });
-
-        if (existingManufacturerById) {
-            console.log("Manufacturer with manfId already exists:", existingManufacturerById);
-            return res.status(409).json({
-                message: "A manufacturer with this manfId already exists in the given organization.",
-            });
-        }
-
+       
+           // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
         // Check if a manufacturer with the same name already exists within the same organization
         const existingManufacturerByName = await manufacturer.findOne({ name, organizationId });
 
@@ -59,12 +58,21 @@ exports.addManufacturer = async (req, res) => {
 };
 
 
-  // Get all item
+  // Get all Manufacturer
 exports.getAllManufacturer = async (req, res) => {
-    const organizationId = req.params.id
+    const { organizationId } = req.body;
     try {
-        const allOrganizations = await manufacturer.findOne(organizationId)
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
+    
+        if (!existingOrganization) {
+        return res.status(404).json({
+            message: "No Organization Found.",
+        });
+        }
+        const allOrganizations = await manufacturer.find({ organizationId })
         res.status(200).json(allOrganizations);
+        
     } catch (error) {
         console.error("Error fetching Items:", error);
         res.status(500).json({ message: "Internal server error." });
@@ -75,9 +83,23 @@ exports.getAllManufacturer = async (req, res) => {
 // Get a Item (particular Item)
 exports.getAManufacturer = async(req,res)=>{
     const manufacturerId = req.params.id
+    const { organizationId } = req.body;
     try {
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
+    
+        if (!existingOrganization) {
+        return res.status(404).json({
+            message: "No Organization Found.",
+        });
+        }
         const aManufacturer = await manufacturer.findOne({_id: manufacturerId})
         res.status(200).json({aManufacturer})
+          // If no settings are found for the provided organizationId
+    if (!aManufacturer|| aManufacturer.length === 0) {
+        return res.status(404).json({ message: "No manufacturer found for this organization" });
+      }
+  
     } catch (error) {
         console.error("Error fetching a Item:", error);
         res.status(500).json({ message: "Internal server error." });
@@ -156,8 +178,8 @@ exports.updateManufacturer = async (req, res) => {
 //5. delete Unit
 exports.deletedManufacturer = async (req, res) => {
     try {
-      const { id } = req.params;
- 
+        const { id } = req.params;
+       
       // Check if the unit exists
       const manufacture  = await manufacturer.findById(id);
  

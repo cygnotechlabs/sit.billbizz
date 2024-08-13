@@ -2,11 +2,12 @@ const express = require("express")
 
 const router = new express.Router()
 
-const itemController = require("../controller/itemController");
-const unitController = require("../controller/unitController")
-const manufacturerController = require("../controller/manufacturerController");
-const categoriesController = require("../controller/categoriesController")
-const brandController = require('../controller/brandController')
+const itemController = require("../../BillBizz/controller/itemController");
+const unitController = require("../../BillBizz/controller/unitController")
+const manufacturerController = require("../../BillBizz/controller/manufacturerController");
+const categoriesController = require("../../BillBizz/controller/categoriesController")
+const brandController = require('../../BillBizz/controller/brandController')
+const rackController = require('../../BillBizz/controller/rackController')
 
 
 // Item
@@ -19,13 +20,14 @@ router.delete('/delete-item/:id',itemController.deleteItem)
 
 // Unit
 router.post('/add-unit', unitController.addUnit);
-router.get('/get-all-unit', unitController.getAllUnit);
+router.put('/get-all-unit', unitController.getAllUnit);
 router.get('/get-one-unit/:_id', unitController.getOneUnit);
 router.put('/edit-unit', unitController.updateUnit);
 router.delete('/delete-unit/:id', unitController.deleteUnit);
+
 // Unit Conversion
 router.post('/add-unitConversion', unitController.addUnitConversion);
-router.get('/get-all-unitConversion', unitController.getAllUnitConversion);
+router.put('/get-all-unitConversion', unitController.getAllUnitConversion);
 router.get('/get-one-unitConversion/:_id', unitController.getOneUnitConversion);
 router.put('/edit-unitConversion', unitController.updateUnitConversion);
 router.delete('/delete-unitConversion/:id', unitController.deleteUnitConversion);
@@ -33,7 +35,7 @@ router.delete('/delete-unitConversion/:id', unitController.deleteUnitConversion)
 
 //manufacturer
 router.post('/addManufacturer', manufacturerController.addManufacturer);
-router.get('/getAllManufacturer', manufacturerController.getAllManufacturer)
+router.put('/getAllManufacturer', manufacturerController.getAllManufacturer)
 router.get('/getAManufacturer/:id',manufacturerController.getAManufacturer)
 router.put('/updateManufacturer/:id', manufacturerController.updateManufacturer)
 router.delete('/deleteManufacturer/:id',manufacturerController.deletedManufacturer)
@@ -41,7 +43,7 @@ router.delete('/deleteManufacturer/:id',manufacturerController.deletedManufactur
 
 //category
 router.post('/addCategory', categoriesController.addCategory)
-router.get('/getAllCategories' , categoriesController.getAllCategories)
+router.put('/getAllCategories' , categoriesController.getAllCategories)
 router.get('/getACategory/:id' , categoriesController.getACategory)
 router.put("/updateCategory/:id" , categoriesController.updateCategory)
 router.delete("/deleteCategory/:id", categoriesController.deleteCategory)
@@ -49,10 +51,18 @@ router.delete("/deleteCategory/:id", categoriesController.deleteCategory)
 
 //brand
 router.post('/addBrand', brandController.addBrand);
-router.get('/getAllBrands', brandController.getAllBrands);
+router.put('/getAllBrands', brandController.getAllBrands);
 router.get('/getBrand/:id', brandController.getABrand);
 router.put('/updateBrand/:id', brandController.updateBrand);
 router.delete('/deleteBrand/:id', brandController.deleteBrand);
+
+
+//Rack
+router.post('/add-rack', rackController.addRack);
+router.put('/get-all-rack', rackController.getAllRack);
+router.get('/get-one-rack/:id', rackController.getOneRack);
+router.put('/update-rack', rackController.updateRack);
+router.delete('/delete-rack/:id', rackController.deleteRack);
 
 
 module.exports = router

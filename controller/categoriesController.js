@@ -1,4 +1,4 @@
-const organization = require('../database/model/organization')
+const Organization = require('../database/model/organization')
 const Categories = require("../database/model/categories");
 
 // Add a new category
@@ -8,10 +8,21 @@ exports.addCategory = async (req, res) => {
         organizationId,
         name,
         description,
-        createdDate,
-    } = req.body;
+        createdDate
+    } 
+    = req.body;
 
     try {
+        
+        // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+ 
         // Check if a category with the same name already exists within the same organization
         const existingCategoryByName = await Categories.findOne({ name, organizationId });
 
@@ -52,6 +63,14 @@ exports.addCategory = async (req, res) => {
 exports.getAllCategories = async (req, res) => {
     const organizationId = req.params.id;
     try {
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
+    
+        if (!existingOrganization) {
+        return res.status(404).json({
+            message: "No Organization Found.",
+        });
+        }
         const allCategories = await Categories.find( organizationId );
         res.status(200).json(allCategories);
     } catch (error) {
@@ -64,6 +83,14 @@ exports.getAllCategories = async (req, res) => {
 exports.getACategory = async (req, res) => {
     const categoryId = req.params.id;
     try {
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
+    
+        if (!existingOrganization) {
+        return res.status(404).json({
+            message: "No Organization Found.",
+        });
+        }
         const category = await Categories.findById(categoryId);
         if (!category) {
             return res.status(404).json({ message: "Category not found" });
@@ -129,7 +156,15 @@ exports.updateCategory = async (req, res) => {
             },
             { new: true, runValidators: true }
         );
-
+        // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+ 
         if (!updatedCategory) {
             console.log("Category not found with ID:", categoryId);
             return res.status(404).json({ message: "Category not found" });
@@ -148,6 +183,14 @@ exports.deleteCategory = async (req, res) => {
     const categoryId = req.params.id;
 
     try {
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
+    
+        if (!existingOrganization) {
+        return res.status(404).json({
+            message: "No Organization Found.",
+        });
+        }
         const deletedCategory = await Categories.findByIdAndDelete(categoryId);
 
         if (!deletedCategory) {

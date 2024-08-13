@@ -1,4 +1,5 @@
 const Brand = require('../database/model/brand');
+const Organization = require('../database/model/organization')
 
 // Add a new brand
 exports.addBrand = async (req, res) => {
@@ -11,6 +12,15 @@ exports.addBrand = async (req, res) => {
     } = req.body;
 
     try {
+        // Check if an Organization already exists
+    const existingOrganization = await Organization.find({ organizationId:organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+ 
         // Check if a brand with the same name already exists within the same organization
         const existingBrandByName = await Brand.findOne({ name, organizationId });
 
@@ -39,7 +49,7 @@ exports.addBrand = async (req, res) => {
         const savedBrand = await newBrand.save();
 
         // Send response
-        res.status(201).json(savedBrand);
+        res.status(201).json("Brand added successfully.");
     } catch (error) {
         console.error("Error adding brand:", error);
         res.status(400).json({ error: error.message });
@@ -48,9 +58,17 @@ exports.addBrand = async (req, res) => {
 
 // Get all brands by organizationId
 exports.getAllBrands = async (req, res) => {
-    const organizationId = req.params.id;
+    const { organizationId } = req.body;
     try {
-        const allBrands = await Brand.find( organizationId );
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.find({ organizationId:organizationId });
+    
+        if (!existingOrganization) {
+        return res.status(404).json({
+            message: "No Organization Found.",
+        });
+        }
+        const allBrands = await Brand.find({ organizationId: organizationId });
         res.status(200).json(allBrands);
     } catch (error) {
         console.error("Error fetching brands:", error);
@@ -61,7 +79,17 @@ exports.getAllBrands = async (req, res) => {
 // Get a single brand by ID
 exports.getABrand = async (req, res) => {
     const brandId = req.params.id;
+    const {organizationId} = req.body;
+
     try {
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
+    
+        if (!existingOrganization) {
+        return res.status(404).json({
+            message: "No Organization Found.",
+        });
+        }
         const brand = await Brand.findById(brandId);
         if (!brand) {
             return res.status(404).json({ message: "Brand not found" });
@@ -127,6 +155,16 @@ exports.updateBrand = async (req, res) => {
             { new: true, runValidators: true }
         );
 
+        // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+ 
+
         if (!updatedBrand) {
             console.log("Brand not found with ID:", brandId);
             return res.status(404).json({ message: "Brand not found" });
@@ -145,6 +183,15 @@ exports.deleteBrand = async (req, res) => {
     const brandId = req.params.id;
 
     try {
+        // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+ 
         const deletedBrand = await Brand.findByIdAndDelete(brandId);
 
         if (!deletedBrand) {

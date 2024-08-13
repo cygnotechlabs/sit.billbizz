@@ -75,9 +75,19 @@ exports.getAllUnit = async (req, res) => {
 exports.getOneUnit = async (req, res) => {
   try {
     const { _id } = req.params;
+    const { organizationId } = req.body;
 
     // Log the ID being fetched
     console.log("Fetching Unit with ID:", _id);
+
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
 
     const unit = await Unit.findById(_id);
 
@@ -262,9 +272,19 @@ exports.getAllUnitConversion = async (req, res) => {
 exports.getOneUnitConversion = async (req, res) => {
   try {
     const { _id } = req.params;
+    const { organizationId } = req.body;
 
     // Log the ID being fetched
     console.log("Fetching Unit with ID:", _id);
+
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
 
     // Find the unit containing the unitConversion with the specified _id
     const unit = await Unit.findOne({ "unitConversion._id": _id });
