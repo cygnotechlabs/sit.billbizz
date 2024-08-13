@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SearchBar from "../../../../Components/SearchBar";
 import Button from "../../../../Components/Button";
 import ListIcon from "../../../../assets/icons/ListIcon";
 import ViewTaxDetailsVat from "./ViewTaxDetailsVat";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
+import { VatResponseContext } from "../../../../context/ContextShare";
 
 type TaxRate = {
   id: string;
@@ -19,6 +20,7 @@ function TaxRateVatTable() {
   const [search, setSearch] = useState<string>("");
 
   const { request: AllTaxVat } = useApi("put", 5004);
+  const { vatResponse } = useContext(VatResponseContext)!;
 
   const fetchAllVatRates = async () => {
     try {
@@ -38,7 +40,7 @@ function TaxRateVatTable() {
 
   useEffect(() => {
     fetchAllVatRates();
-  }, []);
+  }, [vatResponse]);
 
   useEffect(() => {
     setFilteredVatRates(
