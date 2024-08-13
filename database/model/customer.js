@@ -17,15 +17,16 @@ const customerSchema = new Schema({
     //Basic Info
     organizationId: {type:String},
     customerType: {type:String},
+
     salutation: {type:String},
     firstName: {type:String},
     lastName: {type:String},
-
     companyName: {type:String},
+
     customerEmail: {type:String},
     workPhone: {type:String},
     mobile: {type:String},
-    status : {type:String},
+    
 
     dob : {type:String},
     cardNumber: {type:String},
@@ -36,13 +37,22 @@ const customerSchema = new Schema({
     openingBalance: {type:String},
     paymentTerms: {type:String},
     documents: {type:String},
-
-    //Additional Details
-    websiteURL: {type:String},
     department: {type:String},
-    twitter: {type:String},
-    skypeNameNumber: {type:String},
-    facebook: {type:String},
+    designation: {type:String},
+    websiteURL: {type:String},
+
+
+    //Taxes
+    taxType: {type:String},
+    gstTreatment: {type:String},
+    gstin_uin: {type:String},
+    msmeType: {type:String},
+    msmeNumber: {type:String},
+    placeOfSupply: {type:String},
+    businessLegalName: {type:String},
+    businessTradeName: {type:String},
+    vatNumber: {type:String},
+    
 
     //Billing Address
     billingAttention: {type:String},
@@ -67,6 +77,9 @@ const customerSchema = new Schema({
     contactPerson: [contactPersonSchema],
 
     remark: {type:String},
+
+    //Status
+    status : {type:String},
 
 });
 

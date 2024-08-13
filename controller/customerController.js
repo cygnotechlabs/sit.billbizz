@@ -3,11 +3,12 @@ const Account = require("../database/model/account");
 const Customer = require("../database/model/customer");
 
 
-
+// Add Customer
 exports.addCustomer = async (req, res) => {
   console.log("Add Customer:", req.body);
   try {
     const {
+      //Basic Info
       organizationId,
       customerType,
 
@@ -36,9 +37,12 @@ exports.addCustomer = async (req, res) => {
       //Taxes
       gstTreatment,
       gstin_uin,
+      msmeType,
+      msmeNumber,
+      placeOfSupply,
       businessLegalName,
       businessTradeName,
-      placeOfSupply,
+      vatNumber,
       
       // Billing Address
       billingAttention,
@@ -50,7 +54,7 @@ exports.addCustomer = async (req, res) => {
       billingPhone,
       billingFaxNumber,
 
-      // Billing Address
+      // Shipping Address
       shippingAttention,
       shippingCountry,
       shippingAddress,
@@ -96,28 +100,43 @@ exports.addCustomer = async (req, res) => {
 
     // Create a new customer
     const newCustomer = new Customer({
+      //Basic Info
       organizationId,
       customerType,
+
       salutation,
       firstName,
       lastName,
       companyName,
+
       customerEmail,
       workPhone,
       mobile,
-      status: "Active",
+
       dob,
       cardNumber,
+
+      //Other details
       pan,
       currency,
       openingBalance,
       paymentTerms,
       documents,
-      websiteURL,
       department,
-      twitter,
-      skypeNameNumber,
-      facebook,
+      designation,
+      websiteURL,
+
+      //Taxes
+      gstTreatment,
+      gstin_uin,
+      msmeType,
+      msmeNumber,
+      placeOfSupply,
+      businessLegalName,
+      businessTradeName,
+      vatNumber,
+      
+      // Billing Address
       billingAttention,
       billingCountry,
       billingAddress,
@@ -126,6 +145,8 @@ exports.addCustomer = async (req, res) => {
       billingPinCode,
       billingPhone,
       billingFaxNumber,
+
+      // Shipping Address
       shippingAttention,
       shippingCountry,
       shippingAddress,
@@ -134,8 +155,15 @@ exports.addCustomer = async (req, res) => {
       shippingPinCode,
       shippingPhone,
       shippingFaxNumber,
+
+      //Contact Person
       contactPerson,
+
+      //Remark
       remark,
+
+      //Status
+      status: "Active",
     });
 
     
@@ -168,7 +196,8 @@ exports.addCustomer = async (req, res) => {
   }
 };
 
-// Get all Customer for a given organizationId
+
+// Get All Customer for a given organizationId
 exports.getAllCustomer = async (req, res) => {
   try {
     const { organizationId } = req.body;
@@ -188,6 +217,7 @@ exports.getAllCustomer = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+
 
 //Get one Customer for a given organizationId
 exports.getOneCustomer = async (req, res) => {
@@ -394,7 +424,12 @@ exports.getCustomerAdditionalData = (req, res) => {
           "Deemed Export",
           "Tax Deductor",
           "SEZ Developer",          
-          ],        
+          ],
+          msmeType: [
+            "Micro",
+            "Small",
+            "Medium"        
+            ],        
       }
     ];
 
