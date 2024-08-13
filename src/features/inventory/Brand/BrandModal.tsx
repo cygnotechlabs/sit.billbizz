@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useState, useEffect } from "react";
 import bgImage from "../../../assets/Images/Frame 6.png";
 import NewBrandModal from "./NewBrandModal";
 import Button from "../../../Components/Button";
@@ -6,47 +6,141 @@ import PlusCircle from "../../../assets/icons/PlusCircle";
 import OutlineTrashIcon from "../../../assets/icons/OutlineTrashIcon";
 import PencilIcon from "../../../assets/icons/PencilIcon";
 import Modal from "../../../Components/model/Modal";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
+
+type BrandCardProps = {
+  name: string;
+  description: string;
+  onEdit: () => void;
+  onDelete: () => void;
+};
+
+const BrandCard = ({ name, description, onEdit, onDelete }: BrandCardProps) => (
+  <div className="p-3 border w-[272px] h-[80px] border-tableBorder rounded-lg flex justify-between">
+    <div>
+      <h6 className="text-sm text-textColor font-semibold">{name}</h6>
+      <p className="text-xs text-loremcolor">{description}</p>
+    </div>
+    <div className="flex space-x-2">
+      <button onClick={onEdit}>
+        <PencilIcon color="#4B5C79" />
+      </button>
+      <button onClick={onDelete}>
+        <OutlineTrashIcon color="#4B5C79" />
+      </button>
+    </div>
+  </div>
+);
 
 type BrandModalProps = {
   onClose: () => void;
 };
 
+type BrandData = {
+  _id: string;
+  name: string;
+  description: string;
+  organizationId: string;
+  createdDate: string;
+  updatedDate: string;
+  __v: number;
+};
+
 const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
   ({ onClose }, ref) => {
-    const cardData = [
-      {
-        title: "Xperia",
-        count: "Lorem ipsum dolor sit amet cons",
-      },
-      {
-        title: "Galaxy",
-        count: "Lorem ipsum dolor sit amet cons",
-      },
-      {
-        title: "Iphone",
-        count: "Lorem ipsum dolor sit amet cons",
-      },
-    ];
+    const { request: fetchAllBrands } = useApi("put", 5003);
+    const { request: deleteBrandRequest } = useApi("delete", 5003);
+    const { request: updateBrandRequest } = useApi("put", 5003);
+    const { request: addBrandRequest } = useApi("post", 5003);
 
     const [isEditModalOpen, setEditModalOpen] = useState(false);
-    const [selectedCard, setSelectedCard] = useState<{
-      title: string;
-      count: string;
-    } | null>(null);
+    const [selectedBrand, setSelectedBrand] = useState<BrandData | null>(null);
+    const [brandData, setBrandData] = useState<BrandData[]>([]);
 
-    const openEditModal = (card: { title: string; count: string }) => {
-      setSelectedCard(card);
+    useEffect(() => {
+      const loadBrands = async () => {
+        try {
+          const url = `${endponits.GET_ALL_BRAND}`;
+          const { response, error } = await fetchAllBrands(url);
+          if (!error && response) {
+            setBrandData(response.data);
+          }
+        } catch (error) {
+          console.error("Error in fetching brand data", error);
+        }
+      };
+
+      loadBrands();
+    }, [fetchAllBrands]);
+
+    const openEditModal = (brand: BrandData) => {
+      setSelectedBrand(brand);
       setEditModalOpen(true);
     };
 
     const openAddModal = () => {
-      setSelectedCard(null);
+      setSelectedBrand(null);
       setEditModalOpen(true);
     };
 
     const closeEditModal = () => {
       setEditModalOpen(false);
     };
+
+    const handleDelete = async (id: string) => {
+      try {
+        const url = `${endponits.DELETE_BRAND(id)}`;
+        const { response, error } = await deleteBrandRequest(url);
+        if (!error && response) {
+          setBrandData(brandData.filter((brand) => brand._id !== id));
+          console.log(`Brand with id ${id} deleted successfully`);
+        } else {
+          console.error(`Error deleting brand: ${error.message}`);
+        }
+      } catch (error) {
+        console.error("Error in delete operation", error);
+      }
+    };
+
+    const handleSave = async (data: { name: string; description: string }) => {
+      try {
+        const isEditing = Boolean(selectedBrand);
+        const brand: Partial<BrandData> = {
+          name: data.name,
+          description: data.description,
+          ...(isEditing && { _id: selectedBrand!._id }),
+        };
+
+        const url = isEditing
+          ? `${endponits.UPDATE_BRAND(selectedBrand!._id)}`
+          : `${endponits.ADD_BRAND}`;
+        const apiCall = isEditing ? updateBrandRequest : addBrandRequest;
+        const { response, error } = await apiCall(url, brand);
+
+        if (!error && response) {
+          setBrandData((prevData) =>
+            isEditing
+              ? prevData.map((b) =>
+                  b._id === selectedBrand!._id ? { ...b, ...brand } : b
+                )
+              : [...prevData, response.data]
+          );
+          closeEditModal();
+        } else {
+          console.error(`Error saving brand: ${error.message}`);
+        }
+      } catch (error) {
+        console.error("Error in save operation", error);
+      }
+    };
+
+    const mapBrandDataToTitleCount = (
+      brand: BrandData
+    ): { title: string; count: string } => ({
+      title: brand.name,
+      count: brand.description,
+    });
 
     return (
       <div ref={ref}>
@@ -88,30 +182,20 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
             <br />
 
             <div className="grid grid-cols-3 gap-4">
-              {cardData.map((item, index) => (
-                <div key={index} className="flex justify-center mb-5">
-                  <div className="p-3 border w-[272px] h-[59px] border-tableBorder rounded-lg flex justify-between">
-                    <div>
-                      <h6 className="text-sm text-textColor font-semibold">
-                        {item.title}
-                      </h6>
-                      <p className="text-xs text-loremcolor">{item.count}</p>
-                    </div>
-                    <div className="flex space-x-2">
-                      <button onClick={() => openEditModal(item)}>
-                        <PencilIcon color="#4B5C79" />
-                      </button>
-                      <button>
-                        <OutlineTrashIcon color="#4B5C79" />
-                      </button>
-                    </div>
-                  </div>
+              {brandData.map((brand) => (
+                <div key={brand._id} className="flex justify-center mb-5">
+                  <BrandCard
+                    name={brand.name}
+                    description={brand.description}
+                    onEdit={() => openEditModal(brand)}
+                    onDelete={() => handleDelete(brand._id)}
+                  />
                 </div>
               ))}
             </div>
             <div className="flex justify-end pr-3">
               <Button variant="primary" size="sm" className="text-sm">
-               Save
+                Save
               </Button>
             </div>
           </div>
@@ -120,7 +204,10 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
           <NewBrandModal
             isOpen={isEditModalOpen}
             onClose={closeEditModal}
-            initialData={selectedCard}
+            initialData={
+              selectedBrand ? mapBrandDataToTitleCount(selectedBrand) : null
+            }
+            onSave={handleSave}
           />
         )}
       </div>

@@ -61,7 +61,7 @@ const CreateOrganizationForm = () => {
     dateSplit: "",
   });
 
-  console.log(inputData);
+  // console.log(inputData);
 
   const getDropdownList = async () => {
     try {
@@ -69,7 +69,6 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setAdditionalData(response.data[0]);
-        // console.log(response);
       }
     } catch (error) {
       console.log("Error in fetching Additional data", error);
@@ -92,7 +91,9 @@ const CreateOrganizationForm = () => {
   const getcurrencyData = async () => {
     try {
       const url = `${endponits.GET_CURRENCY_LIST}`;
-      const { response, error } = await getCurrencyData(url);
+      const { response, error } = await getCurrencyData(url, {
+        organizationId: "INDORG0001",
+      });
       if (!error && response) {
         setcurrencyData(response.data);
         console.log(response);
@@ -133,7 +134,6 @@ const CreateOrganizationForm = () => {
     e: ChangeEvent<HTMLInputElement>,
     key: "organizationLogo"
   ) => {
-
     const file = e.target.files?.[0];
     if (file) {
       if (key === "organizationLogo") setLogo(file);
@@ -184,10 +184,7 @@ const CreateOrganizationForm = () => {
   }, [inputData.organizationCountry, countryData]);
 
   return (
-    <div
-      className=" m-4 overflow-y-scroll hide-scrollbar h-auto"
-      style={{ height: "92vh" }}
-    >
+    <div className=" m-4 overflow-y-scroll hide-scrollbar h-auto">
       <Banner seeOrgDetails />
 
       {/* FORM */}
@@ -406,7 +403,9 @@ const CreateOrganizationForm = () => {
                     id="phoneCode"
                     className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   >
-                    <option value="">{phoneCodeList.length>0?phoneCodeList:"+91"}</option>
+                    <option value="">
+                      {phoneCodeList.length > 0 ? phoneCodeList : "+91"}
+                    </option>
                   </select>
 
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -431,7 +430,7 @@ const CreateOrganizationForm = () => {
         </p>
         <div className="bg-white border-slate-200  border-2 rounded-md  mt-4 p-5">
           <label htmlFor="websit" className="text-slate-600">
-          Website URL
+            Website URL
           </label>
           <input
             type="text"
@@ -468,21 +467,11 @@ const CreateOrganizationForm = () => {
                         value={item}
                         className="text-slate-300"
                       >
-                        {item}
+                        {item.currencyCode}
                       </option>
                     ))
                   ) : (
-                    <>
-                      <option value="USD" className="text-slate-300">
-                        USD
-                      </option>
-                      <option value="EUR" className="text-slate-300">
-                        EUR
-                      </option>
-                      <option value="INR" className="text-slate-300">
-                        INR
-                      </option>
-                    </>
+                    <></>
                   )}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -639,7 +628,7 @@ const CreateOrganizationForm = () => {
                   id="dateSplit"
                   className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
-                                    <option value="">Select Date Split</option>
+                  <option value="">Select Date Split</option>
 
                   {additionalData?.dateSplit &&
                   additionalData?.dateSplit.length > 0 ? (
