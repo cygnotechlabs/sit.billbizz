@@ -17,5 +17,10 @@ export const endponits = {
   ADD_CUSTOMER:"add-customer",
 
   // Supplier
-  GET_ALL_SUPPLIER:""
+  GET_ALL_SUPPLIER:"",
+
+  //settings/Taxes
+  //Gst
+  GET_ALL_TAX:"get-tax",
+  ADD_NEW_TAX:"add-tax",
 };

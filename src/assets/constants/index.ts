@@ -341,7 +341,10 @@ export const settingsList = [
   {
     nav: "Tax & Complaints",
     icon: circleDollar,
-    subhead: [{ headName: "Taxes", subRoute: "/settings/taxes" }],
+    subhead: [
+      { headName: "Taxes", subRoute: "/settings/taxes" },
+      { headName: "MSME Settings", subRoute: "/settings/taxes/msme" }
+    ],
 },
 {
     nav: "Rewards Settings",
