@@ -3,40 +3,46 @@ const Supplier = require("../database/model/supplier");
 const Account = require("../database/model/account");
 
 exports.addSupplier = async (req, res) => {
-    console.log("add supplier:", req.body);
+    console.log("Add supplier:", req.body);
     const {
+        // Basic 
         organizationId,
         salutation,
         firstName,
         lastName,
+
         companyName,
         supplierEmail,
         workPhone,
         mobile,
+        createdDate,
+        creditDays,
+        creditLimit,
+        interestPercentage,
+
         
-        gstTreatment,
-        gstin_uin,
-        sourceOfSupply,
-        msmeType,
-        msmeNumber,
-
-        // gstNo,
-        // creditDays,
-        // creditLimit,
-        // interestPercentage,
-
+        //Other Details
         pan,
         currency,
         openingBalance,
         paymentTerms,
         tds,
-        uploadFiles,
-        websiteUrl,
+        documents,
+        websiteURL,
         department,
         designation,
-        twitter,
-        skypeName,
-        facebook,
+        
+
+        //Tax
+        gstTreatment,
+        gstin_uin,
+        sourceOfSupply,
+        msmeType,
+        msmeNumber,
+        msmeRegistered,
+
+
+        // Billing Address
         billingAttention,
         billingCountry,
         billingAddress,
@@ -45,6 +51,8 @@ exports.addSupplier = async (req, res) => {
         billingPinCode,
         billingPhone,
         billingFaxNum,
+
+        // Shipping Address
         shippingAttention,
         shippingCountry,
         shippingAddress,
@@ -53,9 +61,16 @@ exports.addSupplier = async (req, res) => {
         shippingPinCode,
         shippingPhone,
         shippingFaxNum,
+        
+        // Contact Person
         contactPersons,
+
+        //Bank Details
         bankDetails,
+
+        //Remark
         remarks
+
     } = req.body;
 
     try {
@@ -90,59 +105,75 @@ exports.addSupplier = async (req, res) => {
 
         // Create a new supplier
         const newSupplier = new Supplier({
-            organizationId,
-            createdDate: formattedDate,
-            salutation,
-            firstName,
-            lastName,
-            companyName,
-            supplierEmail,
-            workPhone,
-            mobile,
 
-            gstTreatment,
-            gstin_uin,
-            sourceOfSupply,
-            msmeType,
-            msmeNumber,
+        // Basic 
+        organizationId,
+        salutation,
+        firstName,
+        lastName,
 
-            // gstNo,
-            // creditDays,
-            // creditLimit,
-            // interestPercentage,
+        companyName,
+        supplierEmail,
+        workPhone,
+        mobile,
+        createdDate:formattedDate,
+        creditDays,
+        creditLimit,
+        interestPercentage,
+        
+        //Other Details
+        pan,
+        currency,
+        openingBalance,
+        paymentTerms,
+        tds,
+        documents,
+        websiteURL,
+        department,
+        designation,
+        
 
-            pan,
-            currency,
-            openingBalance,
-            paymentTerms,
-            tds,
-            uploadFiles,
-            websiteUrl,
-            department,
-            designation,
-            twitter,
-            skypeName,
-            facebook,
-            billingAttention,
-            billingCountry,
-            billingAddress,
-            billingCity,
-            billingState,
-            billingPinCode,
-            billingPhone,
-            billingFaxNum,
-            shippingAttention,
-            shippingCountry,
-            shippingAddress,
-            shippingCity,
-            shippingState,
-            shippingPinCode,
-            shippingPhone,
-            shippingFaxNum,
-            contactPersons,
-            bankDetails,
-            remarks,
-            status: "Active"
+        //Tax
+        gstTreatment,
+        gstin_uin,
+        sourceOfSupply,
+        msmeType,
+        msmeNumber,
+        msmeRegistered,
+
+
+
+        // Billing Address
+        billingAttention,
+        billingCountry,
+        billingAddress,
+        billingCity,
+        billingState,
+        billingPinCode,
+        billingPhone,
+        billingFaxNum,
+
+        // Shipping Address
+        shippingAttention,
+        shippingCountry,
+        shippingAddress,
+        shippingCity,
+        shippingState,
+        shippingPinCode,
+        shippingPhone,
+        shippingFaxNum,
+        
+        // Contact Person
+        contactPersons,
+
+        //Bank Details
+        bankDetails,
+
+        //Remark
+        remarks,
+            
+        //Status
+        status: "Active"
         });
 
         // Save the supplier to the database
@@ -238,49 +269,71 @@ exports.updateSupplier = async (req, res) => {
     try {
         const supplierId = req.params.id;
         const {
-            organizationId,
-            salutation,
-            firstName,
-            lastName,
-            companyName,
-            supplierEmail,
-            workPhone,
-            mobile,
-            gstNo,
-            creditDays,
-            creditLimit,
-            interestPercentage,
-            pan,
-            currency,
-            openingBalance,
-            paymentTerms,
-            tds,
-            uploadFiles,
-            websiteUrl,
-            department,
-            designation,
-            twitter,
-            skypeName,
-            facebook,
-            billingAttention,
-            billingCountry,
-            billingAddress,
-            billingCity,
-            billingState,
-            billingPinCode,
-            billingPhone,
-            billingFaxNum,
-            shippingAttention,
-            shippingCountry,
-            shippingAddress,
-            shippingCity,
-            shippingState,
-            shippingPinCode,
-            shippingPhone,
-            shippingFaxNum,
-            contactPersons,
-            bankDetails,
-            remarks,
+           // Basic 
+        organizationId,
+        salutation,
+        firstName,
+        lastName,
+
+        companyName,
+        supplierEmail,
+        workPhone,
+        mobile,
+        lastModifiedDate,
+        creditDays,
+        creditLimit,
+        interestPercentage,
+        
+        //Other Details
+        pan,
+        currency,
+        openingBalance,
+        paymentTerms,
+        tds,
+        documents,
+        websiteURL,
+        department,
+        designation,
+        
+
+        //Tax
+        gstTreatment,
+        gstin_uin,
+        sourceOfSupply,
+        msmeType,
+        msmeNumber,
+
+
+        // Billing Address
+        billingAttention,
+        billingCountry,
+        billingAddress,
+        billingCity,
+        billingState,
+        billingPinCode,
+        billingPhone,
+        billingFaxNum,
+
+        // Shipping Address
+        shippingAttention,
+        shippingCountry,
+        shippingAddress,
+        shippingCity,
+        shippingState,
+        shippingPinCode,
+        shippingPhone,
+        shippingFaxNum,
+        
+        // Contact Person
+        contactPersons,
+
+        //Bank Details
+        bankDetails,
+
+        //Remark
+        remarks,
+
+        msmeRegistered 
         } = req.body;
 
         const currentDate = new Date();
@@ -308,50 +361,70 @@ exports.updateSupplier = async (req, res) => {
         const updatedSupplier = await Supplier.findByIdAndUpdate(
             supplierId,
             {
-                organizationId,
-                lastModifiedDate: formattedDate,
-                salutation,
-                firstName,
-                lastName,
-                companyName,
-                supplierEmail,
-                workPhone,
-                mobile,
-                gstNo,
-                creditDays,
-                creditLimit,
-                interestPercentage,
-                pan,
-                currency,
-                openingBalance,
-                paymentTerms,
-                tds,
-                uploadFiles,
-                websiteUrl,
-                department,
-                designation,
-                twitter,
-                skypeName,
-                facebook,
-                billingAttention,
-                billingCountry,
-                billingAddress,
-                billingCity,
-                billingState,
-                billingPinCode,
-                billingPhone,
-                billingFaxNum,
-                shippingAttention,
-                shippingCountry,
-                shippingAddress,
-                shippingCity,
-                shippingState,
-                shippingPinCode,
-                shippingPhone,
-                shippingFaxNum,
-                contactPersons,
-                bankDetails,
-                remarks,
+                // Basic 
+        organizationId,
+        salutation,
+        firstName,
+        lastName,
+
+        companyName,
+        supplierEmail,
+        workPhone,
+        mobile,
+        lastModifiedDate:formattedDate,
+        creditDays,
+        creditLimit,
+        interestPercentage,
+        
+        //Other Details
+        pan,
+        currency,
+        openingBalance,
+        paymentTerms,
+        tds,
+        documents,
+        websiteURL,
+        department,
+        designation,
+        
+
+        //Tax
+        gstTreatment,
+        gstin_uin,
+        sourceOfSupply,
+        msmeType,
+        msmeNumber,
+        msmeRegistered,
+
+
+        // Billing Address
+        billingAttention,
+        billingCountry,
+        billingAddress,
+        billingCity,
+        billingState,
+        billingPinCode,
+        billingPhone,
+        billingFaxNum,
+
+        // Shipping Address
+        shippingAttention,
+        shippingCountry,
+        shippingAddress,
+        shippingCity,
+        shippingState,
+        shippingPinCode,
+        shippingPhone,
+        shippingFaxNum,
+        
+        // Contact Person
+        contactPersons,
+
+        //Bank Details
+        bankDetails,
+
+        //Remark
+        remarks
             },
             { new: true, runValidators: true }
         );
@@ -403,7 +476,35 @@ exports.deleteSupplier = async (req, res) => {
 };
 
 
-
+// Supplier Additional data
+exports.getSupplierAdditionalData = (req, res) => {
+    try {
+      const additionalData = [
+        {
+          gstTreatment: [
+            "Registered Business -Regular",
+            "Registered Business -Composition",
+            "Unregistered Business",
+            "Overseas",
+            "Special Economic Zone",
+            "Deemed Export",
+            "Tax Deductor",
+            "SEZ Developer",          
+            ],        
+        }
+      ];
+  
+      if (additionalData.length > 0) {
+        res.status(200).json(additionalData);
+      } else {
+        res.status(404).json("No Additional Data found");
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json("Internal server error");
+    }
+  };
+  
 
 
     

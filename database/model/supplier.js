@@ -9,9 +9,6 @@ const contactPersonsSchema = new Schema({
     emailAddress: {type:String},
     workPhone: {type:String},
     mobile: {type:String},
-    // skypeName: {type:String},
-    // designation: {type:String},
-    // department: {type:String},
 }, { _id: false });
 
 
@@ -19,50 +16,51 @@ const bankDetailsSchema = new Schema({
     accountHolderName: {type:String},
     bankName: {type:String},
     accountNum: {type:String},
-    // reEnterAccountNum: {type:String},
+    reEnterAccountNumber:{type:String},
     ifscCode: {type:String},
 }, { _id: false });
  
  
 const supplierSchema = new Schema({
+    // Basic 
     organizationId: {type:String},
-    createdDate: {type:String},
-    lastModifiedDate: {type:String},
     salutation: {type:String},
     firstName: {type:String},
     lastName: {type:String},
+
     companyName: {type:String},
     supplierEmail: {type:String},
     workPhone: {type:String},
     mobile: {type:String},
+    createdDate: {type:String},
+    lastModifiedDate:{type:String},
+    creditDays:{type:String},
+    creditLimit:{type:String},
+    interestPercentage:{type:String},
 
 
+    //Other Details
+    pan: {type:String},
+    currency: {type:String},
+    openingBalance: {type:String},
+    paymentTerms: {type:String},
+    tds: {type:String},
+    documents: {type:String},
+    websiteURL: {type:String},
+    department: {type:String},
+    designation: {type:String},
+    
+
+    //Tax
     gstTreatment: {type:String},
     gstin_uin: {type:String},
     sourceOfSupply: {type:String},
     msmeType: {type:String},
     msmeNumber: {type:String},
+    msmeRegistered:{type:String},
 
-    // gstNo: {type:String},
-    // creditDays: {type:String},
-    // creditLimit: {type:String},
-    // interestPercentage: {type:String},
- 
-    //Other Details:-
-    pan: {type:String},
-    currency: {type:String},
-    openingBalance:{type:String},
-    paymentTerms:{type:String},
-    tds: {type:String},
-    uploadFiles: [],
-    wedsiteUrl: {type:String},
-    department: {type:String},
-    designation: {type:String},
-    twitter: {type:String},
-    skypeName: {type:String},
-    facebook: {type:String},
-   
-    //Billing Address:-
+
+    // Billing Address
     billingAttention: {type:String},
     billingCountry: {type:String},
     billingAddress: {type:String},
@@ -71,8 +69,8 @@ const supplierSchema = new Schema({
     billingPinCode: {type:String},
     billingPhone: {type:String},
     billingFaxNum: {type:String},
-   
-    //Shipping Address:-
+
+    // Shipping Address
     shippingAttention: {type:String},
     shippingCountry: {type:String},
     shippingAddress: {type:String},
@@ -81,17 +79,19 @@ const supplierSchema = new Schema({
     shippingPinCode: {type:String},
     shippingPhone: {type:String},
     shippingFaxNum: {type:String},
- 
-    //Contact Persons:-
+    
+    // Contact Person
     contactPersons: [contactPersonsSchema],
 
-    //Bank Details:-
+    //Bank Details
     bankDetails: [bankDetailsSchema],
- 
-    //customerFields: {type:String},
-    remarks: {type:String},
 
-    status : {type:String},
+    //Remark
+    remarks: {type:String},
+        
+    //Status
+    status: {type:String},
+
 });
  
 const Supplier = mongoose.model("Supplier", supplierSchema);
