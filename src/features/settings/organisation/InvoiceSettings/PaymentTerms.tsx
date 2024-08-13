@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
-import Trash2 from '../../../../assets/icons/Trash2';
+import { useEffect, useRef, useState } from 'react';
+import CirclePlus from '../../../../assets/icons/circleplus';
 import Pen from '../../../../assets/icons/Pen';
+import Trash2 from '../../../../assets/icons/Trash2';
 import Button from '../../../../Components/Button';
 import Modal from '../../../../Components/model/Modal';
-import CirclePlus from '../../../../assets/icons/circleplus';
 import useApi from '../../../../Hooks/useApi';
 type Props = {}
 type PaymentTerm = {

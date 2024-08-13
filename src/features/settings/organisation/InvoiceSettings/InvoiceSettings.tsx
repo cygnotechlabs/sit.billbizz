@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import ChevronRight from "../../../../assets/icons/ChevronRight";
 import CirclePlus from "../../../../assets/icons/circleplus";
 import Plus from "../../../../assets/icons/Plus";
@@ -11,11 +12,10 @@ import twitterLogo from "../../../../assets/Images/twitter-logo.png";
 import xMark from "../../../../assets/Images/x.svg";
 import Button from "../../../../Components/Button";
 import Modal from "../../../../Components/model/Modal";
-import Banner from "../../banner/Banner";
 import useApi from "../../../../Hooks/useApi";
-import PaymentTerms from "./PaymentTerms";
-import toast, { Toaster } from "react-hot-toast";
 import { endponits } from "../../../../Services/apiEndpoints";
+import Banner from "../../banner/Banner";
+import PaymentTerms from "./PaymentTerms";
 type Props = {};
 
 function InvoiceSettings({}: Props) {
