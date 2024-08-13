@@ -23,7 +23,7 @@ function CreateNewTax({ }: Props) {
              </Button>
 
 
-             <Modal open={isModalOpen} onClose={closeModal} className="w-[60.4%] p-8">
+             <Modal open={isModalOpen} onClose={closeModal} className="w-[59.4%] px-8 py-6">
              <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
           <div
             className="absolute top-0 -right-8 w-[178px] h-[89px]"
@@ -57,7 +57,7 @@ function CreateNewTax({ }: Props) {
             <input
               type="text"
               className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
-              placeholder="Value"
+              placeholder="Enter tax name"
             />
           </div>
             <div className="text-dropdownText text-sm mt-4">
@@ -65,15 +65,31 @@ function CreateNewTax({ }: Props) {
             <input
               type="text"
               className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
-              placeholder="Cash"
+              placeholder="Enter tax rate"
             />
           </div>
             <div className="text-dropdownText text-sm mt-4">
-            <label htmlFor="">Tax Type</label>
+            <label htmlFor="">CGST</label>
             <input
               type="text"
               className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
-              placeholder="Cash"
+              placeholder="CGST"
+            />
+          </div>
+            <div className="text-dropdownText text-sm mt-4">
+            <label htmlFor="">SGST</label>
+            <input
+              type="text"
+              className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+              placeholder="SGST"
+            />
+          </div>
+            <div className="text-dropdownText text-sm mt-4">
+            <label htmlFor="">IGST</label>
+            <input
+              type="text"
+              className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+              placeholder="IGST"
             />
           </div>
             </div>

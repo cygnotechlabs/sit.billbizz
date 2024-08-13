@@ -3,6 +3,7 @@ import SettingsIcons from "../../../../assets/icons/SettingsIcon";
 import Banner from "../../banner/Banner";
 import Preferences from "./Preferences";
 import Vehicle from "./Vehicle";
+import Categories from "./Categories";
 
 type Props = {};
 
@@ -53,6 +54,8 @@ const ExpensesHome = ({}: Props) => {
 
 
         {selectedTab == "Vehicle" && <Vehicle/>}
+
+        {selectedTab =="Categories" && <Categories/>}
       </div>
     </div>
   );

@@ -173,6 +173,7 @@ const AddItem = ({}: Props) => {
                 </div>
               </div>
             </div>
+            
 
             <div className="grid grid-cols-12 gap-4">
               <div className="grid grid-cols-2 gap-4 mt-3 col-span-9">
@@ -270,7 +271,7 @@ const AddItem = ({}: Props) => {
                 <div>
                   <label
                     className="text-slate-600 flex text-sm items-center gap-2"
-                    htmlFor="organizationAddress"
+                    htmlFor=""
                   >
                     SAC
                   </label>
@@ -284,7 +285,7 @@ const AddItem = ({}: Props) => {
                 <div>
                   <label
                     className="text-slate-600 flex text-sm items-center gap-2"
-                    htmlFor="organizationAddress"
+                    htmlFor=""
                   >
                     HSN Code
                   </label>
@@ -314,7 +315,22 @@ const AddItem = ({}: Props) => {
                 </div>
               </div>
             </div>
+             <div>
+                  <label
+                    className="text-slate-600 flex text-sm items-center gap-2"
+                    htmlFor=""
+                  >
+                    SAC
+                  </label>
+                  <input
+                    className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    placeholder=" SAC"
+                    name=""
+                  />{" "}
+                </div>
           </div>
+         
+
         </div>
 
         <p className="text-textColor text-base font-semibold">
