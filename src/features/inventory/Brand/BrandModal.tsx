@@ -62,7 +62,8 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
       const loadBrands = async () => {
         try {
           const url = `${endponits.GET_ALL_BRAND}`;
-          const { response, error } = await fetchAllBrands(url);
+          const body = { organizationId: "INDORG0001" };
+          const { response, error } = await fetchAllBrands(url, body);
           if (!error && response) {
             setBrandData(response.data);
           }
@@ -72,7 +73,7 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
       };
 
       loadBrands();
-    }, [fetchAllBrands]);
+    }, []);
 
     const openEditModal = (brand: BrandData) => {
       setSelectedBrand(brand);
@@ -107,6 +108,7 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
       try {
         const isEditing = Boolean(selectedBrand);
         const brand: Partial<BrandData> = {
+          organizationId: "INDORG0001",
           name: data.name,
           description: data.description,
           ...(isEditing && { _id: selectedBrand!._id }),
@@ -127,6 +129,7 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
               : [...prevData, response.data]
           );
           closeEditModal();
+          onClose();
         } else {
           console.error(`Error saving brand: ${error.message}`);
         }
