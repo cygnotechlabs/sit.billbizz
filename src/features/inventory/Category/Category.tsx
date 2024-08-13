@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../../../Components/Button";
 import Modal from "../../../Components/model/Modal";
 import bgImage from "../../../assets/Images/Frame 6.png";
@@ -7,10 +7,15 @@ import PlusCircle from "../../../assets/icons/PlusCircle";
 import TrashCan from "../../../assets/icons/TrashCan";
 import SearchBar from "../../../Components/SearchBar";
 import CehvronDown from "../../../assets/icons/CehvronDown";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
 
 type Category = {
+  _id?: string;
   categoryName: string;
   notes: string;
+  organizationId?: string;
+  createdDate?: string;
 };
 
 type Props = {
@@ -20,6 +25,12 @@ type Props = {
 };
 
 function Category({ isOpen, onClose, page }: Props) {
+  const { request: fetchAllCategories } = useApi("put", 5003);
+  const { request: deleteCategoryRequest } = useApi("delete", 5003);
+  const { request: updateCategoryRequest } = useApi("put", 5003);
+  const { request: addCategoryRequest } = useApi("post", 5003);
+
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isAddCategoryModal, setIsAddCategoryModal] = useState(false);
   const [isEditCategoryModal, setIsEditCategoryModal] = useState(false);
   const [searchValue, setSearchValue] = useState<string>("");
@@ -27,22 +38,30 @@ function Category({ isOpen, onClose, page }: Props) {
     null
   );
 
-  const categories: Category[] = [
-    { categoryName: "Electronics", notes: "Lorem ipsm dolor sit amet cons" },
-    {
-      categoryName: "Office supplies",
-      notes: "Lorem ipsm dolor sit amet cons",
-    },
-    { categoryName: "Apparel", notes: "Lorem ipsm dolor sit amet cons" },
-    { categoryName: "Home Appliance", notes: "Lorem ipsm dolor sit amet cons" },
-    { categoryName: "Furniture", notes: "Lorem ipsm dolor sit amet cons" },
-    {
-      categoryName: "Health & Beauty",
-      notes: "Lorem ipsm dolor sit amet cons",
-    },
-  ];
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const url = `${endponits.GET_ALL_CATEGORIES}`;
+        const organizationId = { organizationId: "INDORG0001" };
+        const { response, error } = await fetchAllCategories(
+          url,
+          organizationId
+        );
+        if (error) {
+          console.error("Error in fetching categories data", error);
+        } else if (response) {
+          setCategories(response.data);
+        }
+      } catch (error) {
+        console.error("Error in fetching categories data", error);
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   const openAddModal = () => {
+    setEditableCategory(null);
     setIsAddCategoryModal(true);
   };
 
@@ -57,6 +76,55 @@ function Category({ isOpen, onClose, page }: Props) {
 
   const closeEditModal = () => {
     setIsEditCategoryModal(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const url = `${endponits.DELETE_CATEGORY(id)}`;
+      const { response, error } = await deleteCategoryRequest(url);
+      if (error) {
+        console.error(`Error deleting category: ${error.message}`);
+      } else if (response) {
+        setCategories(categories.filter((category) => category._id !== id));
+        console.log(`Category with id ${id} deleted successfully`);
+      }
+    } catch (error) {
+      console.error("Error in delete operation", error);
+    }
+  };
+
+  const handleSave = async (data: { categoryName: string; notes: string }) => {
+    try {
+      const isEditing = Boolean(editableCategory);
+      const category: Partial<Category> = {
+        organizationId: "INDORG0001",
+        categoryName: data.categoryName,
+        notes: data.notes,
+        ...(isEditing && { _id: editableCategory!._id }),
+      };
+
+      const url = isEditing
+        ? `${endponits.UPDATE_CATEGORY(editableCategory?._id ?? "")}`
+        : `${endponits.ADD_CATEGORY}`;
+      const apiCall = isEditing ? updateCategoryRequest : addCategoryRequest;
+      const { response, error } = await apiCall(url, category);
+
+      if (error) {
+        console.error(`Error saving category: ${error.message}`);
+      } else if (response) {
+        setCategories((prevData) =>
+          isEditing
+            ? prevData.map((c) =>
+                c._id === editableCategory!._id ? { ...c, ...category } : c
+              )
+            : [...prevData, response.data]
+        );
+        closeEditModal();
+        closeAddModal();
+      }
+    } catch (error) {
+      console.error("Error in save operation", error);
+    }
   };
 
   const handleEditChange = (field: keyof Category, value: string) => {
@@ -91,15 +159,15 @@ function Category({ isOpen, onClose, page }: Props) {
         </div>
 
         <div className="flex">
-          {page == "expense" && (
+          {page === "expense" && (
             <div className="grid grid-flow-col items-center gap-3 ">
-             <div className="w-96">
+              <div className="w-96">
                 <SearchBar
-                  placeholder="Serach Name or Mobile"
+                  placeholder="Search Name or Mobile"
                   searchValue={searchValue}
                   onSearchChange={setSearchValue}
                 />
-             </div>
+              </div>
               <div>
                 <div className="relative w-full items-center justify-center flex">
                   <select className="block appearance-none w-full h-10  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
@@ -124,7 +192,7 @@ function Category({ isOpen, onClose, page }: Props) {
 
         <div className="grid grid-cols-3 gap-5">
           {categories.map((item) => (
-            <div key={item.categoryName} className="flex p-2">
+            <div key={item._id} className="flex p-2">
               <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
                 <div>
                   <h3 className="text-sm font-bold">{item.categoryName}</h3>
@@ -137,7 +205,10 @@ function Category({ isOpen, onClose, page }: Props) {
                   >
                     <PencilEdit color="currentColor" />
                   </p>
-                  <p className="cursor-pointer">
+                  <p
+                    className="cursor-pointer"
+                    onClick={() => handleDelete(item._id!)}
+                  >
                     <TrashCan color="currentColor" />
                   </p>
                 </div>
@@ -147,26 +218,24 @@ function Category({ isOpen, onClose, page }: Props) {
         </div>
 
         {page !== "expense" && (
-  <div className="flex justify-end gap-2 my-3">
-    <Button
-      className="flex justify-center"
-      variant="primary"
-      size="sm"
-    >
-      Save
-    </Button>
-  </div>
-)}
+          <div className="flex justify-end gap-2 my-3">
+            <Button className="flex justify-center" variant="primary" size="sm">
+              Save
+            </Button>
+          </div>
+        )}
 
-        {/* Add Category */}
+        {/* Add/Edit Category Modal */}
         <Modal
-          open={isAddCategoryModal}
+          open={isAddCategoryModal || isEditCategoryModal}
           onClose={closeAddModal}
           style={{ width: "40.5%" }}
         >
           <div className="p-6 space-y-8">
             <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-textColor">Add Category</h3>
+              <h3 className="text-xl font-bold text-textColor">
+                {editableCategory ? "Edit Category" : "Add Category"}
+              </h3>
               <div
                 className="ms-auto text-3xl cursor-pointer relative z-10"
                 onClick={closeAddModal}
@@ -174,66 +243,15 @@ function Category({ isOpen, onClose, page }: Props) {
                 &times;
               </div>
             </div>
-            <form className="">
-              <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="Electronics"
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">
-                  Notes
-                </label>
-                <textarea
-                  placeholder="Notes"
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
-                  rows={4}
-                />
-              </div>
-              <div className="flex justify-end gap-2 mb-3">
-                <Button
-                  className="flex justify-center"
-                  onClick={closeAddModal}
-                  variant="tertiary"
-                  size="lg"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="flex justify-center"
-                  variant="primary"
-                  size="lg"
-                >
-                  Save
-                </Button>
-              </div>
-            </form>
-          </div>
-        </Modal>
-        {/* Edit Category */}
-        <Modal
-          open={isEditCategoryModal}
-          onClose={closeEditModal}
-          style={{ width: "40.5%" }}
-        >
-          <div className="p-6 space-y-8">
-            <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-textColor">
-                Edit Category
-              </h3>
-              <div
-                className="ms-auto text-3xl cursor-pointer relative z-10"
-                onClick={closeEditModal}
-              >
-                &times;
-              </div>
-            </div>
-            <form className="">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSave({
+                  categoryName: editableCategory?.categoryName || "",
+                  notes: editableCategory?.notes || "",
+                });
+              }}
+            >
               <div className="mb-4">
                 <label className="block text-sm mb-1 text-labelColor">
                   Name
@@ -263,7 +281,7 @@ function Category({ isOpen, onClose, page }: Props) {
               <div className="flex justify-end gap-2 mb-3">
                 <Button
                   className="flex justify-center"
-                  onClick={closeEditModal}
+                  onClick={closeAddModal}
                   variant="tertiary"
                   size="lg"
                 >
