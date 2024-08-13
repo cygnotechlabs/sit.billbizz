@@ -6,8 +6,8 @@ import Eye from "../../../../assets/icons/Eye";
 
 type TaxRate = {
   id: string;
-  name: string;
-  rate: string;
+  taxName: string;
+  taxRate: string;
 };
 
 type Props = {
@@ -59,8 +59,8 @@ function ViewTaxDetailsVat({ vatRate }: Props) {
                 <p className="mt-2">Rate (%)</p>
              </div>
              <div className="text-base font-bold text-textColor">
-             <p>{vatRate.name}</p>
-             <p className="mt-0.5">{vatRate.rate}</p>
+             <p>{vatRate.taxName}</p>
+             <p className="mt-0.5">{vatRate.taxRate}</p>
           </div>
         </div>
       )}
