@@ -68,7 +68,6 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setAdditionalData(response.data[0]);
-        // console.log(response);
       }
     } catch (error) {
       console.log("Error in fetching Additional data", error);

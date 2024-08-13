@@ -7,7 +7,7 @@ import Button from "../../../Components/Button";
 type Props = {};
 
 function Taxes({}: Props) {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string>("GST");
   const navigate = useNavigate();
 
   const handleProceed = () => {
