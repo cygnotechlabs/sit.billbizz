@@ -8,7 +8,7 @@ exports.addCategory = async (req, res) => {
         organizationId,
         name,
         description,
-        createdDate
+        // createdDate
     } 
     = req.body;
 
@@ -33,18 +33,18 @@ exports.addCategory = async (req, res) => {
             });
         }
 
-        const currentDate = new Date();
-        const day = String(currentDate.getDate()).padStart(2, '0');
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-        const year = currentDate.getFullYear();
-        const formattedDate = `${day}-${month}-${year}`;
+        // const currentDate = new Date();
+        // const day = String(currentDate.getDate()).padStart(2, '0');
+        // const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+        // const year = currentDate.getFullYear();
+        // const formattedDate = `${day}-${month}-${year}`;
 
         // Create a new category
         const newCategory = new Categories({
             organizationId,
             name,
             description,
-            createdDate:formattedDate
+            // createdDate:formattedDate
             
         });
 
@@ -61,17 +61,19 @@ exports.addCategory = async (req, res) => {
 
 // Get all categories by organizationId
 exports.getAllCategories = async (req, res) => {
-    const organizationId = req.params.id;
+    const organizationId = req.body;
+    console.log(organizationId);
+    
     try {
         // Check if an Organization already exists
-        const existingOrganization = await Organization.findOne({ organizationId });
+        const existingOrganization = await Organization.findOne( {organizationId : organizationId} );
     
         if (!existingOrganization) {
         return res.status(404).json({
             message: "No Organization Found.",
         });
         }
-        const allCategories = await Categories.find( organizationId );
+        const allCategories = await Categories.find( {organizationId : organizationId});
         res.status(200).json(allCategories);
     } catch (error) {
         console.error("Error fetching categories:", error);
@@ -112,7 +114,7 @@ exports.updateCategory = async (req, res) => {
             organizationId,
             name,
             description,
-            updatedDate,
+            // updatedDate,
         } = req.body;
 
         // Find the current category by its ID
@@ -139,11 +141,11 @@ exports.updateCategory = async (req, res) => {
             }
         }
 
-        const currentDate = new Date();
-      const day = String(currentDate.getDate()).padStart(2, '0');
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-      const year = currentDate.getFullYear();
-      const formattedDate = `${day}-${month}-${year}`;
+    //     const currentDate = new Date();
+    //   const day = String(currentDate.getDate()).padStart(2, '0');
+    //   const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+    //   const year = currentDate.getFullYear();
+    //   const formattedDate = `${day}-${month}-${year}`;
 
         // Update the category
         const updatedCategory = await Categories.findByIdAndUpdate(
@@ -152,7 +154,7 @@ exports.updateCategory = async (req, res) => {
                 organizationId,
                 name,
                 description,
-                updatedDate:formattedDate
+                // updatedDate:formattedDate
             },
             { new: true, runValidators: true }
         );

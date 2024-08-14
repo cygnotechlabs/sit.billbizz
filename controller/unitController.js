@@ -11,7 +11,7 @@ exports.addUnit = async (req, res) => {
         unitName,
         symbol,
         quantityCode,
-        precision
+        // precision
       } = req.body;
   
       // // Check if an unit with the same organizationId already exists
@@ -32,7 +32,7 @@ exports.addUnit = async (req, res) => {
         unitName,
         symbol,
         quantityCode,
-        precision
+        // precision
       //   unitConversion: Array.isArray(unitConversion) ? unitConversion.map((field) => ({
       //     targetUnit: field.targetUnit,
       //     unitConversionRate: field.unitConversionRate,
@@ -114,7 +114,7 @@ exports.updateUnit = async (req, res) => {
       unitName,
       symbol,
       quantityCode,
-      precision,
+      // precision,
     } = req.body;
 
     // Log the ID being updated
@@ -151,7 +151,7 @@ exports.updateUnit = async (req, res) => {
         unitName,
         symbol,
         quantityCode,
-        precision,
+        // precision,
       },
       { new: true, runValidators: true }
     );

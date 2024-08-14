@@ -7,6 +7,7 @@ const itemSchema = new Schema({
     itemName: { type: String},
     sku: { type: String},
     unit: { type: String },
+    returnableItem: { type: String },
     length:{type: String},
     width:{type: String},
     height:{type: String},

@@ -8,7 +8,7 @@ exports.addManufacturer = async (req, res) => {
         organizationId,
         name,
         description,
-        createdDate
+        // createdDate
 
     } = req.body;
 
@@ -31,18 +31,18 @@ exports.addManufacturer = async (req, res) => {
                 message: "A manufacturer with this name already exists in the given organization.",
             });
         }
-        const currentDate = new Date();
-      const day = String(currentDate.getDate()).padStart(2, '0');
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-      const year = currentDate.getFullYear();
-      const formattedDate = `${day}-${month}-${year}`;
+    //     const currentDate = new Date();
+    //   const day = String(currentDate.getDate()).padStart(2, '0');
+    //   const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+    //   const year = currentDate.getFullYear();
+    //   const formattedDate = `${day}-${month}-${year}`;
 
         // Create a new manufacturer
         const newManufacturer = new manufacturer({
             organizationId,
             name,
             description,
-            createdDate:formattedDate
+            // createdDate:formattedDate
             
         });
 
@@ -86,83 +86,69 @@ exports.getAManufacturer = async(req,res)=>{
     const { organizationId } = req.body;
     try {
         // Check if an Organization already exists
-        const existingOrganization = await Organization.findOne({ organizationId });
+        const existingOrganization = await Organization.findOne({ organizationId : organizationId});
     
         if (!existingOrganization) {
         return res.status(404).json({
             message: "No Organization Found.",
         });
         }
-        const aManufacturer = await manufacturer.findOne({_id: manufacturerId})
-        res.status(200).json({aManufacturer})
-          // If no settings are found for the provided organizationId
-    if (!aManufacturer|| aManufacturer.length === 0) {
-        return res.status(404).json({ message: "No manufacturer found for this organization" });
-      }
-  
+        const aManufacturer = await manufacturer.findById(manufacturerId);
+        if (!aManufacturer) {
+            return res.status(404).json({ message: "Brand not found" });
+        }
+        res.status(200).json(aManufacturer);
     } catch (error) {
-        console.error("Error fetching a Item:", error);
+        console.error("Error fetching brand:", error);
         res.status(500).json({ message: "Internal server error." });
     }
-}
+};
+
 
 
 exports.updateManufacturer = async (req, res) => {
     console.log("Received request to update manufacturer:", req.body);
     
     try {
-        const manufacturerId = req.params.id;
         const {
+            _id,
             organizationId,
             name,
             description,
-            updatedDate,
+            // updatedDate,
         } = req.body;
 
-        // Find the current manufacturer by its ID
-        const currentManufacturer = await manufacturer.findById(manufacturerId);
+        // Log the ID being updated
+        console.log("Updating rack with ID:", _id);
 
-        if (!currentManufacturer) {
-            console.log("Manufacturer not found with ID:", manufacturerId);
-            return res.status(404).json({ message: "Manufacturer not found" });
-        }
-
-        // Check if the new name already exists in the same organizationId, excluding the current manufacturer being updated
-        if (currentManufacturer.name !== name) {
-            const existingManufacturerByName = await manufacturer.findOne({
-                name,
-                organizationId,
-                _id: { $ne: manufacturerId } // Exclude the current manufacturer from the check
-            });
-
-            if (existingManufacturerByName) {
-                console.log("Manufacturer with name already exists:", existingManufacturerByName);
-                return res.status(409).json({
-                    message: "A manufacturer with this name already exists in the given organization.",
-                });
-            }
-        }
-
-        const currentDate = new Date();
-      const day = String(currentDate.getDate()).padStart(2, '0');
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-      const year = currentDate.getFullYear();
-      const formattedDate = `${day}-${month}-${year}`;
+    //     const currentDate = new Date();
+    //   const day = String(currentDate.getDate()).padStart(2, '0');
+    //   const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+    //   const year = currentDate.getFullYear();
+    //   const formattedDate = `${day}-${month}-${year}`;
 
         // Update the manufacturer
         const updatedManufacturer = await manufacturer.findByIdAndUpdate(
-            manufacturerId,
+            _id,
             {
                 organizationId,
                 name,
                 description,
-                updatedDate:formattedDate
+                // updatedDate:formattedDate
             },
             { new: true, runValidators: true }
         );
+         // Check if an Organization already exists
+         const existingOrganization = await Organization.findOne({ organizationId });
+    
+         if (!existingOrganization) {
+         return res.status(404).json({
+             message: "No Organization Found.",
+         });
+         }
 
         if (!updatedManufacturer) {
-            console.log("Manufacturer not found with ID:", manufacturerId);
+            console.log("Manufacturer not found with ID:", _id);
             return res.status(404).json({ message: "Manufacturer not found" });
         }
 

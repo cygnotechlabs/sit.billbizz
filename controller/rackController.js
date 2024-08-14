@@ -9,8 +9,8 @@ exports.addRack = async (req, res) => {
         organizationId,  
         rackName,
         description,
-        rackStatus,
-        createdDate,
+        // rackStatus,
+        // createdDate,
       } = req.body;
   
       // // Check if a rack with the same organizationId already exists
@@ -25,19 +25,19 @@ exports.addRack = async (req, res) => {
           });
       }
 
-      const currentDate = new Date();
-      const day = String(currentDate.getDate()).padStart(2, '0');
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-      const year = currentDate.getFullYear();
-      const formattedDate = `${day}-${month}-${year}`;
+      // const currentDate = new Date();
+      // const day = String(currentDate.getDate()).padStart(2, '0');
+      // const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+      // const year = currentDate.getFullYear();
+      // const formattedDate = `${day}-${month}-${year}`;
   
       // Create a new rack
       const newRack = new Rack({
         organizationId,
         rackName,
         description,
-        rackStatus,
-        createdDate: formattedDate
+        // rackStatus,
+        // createdDate: formattedDate
       });
       await newRack.save();
   
@@ -111,8 +111,8 @@ exports.updateRack = async (req, res) => {
       organizationId,  
       rackName,
       description,
-      rackStatus,
-      updatedDate,
+      // rackStatus,
+      // updatedDate,
     } = req.body;
 
     // Log the ID being updated
@@ -141,11 +141,11 @@ exports.updateRack = async (req, res) => {
     //   }
     // }
 
-    const currentDate = new Date();
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-    const year = currentDate.getFullYear();
-    const formattedDate = `${day}-${month}-${year}`;
+    // const currentDate = new Date();
+    // const day = String(currentDate.getDate()).padStart(2, '0');
+    // const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+    // const year = currentDate.getFullYear();
+    // const formattedDate = `${day}-${month}-${year}`;
 
     // Update the rack
     const updatedRack = await Rack.findByIdAndUpdate(
@@ -154,8 +154,8 @@ exports.updateRack = async (req, res) => {
         organizationId,
         rackName,
         description,
-        rackStatus,
-        updatedDate: formattedDate
+        // rackStatus,
+        // updatedDate: formattedDate
       },
       { new: true, runValidators: true }
     );

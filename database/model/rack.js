@@ -6,9 +6,9 @@ const rackSchema = new Schema({
     organizationId: {type: String},
     rackName: {type: String},
     description: {type: String},
-    rackStatus: {type: String},
-    createdDate: {type: String},
-    updatedDate: {type: String}
+    // rackStatus: {type: String},
+    // createdDate: {type: String},
+    // updatedDate: {type: String}
 });
 
 

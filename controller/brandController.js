@@ -8,7 +8,7 @@ exports.addBrand = async (req, res) => {
         organizationId,
         name,
         description,
-        createdDate
+        // createdDate
     } = req.body;
 
     try {
@@ -31,18 +31,18 @@ exports.addBrand = async (req, res) => {
             });
         }
 
-        const currentDate = new Date();
-      const day = String(currentDate.getDate()).padStart(2, '0');
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-      const year = currentDate.getFullYear();
-      const formattedDate = `${day}-${month}-${year}`;
+    //     const currentDate = new Date();
+    //   const day = String(currentDate.getDate()).padStart(2, '0');
+    //   const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+    //   const year = currentDate.getFullYear();
+    //   const formattedDate = `${day}-${month}-${year}`;
 
         // Create a new brand
         const newBrand = new Brand({
             organizationId,
             name,
             description,
-            createdDate:formattedDate
+            // createdDate:formattedDate
         });
 
         // Save the brand to the database
@@ -61,7 +61,7 @@ exports.getAllBrands = async (req, res) => {
     const { organizationId } = req.body;
     try {
         // Check if an Organization already exists
-        const existingOrganization = await Organization.find({ organizationId:organizationId });
+        const existingOrganization = await Organization.findOne({ organizationId:organizationId });
     
         if (!existingOrganization) {
         return res.status(404).json({
@@ -111,7 +111,7 @@ exports.updateBrand = async (req, res) => {
             organizationId,
             name,
             description,
-            updatedDate
+            // updatedDate
         } = req.body;
 
         // Find the current brand by its ID
@@ -138,11 +138,12 @@ exports.updateBrand = async (req, res) => {
             }
         }
 
-        const currentDate = new Date();
-      const day = String(currentDate.getDate()).padStart(2, '0');
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-      const year = currentDate.getFullYear();
-      const formattedDate = `${day}-${month}-${year}`;
+    //     const currentDate = new Date();
+    //   const day = String(currentDate.getDate()).padStart(2, '0');
+    //   const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+    //   const year = currentDate.getFullYear();
+    //   const formattedDate = `${day}-${month}-${year}`;
+
         // Update the brand
         const updatedBrand = await Brand.findByIdAndUpdate(
             brandId,
@@ -150,7 +151,7 @@ exports.updateBrand = async (req, res) => {
                 organizationId,
                 name,
                 description,
-                updatedDate:formattedDate
+                // updatedDate:formattedDate
             },
             { new: true, runValidators: true }
         );
@@ -183,14 +184,6 @@ exports.deleteBrand = async (req, res) => {
     const brandId = req.params.id;
 
     try {
-        // Check if an Organization already exists
-    const existingOrganization = await Organization.findOne({ organizationId });
- 
-    if (!existingOrganization) {
-      return res.status(404).json({
-        message: "No Organization Found.",
-      });
-    }
  
         const deletedBrand = await Brand.findByIdAndDelete(brandId);
 

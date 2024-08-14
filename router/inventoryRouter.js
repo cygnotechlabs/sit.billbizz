@@ -26,18 +26,18 @@ router.put('/edit-unit', unitController.updateUnit);
 router.delete('/delete-unit/:id', unitController.deleteUnit);
 
 // Unit Conversion
-router.post('/add-unitConversion', unitController.addUnitConversion);
-router.put('/get-all-unitConversion', unitController.getAllUnitConversion);
-router.get('/get-one-unitConversion/:_id', unitController.getOneUnitConversion);
-router.put('/edit-unitConversion', unitController.updateUnitConversion);
-router.delete('/delete-unitConversion/:id', unitController.deleteUnitConversion);
+// router.post('/add-unitConversion', unitController.addUnitConversion);
+// router.put('/get-all-unitConversion', unitController.getAllUnitConversion);
+// router.get('/get-one-unitConversion/:_id', unitController.getOneUnitConversion);
+// router.put('/edit-unitConversion', unitController.updateUnitConversion);
+// router.delete('/delete-unitConversion/:id', unitController.deleteUnitConversion);
 
 
 //manufacturer
 router.post('/addManufacturer', manufacturerController.addManufacturer);
 router.put('/getAllManufacturer', manufacturerController.getAllManufacturer)
 router.get('/getAManufacturer/:id',manufacturerController.getAManufacturer)
-router.put('/updateManufacturer/:id', manufacturerController.updateManufacturer)
+router.put('/updateManufacturer', manufacturerController.updateManufacturer)
 router.delete('/deleteManufacturer/:id',manufacturerController.deletedManufacturer)
 
 

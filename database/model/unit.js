@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 
-const unitConversionSchema = new Schema({
-    targetUnit: { type: String },
-    unitConversionRate: { type: String },
-  }
-//   , { _id: false }
-);
+// const unitConversionSchema = new Schema({
+//     targetUnit: { type: String },
+//     unitConversionRate: { type: String },
+//   }
+// //   , { _id: false }
+// );
 
 
 const unitSchema = new Schema({
@@ -15,9 +15,9 @@ const unitSchema = new Schema({
     unitName: {type: String},
     symbol: {type: String},
     quantityCode: {type: String},
-    precision: {type: String},
+    // precision: {type: String},
 
-    unitConversion: [unitConversionSchema],
+    // unitConversion: [unitConversionSchema],
 });
 
 
