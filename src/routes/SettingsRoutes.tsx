@@ -3,7 +3,7 @@ import Settings from "../pages/Settings";
 import Currencies from "../features/settings/organisation/Currencies/Currencies";
 import ExchangeRates from "../features/settings/organisation/Currencies/ExchangeRates";
 import CreateOrganizationForm from "../features/settings/organisation/CreateOrganizationFrom";
-import InvoiceSettings from "../features/settings/organisation/InvoiceSettings";
+import InvoiceSettings from "../features/settings/organisation/InvoiceSettings/InvoiceSettings";
 import Taxes from "../features/settings/taxes/Taxes";
 import GSTComponent from "../features/settings/taxes/gst/GSTComponent";
 import VATComponent from "../features/settings/taxes/vat/VATComponent";
