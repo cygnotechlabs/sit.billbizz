@@ -82,16 +82,12 @@ function InvoiceSettings({}: Props) {
     
     try {
       const url = `${endponits.ADD_INVOICE_SETTINGS}`;
-      console.log("Request URL:", url);
-      console.log("Request Body:", invoiceSettings);
       const apiResponse = await AddInvoiceSettings(url, invoiceSettings);
-      console.log("API Response:", apiResponse);
       const { response, error } = apiResponse;
       if (!error && response) {
         toast.success(response.data);
       } else {
         toast.error(`API Error: ${error}`);
-        alert("An error occurred");
       }
     } catch (error) {
       toast.error(`Error during API call: ${error}`);
