@@ -14,7 +14,9 @@ router.post('/add-account',accountController.addAccount)
 
 router.put('/get-all-account',accountController.getAllAccount)
 
-router.put('/get-one-account/:accountId',accountController.getOneAccount)
+router.put('//:accountId',accountController.getOneAccount)
+
+router.put('/get-bank-account-number/:accouget-one-accountntId',accountController.getBankAccNum)
 
 router.put('/edit-account/:accountId',accountController.editAccount)
 

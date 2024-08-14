@@ -1,10 +1,52 @@
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account")
+const crypto = require('crypto');
+
+
+const key = Buffer.from(process.env.ENCRYPTION_KEY, 'utf8'); 
+const iv = Buffer.from(process.env.ENCRYPTION_IV, 'utf8'); 
+
+function encrypt(text) {
+    try {
+        const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+        let encrypted = cipher.update(text, 'utf8', 'hex');
+        encrypted += cipher.final('hex');
+        return `${iv.toString('hex')}:${encrypted}`;
+    } catch (error) {
+        console.error("Encryption error:", error);
+        throw error;
+    }
+}
+
+function decrypt(encryptedText) {
+  try {
+      // Split the encrypted text to get the IV and the actual encrypted data
+      const [ivHex, encryptedData] = encryptedText.split(':');
+      const iv = Buffer.from(ivHex, 'hex');
+
+      // Create the decipher with the algorithm, key, and IV
+      const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+      let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+      decrypted += decipher.final('utf8');
+      return decrypted;
+  } catch (error) {
+      console.error("Decryption error:", error);
+      throw error;
+  }
+}
+
+
+
+
+
 
 
 //Add Account
 exports.addAccount = async (req, res) => {
-    console.log("Add Account:", req.body);
+    // console.log("Add Account:", req.body);
+    console.log('IV Length:', iv.length);
+    console.log('Key Length:', key.length);
+
     try {
       const {       
         organizationId,
@@ -77,6 +119,9 @@ exports.addAccount = async (req, res) => {
           message: "Account with the provided Account Name already exists.",
         });
       }
+
+      // Encrypt bankAccNum before storing it
+      const encryptedBankAccNum = encrypt(bankAccNum);
   
       // Create a new Account
       const newAccount = new Account({
@@ -91,7 +136,7 @@ exports.addAccount = async (req, res) => {
         openingBalance,
         openingBalanceDate,
         description,
-        bankAccNum,
+        bankAccNum: encryptedBankAccNum,
         bankIfsc,
         bankCurrency,        
       });
@@ -116,10 +161,12 @@ exports.addAccount = async (req, res) => {
 exports.getAllAccount = async (req, res) => {
     try {
         const { organizationId } = req.body;
-        // console.log(organizationId);
 
         // Find all accounts where organizationId matches
-        const accounts = await Account.find({ organizationId:organizationId });
+        const accounts = await Account.find(
+          { organizationId: organizationId },
+          { bankAccNum: 0 } 
+      );
 
         if (!accounts.length) {
             return res.status(404).json({
@@ -157,6 +204,37 @@ exports.getOneAccount = async (req, res) => {
       res.status(200).json(account);
   } catch (error) {
       console.error("Error fetching account:", error);
+      res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
+// Get only bankAccNum for a given organizationId and accountId
+exports.getBankAccNum = async (req, res) => {
+  try {
+      const { accountId } = req.params;
+      const { organizationId } = req.body;
+
+      const account = await Account.findOne({
+          _id: accountId,
+          organizationId: organizationId,
+      }, 'bankAccNum'); 
+
+      if (!account) {
+          return res.status(404).json({
+              message: "Account not found for the provided Organization ID and Account ID.",
+          });
+      }
+
+      // Decrypt the bankAccNum
+      let decryptedBankAccNum = null;
+      if (account.bankAccNum) {
+          decryptedBankAccNum = decrypt(account.bankAccNum);
+      }
+
+      res.status(200).json({ bankAccNum: decryptedBankAccNum });
+  } catch (error) {
+      console.error("Error fetching bank account number:", error);
       res.status(500).json({ message: "Internal server error." });
   }
 };
