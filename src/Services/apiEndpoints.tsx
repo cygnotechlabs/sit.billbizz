@@ -27,6 +27,15 @@ export const endponits = {
   // Supplier
   GET_ALL_SUPPLIER: "",
 
+  //Currency 
+  GET_CURRENCIES:"get-currency",
+  ADD_CURRENCIES:"add-currency",
+DELETE_CURRENCIES:(id:string)=>`delete-currency/${id}`,
+EDIT_CURRENCIES:`edit-currency`,
+
+
+
+  // Inventory
   // Settings/Taxes
   // Gst
   GET_ALL_TAX: "get-tax",
