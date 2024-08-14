@@ -26,10 +26,10 @@ interface InputData {
   timeZone: string;
   dateFormat: string;
   dateSplit: string;
+  phoneNumberCode:string;
 }
 
 const CreateOrganizationForm = () => {
-  const [logo, setLogo] = useState<File | null>(null);
   const [additionalData, setAdditionalData] = useState<any | null>([]);
   // const [oneOrganization, setOneOrganization] = useState<any | []>([]);
   const [countryData, setcountryData] = useState<any | []>([]);
@@ -59,9 +59,10 @@ const CreateOrganizationForm = () => {
     timeZone: "",
     dateFormat: "",
     dateSplit: "",
+    phoneNumberCode:""
   });
 
-  // console.log(inputData);
+// console.log(inputData);
 
   const getDropdownList = async () => {
     try {
@@ -81,7 +82,7 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setcountryData(response.data[0].countries);
-        // console.log(response.data[0].countries), "Country Data";
+        // console.log(response.data[0].countries);
       }
     } catch (error) {
       console.log("Error in fetching country data", error);
@@ -96,7 +97,7 @@ const CreateOrganizationForm = () => {
       });
       if (!error && response) {
         setcurrencyData(response.data);
-        console.log(response);
+        // console.log(response);
       }
     } catch (error) {
       console.log("Error in fetching currency data", error);
@@ -112,6 +113,9 @@ const CreateOrganizationForm = () => {
 
       if (!error && response?.data) {
         // setOneOrganization(response.data);
+        setInputData(response.data);
+        // console.log(response.data, "oneOrganization");
+
         setInputData((prevData) => ({
           ...prevData,
           organizationId: response.data.organizationId,
@@ -136,18 +140,25 @@ const CreateOrganizationForm = () => {
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (key === "organizationLogo") setLogo(file);
+      // if (key === "organizationLogo") setLogo(file);
 
-      setInputData((prevDetails: any) => ({
-        ...prevDetails,
-        [key]: URL.createObjectURL(file),
-      }));
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        console.log("Base64 String:", base64String);
+        setInputData((prevDetails: any) => ({
+          ...prevDetails,
+          [key]: base64String,
+        }));
+      };
+
+      reader.readAsDataURL(file);
     }
   };
 
   const handleCreateOrganization = async (e: any) => {
     e.preventDefault();
-
     try {
       const url = `${endponits.CREATE_ORGANIZATION}`;
       const apiResponse = await createOrganization(url, inputData);
@@ -160,7 +171,7 @@ const CreateOrganizationForm = () => {
         toast.error(error.response.data.message);
       }
     } catch (error) {
-      console.log(error, "try");
+      console.log(error, "Error in creating organization");
     }
   };
 
@@ -193,8 +204,8 @@ const CreateOrganizationForm = () => {
           {" "}
           <label>
             <div className="bg-lightPink flex h-28 justify-center items-center rounded-md">
-              {logo ? (
-                <img src={URL.createObjectURL(logo)} alt="" className="h-24" />
+              {inputData.organizationLogo ? (
+                <img src={inputData.organizationLogo} alt="" className="h-24" />
               ) : (
                 <>
                   <div className="justify-center flex items-center bg-darkRed text-white  p-1 rounded-full">
@@ -242,7 +253,7 @@ const CreateOrganizationForm = () => {
                   onChange={handleInputChange}
                   name="organizationCountry"
                   id="Location"
-                  className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  className="block appearance-none w-full   text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select a country</option>
                   {countryData && countryData.length > 0 ? (
@@ -267,10 +278,11 @@ const CreateOrganizationForm = () => {
               </label>
               <div className="relative w-full mt-3">
                 <select
+                  value={inputData.organizationIndustry}
                   onChange={handleInputChange}
                   name="organizationIndustry"
                   id="organizationIndustry"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Industry</option>
 
@@ -299,7 +311,7 @@ const CreateOrganizationForm = () => {
           <div className="grid grid-cols-2 gap-4 -mt-2 space-y-4 ">
             <div>
               <input
-                className="pl-3 text-sm w-[100%] mt-4 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] mt-4 placeholder-[#495160] rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Street 1"
                 name="addline1"
                 value={inputData.addline1}
@@ -309,7 +321,7 @@ const CreateOrganizationForm = () => {
 
             <div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Street 1"
                 name="addline2"
                 value={inputData.addline2}
@@ -326,7 +338,7 @@ const CreateOrganizationForm = () => {
                 </label>
               </div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Enter City"
                 value={inputData.city}
                 name="city"
@@ -344,7 +356,7 @@ const CreateOrganizationForm = () => {
                 </label>
               </div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder=" Pin / Zip / Post code"
                 type="text"
                 value={inputData.pincode}
@@ -363,10 +375,12 @@ const CreateOrganizationForm = () => {
               </div>
               <div className="relative w-full mt-2">
                 <select
+                  value={inputData.state}
                   onChange={handleInputChange}
                   name="state"
                   id="state"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white  focus:border-darkRed"
+                  className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white  focus:border-darkRed"
+                  disabled={!inputData.organizationCountry}
                 >
                   <option value="">State / Region / County</option>
                   {stateList.length > 0 ? (
@@ -398,14 +412,25 @@ const CreateOrganizationForm = () => {
               <div className="flex">
                 <div className="relative w-24  mt-2 ">
                   <select
+                    value={inputData.phoneNumberCode}
                     onChange={handleInputChange}
-                    name="phoneCode"
-                    id="phoneCode"
-                    className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    name="phoneNumberCode"
+                    id="phoneNumberCode"
+                    className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   >
-                    <option value="">
-                      {phoneCodeList.length > 0 ? phoneCodeList : "+91"}
-                    </option>
+                   <option value="">
+  {inputData.phoneNumberCode ? inputData.phoneNumberCode : phoneCodeList}
+</option>
+{countryData
+  .filter(
+    (item: any) => item.phoneNumberCode !== (inputData.phoneNumberCode || phoneCodeList)
+  )
+  .map((item: any, index: number) => (
+    <option key={index} value={item.phoneNumberCode}>
+      {item.phoneNumberCode}
+    </option>
+  ))}
+
                   </select>
 
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -413,7 +438,7 @@ const CreateOrganizationForm = () => {
                   </div>
                 </div>
                 <input
-                  className="pl-3 text-sm w-[100%] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   placeholder="Phone"
                   type="tel"
                   value={inputData.organizationPhNum}
@@ -435,7 +460,7 @@ const CreateOrganizationForm = () => {
           <input
             type="text"
             placeholder="Value"
-            className="pl-3 text-sm w-[100%] mt-3 rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+            className="pl-3 text-sm w-[100%] placeholder-[#495160] mt-3 rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
             value={inputData.website}
             name="website"
             onChange={handleInputChange}
@@ -453,26 +478,18 @@ const CreateOrganizationForm = () => {
 
               <div className="relative w-full mt-3">
                 <select
+                  value={inputData.baseCurrency}
                   onChange={handleInputChange}
                   name="baseCurrency"
                   id="currency"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Currency</option>
-
-                  {currencyData && currencyData.length > 0 ? (
-                    currencyData.map((item: any, index: number) => (
-                      <option
-                        key={index}
-                        value={item}
-                        className="text-slate-300"
-                      >
-                        {item.currencyCode}
-                      </option>
-                    ))
-                  ) : (
-                    <></>
-                  )}
+                  {currencyData.map((item: any, index: number) => (
+                    <option key={index} value={item.currencyCode}>
+                      {item.currencyName} ({item.currencySymbol})
+                    </option>
+                  ))}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <CehvronDown color="gray" />
@@ -487,10 +504,11 @@ const CreateOrganizationForm = () => {
 
               <div className="relative w-full mt-3">
                 <select
+                  value={inputData.fiscalYear}
                   onChange={handleInputChange}
                   name="fiscalYear"
                   id="fiscalYear"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Financial Year</option>
 
@@ -526,10 +544,11 @@ const CreateOrganizationForm = () => {
               </label>
               <div className="relative w-full my-3">
                 <select
+                  value={inputData.timeZone}
                   name="timeZone"
                   onChange={handleInputChange}
                   id="timeZone"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Time Zone</option>
                   {additionalData.timezones &&
@@ -557,10 +576,11 @@ const CreateOrganizationForm = () => {
               </label>
               <div className="relative w-full mt-3">
                 <select
+                  value={inputData.dateFormat}
                   onChange={handleInputChange}
                   name="dateFormat"
                   id="dateFormat"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Date Format</option>
                   {additionalData?.dateFormat?.short &&
@@ -623,10 +643,11 @@ const CreateOrganizationForm = () => {
             <div className="relative col-span-4 mt-5">
               <div className="relative w-full mt-3">
                 <select
+                  value={inputData.dateSplit}
                   onChange={handleInputChange}
                   name="dateSplit"
                   id="dateSplit"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Date Split</option>
 

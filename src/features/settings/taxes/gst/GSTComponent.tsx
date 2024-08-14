@@ -1,7 +1,7 @@
 import { useState } from "react";
-import bgimage from "../../../../assets/Images/Organization-banner.png";
 import TaxRate from "./TaxRate";
 import GstSettings from "./GstSettings";
+import Banner from "../../banner/Banner";
 
 
 type Props = {}
@@ -11,10 +11,7 @@ function GSTComponent({}: Props) {
 
   return (
     <div className="p-5">
-      <div
-        className="w-full h-[148px] bg-cover bg-center rounded-lg"
-        style={{ backgroundImage: `url(${bgimage})` }}
-      />
+      <Banner/>
       <div className="mt-5 flex gap-7 rounded-[40px] bg-[#EAEBEB] p-3">
         <button
           className={`px-4 py-2 rounded-[40px] text-sm  ${

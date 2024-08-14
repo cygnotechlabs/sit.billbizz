@@ -4,17 +4,17 @@ import Modal from "../../../../Components/model/Modal";
 import bgImage from "../../../../assets/Images/14.png";
 import Button from "../../../../Components/Button";
 
-type TaxRate = {
+type TaxGst = {
   id: string;
-  name: string;
-  rate: string;
+  taxName: string;
+  taxRate: string;
   cgst: string;
   sgst: string;
   igst: string;
 };
 
 type Props = {
-  taxRate: TaxRate | null;
+  taxRate: TaxGst | null;
 };
 
 function ViewTaxDetails({ taxRate }: Props) {
@@ -66,8 +66,8 @@ function ViewTaxDetails({ taxRate }: Props) {
             <p className="mt-2">IGST</p>
          </div>
          <div className="text-base  font-bold text-textColor">
-            <p>{taxRate.name}</p>
-            <p className="mt-0.5">{taxRate.rate}</p>
+            <p>{taxRate.taxName}</p>
+            <p className="mt-0.5">{taxRate.taxRate}</p>
             <p className="mt-0.5">{taxRate.cgst}</p>
             <p className="mt-1">{taxRate.sgst}</p>
             <p className="mt-1">{taxRate.igst}</p>

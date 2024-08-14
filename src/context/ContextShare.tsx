@@ -9,6 +9,14 @@ interface BankResponseContextType {
   bankResponse: any;
   setBankResponse: React.Dispatch<React.SetStateAction<any>>;
 }
+interface GstResponseContextType {
+  gstResponse: any;
+  setGstResponse: React.Dispatch<React.SetStateAction<any>>;
+}
+interface VatResponseContextType {
+  vatResponse: any;
+  setVatResponse: React.Dispatch<React.SetStateAction<any>>;
+}
 
 interface CurrencyResponseContextType {
   currencyResponse: any;
@@ -27,6 +35,12 @@ export const CurrencyResponseContext= createContext<
  CurrencyResponseContextType | undefined
 >(undefined);
 
+export const GstResponseContext = createContext<
+GstResponseContextType | undefined
+>(undefined);
+export const VatResponseContext = createContext<
+VatResponseContextType | undefined
+>(undefined);
 
 interface ContextShareProps {
   children: ReactNode;
@@ -37,6 +51,8 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
   const [cashResponse, setCashResponse] = useState<any>({});
   const [bankResponse, setBankResponse] = useState<any>({});
   const [currencyResponse,setCurrencyResponse]=useState<any>({});
+  const [gstResponse,setGstResponse]=useState<any>({});
+  const [vatResponse,setVatResponse]=useState<any>({});
 
   return (
     <cashResponseContext.Provider value={{ cashResponse, setCashResponse }}>
@@ -44,6 +60,11 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
       <CurrencyResponseContext.Provider value={{ currencyResponse, setCurrencyResponse }}>
           {children}
           </CurrencyResponseContext.Provider>
+        <GstResponseContext.Provider value={{gstResponse,setGstResponse}}>
+          <VatResponseContext.Provider value={{vatResponse,setVatResponse}}>
+          {children}
+          </VatResponseContext.Provider>
+        </GstResponseContext.Provider>
       </BankResponseContext.Provider>
     </cashResponseContext.Provider>
 

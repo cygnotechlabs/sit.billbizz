@@ -1,28 +1,55 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SearchBar from "../../../../Components/SearchBar";
 import Button from "../../../../Components/Button";
 import ListIcon from "../../../../assets/icons/ListIcon";
 import ViewTaxDetailsVat from "./ViewTaxDetailsVat";
+import useApi from "../../../../Hooks/useApi";
+import { endponits } from "../../../../Services/apiEndpoints";
+import { VatResponseContext } from "../../../../context/ContextShare";
+import PencilIcon from "../../../../assets/icons/PencilIcon";
 
 type TaxRate = {
   id: string;
-  name: string;
-  rate: string;
+  taxName: string;
+  taxRate: string;
 };
 
-const vatData: TaxRate[] = [
-  { id: "001", name: "VAT0", rate: "0" },
-];
-
-type Props = {};
-
-function TaxRateVatTable({}: Props) {
-  const [search, setSearch] = useState<string>("");
+function TaxRateVatTable() {
+  const [vatData, setVatData] = useState<TaxRate[]>([]);
+  const [filteredVatRates, setFilteredVatRates] = useState<TaxRate[]>([]);
   const [selectedVatRate, setSelectedVatRate] = useState<TaxRate | null>(null);
+  const [search, setSearch] = useState<string>("");
 
-  const filteredVatRates = vatData.filter((vatRate) =>
-    vatRate.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const { request: AllTaxVat } = useApi("put", 5004);
+  const { vatResponse } = useContext(VatResponseContext)!;
+
+  const fetchAllVatRates = async () => {
+    try {
+      const url = `${endponits.GET_ALL_TAX}`;
+      const body = { organizationId: "INDORG0001" };
+      const { response, error } = await AllTaxVat(url, body);
+      if (!error && response) {
+        const vatTaxRates = response.data.vatTaxRate;
+        console.log(vatTaxRates);
+        setVatData(vatTaxRates);
+        setFilteredVatRates(vatTaxRates);
+      }
+    } catch (error) {
+      console.error("Error fetching VAT tax data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllVatRates();
+  }, [vatResponse]);
+
+  useEffect(() => {
+    setFilteredVatRates(
+      vatData.filter((vatRate) =>
+        vatRate.taxName.toLowerCase().includes(search.toLowerCase())
+      )
+    );
+  }, [search, vatData]);
 
   const tableHeaders = ["", "Tax Name", "Rate(%)", "Actions"];
 
@@ -58,11 +85,14 @@ function TaxRateVatTable({}: Props) {
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input type="checkbox" className="form-checkbox w-4 h-4" />
                 </td>
-                <td className="py-2.5 px-4 border-y border-tableBorder">{item.name}</td>
-                <td className="py-2.5 px-4 border-y border-tableBorder">{item.rate} %</td>
+                <td className="py-2.5 px-4 border-y border-tableBorder">{item.taxName}</td>
+                <td className="py-2.5 px-4 border-y border-tableBorder">{item.taxRate} %</td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
-                  <div className="flex justify-center cursor-pointer" onClick={() => handleViewClick(item)}>
+                  <div className="flex gap-5 justify-center cursor-pointer" onClick={() => handleViewClick(item)}>
                     <ViewTaxDetailsVat vatRate={selectedVatRate} />
+                    <div>
+                      <PencilIcon color="#3C7FBC" />
+                    </div>
                   </div>
                 </td>
               </tr>
