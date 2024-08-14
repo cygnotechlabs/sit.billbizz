@@ -67,6 +67,9 @@ export default {
         membershipText:"#FCF8ED",
         inputBorder:"#CECECE"
       },
+      placeholderColor: {
+        labelColor: "#495160",
+      },
     },
   },
   plugins: [
