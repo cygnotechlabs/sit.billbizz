@@ -6,6 +6,7 @@ import ViewTaxDetailsVat from "./ViewTaxDetailsVat";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import { VatResponseContext } from "../../../../context/ContextShare";
+import PencilIcon from "../../../../assets/icons/PencilIcon";
 
 type TaxRate = {
   id: string;
@@ -87,8 +88,11 @@ function TaxRateVatTable() {
                 <td className="py-2.5 px-4 border-y border-tableBorder">{item.taxName}</td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">{item.taxRate} %</td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
-                  <div className="flex justify-center cursor-pointer" onClick={() => handleViewClick(item)}>
+                  <div className="flex gap-5 justify-center cursor-pointer" onClick={() => handleViewClick(item)}>
                     <ViewTaxDetailsVat vatRate={selectedVatRate} />
+                    <div>
+                      <PencilIcon color="#3C7FBC" />
+                    </div>
                   </div>
                 </td>
               </tr>

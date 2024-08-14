@@ -1,4 +1,5 @@
 import { forwardRef, useState, useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import PencilEdit from "../../../assets/icons/PencilEdit";
 import PlusCircle from "../../../assets/icons/PlusCircle";
 import TrashCan from "../../../assets/icons/TrashCan";
@@ -30,7 +31,10 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const [racks, setRacks] = useState<Rack[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editableRack, setEditableRack] = useState<Rack | null>(null);
-
+  const closeModal = () => {
+    setModalOpen(false);
+    setEditableRack(null);
+  };
   useEffect(() => {
     const loadRacks = async () => {
       try {
@@ -39,8 +43,11 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
         const { response, error } = await fetchAllRacks(url, organizationId);
         if (!error && response) {
           setRacks(response.data);
+        } else {
+          toast.error("Failed to fetch racks data.");
         }
       } catch (error) {
+        toast.error("Error fetching racks data.");
         console.error("Error fetching racks data", error);
       }
     };
@@ -55,11 +62,6 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
       setEditableRack({ rackName: "", description: "" });
     }
     setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-    setEditableRack(null);
   };
 
   const handleSave = async () => {
@@ -87,11 +89,15 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               )
             : [...prevData, response.data]
         );
+
+        toast.success(`Rack ${isEditing ? "updated" : "added"} successfully!`);
         closeModal();
       } else {
-        console.error(`Error saving rack: ${error.message}`);
+        toast.error(`Error saving rack: ${error?.message}`);
+        console.error(`Error saving rack: ${error?.message}`);
       }
     } catch (error) {
+      toast.error("Error in save operation.");
       console.error("Error in save operation", error);
     }
   };
@@ -102,11 +108,13 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
       const { response, error } = await deleteRackRequest(url);
       if (!error && response) {
         setRacks(racks.filter((rack) => rack._id !== id));
-        console.log(`Rack with id ${id} deleted successfully`);
+        toast.success("Rack deleted successfully!");
       } else {
-        console.error(`Error deleting rack: ${error.message}`);
+        toast.error(`Error deleting rack: ${error?.message}`);
+        console.error(`Error deleting rack: ${error?.message}`);
       }
     } catch (error) {
+      toast.error("Error in delete operation.");
       console.error("Error in delete operation", error);
     }
   };
@@ -119,7 +127,8 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
 
   return (
     <div ref={ref}>
-      <Modal open={true} onClose={onClose} className="">
+      <Toaster position="top-center" reverseOrder={false} />
+      <Modal open={true} onClose={onClose}>
         <div className="p-5 mt-3">
           <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden h-24">
             <div
@@ -189,11 +198,10 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
 
       <Modal open={isModalOpen} onClose={closeModal} style={{ width: "35%" }}>
         <div className="p-5 mt-3">
-          <div className=" flex p-4 rounded-xl  relative overflow-hidden">
+          <div className="flex p-4 rounded-xl relative overflow-hidden">
             <h3 className="text-xl font-bold text-textColor">
               {editableRack?._id ? "Edit Rack" : "Add Rack"}
             </h3>
-
             <div
               className="ms-auto text-3xl cursor-pointer relative z-10"
               onClick={closeModal}
@@ -238,7 +246,7 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               </div>
 
               <div className="flex justify-end gap-2 mb-3">
-                <Button variant="primary" size="sm">
+                <Button type="submit" variant="primary" size="sm">
                   Save
                 </Button>
                 <Button onClick={closeModal} variant="tertiary" size="sm">

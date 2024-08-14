@@ -1,4 +1,5 @@
 import { forwardRef, useState, useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import Button from "../../../Components/Button";
 import Modal from "../../../Components/model/Modal";
 import PencilEdit from "../../../assets/icons/PencilEdit";
@@ -39,8 +40,11 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
         const { response, error } = await fetchAllManufacturers(url, body);
         if (!error && response) {
           setManufacturers(response.data);
+        } else {
+          toast.error("Failed to fetch manufacturers.");
         }
       } catch (error) {
+        toast.error("Error fetching manufacturers data");
         console.error("Error fetching manufacturers data", error);
       }
     };
@@ -90,11 +94,16 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               )
             : [...prevData, response.data]
         );
+        toast.success(
+          `Manufacturer ${isEditing ? "updated" : "added"} successfully`
+        );
         closeModal();
       } else {
+        toast.error(`Error saving manufacturer: ${error.message}`);
         console.error(`Error saving manufacturer: ${error.message}`);
       }
     } catch (error) {
+      toast.error("Error in save operation");
       console.error("Error in save operation", error);
     }
   };
@@ -107,11 +116,13 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
         setManufacturers(
           manufacturers.filter((manufacturer) => manufacturer._id !== id)
         );
-        console.log(`Manufacturer with id ${id} deleted successfully`);
+        toast.success("Manufacturer deleted successfully");
       } else {
+        toast.error(`Error deleting manufacturer: ${error.message}`);
         console.error(`Error deleting manufacturer: ${error.message}`);
       }
     } catch (error) {
+      toast.error("Error in delete operation");
       console.error("Error in delete operation", error);
     }
   };
@@ -124,6 +135,7 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
 
   return (
     <div ref={ref}>
+      <Toaster position="top-center" reverseOrder={false} />
       <Modal open={true} onClose={onClose} className="">
         <div className="p-5 mt-3">
           <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden h-24">
@@ -243,7 +255,14 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
             </div>
 
             <div className="flex justify-end gap-2 mb-3">
-              <Button variant="primary" size="sm">
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSave();
+                }}
+                variant="primary"
+                size="sm"
+              >
                 Save
               </Button>
               <Button onClick={closeModal} variant="tertiary" size="sm">

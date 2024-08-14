@@ -114,7 +114,7 @@ const CreateOrganizationForm = () => {
       if (!error && response?.data) {
         // setOneOrganization(response.data);
         setInputData(response.data);
-        console.log(response.data, "oneOrganization");
+        // console.log(response.data, "oneOrganization");
 
         setInputData((prevData) => ({
           ...prevData,
@@ -311,7 +311,7 @@ const CreateOrganizationForm = () => {
           <div className="grid grid-cols-2 gap-4 -mt-2 space-y-4 ">
             <div>
               <input
-                className="pl-3 text-sm w-[100%] mt-4 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] mt-4 placeholder-[#495160] rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Street 1"
                 name="addline1"
                 value={inputData.addline1}
@@ -321,7 +321,7 @@ const CreateOrganizationForm = () => {
 
             <div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Street 1"
                 name="addline2"
                 value={inputData.addline2}
@@ -338,7 +338,7 @@ const CreateOrganizationForm = () => {
                 </label>
               </div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Enter City"
                 value={inputData.city}
                 name="city"
@@ -356,7 +356,7 @@ const CreateOrganizationForm = () => {
                 </label>
               </div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder=" Pin / Zip / Post code"
                 type="text"
                 value={inputData.pincode}
@@ -438,7 +438,7 @@ const CreateOrganizationForm = () => {
                   </div>
                 </div>
                 <input
-                  className="pl-3 text-sm w-[100%] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   placeholder="Phone"
                   type="tel"
                   value={inputData.organizationPhNum}
@@ -460,7 +460,7 @@ const CreateOrganizationForm = () => {
           <input
             type="text"
             placeholder="Value"
-            className="pl-3 text-sm w-[100%] mt-3 rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+            className="pl-3 text-sm w-[100%] placeholder-[#495160] mt-3 rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
             value={inputData.website}
             name="website"
             onChange={handleInputChange}
