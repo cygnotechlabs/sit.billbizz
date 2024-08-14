@@ -26,6 +26,7 @@ interface InputData {
   timeZone: string;
   dateFormat: string;
   dateSplit: string;
+  phoneNumberCode:string;
 }
 
 const CreateOrganizationForm = () => {
@@ -58,9 +59,10 @@ const CreateOrganizationForm = () => {
     timeZone: "",
     dateFormat: "",
     dateSplit: "",
+    phoneNumberCode:""
   });
 
-  console.log(inputData.organizationLogo);
+// console.log(inputData);
 
   const getDropdownList = async () => {
     try {
@@ -80,7 +82,7 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setcountryData(response.data[0].countries);
-        console.log(response.data[0].countries);
+        // console.log(response.data[0].countries);
       }
     } catch (error) {
       console.log("Error in fetching country data", error);
@@ -112,7 +114,7 @@ const CreateOrganizationForm = () => {
       if (!error && response?.data) {
         // setOneOrganization(response.data);
         setInputData(response.data);
-        console.log(response.data, "oneOrganization");
+        // console.log(response.data, "oneOrganization");
 
         setInputData((prevData) => ({
           ...prevData,
@@ -157,7 +159,6 @@ const CreateOrganizationForm = () => {
 
   const handleCreateOrganization = async (e: any) => {
     e.preventDefault();
-
     try {
       const url = `${endponits.CREATE_ORGANIZATION}`;
       const apiResponse = await createOrganization(url, inputData);
@@ -170,7 +171,7 @@ const CreateOrganizationForm = () => {
         toast.error(error.response.data.message);
       }
     } catch (error) {
-      console.log(error, "try");
+      console.log(error, "Error in creating organization");
     }
   };
 
@@ -310,7 +311,7 @@ const CreateOrganizationForm = () => {
           <div className="grid grid-cols-2 gap-4 -mt-2 space-y-4 ">
             <div>
               <input
-                className="pl-3 text-sm w-[100%] mt-4 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] mt-4 placeholder-[#495160] rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Street 1"
                 name="addline1"
                 value={inputData.addline1}
@@ -320,7 +321,7 @@ const CreateOrganizationForm = () => {
 
             <div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Street 1"
                 name="addline2"
                 value={inputData.addline2}
@@ -337,7 +338,7 @@ const CreateOrganizationForm = () => {
                 </label>
               </div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Enter City"
                 value={inputData.city}
                 name="city"
@@ -355,7 +356,7 @@ const CreateOrganizationForm = () => {
                 </label>
               </div>
               <input
-                className="pl-3 text-sm w-[100%] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder=" Pin / Zip / Post code"
                 type="text"
                 value={inputData.pincode}
@@ -411,24 +412,25 @@ const CreateOrganizationForm = () => {
               <div className="flex">
                 <div className="relative w-24  mt-2 ">
                   <select
-                    // value={inputData.phoneCode}
+                    value={inputData.phoneNumberCode}
                     onChange={handleInputChange}
-                    name="phoneCode"
-                    id="phoneCode"
+                    name="phoneNumberCode"
+                    id="phoneNumberCode"
                     className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   >
-                    <option value="">
-                      {phoneCodeList.length > 0 ? phoneCodeList : "+91"}
-                    </option>
-                    {countryData
-                      .filter(
-                        (item: any) => item.phoneNumberCode !== phoneCodeList
-                      )
-                      .map((item: any, index: any) => (
-                        <option key={index} value={item.phoneNumberCode}>
-                          {item.phoneNumberCode}
-                        </option>
-                      ))}
+                   <option value="">
+  {inputData.phoneNumberCode ? inputData.phoneNumberCode : phoneCodeList}
+</option>
+{countryData
+  .filter(
+    (item: any) => item.phoneNumberCode !== (inputData.phoneNumberCode || phoneCodeList)
+  )
+  .map((item: any, index: number) => (
+    <option key={index} value={item.phoneNumberCode}>
+      {item.phoneNumberCode}
+    </option>
+  ))}
+
                   </select>
 
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -436,7 +438,7 @@ const CreateOrganizationForm = () => {
                   </div>
                 </div>
                 <input
-                  className="pl-3 text-sm w-[100%] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   placeholder="Phone"
                   type="tel"
                   value={inputData.organizationPhNum}
@@ -458,7 +460,7 @@ const CreateOrganizationForm = () => {
           <input
             type="text"
             placeholder="Value"
-            className="pl-3 text-sm w-[100%] mt-3 rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+            className="pl-3 text-sm w-[100%] placeholder-[#495160] mt-3 rounded-md text-start bg-white border border-inputBorder  h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
             value={inputData.website}
             name="website"
             onChange={handleInputChange}

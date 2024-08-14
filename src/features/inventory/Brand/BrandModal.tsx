@@ -1,4 +1,5 @@
 import { forwardRef, useState, useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast"; // Import react-hot-toast
 import bgImage from "../../../assets/Images/Frame 6.png";
 import NewBrandModal from "./NewBrandModal";
 import Button from "../../../Components/Button";
@@ -58,23 +59,6 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
     const [selectedBrand, setSelectedBrand] = useState<BrandData | null>(null);
     const [brandData, setBrandData] = useState<BrandData[]>([]);
 
-    useEffect(() => {
-      const loadBrands = async () => {
-        try {
-          const url = `${endponits.GET_ALL_BRAND}`;
-          const body = { organizationId: "INDORG0001" };
-          const { response, error } = await fetchAllBrands(url, body);
-          if (!error && response) {
-            setBrandData(response.data);
-          }
-        } catch (error) {
-          console.error("Error in fetching brand data", error);
-        }
-      };
-
-      loadBrands();
-    }, []);
-
     const openEditModal = (brand: BrandData) => {
       setSelectedBrand(brand);
       setEditModalOpen(true);
@@ -84,6 +68,25 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
       setSelectedBrand(null);
       setEditModalOpen(true);
     };
+    useEffect(() => {
+      const loadBrands = async () => {
+        try {
+          const url = `${endponits.GET_ALL_BRAND}`;
+          const body = { organizationId: "INDORG0001" };
+          const { response, error } = await fetchAllBrands(url, body);
+          if (!error && response) {
+            setBrandData(response.data);
+          } else {
+            toast.error("Failed to fetch brand data.");
+          }
+        } catch (error) {
+          toast.error("Error in fetching brand data.");
+          console.error("Error in fetching brand data", error);
+        }
+      };
+
+      loadBrands();
+    }, []);
 
     const closeEditModal = () => {
       setEditModalOpen(false);
@@ -95,11 +98,13 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
         const { response, error } = await deleteBrandRequest(url);
         if (!error && response) {
           setBrandData(brandData.filter((brand) => brand._id !== id));
-          console.log(`Brand with id ${id} deleted successfully`);
+          toast.success(`Brand with id ${id} deleted successfully.`);
         } else {
+          toast.error(`Error deleting brand: ${error.message}`);
           console.error(`Error deleting brand: ${error.message}`);
         }
       } catch (error) {
+        toast.error("Error in delete operation.");
         console.error("Error in delete operation", error);
       }
     };
@@ -128,12 +133,16 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
                 )
               : [...prevData, response.data]
           );
+          toast.success(
+            `Brand ${isEditing ? "updated" : "added"} successfully.`
+          );
           closeEditModal();
-          onClose();
         } else {
+          toast.error(`Error saving brand: ${error.message}`);
           console.error(`Error saving brand: ${error.message}`);
         }
       } catch (error) {
+        toast.error("Error in save operation.");
         console.error("Error in save operation", error);
       }
     };
@@ -147,6 +156,7 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
 
     return (
       <div ref={ref}>
+        <Toaster position="top-center" reverseOrder={false} />
         <Modal open={true} onClose={onClose} className="w-[66%]">
           <div className="p-5 mt-3">
             <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
