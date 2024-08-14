@@ -13,8 +13,8 @@ import { endponits } from "../../../Services/apiEndpoints";
 
 type Category = {
   _id?: string;
-  categoryName: string;
-  notes: string;
+  name: string;
+  description: string;
   organizationId?: string;
   createdDate?: string;
 };
@@ -27,6 +27,7 @@ type Props = {
 
 function Category({ isOpen, onClose, page }: Props) {
   const { request: fetchAllCategories } = useApi("put", 5003);
+  const { request: getCategoryRequest } = useApi("get", 5003);
   const { request: deleteCategoryRequest } = useApi("delete", 5003);
   const { request: updateCategoryRequest } = useApi("put", 5003);
   const { request: addCategoryRequest } = useApi("post", 5003);
@@ -63,14 +64,30 @@ function Category({ isOpen, onClose, page }: Props) {
     loadCategories();
   }, []);
 
+  const getCategory = async (id: string) => {
+    try {
+      const url = `${endponits.GET_CATEGORY(id)}`;
+      const { response, error } = await getCategoryRequest(url);
+      if (error) {
+        toast.error(`Error fetching category: ${error.message}`);
+        console.error(`Error fetching category: ${error.message}`);
+      } else if (response) {
+        setEditableCategory(response.data);
+        setIsEditCategoryModal(true);
+      }
+    } catch (error) {
+      toast.error("Error in fetching category data.");
+      console.error("Error in fetching category data", error);
+    }
+  };
+
   const openAddModal = () => {
     setEditableCategory(null);
     setIsAddCategoryModal(true);
   };
 
   const openEditModal = (category: Category) => {
-    setEditableCategory(category);
-    setIsEditCategoryModal(true);
+    getCategory(category._id!);
   };
 
   const closeAddModal = () => {
@@ -98,13 +115,14 @@ function Category({ isOpen, onClose, page }: Props) {
     }
   };
 
-  const handleSave = async (data: { categoryName: string; notes: string }) => {
+  const handleSave = async (data: { name: string; description: string }) => {
     try {
       const isEditing = Boolean(editableCategory);
       const category: Partial<Category> = {
         organizationId: "INDORG0001",
-        categoryName: data.categoryName,
-        notes: data.notes,
+        name: data.name,
+        description: data.description,
+        createdDate: editableCategory?.createdDate ?? new Date().toISOString(),
         ...(isEditing && { _id: editableCategory!._id }),
       };
 
@@ -206,8 +224,8 @@ function Category({ isOpen, onClose, page }: Props) {
             <div key={item._id} className="flex p-2">
               <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
                 <div>
-                  <h3 className="text-sm font-bold">{item.categoryName}</h3>
-                  <p className="text-xs text-textColor">{item.notes}</p>
+                  <h3 className="text-sm font-bold">{item.name}</h3>
+                  <p className="text-xs text-textColor">{item.description}</p>
                 </div>
                 <div className="flex space-x-2">
                   <p
@@ -258,8 +276,8 @@ function Category({ isOpen, onClose, page }: Props) {
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSave({
-                  categoryName: editableCategory?.categoryName || "",
-                  notes: editableCategory?.notes || "",
+                  name: editableCategory?.name || "",
+                  description: editableCategory?.description || "",
                 });
               }}
             >
@@ -269,10 +287,8 @@ function Category({ isOpen, onClose, page }: Props) {
                 </label>
                 <input
                   type="text"
-                  onChange={(e) =>
-                    handleEditChange("categoryName", e.target.value)
-                  }
-                  value={editableCategory?.categoryName || ""}
+                  onChange={(e) => handleEditChange("name", e.target.value)}
+                  value={editableCategory?.name || ""}
                   placeholder="Electronics"
                   className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10"
                 />
@@ -282,8 +298,10 @@ function Category({ isOpen, onClose, page }: Props) {
                   Notes
                 </label>
                 <textarea
-                  value={editableCategory?.notes || ""}
-                  onChange={(e) => handleEditChange("notes", e.target.value)}
+                  value={editableCategory?.description || ""}
+                  onChange={(e) =>
+                    handleEditChange("description", e.target.value)
+                  }
                   placeholder="Notes"
                   className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
                   rows={4}

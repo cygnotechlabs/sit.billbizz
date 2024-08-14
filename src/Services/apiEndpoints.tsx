@@ -3,15 +3,15 @@ export const endponits = {
   GET_ADDITIONAL_DATA: `get-additional-data`,
   CREATE_ORGANIZATION: `setup-organization`,
   GET_ONE_ORGANIZATION: `get-one-organization`,
-  GET_COUNTRY_DATA:`get-countries-data`,
-  GET_CURRENCY_LIST:`get-currency`,
+  GET_COUNTRY_DATA: `get-countries-data`,
+  GET_CURRENCY_LIST: `get-currency`,
   // Organisation Invoices
-  ADD_INVOICE_SETTINGS:'add-invoice-settings',
-  GET_INVOICE_SETTINGS:'get-settings',
-  ADD_PAYMENT_TERMS:`add-payment-terms`,
-  EDIT_PAYMENT_TERMS:`edit-payment-terms/:id`,
-  DELETE_PAYMENT_TERMS:`delete-payment-terms`,
-  GET_PAYMENT_TERMS:`get-all-payment-terms`,
+  ADD_INVOICE_SETTINGS: "add-invoice-settings",
+  GET_INVOICE_SETTINGS: "get-settings",
+  ADD_PAYMENT_TERMS: `add-payment-terms`,
+  EDIT_PAYMENT_TERMS: `edit-payment-terms/:id`,
+  DELETE_PAYMENT_TERMS: `delete-payment-terms`,
+  GET_PAYMENT_TERMS: `get-all-payment-terms`,
 
   // Accountant
   Get_ALL_Acounts: "get-all-account",
@@ -33,31 +33,31 @@ export const endponits = {
   ADD_NEW_TAX: "add-tax",
   UPDATE_TAX_VAT: (id: string) => `edit-tax/${id}`,
 
-  
   // Inventory
   // Brand
-  GET_ALL_BRAND: "getAllBrands",
-  GET_BRAND: (id: string) => `getBrand/${id}`,
-  UPDATE_BRAND: (id: string) => `updateBrand/${id}`,
-  DELETE_BRAND: (id: string) => `deleteBrand/${id}`,
-  ADD_BRAND: "addBrand",
+  GET_ALL_BRAND: "get-all-brands",
+  GET_BRAND: (id: string) => `get-one-brand/${id}`,
+  UPDATE_BRAND: (id: string) => `update-brand/${id}`,
+  DELETE_BRAND: (id: string) => `delete-brand/${id}`,
+  ADD_BRAND: "add-brand",
 
   // Category
-  GET_ALL_CATEGORIES: "getAllCategories",
-  ADD_CATEGORY: "addCategory",
-  DELETE_CATEGORY: (id: string) => `deleteCategory/${id}`,
-  UPDATE_CATEGORY: (id: string) => `updateCategory/${id}`,
+  GET_ALL_CATEGORIES: "get-all-category",
+  ADD_CATEGORY: "get-all-category",
+  DELETE_CATEGORY: (id: string) => `delete-category/${id}`,
+  UPDATE_CATEGORY: (id: string) => `update-category/${id}`,
+  GET_CATEGORY: (id: string) => `get-one-category/${id}`,
 
   // Manufacturer
-  GET_ALL_MANUFACTURER: "getAllManufacturer",
-  ADD_MANUFACTURER: "addManufacturer",
-  DELETE_MANUFACTURER: (id: string) => `deleteManufacturer/${id}`,
-  UPDATE_MANUFACTURER: (id: string) => `updateManufacturer/${id}`,
+  GET_ALL_MANUFACTURER: "get-all-manufacturer",
+  ADD_MANUFACTURER: "add-manufacturer",
+  DELETE_MANUFACTURER: (id: string) => `delete-manufacturer/${id}`,
+  UPDATE_MANUFACTURER: (id: string) => `update-manufacturer/${id}`,
 
   // Rack
   GET_ALL_RACK: "get-all-rack",
-  GET_RACK: (id: string) => `get-one-rack/${id}`,
   ADD_RACK: "add-rack",
   UPDATE_RACK: "update-rack",
+  GET_RACK: (id: string) => `get-one-rack/${id}`,
   DELETE_RACK: (id: string) => `delete-rack/${id}`,
 };

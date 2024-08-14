@@ -86,7 +86,7 @@ const BrandModal = forwardRef<HTMLDivElement, BrandModalProps>(
       };
 
       loadBrands();
-    }, [setEditModalOpen]);
+    }, []);
 
     const closeEditModal = () => {
       setEditModalOpen(false);
