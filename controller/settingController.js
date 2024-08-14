@@ -273,12 +273,8 @@ exports.getAllPaymentTerms = async (req, res) => {
 exports.addTax = async (req, res) => {
   try {
     const { organizationId, taxType, gstIn, gstBusinesLegalName, gstBusinessTradeName, gstRegisteredDate, gstTaxRate, compositionSchema, compositionPercentage, vatNumber, vatBusinesLegalName, vatBusinessTradeName, vatRegisteredDate, tinNumber, vatTaxRate, msmeType, msmeRegistrationNumber } = req.body;
-
-    // Validate the taxType
-    if (taxType !== 'GST' && taxType !== 'VAT') {
-      return res.status(400).json({ message: "Invalid tax type. Must be 'GST' or 'VAT'." });
-    }
-
+    console.log(req.body);
+    
     // Find the tax record by organizationId and taxType
     let taxRecord = await Tax.findOne({ organizationId });
 

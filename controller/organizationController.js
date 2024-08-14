@@ -383,6 +383,7 @@ exports.setupOrganization = async (req, res) => {
       timeZone,
       dateFormat,
       dateSplit,
+      phoneNumberCode
     } = req.body;
 
     // Check if an Organization already exists
@@ -411,6 +412,7 @@ exports.setupOrganization = async (req, res) => {
     existingOrganization.timeZone = timeZone;
     existingOrganization.dateFormat = dateFormat;
     existingOrganization.dateSplit = dateSplit; 
+    existingOrganization.phoneNumberCode=phoneNumberCode;
     
     const savedOrganization = await existingOrganization.save();
 

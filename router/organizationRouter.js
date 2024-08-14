@@ -50,7 +50,7 @@ router.put('/edit-payment-terms/:id',settingController.editPaymentTerm)
 
 router.delete('/delete-payment-terms',settingController.deletePaymentTerm)
 
-router.get('/getAll-payment-terms',settingController.getAllPaymentTerms)
+router.get('/get-all-payment-terms',settingController.getAllPaymentTerms)
 
 
 //Tax
