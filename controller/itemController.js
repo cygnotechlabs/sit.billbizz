@@ -53,6 +53,12 @@ exports.addItem = async (req, res) => {
         status
       } = req.body;
 
+      const existingItem = await Item.findOne({ sku });     
+      if (existingItem) {       
+        console.error("Item with this SKU already exists.");       
+        return res.status(400).json({ message: "Item with this SKU already exists." }); 
+      }
+
     const currentDate = new Date();
     const day = String(currentDate.getDate()).padStart(2, '0');
     const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
@@ -125,7 +131,16 @@ exports.getAllItem = async (req, res) => {
   try {
     const { organizationId } = req.body;
 
-    const allItem = await Item.find({ organizationId: organizationId })
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+    
+    if (!existingOrganization) {
+    return res.status(404).json({
+        message: "No Organization Found.",
+    });
+    }
+
+    const allItem = await Item.find({ organizationId })
     if (allItem.length > 0) {
       res.status(200).json(allItem);
     } else {

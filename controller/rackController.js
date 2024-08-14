@@ -1,5 +1,6 @@
 const Organization = require("../database/model/organization");
 const Rack = require("../database/model/rack");
+const Item = require("../database/model/item"); 
 
 //1. Add rack
 exports.addRack = async (req, res) => {
@@ -9,10 +10,17 @@ exports.addRack = async (req, res) => {
         organizationId,  
         rackName,
         description,
-        // rackStatus,
-        // createdDate,
       } = req.body;
   
+      // Check if an Organization already exists
+      const existingOrganization = await Organization.findOne({ organizationId });
+ 
+      if (!existingOrganization) {
+          return res.status(404).json({
+              message: "No Organization Found.",
+          });
+      }
+
       // // Check if a rack with the same organizationId already exists
       const existingRack = await Rack.findOne({
         rackName,
@@ -24,20 +32,12 @@ exports.addRack = async (req, res) => {
               message: "This rack name already exists in the given organization.",
           });
       }
-
-      // const currentDate = new Date();
-      // const day = String(currentDate.getDate()).padStart(2, '0');
-      // const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-      // const year = currentDate.getFullYear();
-      // const formattedDate = `${day}-${month}-${year}`;
   
       // Create a new rack
       const newRack = new Rack({
         organizationId,
         rackName,
         description,
-        // rackStatus,
-        // createdDate: formattedDate
       });
       await newRack.save();
   
@@ -57,6 +57,15 @@ exports.getAllRack = async (req, res) => {
     try {
         const { organizationId } = req.body;
         console.log(organizationId);
+
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
+    
+        if (!existingOrganization) {
+        return res.status(404).json({
+            message: "No Organization Found.",
+        });
+        }
 
         // Find all rack where organizationId matches
         const allRack = await Rack.find({ organizationId })
@@ -101,7 +110,10 @@ exports.getOneRack = async (req, res) => {
 };
   
 
-//4. edit rack
+
+
+
+//4. Edit rack with items update
 exports.updateRack = async (req, res) => {
   console.log("Received request to update rack:", req.body);
 
@@ -111,41 +123,39 @@ exports.updateRack = async (req, res) => {
       organizationId,  
       rackName,
       description,
-      // rackStatus,
-      // updatedDate,
     } = req.body;
 
     // Log the ID being updated
     console.log("Updating rack with ID:", _id);
 
-    // // Find the rack by its ID to get the current rackName
-    // const currentRack = await Unit.findById(_id);
+    // Find the rack by its ID to get the current rackName
+    const currentRack = await Rack.findById(_id);
 
-    // if (!currentRack) {
-    //   console.log("Rack not found with ID:", _id);
-    //   return res.status(404).json({ message: "Rack not found" });
-    // }
+    if (!currentRack) {
+      console.log("Rack not found with ID:", _id);
+      return res.status(404).json({ message: "Rack not found" });
+    }
 
-    // // Check if the new rack already exists in the same organizationId, excluding the current rack being updated
-    // if (currentRack.rackName !== rackName) {
-    //   const existingRack = await Rack.findOne({
-    //     rackName,
-    //     organizationId,
-    //     _id: { $ne: _id } // Exclude the current rack from the check
-    //   });
+    // Check if the new rack already exists in the same organizationId, excluding the current rack being updated
+    if (currentRack.rackName !== rackName) {
+      const existingRack = await Rack.findOne({
+        rackName,
+        organizationId,
+        _id: { $ne: _id } // Exclude the current rack from the check
+      });
 
-    //   if (existingRack) {
-    //     return res.status(409).json({
-    //       message: "This rack name already exists in the given organization.",
-    //     });
-    //   }
-    // }
+      if (existingRack) {
+        return res.status(409).json({
+          message: "This rack name already exists in the given organization.",
+        });
+      }
 
-    // const currentDate = new Date();
-    // const day = String(currentDate.getDate()).padStart(2, '0');
-    // const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-    // const year = currentDate.getFullYear();
-    // const formattedDate = `${day}-${month}-${year}`;
+      // Update all items with the current rack name to the new rack name
+      await Item.updateMany(
+        { organizationId, rack: currentRack.rackName },
+        { rack: rackName }
+      );
+    }
 
     // Update the rack
     const updatedRack = await Rack.findByIdAndUpdate(
@@ -172,7 +182,6 @@ exports.updateRack = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 
 //5. delete Rack

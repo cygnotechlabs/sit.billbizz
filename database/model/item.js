@@ -5,7 +5,7 @@ const itemSchema = new Schema({
     organizationId: {type: String},
     itemType: { type: String, enum: ['Goods', 'Service'] },
     itemName: { type: String},
-    sku: { type: String},
+    sku: { type: String,},
     unit: { type: String },
     returnableItem: { type: String },
     length:{type: String},

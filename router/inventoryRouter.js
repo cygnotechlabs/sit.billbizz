@@ -34,27 +34,27 @@ router.delete('/delete-unit/:id', unitController.deleteUnit);
 
 
 //manufacturer
-router.post('/addManufacturer', manufacturerController.addManufacturer);
-router.put('/getAllManufacturer', manufacturerController.getAllManufacturer)
-router.get('/getAManufacturer/:id',manufacturerController.getAManufacturer)
-router.put('/updateManufacturer', manufacturerController.updateManufacturer)
-router.delete('/deleteManufacturer/:id',manufacturerController.deletedManufacturer)
+router.post('/add-manufacturer', manufacturerController.addManufacturer);
+router.put('/get-all-manufacturer', manufacturerController.getAllManufacturer)
+router.get('/get-one-manufacturer/:id',manufacturerController.getAManufacturer)
+router.put('/update-manufacturer', manufacturerController.updateManufacturer)
+router.delete('/delete-manufacturer/:id',manufacturerController.deletedManufacturer)
 
 
 //category
-router.post('/addCategory', categoriesController.addCategory)
-router.put('/getAllCategories' , categoriesController.getAllCategories)
-router.get('/getACategory/:id' , categoriesController.getACategory)
-router.put("/updateCategory/:id" , categoriesController.updateCategory)
-router.delete("/deleteCategory/:id", categoriesController.deleteCategory)
+router.post('/add-category', categoriesController.addCategory)
+router.put('/get-all-category' , categoriesController.getAllCategories)
+router.get('/get-one-category/:id' , categoriesController.getACategory)
+router.put("/update-category/:id" , categoriesController.updateCategory)
+router.delete("/delete-category/:id", categoriesController.deleteCategory)
 
 
 //brand
-router.post('/addBrand', brandController.addBrand);
-router.put('/getAllBrands', brandController.getAllBrands);
-router.get('/getBrand/:id', brandController.getABrand);
-router.put('/updateBrand/:id', brandController.updateBrand);
-router.delete('/deleteBrand/:id', brandController.deleteBrand);
+router.post('/add-brand', brandController.addBrand);
+router.put('/get-all-brands', brandController.getAllBrands);
+router.get('/get-one-brand/:id', brandController.getABrand);
+router.put('/update-brand', brandController.updateBrand);
+router.delete('/delete-brand/:id', brandController.deleteBrand);
 
 
 //Rack

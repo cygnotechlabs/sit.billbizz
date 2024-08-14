@@ -8,20 +8,17 @@ exports.addManufacturer = async (req, res) => {
         organizationId,
         name,
         description,
-        // createdDate
-
     } = req.body;
 
     try {
-       
-           // Check if an Organization already exists
-    const existingOrganization = await Organization.findOne({ organizationId });
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
  
-    if (!existingOrganization) {
-      return res.status(404).json({
-        message: "No Organization Found.",
-      });
-    }
+        if (!existingOrganization) {
+            return res.status(404).json({
+                message: "No Organization Found.",
+            });
+        }
         // Check if a manufacturer with the same name already exists within the same organization
         const existingManufacturerByName = await manufacturer.findOne({ name, organizationId });
 
@@ -31,26 +28,19 @@ exports.addManufacturer = async (req, res) => {
                 message: "A manufacturer with this name already exists in the given organization.",
             });
         }
-    //     const currentDate = new Date();
-    //   const day = String(currentDate.getDate()).padStart(2, '0');
-    //   const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-    //   const year = currentDate.getFullYear();
-    //   const formattedDate = `${day}-${month}-${year}`;
 
         // Create a new manufacturer
         const newManufacturer = new manufacturer({
             organizationId,
             name,
             description,
-            // createdDate:formattedDate
-            
         });
 
         // Save the manufacturer to the database
-        const savedManufacturer = await newManufacturer.save();
+        await newManufacturer.save();
 
         // Send response
-        res.status(201).json(savedManufacturer);
+        res.status(201).json("manufacturer added successfully");
     } catch (error) {
         console.error("Error adding manufacturer:", error);
         res.status(400).json({ error: error.message });
@@ -58,7 +48,7 @@ exports.addManufacturer = async (req, res) => {
 };
 
 
-  // Get all Manufacturer
+// Get all Manufacturer
 exports.getAllManufacturer = async (req, res) => {
     const { organizationId } = req.body;
     try {
@@ -80,13 +70,13 @@ exports.getAllManufacturer = async (req, res) => {
 };
 
 
-// Get a Item (particular Item)
+// Get a manufacturer (particular Item)
 exports.getAManufacturer = async(req,res)=>{
     const manufacturerId = req.params.id
     const { organizationId } = req.body;
     try {
         // Check if an Organization already exists
-        const existingOrganization = await Organization.findOne({ organizationId : organizationId});
+        const existingOrganization = await Organization.findOne({ organizationId });
     
         if (!existingOrganization) {
         return res.status(404).json({
@@ -95,7 +85,7 @@ exports.getAManufacturer = async(req,res)=>{
         }
         const aManufacturer = await manufacturer.findById(manufacturerId);
         if (!aManufacturer) {
-            return res.status(404).json({ message: "Brand not found" });
+            return res.status(404).json({ message: "Manufacturer not found" });
         }
         res.status(200).json(aManufacturer);
     } catch (error) {
@@ -115,17 +105,10 @@ exports.updateManufacturer = async (req, res) => {
             organizationId,
             name,
             description,
-            // updatedDate,
         } = req.body;
 
         // Log the ID being updated
         console.log("Updating rack with ID:", _id);
-
-    //     const currentDate = new Date();
-    //   const day = String(currentDate.getDate()).padStart(2, '0');
-    //   const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-    //   const year = currentDate.getFullYear();
-    //   const formattedDate = `${day}-${month}-${year}`;
 
         // Update the manufacturer
         const updatedManufacturer = await manufacturer.findByIdAndUpdate(
@@ -134,18 +117,18 @@ exports.updateManufacturer = async (req, res) => {
                 organizationId,
                 name,
                 description,
-                // updatedDate:formattedDate
             },
             { new: true, runValidators: true }
         );
-         // Check if an Organization already exists
-         const existingOrganization = await Organization.findOne({ organizationId });
+
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
     
-         if (!existingOrganization) {
+        if (!existingOrganization) {
          return res.status(404).json({
              message: "No Organization Found.",
          });
-         }
+        }
 
         if (!updatedManufacturer) {
             console.log("Manufacturer not found with ID:", _id);
@@ -164,14 +147,14 @@ exports.updateManufacturer = async (req, res) => {
 //5. delete Unit
 exports.deletedManufacturer = async (req, res) => {
     try {
-        const { id } = req.params;
+      const { id } = req.params;
        
       // Check if the unit exists
       const manufacture  = await manufacturer.findById(id);
  
       if (!manufacture) {
         return res.status(404).json({
-          message: "Unit not found.",
+          message: "manufacturer not found.",
         });
       }
  
@@ -183,7 +166,7 @@ exports.deletedManufacturer = async (req, res) => {
       });
       console.log("manufacturer deleted successfully:", id);
     } catch (error) {
-      console.error("Error deleting Unit:", error);
+      console.error("Error deleting manufacturer:", error);
       res.status(500).json({ message: "Internal server error." });
     }
   };
