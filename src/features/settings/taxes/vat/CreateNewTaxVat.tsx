@@ -7,6 +7,7 @@ import TaxImage from "../../../../assets/Images/Tax-bro 1.png";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import { VatResponseContext } from "../../../../context/ContextShare";
+import toast, { Toaster } from "react-hot-toast";
 
 type Props = {};
 
@@ -42,6 +43,7 @@ function CreateNewTaxVat({}: Props) {
       const body = taxVat;
       const { response, error } = await CreateTaxVat(url, body);
       if (!error && response) {
+        toast.success(response.data.message);
         setVatResponse((prevVatResponse: any) => ({
           ...prevVatResponse,
           ...response.data,  
@@ -49,7 +51,7 @@ function CreateNewTaxVat({}: Props) {
         setTaxVat(initialTaxVat);
         closeModal();
       } else {
-        console.log("Error:", error);
+        toast.error(error.response.data.message);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -139,12 +141,14 @@ function CreateNewTaxVat({}: Props) {
               variant="primary"
               className="pl-10 pr-10 h-[38px]"
               size="sm"
+              type="submit"
             >
               Save
             </Button>
           </div>
         </form>
       </Modal>
+      <Toaster position="top-center" reverseOrder={false} />
     </div>
   );
 }

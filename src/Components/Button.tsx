@@ -1,13 +1,14 @@
 // Path: components/Button.tsx
 import { cva } from "class-variance-authority";
-
+ 
 type ButtonProps = React.HTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "tertiary" | "fourthiary";
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
   type?: "button" | "submit" | "reset";
+  onSubmit?: (event: React.FormEvent<HTMLButtonElement>) => void; // Added onSubmit event type
 };
-
+ 
 const buttonVariants = cva("flex text-center items-center", {
   variants: {
     variant: {
@@ -32,15 +33,33 @@ const buttonVariants = cva("flex text-center items-center", {
     size: "md",
   },
 });
-
+ 
 export default function Button({
   variant = "primary",
   size = "md",
   className = "p-4",
-  type = "button", // Default type is "button"
+  type = "button",
+  onSubmit, // Added onSubmit prop
   ...props
 }: ButtonProps) {
   const combinedClassName = `${buttonVariants({ variant, size })} ${className}`;
-
-  return <button type={type} {...props} className={combinedClassName} />;
+ 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (type === "submit" && onSubmit) {
+      onSubmit(event as any); // Cast to `any` to simulate `onSubmit` behavior
+    }
+ 
+    if (props.onClick) {
+      props.onClick(event);
+    }
+  };
+ 
+  return (
+<button
+      type={type}
+      {...props}
+      className={combinedClassName}
+      onClick={handleClick} // Use handleClick to trigger onSubmit if type is "submit"
+    />
+  );
 }
