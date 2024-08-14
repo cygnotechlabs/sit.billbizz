@@ -1,5 +1,7 @@
 import { useRoutes } from "react-router-dom";
 import "./App.css";
+import Layout from "./layout/Layout";
+import SettingsLayout from "./layout/SettingsLayout";
 import Dashboard from "./pages/Dashboard";
 import AccountantRoutes from "./routes/AccountantRoutes";
 import CustomerRoutes from "./routes/CustomerRoutes";
@@ -7,11 +9,9 @@ import ExpenseRoutes from "./routes/ExpenseRoutes";
 import InventoryRoutes from "./routes/InventoryRoutes";
 import PurchaseRoutes from "./routes/PurchaseRoutes";
 import SalesRoutes from "./routes/SalesRoutes";
+import SettingsRoutes from "./routes/SettingsRoutes";
 import StaffRoutes from "./routes/StaffRoutes";
 import SupplierRoutes from "./routes/SupplierRoutes";
-import SettingsRoutes from "./routes/SettingsRoutes";
-import Layout from "./layout/Layout";
-import SettingsLayout from "./layout/SettingsLayout";
 
 function App() {
   const routes = [
