@@ -7,6 +7,7 @@ import TaxImage from "../../../../assets/Images/Tax-bro 1.png";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import { GstResponseContext } from "../../../../context/ContextShare";
+import toast, { Toaster } from "react-hot-toast";
 
 type Props = {};
 
@@ -50,6 +51,7 @@ function CreateNewTax({}: Props) {
       const body = taxGst;
       const { response, error } = await CreateTaxGst(url, body);
       if (!error && response) {
+        toast.success(response.data.message);
         setGstResponse((prevGstResponse: any) => ({
           ...prevGstResponse,
           ...response.data,
@@ -57,7 +59,7 @@ function CreateNewTax({}: Props) {
         setTaxGst(initialTaxGst);
         closeModal();
       } else {
-        console.log("Error:", error);
+        toast.error(error.response.data.message);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -191,6 +193,7 @@ function CreateNewTax({}: Props) {
           </div>
         </form>
       </Modal>
+      <Toaster position="top-center" reverseOrder={false} />
     </div>
   );
 }

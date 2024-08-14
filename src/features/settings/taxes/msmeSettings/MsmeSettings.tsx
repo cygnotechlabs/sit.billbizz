@@ -4,6 +4,7 @@ import CehvronDown from "../../../../assets/icons/CehvronDown";
 import Button from "../../../../Components/Button";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
+import toast, { Toaster } from "react-hot-toast";
 
 type Props = {}
 
@@ -31,12 +32,12 @@ function MsmeSettings({ }: Props) {
             const body = msmeSettings;
             const { response, error } = await CreateMsme(url, body);
             if (!error && response) {
+                toast.success(response.data.message);
                 setMsmeSettings(initialMsmeSettings);
-                alert("MSME Settings Updated");
                 console.log(initialMsmeSettings);
                 
             } else {
-                console.log("Error:", error);
+                toast.error(error.response.data.message);
             }
         } catch (error) {
             console.error("Error:", error);
@@ -119,13 +120,14 @@ function MsmeSettings({ }: Props) {
                             </div>
                         </div>
                         <div className="flex justify-end mt-6">
-                            <Button variant="primary" className="pl-10 pr-10 h-[38px] text-sm" size="sm">
+                            <Button variant="primary" type="submit" className="pl-10 pr-10 h-[38px] text-sm" size="sm">
                                 Save
                             </Button>
                         </div>
                     </form>
                 </div>
             )}
+               <Toaster position="top-center" reverseOrder={false} />
         </div>
     )
 }

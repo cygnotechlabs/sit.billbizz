@@ -3,6 +3,7 @@ import CalenderIcon from "../../../../assets/icons/CalenderIcon";
 import Button from "../../../../Components/Button";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
+import toast, { Toaster } from "react-hot-toast";
 
 type GstSettingsProps = {};
 
@@ -37,10 +38,10 @@ function GstSettings({ }: GstSettingsProps) {
       const body = gstSettings;
       const { response, error } = await CreateGstSettings(url, body);
       if (!error && response) {
+        toast.success(response.data.message);
         setGstSettings(initialGstSettings);
-        alert("GST Settings Updated")
       } else {
-        console.log("Error:", error);
+        toast.error(error.response.data.message);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -166,7 +167,7 @@ function GstSettings({ }: GstSettingsProps) {
                     </div>
                     <p className="w-[95%] mt-3 text-xs">Enabling this option will let you record and track export of digital services to individuals</p>
                     <div className="flex justify-end mt-6">
-                      <Button size="sm" className="text-sm pl-10 pr-10">Save</Button>
+                      <Button size="sm" className="text-sm pl-10 pr-10" type="submit">Save</Button>
                     </div>
                   </div>
                 </div>
@@ -175,6 +176,7 @@ function GstSettings({ }: GstSettingsProps) {
           </div>
         )}
       </div>
+      <Toaster position="top-center" reverseOrder={false} />
     </div>
   );
 }
