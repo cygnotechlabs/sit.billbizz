@@ -27,9 +27,7 @@ function CreateNewTax({}: Props) {
   const { request: CreateTaxGst } = useApi("post", 5004);
   const { setGstResponse } = useContext(GstResponseContext)!;
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const key = name as keyof typeof taxGst.gstTaxRate;
     setTaxGst((prevTaxGst) => {
@@ -54,7 +52,7 @@ function CreateNewTax({}: Props) {
       if (!error && response) {
         setGstResponse((prevGstResponse: any) => ({
           ...prevGstResponse,
-          ...response.data,  
+          ...response.data,
         }));
         setTaxGst(initialTaxGst);
         closeModal();
@@ -81,7 +79,11 @@ function CreateNewTax({}: Props) {
         <PlusCircle color="white" /> New Tax
       </Button>
 
-      <Modal open={isModalOpen} onClose={closeModal} className="w-[59.4%] px-8 py-6">
+      <Modal
+        open={isModalOpen}
+        onClose={closeModal}
+        className="w-[59.4%] px-8 py-6"
+      >
         <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
           <div
             className="absolute top-0 -right-8 w-[178px] h-[89px]"
@@ -91,9 +93,7 @@ function CreateNewTax({}: Props) {
             }}
           ></div>
           <div className="relative z-10">
-            <h3 className="text-xl font-bold text-textColor">
-              Create New Tax
-            </h3>
+            <h3 className="text-xl font-bold text-textColor">Create New Tax</h3>
             <p className="text-dropdownText font-semibold text-sm mt-2">
               Open a new bank account swiftly and securely.
             </p>
@@ -104,7 +104,7 @@ function CreateNewTax({}: Props) {
           >
             &times;
           </div>
-        </div>  
+        </div>
         <form onSubmit={onSubmit}>
           <div className="flex items-center mt-6">
             <div className="">
@@ -184,6 +184,7 @@ function CreateNewTax({}: Props) {
               variant="primary"
               className="pl-10 pr-10 h-[38px]"
               size="sm"
+              type="submit"
             >
               Save
             </Button>

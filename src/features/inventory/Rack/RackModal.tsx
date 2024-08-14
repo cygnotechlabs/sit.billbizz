@@ -80,6 +80,7 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
       const { response, error } = await apiCall(url, rack);
 
       if (!error && response) {
+        // Optimistically update the state
         setRacks((prevData) =>
           isEditing
             ? prevData.map((r) =>
@@ -87,6 +88,8 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               )
             : [...prevData, response.data]
         );
+
+        // Close the modal after updating the state
         closeModal();
       } else {
         console.error(`Error saving rack: ${error.message}`);
@@ -238,7 +241,7 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               </div>
 
               <div className="flex justify-end gap-2 mb-3">
-                <Button variant="primary" size="sm">
+                <Button type="submit" variant="primary" size="sm">
                   Save
                 </Button>
                 <Button onClick={closeModal} variant="tertiary" size="sm">
