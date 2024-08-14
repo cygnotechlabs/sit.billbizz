@@ -43,23 +43,41 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const combinedClassName = `${buttonVariants({ variant, size })} ${className}`;
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 8452a7f8d390bd14f333d08297ea267db723e49c
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (type === "submit" && onSubmit) {
       onSubmit(event as any); // Cast to `any` to simulate `onSubmit` behavior
     }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 8452a7f8d390bd14f333d08297ea267db723e49c
     if (props.onClick) {
       props.onClick(event);
     }
   };
+<<<<<<< HEAD
  
   return (
 <button
+=======
+
+  return (
+    <button
+>>>>>>> 8452a7f8d390bd14f333d08297ea267db723e49c
       type={type}
       {...props}
       className={combinedClassName}
       onClick={handleClick} // Use handleClick to trigger onSubmit if type is "submit"
     />
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8452a7f8d390bd14f333d08297ea267db723e49c
