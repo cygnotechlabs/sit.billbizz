@@ -53,7 +53,7 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
     };
 
     loadRacks();
-  }, [closeModal]);
+  }, []);
 
   const openModal = (rack?: Rack) => {
     if (rack) {
