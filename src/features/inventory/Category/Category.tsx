@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import Button from "../../../Components/Button";
 import Modal from "../../../Components/model/Modal";
 import bgImage from "../../../assets/Images/Frame 6.png";
@@ -48,11 +49,13 @@ function Category({ isOpen, onClose, page }: Props) {
           organizationId
         );
         if (error) {
+          toast.error("Error in fetching categories data.");
           console.error("Error in fetching categories data", error);
         } else if (response) {
           setCategories(response.data);
         }
       } catch (error) {
+        toast.error("Error in fetching categories data.");
         console.error("Error in fetching categories data", error);
       }
     };
@@ -83,12 +86,14 @@ function Category({ isOpen, onClose, page }: Props) {
       const url = `${endponits.DELETE_CATEGORY(id)}`;
       const { response, error } = await deleteCategoryRequest(url);
       if (error) {
+        toast.error(`Error deleting category: ${error.message}`);
         console.error(`Error deleting category: ${error.message}`);
       } else if (response) {
         setCategories(categories.filter((category) => category._id !== id));
-        console.log(`Category with id ${id} deleted successfully`);
+        toast.success(`Category with id ${id} deleted successfully.`);
       }
     } catch (error) {
+      toast.error("Error in delete operation.");
       console.error("Error in delete operation", error);
     }
   };
@@ -110,6 +115,7 @@ function Category({ isOpen, onClose, page }: Props) {
       const { response, error } = await apiCall(url, category);
 
       if (error) {
+        toast.error(`Error saving category: ${error.message}`);
         console.error(`Error saving category: ${error.message}`);
       } else if (response) {
         setCategories((prevData) =>
@@ -119,10 +125,14 @@ function Category({ isOpen, onClose, page }: Props) {
               )
             : [...prevData, response.data]
         );
+        toast.success(
+          `Category ${isEditing ? "updated" : "added"} successfully.`
+        );
         closeEditModal();
         closeAddModal();
       }
     } catch (error) {
+      toast.error("Error in save operation.");
       console.error("Error in save operation", error);
     }
   };
@@ -135,6 +145,7 @@ function Category({ isOpen, onClose, page }: Props) {
 
   return (
     <Modal open={isOpen} onClose={onClose} className="w-[65%]">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="p-5 mt-3">
         <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden h-24">
           <div
@@ -291,6 +302,7 @@ function Category({ isOpen, onClose, page }: Props) {
                   className="flex justify-center"
                   variant="primary"
                   size="lg"
+                  type="submit"
                 >
                   Save
                 </Button>
