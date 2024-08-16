@@ -74,9 +74,12 @@ exports.verifyOtp = async (req, res) => {
 
     // Check if OTP matches and is not expired
     if (cachedOtp && cachedOtp === otp) {
-      // Create JWT token
+      // Create JWT token with user ID and organizationId
       const token = jwt.sign(
-        { id: user._id },
+        {
+          id: user._id,
+          organizationId: user.organizationId, // Include organizationId in the token
+        },
         process.env.JWT_SECRET, // JWT secret from environment variables
         { expiresIn: '12h' }
       );
@@ -84,11 +87,15 @@ exports.verifyOtp = async (req, res) => {
       // Remove sensitive data from response
       user.password = undefined;
 
-      // Send response
+      // Send response with user data (excluding organizationId)
       res.status(200).json({
         success: true,
         token: `Bearer ${token}`, // Prepend "Bearer " to the token
-        user: user,
+        user: {
+          id: user._id,
+          email: user.email,
+          // Include any other user fields you want to return
+        },
       });
 
       // Invalidate the OTP after successful verification
@@ -101,6 +108,11 @@ exports.verifyOtp = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 };
+
+
+
+
+
 
 // Nodemailer transporter setup using environment variables
 const transporter = nodemailer.createTransport({

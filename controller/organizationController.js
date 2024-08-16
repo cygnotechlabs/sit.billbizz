@@ -115,6 +115,7 @@ exports.getAllOrganization = async (req, res) => {
 exports.getOneOrganization = async (req, res) => {
   try {
     const { organizationId } = req.body;
+    // const organization = req.user.organizationId;
 
     // Log the ID being fetched
     console.log("Fetching organization with ID:", organizationId);
@@ -122,6 +123,8 @@ exports.getOneOrganization = async (req, res) => {
     const organization = await Organization.findOne({organizationId});
 
     if (organization) {
+      // Remove sensitive data
+      // organization.organizationId = undefined;
       res.status(200).json(organization);
     } else {
       res.status(404).json({ message: "Organization not found" });

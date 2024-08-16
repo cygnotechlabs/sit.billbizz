@@ -1,28 +1,5 @@
-// // authMiddleware.js
-
-// function verifyToken(req, res, next) {
-//     // Extract token from Authorization header
-//     const bearerHeader = req.headers['authorization'];
-    
-//     if (typeof bearerHeader !== 'undefined') {
-//         // Split the header into parts
-//         const bearerToken = bearerHeader.split(' ')[1];
-//         // console.log(bearerToken)
-        
-//         req.token = bearerToken; // Set the token in the request object
-//         next();
-//     } else {
-//         // If there is no token, return a 403 Forbidden response
-//         res.sendStatus(403);
-//     }
-// }
-
-// module.exports = { verifyToken };
-
-
-
 const jwt = require('jsonwebtoken');
-const secretKey = 'your_secret_key'; 
+const secretKey = process.env.JWT_SECRET; 
 
 function verifyToken(req, res, next) {
     const bearerHeader = req.headers['authorization'];
@@ -33,14 +10,19 @@ function verifyToken(req, res, next) {
         
         jwt.verify(req.token, secretKey, (err, authData) => {
             if (err) {
-                res.sendStatus(403);
+                return res.sendStatus(403);  // Forbidden if token is invalid
             } else {
-                req.user = authData;
-                next();
+                // Extract userId and organizationId from authData
+                const { id: userId, organizationId } = authData;
+                
+                // Attach userId and organizationId to req object
+                req.user = { id: userId, organizationId };
+
+                next();  // Pass control to the next middleware or route handler
             }
         });
     } else {
-        res.sendStatus(403);
+        res.sendStatus(403);  // Forbidden if token is not provided
     }
 }
 
