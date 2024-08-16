@@ -73,7 +73,7 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
         organizationId: "INDORG0001",
         name: editableManufacturer?.name || "",
         description: editableManufacturer?.description || "",
-        ...(isEditing && { _id: editableManufacturer?._id }),
+        ...(isEditing && { _id: editableManufacturer!._id }),
       };
 
       const url = isEditing
