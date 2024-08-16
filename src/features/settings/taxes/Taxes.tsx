@@ -59,7 +59,7 @@ function Taxes({}: Props) {
     return <GSTComponent />;
   } else if (taxType === "VAT") {
     return <VATComponent />;
-  } else {
+  } else if(taxType==="") {
     return (
       <div className="p-5">
         <div
