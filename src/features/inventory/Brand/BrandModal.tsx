@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { forwardRef, useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import bgImage from "../../../assets/Images/Frame 6.png";
 import Button from "../../../Components/Button";
@@ -10,26 +10,33 @@ import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
 
 type BrandData = {
-  _id: string;
+  _id?: string;
   name: string;
   description: string;
-  organizationId: string;
-  createdDate: string;
-  updatedDate: string;
-  __v: number;
+  organizationId?: string;
+  createdDate?: string;
+  updatedDate?: string;
+  __v?: number;
 };
 
-const BrandManager = () => {
+type Props = {
+  onClose: () => void;
+};
+
+const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const { request: fetchAllBrands } = useApi("put", 5003);
   const { request: deleteBrandRequest } = useApi("delete", 5003);
   const { request: updateBrandRequest } = useApi("put", 5003);
   const { request: addBrandRequest } = useApi("post", 5003);
 
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedBrand, setSelectedBrand] = useState<BrandData | null>(null);
   const [brandData, setBrandData] = useState<BrandData[]>([]);
-  const [name, setName] = useState("");
-  const [count, setCount] = useState("");
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [editableBrand, setEditableBrand] = useState<BrandData | null>(null);
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setEditableBrand(null);
+  };
 
   useEffect(() => {
     const loadBrands = async () => {
@@ -53,52 +60,25 @@ const BrandManager = () => {
 
   const openModal = (brand?: BrandData) => {
     if (brand) {
-      setSelectedBrand(brand);
-      setName(brand.name);
-      setCount(brand.description);
+      setEditableBrand(brand);
     } else {
-      setSelectedBrand(null);
-      setName("");
-      setCount("");
+      setEditableBrand({ name: "", description: "" });
     }
     setModalOpen(true);
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setName("");
-    setCount("");
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      const url = `${endponits.DELETE_BRAND(id)}`;
-      const { response, error } = await deleteBrandRequest(url);
-      if (!error && response) {
-        setBrandData(brandData.filter((brand) => brand._id !== id));
-        toast.success(`Brand with id ${id} deleted successfully.`);
-      } else {
-        toast.error(`Error deleting brand: ${error.message}`);
-        console.error(`Error deleting brand: ${error.message}`);
-      }
-    } catch (error) {
-      toast.error("Error in delete operation.");
-      console.error("Error in delete operation", error);
-    }
-  };
-
   const handleSave = async () => {
     try {
-      const isEditing = Boolean(selectedBrand);
+      const isEditing = Boolean(editableBrand?._id);
       const brand: Partial<BrandData> = {
         organizationId: "INDORG0001",
-        name: name,
-        description: count,
-        ...(isEditing && { _id: selectedBrand!._id }),
+        name: editableBrand?.name || "",
+        description: editableBrand?.description || "",
+        ...(isEditing && { _id: editableBrand?._id }),
       };
 
       const url = isEditing
-        ? `${endponits.UPDATE_BRAND(selectedBrand!._id)}`
+        ? `${endponits.UPDATE_BRAND}`
         : `${endponits.ADD_BRAND}`;
       const apiCall = isEditing ? updateBrandRequest : addBrandRequest;
       const { response, error } = await apiCall(url, brand);
@@ -107,15 +87,16 @@ const BrandManager = () => {
         setBrandData((prevData) =>
           isEditing
             ? prevData.map((b) =>
-                b._id === selectedBrand!._id ? { ...b, ...brand } : b
+                b._id === editableBrand!._id ? { ...b, ...brand } : b
               )
             : [...prevData, response.data]
         );
-        toast.success(`Brand ${isEditing ? "updated" : "added"} successfully.`);
+
+        toast.success(`Brand ${isEditing ? "updated" : "added"} successfully!`);
         closeModal();
       } else {
-        toast.error(`Error saving brand: ${error.message}`);
-        console.error(`Error saving brand: ${error.message}`);
+        toast.error(`Error saving brand: ${error?.message}`);
+        console.error(`Error saving brand: ${error?.message}`);
       }
     } catch (error) {
       toast.error("Error in save operation.");
@@ -123,63 +104,89 @@ const BrandManager = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      const url = `${endponits.DELETE_BRAND(id)}`;
+      const { response, error } = await deleteBrandRequest(url);
+      if (!error && response) {
+        setBrandData(brandData.filter((brand) => brand._id !== id));
+        toast.success("Brand deleted successfully!");
+      } else {
+        toast.error(`Error deleting brand: ${error?.message}`);
+        console.error(`Error deleting brand: ${error?.message}`);
+      }
+    } catch (error) {
+      toast.error("Error in delete operation.");
+      console.error("Error in delete operation", error);
+    }
+  };
+
+  const handleEditChange = (field: keyof BrandData, value: string) => {
+    if (editableBrand) {
+      setEditableBrand({ ...editableBrand, [field]: value });
+    }
+  };
+
   return (
-    <div>
+    <div ref={ref}>
       <Toaster position="top-center" reverseOrder={false} />
-      <Modal open={true} onClose={closeModal} className="w-[66%]">
+      <Modal open={true} onClose={onClose}>
         <div className="p-5 mt-3">
-          <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
+          <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden h-24">
             <div
-              className="absolute top-0 right-12 h-full w-[212px] bg-cover bg-no-repeat"
+              className="absolute top-0 right-12 h-24 w-[200px] bg-cover bg-no-repeat"
               style={{ backgroundImage: `url(${bgImage})` }}
             ></div>
             <div className="relative z-10">
               <h3 className="text-xl font-bold text-textColor">Manage Brand</h3>
               <p className="text-dropdownText font-semibold text-sm mt-2">
                 Have an insight on the profit or loss incurred due to the change
-                in <br /> exchange rates
+                in exchange rates
               </p>
             </div>
             <div
               className="ms-auto text-3xl cursor-pointer relative z-10"
-              onClick={closeModal}
+              onClick={onClose}
             >
               &times;
             </div>
           </div>
-          <div className="flex justify-end pr-3">
+
+          <div className="flex justify-end me-2 my-4">
             <Button
-              onClick={() => openModal()}
               variant="primary"
-              className="text-sm"
               size="sm"
-              style={{ height: "38px", padding: "14px" }}
+              onClick={() => openModal()}
+              className="text-sm"
             >
               <PlusCircle color="white" />
-              New Brand
+              Add Brand
             </Button>
           </div>
-          <br />
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-5">
             {brandData.map((brand) => (
-              <div key={brand._id} className="flex justify-center mb-5">
-                <div className="p-3 border w-[272px] h-[80px] border-tableBorder rounded-lg flex justify-between">
+              <div key={brand._id} className="flex p-2">
+                <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
                   <div>
-                    <h6 className="text-sm text-textColor font-semibold">
-                      {brand.name}
-                    </h6>
-                    <p className="text-xs text-loremcolor">
+                    <h3 className="text-sm font-bold">{brand.name}</h3>
+                    <p className="text-xs text-textColor">
                       {brand.description}
                     </p>
                   </div>
                   <div className="flex space-x-2">
-                    <button onClick={() => openModal(brand)}>
-                      <PencilIcon color="#4B5C79" />
-                    </button>
-                    <button onClick={() => handleDelete(brand._id)}>
-                      <OutlineTrashIcon color="#4B5C79" />
-                    </button>
+                    <p
+                      className="cursor-pointer"
+                      onClick={() => openModal(brand)}
+                    >
+                      <PencilIcon color="currentColor" />
+                    </p>
+                    <p
+                      className="cursor-pointer"
+                      onClick={() => handleDelete(brand._id!)}
+                    >
+                      <OutlineTrashIcon color="currentColor" />
+                    </p>
                   </div>
                 </div>
               </div>
@@ -188,63 +195,69 @@ const BrandManager = () => {
         </div>
       </Modal>
 
-      {/* New/Edit Brand Modal */}
-      {isModalOpen && (
-        <Modal
-          style={{ width: "40.5%" }}
-          open={isModalOpen}
-          onClose={closeModal}
-        >
-          <div className="p-6 space-y-5">
-            <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-textColor">
-                {selectedBrand ? "Edit Brand" : "Add Brand"}
-              </h3>
-              <div
-                className="ms-auto text-3xl font-normal cursor-pointer relative z-10 text-textColor"
-                onClick={closeModal}
-              >
-                &times;
-              </div>
+      <Modal open={isModalOpen} onClose={closeModal} style={{ width: "35%" }}>
+        <div className="p-5 mt-3">
+          <div className="flex p-4 rounded-xl relative overflow-hidden">
+            <h3 className="text-xl font-bold text-textColor">
+              {editableBrand?._id ? "Edit Brand" : "Add Brand"}
+            </h3>
+            <div
+              className="ms-auto text-3xl cursor-pointer relative z-10"
+              onClick={closeModal}
+            >
+              &times;
             </div>
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <div>
+          </div>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSave();
+            }}
+          >
+            <div className="">
+              <div className="mb-4">
                 <label className="block text-sm mb-1 text-labelColor">
                   Name
                 </label>
                 <input
+                  placeholder="Brand Name"
                   type="text"
-                  placeholder="Brand name"
-                  className="border-inputBorder outline-none w-full text-sm border rounded py-2 px-3"
-                  value={name || ""}
-                  onChange={(e) => setName(e.target.value)}
+                  value={editableBrand?.name || ""}
+                  onChange={(e) => handleEditChange("name", e.target.value)}
+                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10 "
                 />
               </div>
-              <div>
+
+              <div className="mb-4">
                 <label className="block text-sm mb-1 text-labelColor">
-                  Count
+                  Description
                 </label>
                 <textarea
-                  placeholder="Notes"
-                  className="border-inputBorder outline-none w-full text-sm border rounded py-3 px-3 h-24"
-                  value={count || ""}
-                  onChange={(e) => setCount(e.target.value)}
+                  rows={4}
+                  placeholder="Description"
+                  value={editableBrand?.description || ""}
+                  onChange={(e) =>
+                    handleEditChange("description", e.target.value)
+                  }
+                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 "
                 />
               </div>
-              <div className="flex justify-end gap-3">
-                <Button onClick={closeModal} variant="fourthiary" size="lg">
-                  Cancel
-                </Button>
-                <Button onClick={handleSave} variant="secondary" size="lg">
+
+              <div className="flex justify-end gap-2 mb-3">
+                <Button type="submit" variant="primary" size="sm">
                   Save
                 </Button>
+                <Button onClick={closeModal} variant="tertiary" size="sm">
+                  Cancel
+                </Button>
               </div>
-            </form>
-          </div>
-        </Modal>
-      )}
+            </div>
+          </form>
+        </div>
+      </Modal>
     </div>
   );
-};
+});
 
 export default BrandManager;
