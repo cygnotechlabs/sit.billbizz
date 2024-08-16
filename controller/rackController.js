@@ -163,51 +163,76 @@ exports.updateRacks = async (req, res) => {
 
 
 
+// //5. delete Rack
+// exports.deleteRack = async (req, res) => {
+//     try {
+//       const { id } = req.params;
+  
+//       // Check if the rack exists
+//       const rack = await Rack.findById(id);
+  
+//       if (!rack) {
+//         return res.status(404).json({
+//           message: "Rack not found.",
+//         });
+//       }
+//         // Check if any items are associated with the rack
+//         const itemsInRack = await Item.find({ rack: rackId });
+
+//         if (itemsInRack.length > 0) {
+//             return res.status(400).json({
+//                 message: 'Cannot delete rack. Items are associated with this rack.',
+//             });
+//         }
+  
+//       // Delete the rack
+//       await Rack.findByIdAndDelete(id);
+  
+//       res.status(200).json({
+//         message: "Rack deleted successfully.",
+//       });
+//       console.log("Rack deleted successfully:", id);
+//     } catch (error) {
+//       console.error("Error deleting rack:", error);
+//       res.status(500).json({ message: "Internal server error." });
+//     }
+// };
+
+
+
+
+
+
+
+
+
+
 //5. delete Rack
 exports.deleteRack = async (req, res) => {
-    try {
-      const { id } = req.params;
-  
-      // Check if the rack exists
-      const rack = await Rack.findById(id);
-  
-      if (!rack) {
-        return res.status(404).json({
-          message: "Rack not found.",
-        });
-      }
-        // Check if any items are associated with the rack
-        const itemsInRack = await Item.find({ rack: rackId });
+  try {
+    const { id } = req.params;
 
-        if (itemsInRack.length > 0) {
-            return res.status(400).json({
-                message: 'Cannot delete rack. Items are associated with this rack.',
-            });
-        }
-  
-      // Delete the rack
-      await Rack.findByIdAndDelete(id);
-  
-      res.status(200).json({
-        message: "Rack deleted successfully.",
+    // Check if the rack exists
+    const rack = await Rack.findById(id);
+
+    if (!rack) {
+      return res.status(404).json({
+        message: "Rack not found.",
       });
-      console.log("Rack deleted successfully:", id);
-    } catch (error) {
-      console.error("Error deleting rack:", error);
-      res.status(500).json({ message: "Internal server error." });
     }
+
+    // Delete the rack
+    await Rack.findByIdAndDelete(id);
+
+    res.status(200).json({
+      message: "Rack deleted successfully.",
+    });
+    console.log("Rack deleted successfully:", id);
+  } catch (error) {
+    console.error("Error deleting rack:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
 };
-
-
-
-
-
-
-
-
-
-
-
 
   
 
