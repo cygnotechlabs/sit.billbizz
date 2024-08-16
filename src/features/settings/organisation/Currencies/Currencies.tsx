@@ -2,13 +2,24 @@ import CurrencyTable from "./CurrencyTable";
 import Button from "../../../../Components/Button";
 import PlusCircle from "../../../../assets/icons/PlusCircle";
 import Banner from "../../banner/Banner";
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import Modal from "../../../../Components/model/Modal";
 import CehvronDown from "../../../../assets/icons/CehvronDown";
-import CurrencyBro from "../../../../assets/Images/Currency-bro 1.png"
-import topImg from "../../../../assets/Images/14.png"
+import CurrencyBro from "../../../../assets/Images/Currency-bro 1.png";
+import topImg from "../../../../assets/Images/14.png";
+import { endponits } from "../../../../Services/apiEndpoints";
+import useApi from "../../../../Hooks/useApi";
+import { toast, Toaster } from "react-hot-toast";
+import { CurrencyResponseContext } from "../../../../context/ContextShare";
 
-
+interface InputCurrencyData {
+  organizationId: string;
+  currencyCode: string;
+  currencySymbol: string;
+  currencyName: string;
+  decimalPlaces: string;
+  format: string;
+}
 
 type Props = {};
 
@@ -16,6 +27,18 @@ const Currencies: React.FC<Props> = () => {
   const [isExchangeRateFields, setIsExchangeRateFields] = useState(false);
   const [enableExchangeRateModal, setEnableExchangeRateModal] = useState(false);
   const [newCurrencyModal, setNewCurrencyModal] = useState(false);
+  const [newCurrency, setNewCurrency] = useState<InputCurrencyData>({
+    organizationId: "INDORG0001",
+    currencyCode: "",
+    currencySymbol: "",
+    currencyName: "",
+    decimalPlaces: "",
+    format: "",
+  });
+  const {setCurrencyResponse}=useContext(CurrencyResponseContext)!;
+  const { request: CreateNewCurrency } = useApi("post", 5004);
+
+  console.log(newCurrency);
 
   const openModal = (
     enableExchangeRateModal = false,
@@ -29,6 +52,43 @@ const Currencies: React.FC<Props> = () => {
     setEnableExchangeRateModal(false);
     setNewCurrencyModal(false);
   };
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setNewCurrency((prevCurrencyAccount) => ({
+      ...prevCurrencyAccount,
+      [name]: value,
+    }));
+  };
+
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      const url = `${endponits.ADD_CURRENCIES}`;
+
+      const { response, error } = await CreateNewCurrency(url, newCurrency);
+      console.log(response);
+      console.log(error);
+      
+      if (!error && response) {
+        closeModal();
+        toast.success(response.data.message	);
+        setCurrencyResponse((prevCurrencyResponse: any) => ({
+          ...prevCurrencyResponse,
+          ...newCurrency,
+        }));
+       
+      } else {
+        toast.error(response?.data?.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
 
   return (
     <div className="m-4 overflow-y-scroll hide-scrollbar text-[#303F58]">
@@ -136,117 +196,124 @@ const Currencies: React.FC<Props> = () => {
               <img alt=""src={CurrencyBro}  />
             </div>
             <div className="col-span-9 space-y-2">
-{/* Currency Code  */}
-<div className="relative w-full mt-3">
-                <label className="block text-sm mb-1 text-labelColor">
+              {/* Currency Code  */}
+              <div className="relative w-full mt-3">
+                <label className="block text-sm mb-1 text-labelColor" htmlFor="currencyCode">
                   Currency Code
                 </label>
                 <div className="relative w-full mt-1">
-                <select
-                  name="organizationIndustry"
-                  id="organizationIndustry"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                >
-                  <option value="">Select Currency Code</option>
-
-                  
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <CehvronDown color="gray" />
+                  <select
+                    value={newCurrency.currencyCode}
+                    onChange={handleChange}
+                    name="currencyCode"
+                    id="currencyCode"
+                    className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  >
+                    <option value="">Select Currency Code</option>
+                    <option value="AED">AED</option>
+                    <option value="INR">INR</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <CehvronDown color="gray" />
+                  </div>
                 </div>
               </div>
-              </div>
               <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">
+                <label className="block text-sm mb-1 text-labelColor" htmlFor="currencySymbol">
                   Currency Symbol
                 </label>
                 <input
                   type="text"
-                  name="accountName"
-                  // value={bankAccount.accountName}
-                  // onChange={handleChange}
+                  name="currencySymbol"
+                  value={newCurrency.currencySymbol}
+                  onChange={handleChange}
                   placeholder="Value"
                   className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
                 />
               </div>
 
-{/* Currency Name  */}
+              {/* Currency Name  */}
               <div className="mb-4 mt-4">
                 <label className="block text-sm mb-1 text-labelColor">
-                Currency Name
+                  Currency Name
                 </label>
                 <input
                   type="text"
-                  name="accountCode"
-                  // value={bankAccount.accountCode}
-                  // onChange={handleChange}
+                  name="currencyName"
+                  value={newCurrency.currencyName}
+                  onChange={handleChange}
                   placeholder="Value"
                   className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
                 />
               </div>
-
-
               <div className="relative w-full mt-3">
                 <label className="block text-sm mb-1 text-labelColor">
                   Decimal Places
                 </label>
                 <div className="relative w-full mt-1">
-                <select
-                  name="organizationIndustry"
-                  id="organizationIndustry"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                >
-                  <option value="">Select Decimal Places</option>
-
-                  
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <CehvronDown color="gray" />
+                  <select
+                    name="decimalPlaces"
+                    id="decimalPlaces"
+                    onChange={handleChange}
+value={newCurrency.decimalPlaces}
+                    className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  >
+                    <option value="">Select Decimal Places</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <CehvronDown color="gray" />
+                  </div>
                 </div>
-              </div>
               </div>
               <div className="relative w-full mt-3 ">
                 <label className="block text-sm mb-1 text-labelColor">
                   Format
                 </label>
                 <div className="relative w-full mt-1">
-                <select
-                
-                  name="organizationIndustry"
-                  id="organizationIndustry"
-                  className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                >
-                  <option value="">Select Format Value</option>
-
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <CehvronDown color="gray" />
+                  <select
+                    name="format"
+                    id="format"
+                    onChange={handleChange}
+                    value={newCurrency.format}
+                    className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  >
+                    <option value="">Select Format Value</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <CehvronDown color="gray" />
+                  </div>
                 </div>
-              </div>
               </div>
 
               <div className="flex justify-end gap-2 pt-3">
-              <Button
-                onClick={closeModal}
-                variant="secondary"
-                className="h-[38px] w-[120px] flex justify-center"
-              >
-                <p className="text-sm">Cancel</p>
-              </Button>
-              <Button
-                onClick={() => {
-                  closeModal()
-                }}
-                variant="primary"
-                className="h-[38px] w-[120px] flex justify-center"
-              >
-                <p className="text-sm">Save</p>
-              </Button>
-            </div>
+                <Button
+                  onClick={closeModal}
+                  variant="secondary"
+                  className="h-[38px] w-[120px] flex justify-center"
+                >
+                  <p className="text-sm">Cancel</p>
+                </Button>
+                <Button
+  onClick={(e) => {
+   
+    onSubmit(e);
+  }}
+  variant="primary"
+  className="h-[38px] w-[120px] flex justify-center"
+>
+  <p className="text-sm">Save</p>
+</Button>
+
+              </div>
             </div>
           </form>
         </div>
       </Modal>
+      <Toaster position="top-center" reverseOrder={true} />
     </div>
   );
 };

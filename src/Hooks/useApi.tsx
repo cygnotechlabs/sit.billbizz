@@ -45,6 +45,9 @@ const useApi = (type: string, port: number) => {
         case "delete":
           response = await api.delete(url);
           break;
+        case "pdelete":
+          response = await api.delete(url,payload);
+          break;
         case "hget":
           response = await api.get(url, header);
           break;
