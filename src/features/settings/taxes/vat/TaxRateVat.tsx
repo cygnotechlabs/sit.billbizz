@@ -165,7 +165,7 @@ function TaxRateVat({}: Props) {
         <p className="text-textColor font-bold">Tax Rate</p>
         <div className="flex gap-4">
           <Button onClick={() => openModal(null)} className="text-sm font-medium" size="sm">
-            <PlusCircle color="white" /> New Tax
+            <PlusCircle color="white" /> New Vat
           </Button>
         </div>
       </div>
