@@ -40,7 +40,7 @@ EDIT_CURRENCIES:`edit-currency`,
   // Gst
   GET_ALL_TAX: "get-tax",
   ADD_NEW_TAX: "add-tax",
-  UPDATE_TAX_VAT: (id: string) => `edit-tax/${id}`,
+  UPDATE_TAX_VAT: `edit-tax`,
 
   // Inventory
   // Brand

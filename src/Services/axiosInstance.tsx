@@ -7,7 +7,6 @@ const BASE_URLS: Record<number, string> = {
   5003: "http://localhost:5003/",
   5004: "http://billbiz-organization.dev-billbizz-connection",
   // 5004: "http://localhost:5004/",
-  // 5004: "https://10.0.1.196:5004/",
   5005: "http://localhost:5005/",
   5006: "http://localhost:5006/",
   5007: "http://localhost:5007/",

@@ -5,7 +5,7 @@ import Button from "../../../../Components/Button";
 import Eye from "../../../../assets/icons/Eye";
 
 type TaxRate = {
-  id: string;
+  _id: string;
   taxName: string;
   taxRate: string;
 };
