@@ -50,7 +50,7 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
     };
 
     loadManufacturers();
-  }, []);
+  }, [manufacturers]);
 
   const openModal = (manufacturer?: Manufacturer) => {
     if (manufacturer) {
@@ -77,7 +77,7 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
       };
 
       const url = isEditing
-        ? `${endponits.UPDATE_MANUFACTURER(editableManufacturer!._id!)}`
+        ? `${endponits.UPDATE_MANUFACTURER}`
         : `${endponits.ADD_MANUFACTURER}`;
       const apiCall = isEditing
         ? updateManufacturerRequest

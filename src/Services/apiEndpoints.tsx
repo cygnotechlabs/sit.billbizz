@@ -27,13 +27,11 @@ export const endponits = {
   // Supplier
   GET_ALL_SUPPLIER: "",
 
-  //Currency 
-  GET_CURRENCIES:"get-currency",
-  ADD_CURRENCIES:"add-currency",
-DELETE_CURRENCIES:(id:string)=>`delete-currency/${id}`,
-EDIT_CURRENCIES:`edit-currency`,
-
-
+  //Currency
+  GET_CURRENCIES: "get-currency",
+  ADD_CURRENCIES: "add-currency",
+  DELETE_CURRENCIES: (id: string) => `delete-currency/${id}`,
+  EDIT_CURRENCIES: `edit-currency`,
 
   // Inventory
   // Settings/Taxes
@@ -46,22 +44,22 @@ EDIT_CURRENCIES:`edit-currency`,
   // Brand
   GET_ALL_BRAND: "get-all-brands",
   GET_BRAND: (id: string) => `get-one-brand/${id}`,
-  UPDATE_BRAND: (id: string) => `update-brand/${id}`,
+  UPDATE_BRAND: `update-brand`,
   DELETE_BRAND: (id: string) => `delete-brand/${id}`,
   ADD_BRAND: "add-brand",
 
   // Category
   GET_ALL_CATEGORIES: "get-all-category",
-  ADD_CATEGORY: "get-all-category",
+  ADD_CATEGORY: "add-category",
   DELETE_CATEGORY: (id: string) => `delete-category/${id}`,
-  UPDATE_CATEGORY: (id: string) => `update-category/${id}`,
+  UPDATE_CATEGORY: `update-category`,
   GET_CATEGORY: (id: string) => `get-one-category/${id}`,
 
   // Manufacturer
   GET_ALL_MANUFACTURER: "get-all-manufacturer",
   ADD_MANUFACTURER: "add-manufacturer",
   DELETE_MANUFACTURER: (id: string) => `delete-manufacturer/${id}`,
-  UPDATE_MANUFACTURER: (id: string) => `update-manufacturer/${id}`,
+  UPDATE_MANUFACTURER: `update-manufacturer`,
 
   // Rack
   GET_ALL_RACK: "get-all-rack",
