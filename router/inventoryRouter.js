@@ -45,7 +45,7 @@ router.delete('/delete-manufacturer/:id',manufacturerController.deletedManufactu
 router.post('/add-category', categoriesController.addCategory)
 router.put('/get-all-category' , categoriesController.getAllCategories)
 router.get('/get-one-category/:id' , categoriesController.getACategory)
-router.put("/update-category/:id" , categoriesController.updateCategory)
+router.put("/update-category" , categoriesController.updateCategory)
 router.delete("/delete-category/:id", categoriesController.deleteCategory)
 
 
@@ -61,7 +61,7 @@ router.delete('/delete-brand/:id', brandController.deleteBrand);
 router.post('/add-rack', rackController.addRack);
 router.put('/get-all-rack', rackController.getAllRack);
 router.get('/get-one-rack/:id', rackController.getOneRack);
-router.put('/update-rack', rackController.updateRack);
+router.put('/update-rack', rackController.updateRacks);
 router.delete('/delete-rack/:id', rackController.deleteRack);
 
 

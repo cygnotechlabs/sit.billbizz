@@ -1,5 +1,6 @@
 const Organization = require("../database/model/organization");
 const Item = require("../database/model/item");
+// const Rack = require("../database/model/rack")
 
 
 // Add item
@@ -113,6 +114,8 @@ exports.addItem = async (req, res) => {
         status: status || 'Active' // Default to 'Active' if not provided
       });
       await newItem.save();
+
+
   
       res.status(201).json({
         message: "New Item created successfully."
@@ -126,58 +129,39 @@ exports.addItem = async (req, res) => {
 
 
 
-// Get all item
+// Get all items
 exports.getAllItem = async (req, res) => {
   try {
     const { organizationId } = req.body;
 
-    // Check if an Organization already exists
-    const existingOrganization = await Organization.findOne({ organizationId });
-    
-    if (!existingOrganization) {
-    return res.status(404).json({
-        message: "No Organization Found.",
-    });
-    }
-
-    const allItem = await Item.find({ organizationId })
+    const allItem = await Item.find({ organizationId });
     if (allItem.length > 0) {
       res.status(200).json(allItem);
     } else {
-      res.status(404).json("No Items found");
+      return res.status(404).json("No Items found.");
     }
-} catch (error) {
+  } catch (error) {
     console.error("Error fetching Items:", error);
     res.status(500).json({ message: "Internal server error." });
-}
+  }
 };
 
-
-// Get a Item (particular Item)
-exports.getAItem = async(req,res)=>{
-    const itemId = req.params.id
-    const { organizationId } = req.body;
-
-    try {
-        // Check if an Organization already exists
-        const existingOrganization = await Organization.findOne({ organizationId });
-    
-        if (!existingOrganization) {
-          return res.status(404).json({
-            message: "No Organization Found.",
-          });
-        }
-        const item = await Item.findById({_id: itemId})
-        if (item) {
-          res.status(200).json(item)
-        } else {
-          res.status(404).json({ message: "Item not found" });
-        }
-    } catch (error) {
-        console.error("Error fetching a Item:", error);
-        res.status(500).json({ message: "Internal server error." });
+// Get a particular item
+exports.getAItem = async (req, res) => {
+  const itemId = req.params.id;
+  try {
+    const singleItem = await Item.findById(itemId);
+    if (singleItem) {
+      res.status(200).json(singleItem);
+    } else {
+      res.status(404).json({ message: "Item not found." });
     }
-}
+  } catch (error) {
+    console.error("Error fetching Item:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 
 
 // Update Item
@@ -235,6 +219,15 @@ exports.updateItem = async (req, res) => {
 
       // Log the ID being updated
       console.log("Updating organization with ID:", _id);
+
+      // Check if an Organization already exists
+      const existingOrganization = await Organization.findOne({ organizationId });
+  
+      if (!existingOrganization) {
+        return res.status(404).json({
+          message: "No Organization Found.",
+        });
+      }
 
       const currentDate = new Date();
       const day = String(currentDate.getDate()).padStart(2, '0');

@@ -109,79 +109,58 @@ exports.getOneRack = async (req, res) => {
   }
 };
   
-
-
-
-
-//4. Edit rack with items update
-exports.updateRack = async (req, res) => {
+exports.updateRacks = async (req, res) => {
   console.log("Received request to update rack:", req.body);
-
   try {
-    const {
-      _id,
-      organizationId,  
-      rackName,
-      description,
+    const { 
+      _id, 
+      organizationId, 
+      rackName, 
+      description 
     } = req.body;
 
-    // Log the ID being updated
-    console.log("Updating rack with ID:", _id);
-
-    // Find the rack by its ID to get the current rackName
-    const currentRack = await Rack.findById(_id);
-
-    if (!currentRack) {
+    // Find the existing rack to get the old rackName
+    const existingRack = await Rack.findById(_id);
+    if (!existingRack) {
       console.log("Rack not found with ID:", _id);
-      return res.status(404).json({ message: "Rack not found" });
+      return res.status(404).json({ message: "Rack not found." });
     }
 
-    // Check if the new rack already exists in the same organizationId, excluding the current rack being updated
-    if (currentRack.rackName !== rackName) {
-      const existingRack = await Rack.findOne({
-        rackName,
-        organizationId,
-        _id: { $ne: _id } // Exclude the current rack from the check
-      });
-
-      if (existingRack) {
-        return res.status(409).json({
-          message: "This rack name already exists in the given organization.",
-        });
-      }
-
-      // Update all items with the current rack name to the new rack name
-      await Item.updateMany(
-        { organizationId, rack: currentRack.rackName },
-        { rack: rackName }
-      );
-    }
+    const oldRackName = existingRack.rackName;
 
     // Update the rack
     const updatedRack = await Rack.findByIdAndUpdate(
       _id,
-      {
-        organizationId,
-        rackName,
-        description,
-        // rackStatus,
-        // updatedDate: formattedDate
+      { 
+        organizationId, 
+        rackName, 
+        description 
       },
       { new: true, runValidators: true }
     );
 
-    if (!updatedRack) {
-      console.log("Rack not found with ID:", _id);
-      return res.status(404).json({ message: "Rack not found" });
+    // Update the rackName in associated Item documents
+    if (rackName && rackName !== oldRackName) {
+      const updatedItems = await Item.updateMany(
+        { 
+          rack: oldRackName,  // Match the old rackName
+          organizationId: organizationId  // Match the organizationId from the request
+        },
+        { $set: { rack: rackName } }  // Update with the new rackName
+      );
+      console.log(`${updatedItems.modifiedCount} items associated with the rack have been updated with the new rackName.`);
     }
 
-    res.status(200).json({ message: "Rack updated successfully" });
+    res.status(200).json({ message: "Rack and associated items updated successfully." });
     console.log("Rack updated successfully:", updatedRack);
   } catch (error) {
     console.error("Error updating rack:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error." });
   }
 };
+
+
+
 
 
 //5. delete Rack
@@ -197,6 +176,14 @@ exports.deleteRack = async (req, res) => {
           message: "Rack not found.",
         });
       }
+        // Check if any items are associated with the rack
+        const itemsInRack = await Item.find({ rack: rackId });
+
+        if (itemsInRack.length > 0) {
+            return res.status(400).json({
+                message: 'Cannot delete rack. Items are associated with this rack.',
+            });
+        }
   
       // Delete the rack
       await Rack.findByIdAndDelete(id);
@@ -209,4 +196,30 @@ exports.deleteRack = async (req, res) => {
       console.error("Error deleting rack:", error);
       res.status(500).json({ message: "Internal server error." });
     }
-  };
+};
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+

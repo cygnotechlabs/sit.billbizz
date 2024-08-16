@@ -108,7 +108,7 @@ exports.updateManufacturer = async (req, res) => {
         } = req.body;
 
         // Log the ID being updated
-        console.log("Updating rack with ID:", _id);
+        console.log("Updating manufacturer with ID:", _id);
 
         // Update the manufacturer
         const updatedManufacturer = await manufacturer.findByIdAndUpdate(
