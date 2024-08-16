@@ -68,7 +68,7 @@ function Category({ isOpen, onClose, page }: Props) {
     };
 
     loadCategories();
-  }, []);
+  }, [categories]);
 
   const getCategory = async (id: string) => {
     try {
