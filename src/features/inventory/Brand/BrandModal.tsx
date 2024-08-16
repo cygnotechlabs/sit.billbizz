@@ -49,7 +49,7 @@ const BrandManager = () => {
     };
 
     loadBrands();
-  }, []);
+  }, [brandData]);
 
   const openModal = (brand?: BrandData) => {
     if (brand) {
