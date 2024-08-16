@@ -50,7 +50,7 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
     };
 
     loadManufacturers();
-  }, []);
+  }, [manufacturers]);
 
   const openModal = (manufacturer?: Manufacturer) => {
     if (manufacturer) {
