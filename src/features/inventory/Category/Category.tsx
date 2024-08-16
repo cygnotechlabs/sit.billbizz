@@ -39,6 +39,12 @@ function Category({ isOpen, onClose, page }: Props) {
   const [editableCategory, setEditableCategory] = useState<Category | null>(
     null
   );
+  const [newCategory, setNewCategory] = useState<Category>({
+    name: "",
+    description: "",
+    organizationId: "INDORG0001",
+    createdDate: new Date().toISOString(),
+  });
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -83,6 +89,12 @@ function Category({ isOpen, onClose, page }: Props) {
 
   const openAddModal = () => {
     setEditableCategory(null);
+    setNewCategory({
+      name: "",
+      description: "",
+      organizationId: "INDORG0001",
+      createdDate: new Date().toISOString(),
+    });
     setIsAddCategoryModal(true);
   };
 
@@ -115,16 +127,16 @@ function Category({ isOpen, onClose, page }: Props) {
     }
   };
 
-  const handleSave = async (data: { name: string; description: string }) => {
+  const handleSave = async () => {
     try {
       const isEditing = Boolean(editableCategory);
-      const category: Partial<Category> = {
-        organizationId: "INDORG0001",
-        name: data.name,
-        description: data.description,
-        createdDate: editableCategory?.createdDate ?? new Date().toISOString(),
-        ...(isEditing && { _id: editableCategory!._id }),
-      };
+      const category: Partial<Category> = isEditing
+        ? {
+            ...editableCategory,
+            organizationId: "INDORG0001",
+            createdDate: editableCategory?.createdDate,
+          }
+        : newCategory;
 
       const url = isEditing
         ? `${endponits.UPDATE_CATEGORY(editableCategory?._id ?? "")}`
@@ -158,6 +170,8 @@ function Category({ isOpen, onClose, page }: Props) {
   const handleEditChange = (field: keyof Category, value: string) => {
     if (editableCategory) {
       setEditableCategory({ ...editableCategory, [field]: value });
+    } else {
+      setNewCategory({ ...newCategory, [field]: value });
     }
   };
 
@@ -275,10 +289,7 @@ function Category({ isOpen, onClose, page }: Props) {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                handleSave({
-                  name: editableCategory?.name || "",
-                  description: editableCategory?.description || "",
-                });
+                handleSave();
               }}
             >
               <div className="mb-4">
@@ -288,17 +299,21 @@ function Category({ isOpen, onClose, page }: Props) {
                 <input
                   type="text"
                   onChange={(e) => handleEditChange("name", e.target.value)}
-                  value={editableCategory?.name || ""}
+                  value={editableCategory?.name || newCategory.name || ""}
                   placeholder="Electronics"
                   className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10"
                 />
               </div>
               <div className="mb-4">
                 <label className="block text-sm mb-1 text-labelColor">
-                  Notes
+                  Description
                 </label>
                 <textarea
-                  value={editableCategory?.description || ""}
+                  value={
+                    editableCategory?.description ||
+                    newCategory.description ||
+                    ""
+                  }
                   onChange={(e) =>
                     handleEditChange("description", e.target.value)
                   }
