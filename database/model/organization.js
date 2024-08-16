@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const organizationSchema = new Schema({
 
-  organizationId: { type: String },
+  organizationId: { type: String, index: true},
   organizationName: { type: String },
   organizationLogo: { type: String },
 

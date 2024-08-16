@@ -10,6 +10,12 @@ const checkPermission = require('../controller/permission');
 const { verifyToken } = require('../controller/middleware');
 
 
+
+
+// router.put('/get-one-organization',verifyToken,checkPermission('OrganizationView'),organizationController.getOneOrganization)
+
+
+
 //Production
 router.post('/setup-organization',organizationController.setupOrganization)
 
