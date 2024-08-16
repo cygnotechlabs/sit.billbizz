@@ -44,7 +44,7 @@ export const endponits = {
   // Brand
   GET_ALL_BRAND: "get-all-brands",
   GET_BRAND: (id: string) => `get-one-brand/${id}`,
-  UPDATE_BRAND: (id: string) => `update-brand/${id}`,
+  UPDATE_BRAND: `update-brand`,
   DELETE_BRAND: (id: string) => `delete-brand/${id}`,
   ADD_BRAND: "add-brand",
 
