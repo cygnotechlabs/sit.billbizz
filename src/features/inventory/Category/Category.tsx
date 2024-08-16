@@ -68,7 +68,7 @@ function Category({ isOpen, onClose, page }: Props) {
     };
 
     loadCategories();
-  }, [categories]);
+  }, []);
 
   const getCategory = async (id: string) => {
     try {
@@ -79,7 +79,7 @@ function Category({ isOpen, onClose, page }: Props) {
         console.error(`Error fetching category: ${error.message}`);
       } else if (response) {
         setEditableCategory(response.data);
-        setIsEditCategoryModal(true);
+        setIsEditCategoryModal(true); // Open the edit modal after setting the editable category
       }
     } catch (error) {
       toast.error("Error in fetching category data.");
@@ -99,15 +99,12 @@ function Category({ isOpen, onClose, page }: Props) {
   };
 
   const openEditModal = (category: Category) => {
-    getCategory(category._id!);
+    getCategory(category._id!); // Fetch and set the category to be edited
   };
 
   const closeAddModal = () => {
     setIsAddCategoryModal(false);
-  };
-
-  const closeEditModal = () => {
-    setIsEditCategoryModal(false);
+    setIsEditCategoryModal(false); // Close both modals
   };
 
   const handleDelete = async (id: string) => {
@@ -139,7 +136,7 @@ function Category({ isOpen, onClose, page }: Props) {
         : newCategory;
 
       const url = isEditing
-        ? `${endponits.UPDATE_CATEGORY(editableCategory?._id ?? "")}`
+        ? `${endponits.UPDATE_CATEGORY}`
         : `${endponits.ADD_CATEGORY}`;
       const apiCall = isEditing ? updateCategoryRequest : addCategoryRequest;
       const { response, error } = await apiCall(url, category);
@@ -158,7 +155,6 @@ function Category({ isOpen, onClose, page }: Props) {
         toast.success(
           `Category ${isEditing ? "updated" : "added"} successfully.`
         );
-        closeEditModal();
         closeAddModal();
       }
     } catch (error) {
