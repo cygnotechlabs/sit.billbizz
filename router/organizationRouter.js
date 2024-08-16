@@ -34,7 +34,7 @@ router.post('/add-currency',settingController.addCurrency)
 
 router.put('/edit-currency',settingController.editCurrency)
 
-router.delete('/delete-currency',settingController.deleteCurrency)
+router.delete('/delete-currency/:currencyId',settingController.deleteCurrency)
 
 
 // Invoice settings

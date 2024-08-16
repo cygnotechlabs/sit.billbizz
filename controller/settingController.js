@@ -35,6 +35,16 @@ exports.addCurrency = async (req, res) => {
   try {
     const { organizationId, currencyCode, currencySymbol, currencyName, decimalPlaces, format  } = req.body;
 
+    const organization = await Organization.findOne({ organizationId });
+    if (!organization) {
+      return res.status(404).json({ message: "Organization not found" });
+    }
+
+    const existingCurrency = await Currency.findOne({ organizationId, currencyCode });
+    if (existingCurrency) {
+      return res.status(400).json({ message: "Currency code already exists for this organization" });
+    }
+
     const newCurrency = new Currency({
       organizationId,
       currencyCode,
@@ -42,7 +52,7 @@ exports.addCurrency = async (req, res) => {
       currencyName,
       decimalPlaces,
       format,
-      
+      baseCurrency:false
     });
 
     const savedCurrency = await newCurrency.save();
@@ -61,7 +71,7 @@ exports.editCurrency = async (req, res) => {
 
     const updatedCurrency = await Currency.findByIdAndUpdate(
       currencyId,
-      { organizationId, currencyCode, currencySymbol, currencyName, decimalPlaces, format,  },
+      { organizationId, currencyCode, currencySymbol, currencyName, decimalPlaces, format},
       { new: true }
     );
 
@@ -80,20 +90,35 @@ exports.editCurrency = async (req, res) => {
 // Delete currency 
 exports.deleteCurrency = async (req, res) => {
   try {
-    const { currencyId } = req.body;
+    const { currencyId } = req.params;
 
-    const deletedCurrency = await Currency.findByIdAndDelete(currencyId);
+    // Fetch the currency by ID and organizationId
+    const currency = await Currency.findOne({
+      _id: currencyId
+    });
 
-    if (deletedCurrency) {
+    if (!currency) {
+      return res.status(404).json({ message: "Currency not found" });
+    }
+
+    // Check if the baseCurrency is false
+    if (currency.baseCurrency === false) {
+      // Delete the currency
+      await Currency.findOneAndDelete({
+        _id: currencyId
+      });
+
       res.status(200).json({ message: "Currency deleted successfully" });
     } else {
-      res.status(404).json({ message: "Currency not found" });
+      // Reject the deletion if baseCurrency is true
+      res.status(400).json({ message: "Cannot delete a base currency" });
     }
   } catch (error) {
     console.error("Error deleting Currency:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 
@@ -386,6 +411,8 @@ exports.getTax = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
 
 
 

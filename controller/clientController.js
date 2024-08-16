@@ -295,13 +295,13 @@ const createPaymentTermForOrganization = async (organizationId) => {
 
     // Create Payment terms
     const paymentTerm = [
-      { organizationId, name: 'Net 15',days: '15'},
-      { organizationId, name: 'Net 30',days: '30'},
-      { organizationId, name: 'Net 45',days: '45'},
-      { organizationId, name: 'Net 60',days: '60'},
-      { organizationId, name: 'Due end of the month',days: ''},
-      { organizationId, name: 'Due end of next month',days: ''},
-      { organizationId, name: 'Due on Receipt',days: ''},            
+      { organizationId, name: 'Net 15',days: '15',description:"Payment is due within 15 days from the invoice date"},
+      { organizationId, name: 'Net 30',days: '30',description:"Payment is due within 30 days from the invoice date"},
+      { organizationId, name: 'Net 45',days: '45',description:"Payment is due within 45 days from the invoice date"},
+      { organizationId, name: 'Net 60',days: '60',description:"Payment is due within 60 days from the invoice date"},
+      { organizationId, name: 'Due end of the month',description:"Payment is due by the last day of the month in which the invoice is issued"},
+      { organizationId, name: 'Due end of next month',description:"Payment is due by the last day of the next month in which the invoice is issued"},
+      { organizationId, name: 'Due on Receipt',description:"Payment is required immediately after receiving the invoice"},            
     ];
 
     await PaymentTerms.insertMany(paymentTerm);
@@ -372,7 +372,7 @@ const createTaxForOrganization = async (organizationId) => {
 
     // Create Tax
     const tax = [
-      { organizationId,gstTaxRate:[
+      { organizationId,taxType:"",gstTaxRate:[
         {taxName: " GST0",taxRate:0,cgst:0,sgst:0,igst:0},
         {taxName: " GST5",taxRate:5,cgst:2.5,sgst:2.5,igst:5},
         {taxName: " GST12",taxRate:12,cgst:6,sgst:6,igst:12},
