@@ -25,7 +25,7 @@ function Taxes({}: Props) {
       const { response, error } = await AllTaxGst(url, body);
       if (!error && response) {
         const gstTaxRates = response.data;
-        const taxType = gstTaxRates?.taxType || "";
+        const taxType = gstTaxRates?.taxType || ""; 
         setTaxType(taxType);
         console.log(taxType);
       }
@@ -61,7 +61,7 @@ function Taxes({}: Props) {
     return <GSTComponent />;
   } else if (taxType === "VAT") {
     return <VATComponent />;
-  } else if (taxType === "") {
+  } else {
     return (
       <div className="p-5">
         <div
