@@ -15,7 +15,7 @@ exports.getCurrency = async (req, res) => {
     const { organizationId } = req.body;
 
     // Log the ID being fetched
-    console.log("Fetching organization with ID:", organizationId);
+    // console.log("Fetching organization with ID:", organizationId);
 
     const currencies = await Currency.find({organizationId:organizationId});
 
@@ -29,6 +29,28 @@ exports.getCurrency = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+//get single currency
+exports.viewCurrency = async (req, res) => {
+  try {
+    const { id } = req.params; // Assuming you're passing the _id as a route parameter
+
+    // Log the ID being fetched
+    console.log("Fetching currency with ID:", id);
+
+    const currency = await Currency.findById(id);
+
+    if (currency) {
+      res.status(200).json(currency);
+    } else {
+      res.status(404).json({ message: "Currency not found" });
+    }
+  } catch (error) {
+    console.error("Error fetching currency:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 // Add currency
 exports.addCurrency = async (req, res) => {
@@ -298,7 +320,7 @@ exports.getAllPaymentTerms = async (req, res) => {
 exports.addTax = async (req, res) => {
   try {
     const { organizationId, taxType, gstIn, gstBusinesLegalName, gstBusinessTradeName, gstRegisteredDate, gstTaxRate, compositionSchema, compositionPercentage, vatNumber, vatBusinesLegalName, vatBusinessTradeName, vatRegisteredDate, tinNumber, vatTaxRate, msmeType, msmeRegistrationNumber } = req.body;
-    console.log(req.body);
+    console.log("Add Tax :",req.body);
     
     // Find the tax record by organizationId and taxType
     let taxRecord = await Tax.findOne({ organizationId });
@@ -342,6 +364,7 @@ exports.addTax = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 //Edit Tax
 exports.editTaxRate = async (req, res) => {
@@ -393,6 +416,7 @@ exports.editTaxRate = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // Get Tax 
 exports.getTax = async (req, res) => {

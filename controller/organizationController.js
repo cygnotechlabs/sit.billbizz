@@ -62,15 +62,9 @@ const accounts = [
   { accountName: "Subcontractor", accountSubhead: "Cost of Goods Sold", accountHead: "Expenses", accountGroup: "Liability",accountCode:"AC-47",description: "Subcontractor" }
 ];
 
-async function insertAccounts(accounts,organizationId) {
+async function insertAccounts(accounts,organizationId,createdDateAndTime) {
 
 const accountDocuments = accounts.map(account => {
-    const currentDate = new Date();
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-    const year = currentDate.getFullYear();
-    const formattedDate = `${day}-${month}-${year}`;
-
     return {
         organizationId: organizationId, 
         accountName: account.accountName,
@@ -81,7 +75,7 @@ const accountDocuments = accounts.map(account => {
         accountGroup: account.accountGroup,
 
         balance: 0, 
-        openingDate: formattedDate, 
+        openingDate: createdDateAndTime, 
         description: account.description
     };});
 
@@ -119,7 +113,7 @@ exports.getOneOrganization = async (req, res) => {
     // const organization = req.user.organizationId;
 
     // Log the ID being fetched
-    console.log("Fetching organization with ID:", organizationId);
+    // console.log("Fetching organization with ID:", organizationId);
 
     const organization = await Organization.findOne({organizationId});
 
@@ -370,25 +364,10 @@ exports.setupOrganization = async (req, res) => {
   console.log("Setup Organization:", req.body);
   try {
     const {
-      organizationId,
-      organizationLogo,
-      organizationCountry,
-      organizationIndustry,
-      addline1,
-      addline2,
-      city,
-      pincode,
-      state,
-      organizationPhNum,
-      website,
-      baseCurrency,
-      fiscalYear,
-      reportBasis,
-      timeZone,
-      timeZoneExp,
-      dateFormat,
-      dateSplit,
-      phoneNumberCode
+      organizationId, organizationLogo, organizationCountry, organizationIndustry, addline1, addline2, city, pincode, state, phoneNumberCode, organizationPhNum, 
+      website, 
+      baseCurrency, fiscalYear,
+      timeZone, timeZoneExp, dateFormat, dateFormatExp, dateSplit, 
     } = req.body;
 
     // Check if an Organization already exists
@@ -405,6 +384,8 @@ exports.setupOrganization = async (req, res) => {
           console.log('Generated Date:', generatedDateTime.date);
           console.log('Generated Time:', generatedDateTime.time);
           console.log('Generated Combined DateTime:', generatedDateTime.dateTime);
+
+    const createdDateAndTime = generatedDateTime.dateTime;
     
     // Update the existing organization's fields
     existingOrganization.organizationLogo = organizationLogo;
@@ -419,13 +400,13 @@ exports.setupOrganization = async (req, res) => {
     existingOrganization.website = website;
     existingOrganization.baseCurrency = baseCurrency;
     existingOrganization.fiscalYear = fiscalYear;
-    existingOrganization.reportBasis = reportBasis;
     existingOrganization.timeZone = timeZone;
     existingOrganization.timeZoneExp = timeZoneExp;    
     existingOrganization.dateFormat = dateFormat;
+    existingOrganization.dateFormatExp = dateFormatExp;    
     existingOrganization.dateSplit = dateSplit; 
     existingOrganization.phoneNumberCode=phoneNumberCode;
-    existingOrganization.createdDateAndTime=generatedDateTime.dateTime;
+    existingOrganization.createdDateAndTime=createdDateAndTime;
     
     const savedOrganization = await existingOrganization.save();
 
@@ -451,7 +432,7 @@ exports.setupOrganization = async (req, res) => {
 
     const account = await Account.findOne({ organizationId });
     if (!account) {
-      insertAccounts(accounts, organizationId);
+      insertAccounts(accounts, organizationId,createdDateAndTime);
     }
 
   } catch (error) {

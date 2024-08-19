@@ -28,11 +28,11 @@ const organizationSchema = new Schema({
 
   baseCurrency: { type: String },
   fiscalYear: { type: String },
-  reportBasis: { type: String },
 
   timeZone: { type: String },
   timeZoneExp: { type: String },
   dateFormat: { type: String },
+  dateFormatExp: { type: String },
   dateSplit: { type: String },
 
   phoneNumberCode: { type: String },  

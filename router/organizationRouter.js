@@ -36,6 +36,8 @@ router.delete('/delete-organization/:organizationId',organizationController.dele
 // Currency
 router.put('/get-currency',settingController.getCurrency)
 
+router.get('/view-currency/:id',settingController.viewCurrency)
+
 router.post('/add-currency',settingController.addCurrency)
 
 router.put('/edit-currency',settingController.editCurrency)
