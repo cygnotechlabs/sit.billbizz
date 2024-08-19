@@ -2,6 +2,7 @@ const Organization = require("../database/model/organization");
 const Account = require("../database/model/account")
 const Currency = require("../database/model/currency")
 const mongoose = require('mongoose');
+const moment = require('moment-timezone');
 
 
 const accounts = [
@@ -220,60 +221,60 @@ exports.getAdditionalData = (req, res) => {
           "November -October ",
           "December - November "
         ],
-        dateFormat: {
-          "short": [
-            "mm/dd/yy (08/19/24)",
-            "dd/mm/yy (19/08/24)",
-            "yy/mm/dd (24/08/19)"
-          ],
-          "medium": [
-            "mm/dd/yyyy (08/19/2024)",
-            "dd/mm/yyyy (19/08/2024)",
-            "yyyy/mm/dd (2024/08/19)"
-          ],
-          "long": [
-            "dd/mmm/yyyy (19 June 2024)",
-            "mmm/dd/yyyy (June 19 2024)",
-            "yyyy/mmm/dd (2024 June 19)"
-          ]
-        },
+        "dateFormats": {
+                  "short": [
+                    { "format": "mm/dd/yy", "example": "08/19/24", "dateFormat": "MM/DD/YY" },
+                    { "format": "dd/mm/yy", "example": "19/08/24", "dateFormat": "DD/MM/YY" },
+                    { "format": "yy/mm/dd", "example": "24/08/19", "dateFormat": "YY/MM/DD" }
+                  ],
+                  "medium": [
+                    { "format": "mm/dd/yyyy", "example": "08/19/2024", "dateFormat": "MM/DD/YYYY" },
+                    { "format": "dd/mm/yyyy", "example": "19/08/2024", "dateFormat": "DD/MM/YYYY" },
+                    { "format": "yyyy/mm/dd", "example": "2024/08/19", "dateFormat": "YYYY/MM/DD" }
+                  ],
+                  "long": [
+                    { "format": "dd/mmm/yyyy", "example": "19 December 2024", "dateFormat": "DD/MMMM/YYYY" },
+                    { "format": "mmm/dd/yyyy", "example": "December 19 2024", "dateFormat": "MMMM/DD/YYYY" },
+                    { "format": "yyyy/mmm/dd", "example": "2024 December 19", "dateFormat": "YYYY/MMMM/DD" }
+                  ]
+                },
         dateSplit: ["-", "/", "."],
-        timezones: [
-          { zone: "GMT-12:00", description: "Baker Island (no permanent population)" },
-          { zone: "GMT-11:00", description: "Niue, Samoa" },
-          { zone: "GMT-10:00", description: "Hawaii-Aleutian Standard Time (Hawaii)" },
-          { zone: "GMT-09:30", description: "Marquesas Islands (French Polynesia)" },
-          { zone: "GMT-09:00", description: "Alaska Time (Alaska)" },
-          { zone: "GMT-08:00", description: "Pacific Time (Los Angeles, Vancouver)" },
-          { zone: "GMT-07:00", description: "Mountain Time (Denver, Calgary)" },
-          { zone: "GMT-06:00", description: "Central Time (Chicago, Mexico City)" },
-          { zone: "GMT-05:00", description: "Eastern Time (New York, Toronto)" },
-          { zone: "GMT-04:00", description: "Atlantic Time (Halifax, Caracas)" },
-          { zone: "GMT-03:30", description: "Newfoundland Time (Newfoundland)" },
-          { zone: "GMT-03:00", description: "Argentina Time, Brasília Time" },
-          { zone: "GMT-02:00", description: "South Georgia and the South Sandwich Islands" },
-          { zone: "GMT-01:00", description: "Azores, Cape Verde" },
-          { zone: "GMT+00:00", description: "Greenwich Mean Time (GMT), Western European Time (WET)" },
-          { zone: "GMT+01:00", description: "Central European Time (CET), West Africa Time (WAT)" },
-          { zone: "GMT+02:00", description: "Eastern European Time (EET), Central Africa Time (CAT)" },
-          { zone: "GMT+03:00", description: "Moscow Time (MSK), East Africa Time (EAT)" },
-          { zone: "GMT+03:30", description: "Iran Standard Time (IRST)" },
-          { zone: "GMT+04:00", description: "Gulf Standard Time (GST), Azerbaijan Time (AZT)" },
-          { zone: "GMT+04:30", description: "Afghanistan Time (AFT)" },
-          { zone: "GMT+05:00", description: "Pakistan Standard Time (PKT), Yekaterinburg Time (YEKT)" },
-          { zone: "GMT+05:30", description: "Indian Standard Time (IST), Sri Lanka Time (SLT)" },
-          { zone: "GMT+06:00", description: "Bangladesh Standard Time (BST), Novosibirsk Time (NOVT)" },
-          { zone: "GMT+06:30", description: "Cocos Islands Time (CCT)" },
-          { zone: "GMT+07:00", description: "Indochina Time (ICT), Krasnoyarsk Time (KRAT)" },
-          { zone: "GMT+08:00", description: "China Standard Time (CST), Singapore Time (SGT)" },
-          { zone: "GMT+08:45", description: "Australian Central Western Standard Time (ACWST)" },
-          { zone: "GMT+09:00", description: "Japan Standard Time (JST), Korea Standard Time (KST)" },
-          { zone: "GMT+09:30", description: "Australian Central Standard Time (ACST)" },
-          { zone: "GMT+10:00", description: "Australian Eastern Standard Time (AEST), Papua New Guinea Time (PGT)" },
-          { zone: "GMT+10:30", description: "Lord Howe Island Time (LHST)" },
-          { zone: "GMT+11:00", description: "Solomon Islands Time (SBT), Vanuatu Time (VUT)" },
-          { zone: "GMT+12:00", description: "Fiji Time (FJT), New Zealand Standard Time (NZST)" }
-        ]
+        "timezones": [
+              { "zone": "GMT-12:00", "description": "Baker Island (no permanent population)", "timeZone": "Etc/GMT+12" },
+              { "zone": "GMT-11:00", "description": "Niue, Samoa", "timeZone": "Pacific/Pago_Pago" },
+              { "zone": "GMT-10:00", "description": "Hawaii-Aleutian Standard Time (Hawaii)", "timeZone": "Pacific/Honolulu" },
+              { "zone": "GMT-09:30", "description": "Marquesas Islands (French Polynesia)", "timeZone": "Pacific/Marquesas" },
+              { "zone": "GMT-09:00", "description": "Alaska Time (Alaska)", "timeZone": "America/Anchorage" },
+              { "zone": "GMT-08:00", "description": "Pacific Time (Los Angeles, Vancouver)", "timeZone": "America/Los_Angeles" },
+              { "zone": "GMT-07:00", "description": "Mountain Time (Denver, Calgary)", "timeZone": "America/Denver" },
+              { "zone": "GMT-06:00", "description": "Central Time (Chicago, Mexico City)", "timeZone": "America/Chicago" },
+              { "zone": "GMT-05:00", "description": "Eastern Time (New York, Toronto)", "timeZone": "America/New_York" },
+              { "zone": "GMT-04:00", "description": "Atlantic Time (Halifax, Caracas)", "timeZone": "America/Halifax" },
+              { "zone": "GMT-03:30", "description": "Newfoundland Time (Newfoundland)", "timeZone": "America/St_Johns" },
+              { "zone": "GMT-03:00", "description": "Argentina Time, Brasília Time", "timeZone": "America/Argentina/Buenos_Aires" },
+              { "zone": "GMT-02:00", "description": "South Georgia and the South Sandwich Islands", "timeZone": "Atlantic/South_Georgia" },
+              { "zone": "GMT-01:00", "description": "Azores, Cape Verde", "timeZone": "Atlantic/Azores" },
+              { "zone": "GMT+00:00", "description": "Greenwich Mean Time (GMT), Western European Time (WET)", "timeZone": "Etc/GMT" },
+              { "zone": "GMT+01:00", "description": "Central European Time (CET), West Africa Time (WAT)", "timeZone": "Europe/Paris" },
+              { "zone": "GMT+02:00", "description": "Eastern European Time (EET), Central Africa Time (CAT)", "timeZone": "Europe/Kiev" },
+              { "zone": "GMT+03:00", "description": "Moscow Time (MSK), East Africa Time (EAT)", "timeZone": "Europe/Moscow" },
+              { "zone": "GMT+03:30", "description": "Iran Standard Time (IRST)", "timeZone": "Asia/Tehran" },
+              { "zone": "GMT+04:00", "description": "Gulf Standard Time (GST), Azerbaijan Time (AZT)", "timeZone": "Asia/Dubai" },
+              { "zone": "GMT+04:30", "description": "Afghanistan Time (AFT)", "timeZone": "Asia/Kabul" },
+              { "zone": "GMT+05:00", "description": "Pakistan Standard Time (PKT), Yekaterinburg Time (YEKT)", "timeZone": "Asia/Karachi" },
+              { "zone": "GMT+05:30", "description": "Indian Standard Time (IST), Sri Lanka Time (SLT)", "timeZone": "Asia/Kolkata" },
+              { "zone": "GMT+06:00", "description": "Bangladesh Standard Time (BST), Novosibirsk Time (NOVT)", "timeZone": "Asia/Dhaka" },
+              { "zone": "GMT+06:30", "description": "Cocos Islands Time (CCT)", "timeZone": "Indian/Cocos" },
+              { "zone": "GMT+07:00", "description": "Indochina Time (ICT), Krasnoyarsk Time (KRAT)", "timeZone": "Asia/Bangkok" },
+              { "zone": "GMT+08:00", "description": "China Standard Time (CST), Singapore Time (SGT)", "timeZone": "Asia/Shanghai" },
+              { "zone": "GMT+08:45", "description": "Australian Central Western Standard Time (ACWST)", "timeZone": "Australia/Eucla" },
+              { "zone": "GMT+09:00", "description": "Japan Standard Time (JST), Korea Standard Time (KST)", "timeZone": "Asia/Tokyo" },
+              { "zone": "GMT+09:30", "description": "Australian Central Standard Time (ACST)", "timeZone": "Australia/Darwin" },
+              { "zone": "GMT+10:00", "description": "Australian Eastern Standard Time (AEST), Papua New Guinea Time (PGT)", "timeZone": "Australia/Sydney" },
+              { "zone": "GMT+10:30", "description": "Lord Howe Island Time (LHST)", "timeZone": "Australia/Lord_Howe" },
+              { "zone": "GMT+11:00", "description": "Solomon Islands Time (SBT), Vanuatu Time (VUT)", "timeZone": "Pacific/Guadalcanal" },
+              { "zone": "GMT+12:00", "description": "Fiji Time (FJT), New Zealand Standard Time (NZST)", "timeZone": "Pacific/Auckland" }
+                      ]   
       }
     ];
 
@@ -384,6 +385,7 @@ exports.setupOrganization = async (req, res) => {
       fiscalYear,
       reportBasis,
       timeZone,
+      timeZoneExp,
       dateFormat,
       dateSplit,
       phoneNumberCode
@@ -397,6 +399,12 @@ exports.setupOrganization = async (req, res) => {
         message: "No Organization Found.",
       });
     }
+
+    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormat, dateSplit);
+
+          console.log('Generated Date:', generatedDateTime.date);
+          console.log('Generated Time:', generatedDateTime.time);
+          console.log('Generated Combined DateTime:', generatedDateTime.dateTime);
     
     // Update the existing organization's fields
     existingOrganization.organizationLogo = organizationLogo;
@@ -413,9 +421,11 @@ exports.setupOrganization = async (req, res) => {
     existingOrganization.fiscalYear = fiscalYear;
     existingOrganization.reportBasis = reportBasis;
     existingOrganization.timeZone = timeZone;
+    existingOrganization.timeZoneExp = timeZoneExp;    
     existingOrganization.dateFormat = dateFormat;
     existingOrganization.dateSplit = dateSplit; 
     existingOrganization.phoneNumberCode=phoneNumberCode;
+    existingOrganization.createdDateAndTime=generatedDateTime.dateTime;
     
     const savedOrganization = await existingOrganization.save();
 
@@ -433,6 +443,7 @@ exports.setupOrganization = async (req, res) => {
       await Currency.updateOne({ organizationId, currencyCode: baseCurrency }, { baseCurrency: true });
     }
 
+
     res.status(200).json({
       message: "Organization updated successfully."
     });
@@ -448,4 +459,37 @@ exports.setupOrganization = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+
+
+
+
+
+
+// Function to generate time and date for storing in the database
+function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = new Date(), timeFormat = 'HH:mm:ss', timeSplit = ':') {
+  // Convert the base time to the desired time zone
+  const localDate = moment.tz(baseTime, timeZone);
+
+  // Format date and time according to the specified formats
+  let formattedDate = localDate.format(dateFormat);
+  
+  // Handle date split if specified
+  if (dateSplit) {
+    // Replace default split characters with specified split characters
+    formattedDate = formattedDate.replace(/[-/]/g, dateSplit); // Adjust regex based on your date format separators
+  }
+
+  const formattedTime = localDate.format(timeFormat);
+  const timeZoneName = localDate.format('z'); // Get time zone abbreviation
+
+  // Combine the formatted date and time with the split characters and time zone
+  const dateTime = `${formattedDate} ${formattedTime.split(':').join(timeSplit)} (${timeZoneName})`;
+
+  return {
+    date: formattedDate,
+    time: `${formattedTime} (${timeZoneName})`,
+    dateTime: dateTime
+  };
+}
+
 

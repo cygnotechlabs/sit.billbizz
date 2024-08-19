@@ -14,6 +14,8 @@ const organizationSchema = new Schema({
   organizationCountry: { type: String },
   organizationIndustry: { type: String },
 
+  createdDateAndTime: { type: String },  
+
   //address
   addline1: { type: String },
   addline2: { type: String },
@@ -29,6 +31,7 @@ const organizationSchema = new Schema({
   reportBasis: { type: String },
 
   timeZone: { type: String },
+  timeZoneExp: { type: String },
   dateFormat: { type: String },
   dateSplit: { type: String },
 
