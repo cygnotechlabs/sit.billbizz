@@ -37,10 +37,6 @@ function decrypt(encryptedText) {
 
 
 
-
-
-
-
 //Add Account
 exports.addAccount = async (req, res) => {
     // console.log("Add Account:", req.body);
