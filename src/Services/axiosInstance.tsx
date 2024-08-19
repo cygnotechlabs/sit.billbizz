@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const BASE_URLS: Record<number, string> = {
-  5000: "http://localhost:5000/",
-  5001: "http://localhost:5001/",
+  5001: "https://billbizz-acounts.dev-billbizz-connection:5001",
+  // 5000: "http://localhost:5000/",
+  // 5001: "http://localhost:5001/",
   5002: "http://localhost:5002/",
   5003: "http://localhost:5003/",
   5004: "https://billbiz-organization.dev-billbizz-connection:5004",
