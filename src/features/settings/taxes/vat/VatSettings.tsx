@@ -1,10 +1,9 @@
-import { ChangeEvent, FormEvent, useEffect, useState, useContext } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Button from "../../../../Components/Button";
 import CalenderIcon from "../../../../assets/icons/CalenderIcon";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
-import { VatResponseContext } from "../../../../context/ContextShare";
 
 type Props = {};
 
@@ -20,29 +19,35 @@ function VatSettings({}: Props) {
   };
 
   const [vatSettings, setVatSettings] = useState(initialVatSettings);
-  console.log(vatSettings);
-  
   const { request: fetchVatSettings } = useApi("put", 5004);
-  const { request: CreateVatSettings } = useApi("post", 5004);
-  const { vatResponse } = useContext(VatResponseContext)!;
+  const { request: createVatSettings } = useApi("post", 5004);
 
-  const fetchAllVatSettings = async () => {
+  // Fetch VAT settings
+  const getVatSettings = async () => {
     try {
       const url = `${endponits.GET_ALL_TAX}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await fetchVatSettings(url, body);
-      if (!error && response) {
-        const vatSettingsData = response.data;
-        setVatSettings(vatSettingsData);
+      const { response, error } = await fetchVatSettings(url, {
+        organizationId: "INDORG0001",
+      });
+
+      if (!error && response?.data) {
+        setVatSettings((prevData) => ({
+          ...prevData,
+          vatNumber: response.data.vatNumber || "",
+          vatBusinesLegalName: response.data.vatBusinesLegalName || "",
+          vatBusinessTradeName: response.data.vatBusinessTradeName || "",
+          vatRegisteredDate: response.data.vatRegisteredDate || "",
+          tinNumber: response.data.tinNumber || "",
+        }));
       }
     } catch (error) {
-      console.error("Error fetching VAT settings:", error);
+      console.error("Error fetching VAT data:", error);
     }
   };
 
   useEffect(() => {
-    fetchAllVatSettings();
-  }, [vatResponse]);
+    getVatSettings();
+  }, []);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -57,10 +62,10 @@ function VatSettings({}: Props) {
     try {
       const url = `${endponits.ADD_NEW_TAX}`;
       const body = vatSettings;
-      const { response, error } = await CreateVatSettings(url, body);
+      const { response, error } = await createVatSettings(url, body);
       if (!error && response) {
         toast.success(response.data.message);
-        setVatSettings(response.data); 
+        setVatSettings(response.data);
       } else {
         toast.error(error.response.data.message);
       }
@@ -124,7 +129,7 @@ function VatSettings({}: Props) {
                     value={vatSettings.vatNumber}
                     onChange={handleChange}
                     className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
-                    placeholder={vatSettings.vatNumber || "Enter VAT Number"}
+                    placeholder="Enter VAT Number"
                   />
                 </div>
                 <div className="mt-5">
@@ -135,7 +140,7 @@ function VatSettings({}: Props) {
                     value={vatSettings.vatBusinessTradeName}
                     onChange={handleChange}
                     className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
-                    placeholder={vatSettings.vatBusinessTradeName || "Enter Business Trade Name"}
+                    placeholder="Enter Business Trade Name"
                   />
                 </div>
                 <div className="mt-5">
@@ -146,7 +151,7 @@ function VatSettings({}: Props) {
                     value={vatSettings.tinNumber}
                     onChange={handleChange}
                     className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
-                    placeholder={vatSettings.tinNumber || "Enter TIN Number"}
+                    placeholder="Enter TIN Number"
                   />
                 </div>
               </div>
@@ -160,7 +165,7 @@ function VatSettings({}: Props) {
                     value={vatSettings.vatBusinesLegalName}
                     onChange={handleChange}
                     className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
-                    placeholder={vatSettings.vatBusinesLegalName || "Enter Business Legal Name"}
+                    placeholder="Enter Business Legal Name"
                   />
                 </div>
                 <div className="mt-5">
