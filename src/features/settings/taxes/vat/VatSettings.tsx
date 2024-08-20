@@ -4,9 +4,8 @@ import CalenderIcon from "../../../../assets/icons/CalenderIcon";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
-
 type Props = {};
-
+ 
 function VatSettings({}: Props) {
   const initialVatSettings = {
     organizationId: "INDORG0001",
@@ -17,7 +16,7 @@ function VatSettings({}: Props) {
     vatRegisteredDate: "",
     tinNumber: "",
   };
-
+ 
   const [vatSettings, setVatSettings] = useState(initialVatSettings);
   const { request: fetchVatSettings } = useApi("put", 5004);
   const { request: createVatSettings } = useApi("post", 5004);
@@ -56,7 +55,7 @@ function VatSettings({}: Props) {
       [name]: value,
     }));
   };
-
+ 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
@@ -73,12 +72,12 @@ function VatSettings({}: Props) {
       console.error("Error:", error);
     }
   };
-
+ 
   const [isVatRegistered, setIsVatRegistered] = useState(true);
   const handleToggle = () => {
     setIsVatRegistered(!isVatRegistered);
   };
-
+ 
   return (
     <div>
       <p className="text-textColor font-bold">VAT Settings</p>
@@ -115,7 +114,7 @@ function VatSettings({}: Props) {
           </label>
         </div>
       </div>
-
+ 
       <div>
         {isVatRegistered && (
           <div className="p-6 rounded-lg bg-white mt-4">
@@ -155,7 +154,7 @@ function VatSettings({}: Props) {
                   />
                 </div>
               </div>
-
+ 
               <div className="text-[#495160] text-sm w-[50%]">
                 <div>
                   <label htmlFor="vatBusinesLegalName">Business Legal Name</label>
@@ -200,5 +199,5 @@ function VatSettings({}: Props) {
     </div>
   );
 }
-
+ 
 export default VatSettings;

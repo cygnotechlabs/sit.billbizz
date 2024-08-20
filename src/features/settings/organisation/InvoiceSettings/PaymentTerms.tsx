@@ -16,13 +16,14 @@ type PaymentTerm = {
 };
 
 function PaymentTerms({}: Props) {
-    // const { request: addPaymentTerms } = useApi("post", 5004);
-    // const { request: editPaymentTerms } = useApi("put", 5004);
+    const { request: addPaymentTerms } = useApi("post", 5004);
+    const { request: editPaymentTerms } = useApi("put", 5004);
     // const { request: deletePaymentTerms } = useApi("delete", 5004);
     const { request: getPaymentTerms } = useApi("get", 5004);
 
     const [isModalOpen, setModalOpen] = useState(false);
     const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>([]);
+    const [initialPaymentTerms, setInitialPaymentTerms] = useState<PaymentTerm[]>([]);
 
     const textAreasRef = useRef<HTMLTextAreaElement[]>([]);
 
@@ -62,46 +63,114 @@ function PaymentTerms({}: Props) {
         }
     };
 
-    const handleAddPaymentTerms = async () => {
-        toast.success("Success");
-        // try {
-        //   const url = `${endponits.ADD_PAYMENT_TERMS}`;
-        //   const apiResponse = await addPaymentTerms(url, paymentTerms)
-        //   const { response, error } = apiResponse;
-        //   if (!error && response) {
-        //     toast.success(response.data);
-        //   } else {
-        //     toast.error(`API Error: ${error}`);
-        //   }
-        // } catch (error) {
-        //   toast.error(`Error during API call: ${error}`);
-        // }
-      };
 
-      const handleGetPaymentTerms = async () => {
-          try {
-              const url = `${endponits.GET_PAYMENT_TERMS}`;
-              const body = { organizationId: "INDORG0001" };
-              const { response, error } = await getPaymentTerms(url, body);
-              if (!error && response) {
-                  const data: PaymentTerm[] = response.data.map((item: any) => ({
-                      name: item.name,
-                      days: item.days,
-                      description: item.description,
-                  }));
-  
-                  setPaymentTerms(data);
-              } else {
-                  toast.error(`API Error: ${error}`);
-              }
-          } catch (error) {
-              toast.error(`Error fetching invoice settings: ${error}`);
-          }
-      };
-  
-      useEffect(() => {
-          handleGetPaymentTerms();
-      }, []);
+    const handleEditPaymentTerms = async (editedTerms: PaymentTerm[]) => {
+        try {
+            const url = `${endponits.EDIT_PAYMENT_TERMS}`; // Adjust endpoint accordingly
+            const apiResponse = await editPaymentTerms(url, editedTerms); // Assume editPaymentTermsApi is your API call method
+            const { response, error } = apiResponse as { response: any; error: any };
+    
+            if (!error && response) {
+                toast.success("Payment terms updated successfully.");
+            } else {
+                toast.error(`API Error: ${error}`);
+            }
+        } catch (error: any) {
+            toast.error(`Error during API call: ${error.message || error}`);
+        }
+    };
+
+    const handleAddPaymentTerms = async () => {
+        let isValid = true;
+        let errorMessage = '';
+        const modifiedTerms: PaymentTerm[] = [];
+        const newTerms: PaymentTerm[] = [];
+    
+        paymentTerms.forEach((term, index) => {
+            // Ensure that all fields are defined
+            if (!term.name) term.name = '';
+            if (!term.days) term.days = '';
+            if (!term.description) term.description = '';
+    
+            if (index >= 5) { // New rows beyond the initial 5
+                if (!term.name.trim() || !term.days.trim() || !term.description.trim()) {
+                    isValid = false;
+                    errorMessage += `Row ${index + 1} is incomplete. Please fill in all fields.\n`;
+                } else {
+                    newTerms.push(term); // Push to newTerms for creation
+                }
+            } else if (initialPaymentTerms[index]) { // Existing rows
+                // Check if the existing term has been modified
+                if (
+                    term.name.trim() !== initialPaymentTerms[index].name ||
+                    term.days.trim() !== initialPaymentTerms[index].days ||
+                    term.description.trim() !== initialPaymentTerms[index].description
+                ) {
+                    modifiedTerms.push(term); // Push to modifiedTerms for editing
+                }
+            }
+        });
+    
+        if (!isValid) {
+            toast.error(errorMessage);
+            return;
+        }
+    
+        // Handle the creation of new terms
+        if (newTerms.length > 0) {
+            try {
+                const url = `${endponits.ADD_PAYMENT_TERMS}`;
+                const apiResponse = await addPaymentTerms(url, newTerms);
+                const { response, error } = apiResponse as { response: any; error: any };
+    
+                if (!error && response) {
+                    toast.success("New payment terms added successfully.");
+                } else {
+                    toast.error(`API Error: ${error}`);
+                }
+            } catch (error: any) {
+                toast.error(`Error during API call: ${error.message || error}`);
+            }
+        }
+    
+        // Handle the editing of existing terms
+        if (modifiedTerms.length > 0) {
+            await handleEditPaymentTerms(modifiedTerms);
+        }
+    };
+    
+    
+    
+    
+    
+    
+    
+
+    const handleGetPaymentTerms = async () => {
+        try {
+            const url = `${endponits.GET_PAYMENT_TERMS}`;
+            const body = { organizationId: "INDORG0001" };
+            const { response, error } = await getPaymentTerms(url, body);
+            if (!error && response) {
+                const data: PaymentTerm[] = response.data.map((item: any) => ({
+                    name: item.name,
+                    days: item.days,
+                    description: item.description,
+                }));
+    
+                setPaymentTerms(data);
+                setInitialPaymentTerms(data); // Initialize initialPaymentTerms here
+            } else {
+                toast.error(`API Error: ${error}`);
+            }
+        } catch (error) {
+            toast.error(`Error fetching payment terms: ${error}`);
+        }
+    };
+    
+    useEffect(() => {
+        handleGetPaymentTerms();
+    }, []);
       return (
         <>
             <div className="mt-7 mb-3 flex justify-between">
@@ -124,16 +193,19 @@ function PaymentTerms({}: Props) {
     <div className="col-span-3 text-center text-[14px]">Title</div>
     <div className="col-span-2 text-center text-[14px]">Days</div>
     <div className="col-span-7 text-center text-[14px]">Description</div>
+    
+    
 </div>
 
 <div className="max-h-[330px] overflow-y-auto"> {/* 220px height is roughly 5 rows, adjust as needed */}
     {paymentTerms.map((term, index) => (
-        <div className="grid grid-cols-12 border-b border-b-slate-300 gap-2" key={index}>
-            <div className="col-span-3 m-3">
+        index>2&&<div className="grid grid-cols-12 border-b border-b-slate-300 gap-2" key={index}>
+            <div className='col-span-3 m-3'>
                 <textarea
                     value={term.name}
+                    placeholder='Net 0'
                     onChange={(e) => handleInputChange(index, 'name', e.target.value)}
-                    className="w-full border-slate-400 border outline-red-700 rounded p-2 font-medium resize-none overflow-hidden"
+                    className={`w-full  border-slate-400 border  outline-red-700 rounded p-2 font-medium resize-none overflow-hidden`}
                     rows={1}
                     ref={(el) => {
                         if (el) {
@@ -142,11 +214,13 @@ function PaymentTerms({}: Props) {
                     }}
                 />
             </div>
+
             <div className="col-span-2 m-3">
                 <textarea
                     value={term.days}
+                    placeholder='0'
                     onChange={(e) => handleInputChange(index, 'days', e.target.value)}
-                    className="w-full border-slate-400 border outline-red-700 rounded p-2 font-medium resize-none overflow-hidden"
+                    className="w-full border-slate-400 border  outline-red-700 rounded p-2 font-medium resize-none overflow-hidden"
                     rows={1}
                     ref={(el) => {
                         if (el) {
@@ -155,6 +229,7 @@ function PaymentTerms({}: Props) {
                     }}
                 />
             </div>
+            
             <div className="col-span-7 m-3 gap-[10px] flex items-center">
                 <textarea
                     value={term.description}
@@ -167,7 +242,7 @@ function PaymentTerms({}: Props) {
                         }
                     }}
                 />
-                {index > 2 ? (
+                {index > 4 ? (
                     <div onClick={() => deleteRow(index)} className="cursor-pointer">
                         <Trash2 size={20} color='#820000' />
                     </div>
@@ -175,7 +250,11 @@ function PaymentTerms({}: Props) {
                     <div className='ms-5'></div>
                 )}
             </div>
-        </div>
+            
+            
+                
+            </div>
+        
     ))}
 </div>
                     <Button onClick={addNewRow} variant="secondary" className="h-[30px] w-[80px] m-5 flex justify-center" size="sm">
@@ -201,7 +280,7 @@ function PaymentTerms({}: Props) {
                 <p key={index} className="text-textColor my-3 break-words whitespace-normal">
                     <div className="font-semibold flex text-[12px] items-center">
                         {data.name} - <span className='font-normal'>{data.description}</span>
-                        <p className='px-1 text-[12px] bg-[#F3E6E6] ms-2'>{data.days} Days</p>
+                        {index>2&&<p className='px-1 text-[12px] bg-[#F3E6E6] ms-2'>{data.days} Days</p>}
                     </div>
                 </p>
             ))}
