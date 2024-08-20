@@ -17,7 +17,7 @@ import Invoices from "../features/settings/sales/invoice/Invoices";
 
 import SalesOrder from "../features/settings/sales/salesOrder/SalesOrder";
 import CreditNotes from "../features/settings/sales/creditnote/CreditNotes";
-import ExpensesHome from "../features/settings/Purchases/Expense/ExpensesHome";
+import ExpensesHome from "../features/settings/Purcahse/Expense/ExpensesHome";
 import PurchaseOrders from "../features/settings/Purcahse/PuchaseOrder";
 import MsmeSettings from "../features/settings/taxes/msmeSettings/MsmeSettings";
 
