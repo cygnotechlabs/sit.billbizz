@@ -34,7 +34,7 @@ function App() {
       path: "/",
       element: <SettingsLayout children />,
       children: [
-        { path: "", },
+        { path: "" },
         ...SettingsRoutes,
       ],
     },

@@ -56,13 +56,13 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
 
   return (
     <cashResponseContext.Provider value={{ cashResponse, setCashResponse }}>
-      <BankResponseContext.Provider value={{ bankResponse, setBankResponse }}>
-      <CurrencyResponseContext.Provider value={{ currencyResponse, setCurrencyResponse }}>
-          {children}
-          </CurrencyResponseContext.Provider>
+      <BankResponseContext.Provider value={{ bankResponse, setBankResponse }}>         
         <GstResponseContext.Provider value={{gstResponse,setGstResponse}}>
           <VatResponseContext.Provider value={{vatResponse,setVatResponse}}>
+          <CurrencyResponseContext.Provider value={{ currencyResponse, setCurrencyResponse }}>
+
           {children}
+           </CurrencyResponseContext.Provider>
           </VatResponseContext.Provider>
         </GstResponseContext.Provider>
       </BankResponseContext.Provider>

@@ -6,6 +6,9 @@ import { toast, Toaster } from "react-hot-toast";
 import CehvronDown from "../../../assets/icons/CehvronDown";
 import Plus from "../../../assets/icons/Plus";
 import Banner from "../banner/Banner";
+import TrashCan from "../../../assets/icons/TrashCan";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 interface InputData {
   organizationId: string;
@@ -22,11 +25,12 @@ interface InputData {
   website: string;
   baseCurrency: string;
   fiscalYear: string;
-  reportBasis: string;
   timeZone: string;
+  timeZoneExp:string;
   dateFormat: string;
+  dateFormatExp:string;
   dateSplit: string;
-  phoneNumberCode:string;
+  phoneNumberCode: string;
 }
 
 const CreateOrganizationForm = () => {
@@ -55,14 +59,16 @@ const CreateOrganizationForm = () => {
     website: "",
     baseCurrency: "",
     fiscalYear: "",
-    reportBasis: "",
     timeZone: "",
+    timeZoneExp:"",
     dateFormat: "",
+    dateFormatExp:"",
     dateSplit: "",
-    phoneNumberCode:""
+    phoneNumberCode: "",
   });
 
-// console.log(inputData);
+  console.log(inputData);
+  
 
   const getDropdownList = async () => {
     try {
@@ -70,6 +76,7 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setAdditionalData(response.data[0]);
+        console.log(response.data[0], "additionalData");
       }
     } catch (error) {
       console.log("Error in fetching Additional data", error);
@@ -82,7 +89,7 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setcountryData(response.data[0].countries);
-        // console.log(response.data[0].countries);
+        console.log(response.data[0].countries, "CountryData");
       }
     } catch (error) {
       console.log("Error in fetching country data", error);
@@ -97,7 +104,7 @@ const CreateOrganizationForm = () => {
       });
       if (!error && response) {
         setcurrencyData(response.data);
-        // console.log(response);
+        console.log(response.data, "currencyData");
       }
     } catch (error) {
       console.log("Error in fetching currency data", error);
@@ -107,24 +114,35 @@ const CreateOrganizationForm = () => {
   const getOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
-      const { response, error } = await getOneOrganization(url, {
+      const apiResponse = await getOneOrganization(url, {
         organizationId: "INDORG0001",
       });
+      // console.log(apiResponse);
 
+      const { response, error } = apiResponse;
       if (!error && response?.data) {
         // setOneOrganization(response.data);
         setInputData(response.data);
-        // console.log(response.data, "oneOrganization");
+        console.log(response.data, "oneOrganization");
 
         setInputData((prevData) => ({
           ...prevData,
           organizationId: response.data.organizationId,
           organizationName: response.data.organizationName,
         }));
+      } else {
+        toast.error(error.response.data.message);
       }
     } catch (error) {
       console.error("Error fetching organization:", error);
     }
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setInputData((prevData) => ({
+      ...prevData,
+      organizationPhNum: value,
+    }));
   };
 
   const handleInputChange = (
@@ -146,7 +164,7 @@ const CreateOrganizationForm = () => {
 
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        console.log("Base64 String:", base64String);
+        // console.log("Base64 String:", base64String);
         setInputData((prevDetails: any) => ({
           ...prevDetails,
           [key]: base64String,
@@ -156,6 +174,48 @@ const CreateOrganizationForm = () => {
       reader.readAsDataURL(file);
     }
   };
+
+
+  const selectTimeZone = (e:any) => {
+    const selectedZone = e.target.value;
+  
+    const selectedTimeZone = additionalData.timezones.find(
+      (timezone:any) => timezone.zone === selectedZone
+    );
+  
+    console.log(selectedTimeZone);
+  
+    if (selectedTimeZone) {
+      setInputData((prevDetails) => ({
+        ...prevDetails,
+        timeZone: selectedZone,
+        timeZoneExp: selectedTimeZone.timeZone,
+      }));
+    }
+  };
+  
+  const selectDateFormat = (e:any) => {
+    const selectedFormat = e.target.value;
+  
+    const selectedDateFormat = [
+      ...additionalData.dateFormats.short,
+      ...additionalData.dateFormats.medium,
+      ...additionalData.dateFormats.long
+    ].find(
+      (dateFormat) => dateFormat.format === selectedFormat
+    );
+  
+    console.log(selectedDateFormat);
+  
+    if (selectedDateFormat) {
+      setInputData((prevDetails:any) => ({
+        ...prevDetails,
+        dateFormat: selectedFormat,
+        dateFormatExp: selectedDateFormat.dateFormat,
+      }));
+    }
+  };
+  
 
   const handleCreateOrganization = async (e: any) => {
     e.preventDefault();
@@ -175,6 +235,13 @@ const CreateOrganizationForm = () => {
     }
   };
 
+  const handleDeleteImage = () => {
+    setInputData((prevDetails: any) => ({
+      ...prevDetails,
+      organizationLogo: "",
+    }));
+  };
+
   useEffect(() => {
     getDropdownList();
     getOrganization();
@@ -192,7 +259,7 @@ const CreateOrganizationForm = () => {
         setPhoneCodeList(country.phoneNumberCode);
       }
     }
-  }, [inputData.organizationCountry, countryData]);
+  }, [inputData.organizationCountry, countryData, inputData.organizationLogo]);
 
   return (
     <div className=" m-4 overflow-y-scroll hide-scrollbar h-auto">
@@ -203,9 +270,19 @@ const CreateOrganizationForm = () => {
         <div className="h-56 p-3 border-dashed border-neutral-400  rounded-md mt-5 border bg-white text-textColor w-[403px]">
           {" "}
           <label>
-            <div className="bg-lightPink flex h-28 justify-center items-center rounded-md">
+            <div
+              className={`bg-lightPink flex h-28 justify-center items-center rounded-lg ${
+                inputData.organizationLogo ? "h-[90px] rounded-b-none" : ""
+              }`}
+            >
               {inputData.organizationLogo ? (
-                <img src={inputData.organizationLogo} alt="" className="h-24" />
+                <div className="">
+                  <img
+                    src={inputData.organizationLogo}
+                    alt=""
+                    className="py-0 h-[51px]"
+                  />
+                </div>
               ) : (
                 <>
                   <div className="justify-center flex items-center bg-darkRed text-white  p-1 rounded-full">
@@ -217,24 +294,32 @@ const CreateOrganizationForm = () => {
                   </p>
                 </>
               )}
+              <input
+                accept="image/*"
+                type="file"
+                className="hidden"
+                onChange={(e) => handleFileChange(e, "organizationLogo")}
+              />
             </div>
-            <div className="text-center">
-              <p className="mt-3 text-base">
-                <b>Organization Logo</b>
-              </p>
-              <p className="text-xs mt-1">
-                Preferred Image Dimensions: 240&times;240&times; pixels @ 72 DPI{" "}
-                <br />
-                Maximum File size 1MB
-              </p>
-            </div>
-            <input
-              accept="image/*"
-              type="file"
-              className="hidden"
-              onChange={(e) => handleFileChange(e, "organizationLogo")}
-            />
           </label>
+          {inputData.organizationLogo && (
+            <div className="bg-neutral-200 rounded-b-lg h-7 flex items-center justify-end px-4">
+              <div onClick={handleDeleteImage}>
+                {" "}
+                <TrashCan color={"darkRed"} />
+              </div>
+            </div>
+          )}
+          <div className="text-center">
+            <p className="mt-3 text-base">
+              <b>Organization Logo</b>
+            </p>
+            <p className="text-xs mt-1">
+              Preferred Image Dimensions: 240&times;240&times; pixels @ 72 DPI{" "}
+              <br />
+              Maximum File size 1MB
+            </p>
+          </div>
         </div>
 
         <p className="mt-4 text-textColor">
@@ -411,40 +496,63 @@ const CreateOrganizationForm = () => {
               </div>
               <div className="flex">
                 <div className="relative w-24  mt-2 ">
-                  <select
+                  {/* <select
                     value={inputData.phoneNumberCode}
                     onChange={handleInputChange}
                     name="phoneNumberCode"
                     id="phoneNumberCode"
                     className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   >
-                   <option value="">
-  {inputData.phoneNumberCode ? inputData.phoneNumberCode : phoneCodeList}
-</option>
-{countryData
-  .filter(
-    (item: any) => item.phoneNumberCode !== (inputData.phoneNumberCode || phoneCodeList)
-  )
-  .map((item: any, index: number) => (
-    <option key={index} value={item.phoneNumberCode}>
-      {item.phoneNumberCode}
-    </option>
-  ))}
+                    <option value="">
+                      {inputData.phoneNumberCode
+                        ? inputData.phoneNumberCode
+                        : phoneCodeList.length > 0
+                        ? phoneCodeList
+                        : "+91"}
+                    </option>
+ 
+                    {countryData
+                      .filter(
+                        (item: any) =>
+                          item.phoneNumberCode !==
+                          (inputData.phoneNumberCode || phoneCodeList)
+                      )
+                      .map((item: any, index: number) => (
+                        <option key={index} value={item.phoneNumberCode}>
+                          {item.phoneNumberCode}
+                        </option>
+                      ))}
+                  </select> */}
 
-                  </select>
-
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  {/* <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <CehvronDown color="gray" height={15} width={15} />
-                  </div>
+                  </div> */}
                 </div>
-                <input
+                {/* <input
                   className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   placeholder="Phone"
                   type="tel"
                   value={inputData.organizationPhNum}
                   name="organizationPhNum"
                   onChange={handleInputChange}
-                />{" "}
+                />{" "} */}
+              </div>
+              <div className="w-full border-0">
+                <PhoneInput
+                  inputClass=" appearance-none  text-[#495160] bg-white border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  inputStyle={{
+                    height: "38px",
+                    width:"100%"
+                  }}
+                  containerStyle={{ width: "100%" }}
+                  country={
+                    inputData.organizationCountry
+                      ? inputData.organizationCountry.toLowerCase()
+                      : "in"
+                  }
+                  value={inputData.organizationPhNum}
+                  onChange={handlePhoneChange}
+                />
               </div>
             </div>
           </div>
@@ -546,7 +654,7 @@ const CreateOrganizationForm = () => {
                 <select
                   value={inputData.timeZone}
                   name="timeZone"
-                  onChange={handleInputChange}
+                  onChange={selectTimeZone}
                   id="timeZone"
                   className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
@@ -577,20 +685,23 @@ const CreateOrganizationForm = () => {
               <div className="relative w-full mt-3">
                 <select
                   value={inputData.dateFormat}
-                  onChange={handleInputChange}
+                  onChange={selectDateFormat}
                   name="dateFormat"
                   id="dateFormat"
                   className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Date Format</option>
-                  {additionalData?.dateFormat?.short &&
-                  additionalData?.dateFormat.short.length > 0 ? (
+                  {additionalData?.dateFormats?.short &&
+                  additionalData?.dateFormats.short.length > 0 ? (
                     <>
                       <optgroup label="Short">
-                        {additionalData.dateFormat.short.map(
+                        {additionalData.dateFormats.short.map(
                           (item: any, index: any) => (
-                            <option key={`short-${index}`} value={item}>
-                              {item}
+                            <option
+                              key={`short-${index}`}
+                              value={item.format}
+                            >
+                              {item.format}
                             </option>
                           )
                         )}
@@ -600,14 +711,17 @@ const CreateOrganizationForm = () => {
                     <></>
                   )}
 
-                  {additionalData?.dateFormat?.medium &&
-                  additionalData?.dateFormat.medium.length > 0 ? (
+                  {additionalData?.dateFormats?.medium &&
+                  additionalData?.dateFormats.medium.length > 0 ? (
                     <>
                       <optgroup label="Medium">
-                        {additionalData.dateFormat.medium.map(
+                        {additionalData.dateFormats.medium.map(
                           (item: any, index: any) => (
-                            <option key={`medium-${index}`} value={item}>
-                              {item}
+                            <option
+                              key={`medium-${index}`}
+                              value={item.format}
+                            >
+                              {item.format}
                             </option>
                           )
                         )}
@@ -617,14 +731,17 @@ const CreateOrganizationForm = () => {
                     <></>
                   )}
 
-                  {additionalData?.dateFormat?.long &&
-                  additionalData?.dateFormat.long.length > 0 ? (
+                  {additionalData?.dateFormats?.long &&
+                  additionalData?.dateFormats.long.length > 0 ? (
                     <>
                       <optgroup label="Long">
-                        {additionalData.dateFormat.long.map(
+                        {additionalData.dateFormats.long.map(
                           (item: any, index: any) => (
-                            <option key={`long-${index}`} value={item}>
-                              {item}
+                            <option
+                              key={`long-${index}`}
+                              value={item.format}
+                            >
+                              {item.format}
                             </option>
                           )
                         )}
