@@ -23,6 +23,7 @@ function InvoiceSettings({}: Props) {
   const { request: GetInvoiceSettings } = useApi("put", 5004);
   const [isAddPlaceHolderOpen, setAddPlaceHolderOpen] = useState(false);
   const [isSeePreviewOpen, setSeePreviewOpen] = useState(false);
+  const [showQROpen,setShowQROpen]=useState(false)
   const [isOrganisationAddressOpen, setOrganisationAddressOpen] =
     useState(false);
   const organizationDetails = [
@@ -82,16 +83,12 @@ function InvoiceSettings({}: Props) {
     
     try {
       const url = `${endponits.ADD_INVOICE_SETTINGS}`;
-      console.log("Request URL:", url);
-      console.log("Request Body:", invoiceSettings);
       const apiResponse = await AddInvoiceSettings(url, invoiceSettings);
-      console.log("API Response:", apiResponse);
       const { response, error } = apiResponse;
       if (!error && response) {
         toast.success(response.data);
       } else {
         toast.error(`API Error: ${error}`);
-        alert("An error occurred");
       }
     } catch (error) {
       toast.error(`Error during API call: ${error}`);
@@ -130,14 +127,16 @@ function InvoiceSettings({}: Props) {
     getInvoiceSettings()
   },[])
 
-  const openModal = (placeholder?: boolean, seePreview?: boolean) => {
+  const openModal = (placeholder?: boolean, seePreview?: boolean,showQR?:boolean) => {
     setAddPlaceHolderOpen(placeholder || false);
     setSeePreviewOpen(seePreview || false);
+    setShowQROpen(showQR || false)
   };
 
-  const closeModal = (placeholder?: boolean, seePreview?: boolean) => {
+  const closeModal = (placeholder?: boolean, seePreview?: boolean,showQR?:boolean) => {
     setAddPlaceHolderOpen(placeholder || false);
     setSeePreviewOpen(seePreview || false);
+    setShowQROpen(showQR || false)
   };
 
   
@@ -251,14 +250,9 @@ function InvoiceSettings({}: Props) {
               <div className="  rounded-md  p-5  bg-white grid grid-cols-12 gap-4 cursor-pointer">
                 <div className="col-span-10 flex ">
                   <div className="w-20 h-20 rounded-md flex items-center justify-center bg-[#F7E7CE]">
-                    {invoiceSettings.qrLocation ? (
-                      <img
-                        src={invoiceSettings.qrLocation}
-                        alt="QR Code Type 1"
-                      />
-                    ) : (
+              
                       <img src={QrCode} alt="Default QR Code Type 1" />
-                    )}
+                    
                   </div>
                   <div className="ms-3 flex items-center  h-full">
                     <div className="space-y-2">
@@ -272,11 +266,49 @@ function InvoiceSettings({}: Props) {
                     </div>
                   </div>
                 </div>
-                <div className="col-span-2 flex items-center justify-end">
+                <div className="col-span-2 flex items-center justify-end gap-8">
+                {invoiceSettings.qrLocation &&<Button onClick={()=>openModal(false,false,true)} variant="secondary" className="h-[26px] w-[68px] flex justify-center" size="sm">
+                     <p className="text-[10px] font-medium">Show QR</p>
+                </Button>}
                   <div className="bg-darkRed text-white items-center justify-center rounded-full flex h-8 w-8">
                     <Plus color="white" />
                   </div>
                 </div>
+                <Modal 
+  open={showQROpen}
+  onClose={() => closeModal()}
+  style={{ width: "360px", padding: "32px", borderRadius: "16px" }}
+>
+  <div className="flex flex-col items-center justify-center space-y-6 my-6">
+    <p className="w-[220px] text-center text-[18px] font-bold">
+      Organization’s Location QR Code
+    </p>
+    <div className="px-4 py-2 border  border-[#ABABAB] rounded-lg">
+    <img
+      src={invoiceSettings.qrLocation}
+      alt="QR Code Type 1"
+      width={150}
+      className=""
+    />
+    </div>
+    <div className="flex items-center gap-4">
+    <label htmlFor="qrLocation" className="cursor-pointer">
+  <div className="h-[32px] w-[92px] flex justify-center items-center rounded-lg bg-[#820000] hover:bg-[#820000]">
+    <p className="text-xs font-medium text-white">Replace QR</p>
+  </div>
+  <input
+    type="file"
+    id="qrLocation"
+    className="hidden"
+    onChange={(e) => handleFileChange(e, "qrLocation")}
+  />
+</label>
+      <Button onClick={()=>closeModal()} variant="secondary" className="h-[32px] w-[92px] flex justify-center rounded-lg" size="sm">
+                     <p className="text-xs font-medium text-[#565148]">Close</p>
+                </Button>
+    </div>                  
+  </div>
+</Modal>
               </div>
               <input
                 type="file"

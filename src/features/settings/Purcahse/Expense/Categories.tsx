@@ -110,7 +110,7 @@ const Categories = ({}: Props) => {
               ))}
             </tr>
           </thead>
-          <tbody className="text-dropdownText text-left text-[13px] relative text-base">
+          <tbody className="text-dropdownText text-left text-[13px] relative text-sm">
   {data.map((item, index) => (
     <tr className="relative" key={index}>
       <td className="py-5 px-6 border-y border-tableBorder">

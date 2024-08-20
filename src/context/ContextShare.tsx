@@ -23,7 +23,6 @@ interface CurrencyResponseContextType {
   setCurrencyResponse: React.Dispatch<React.SetStateAction<any>>;
 }
 
-
 export const cashResponseContext = createContext<
   CashResponseContextType | undefined
 >(undefined);
@@ -31,43 +30,44 @@ export const BankResponseContext = createContext<
   BankResponseContextType | undefined
 >(undefined);
 
-export const CurrencyResponseContext= createContext<
- CurrencyResponseContextType | undefined
+export const CurrencyResponseContext = createContext<
+  CurrencyResponseContextType | undefined
 >(undefined);
 
 export const GstResponseContext = createContext<
-GstResponseContextType | undefined
+  GstResponseContextType | undefined
 >(undefined);
 export const VatResponseContext = createContext<
-VatResponseContextType | undefined
+  VatResponseContextType | undefined
 >(undefined);
 
 interface ContextShareProps {
   children: ReactNode;
 }
 
-
 const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
   const [cashResponse, setCashResponse] = useState<any>({});
   const [bankResponse, setBankResponse] = useState<any>({});
-  const [currencyResponse,setCurrencyResponse]=useState<any>({});
-  const [gstResponse,setGstResponse]=useState<any>({});
-  const [vatResponse,setVatResponse]=useState<any>({});
+  const [currencyResponse, setCurrencyResponse] = useState<any>({});
+  const [gstResponse, setGstResponse] = useState<any>({});
+  const [vatResponse, setVatResponse] = useState<any>({});
 
   return (
     <cashResponseContext.Provider value={{ cashResponse, setCashResponse }}>
-      <BankResponseContext.Provider value={{ bankResponse, setBankResponse }}>         
-        <GstResponseContext.Provider value={{gstResponse,setGstResponse}}>
-          <VatResponseContext.Provider value={{vatResponse,setVatResponse}}>
-          <CurrencyResponseContext.Provider value={{ currencyResponse, setCurrencyResponse }}>
-
-          {children}
-           </CurrencyResponseContext.Provider>
-          </VatResponseContext.Provider>
-        </GstResponseContext.Provider>
+      <BankResponseContext.Provider value={{ bankResponse, setBankResponse }}>
+        <CurrencyResponseContext.Provider
+          value={{ currencyResponse, setCurrencyResponse }}
+        >
+          <GstResponseContext.Provider value={{ gstResponse, setGstResponse }}>
+            <VatResponseContext.Provider
+              value={{ vatResponse, setVatResponse }}
+            >
+              {children}
+            </VatResponseContext.Provider>
+          </GstResponseContext.Provider>
+        </CurrencyResponseContext.Provider>
       </BankResponseContext.Provider>
     </cashResponseContext.Provider>
-
   );
 };
 

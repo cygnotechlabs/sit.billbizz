@@ -5,7 +5,7 @@ import bgImage from "../../../../assets/Images/14.png";
 import Button from "../../../../Components/Button";
 
 type TaxGst = {
-  id: string;
+  _id: string;
   taxName: string;
   taxRate: string;
   cgst: string;

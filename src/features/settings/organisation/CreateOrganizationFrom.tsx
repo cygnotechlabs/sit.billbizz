@@ -32,14 +32,13 @@ interface InputData {
   dateSplit: string;
   phoneNumberCode: string;
 }
-
+ 
 const CreateOrganizationForm = () => {
   const [additionalData, setAdditionalData] = useState<any | null>([]);
   // const [oneOrganization, setOneOrganization] = useState<any | []>([]);
   const [countryData, setcountryData] = useState<any | []>([]);
   const [currencyData, setcurrencyData] = useState<any | []>([]);
   const [stateList, setStateList] = useState<any | []>([]);
-  const [phoneCodeList, setPhoneCodeList] = useState<any | []>([]);
   const { request: getAdditionalData } = useApi("get", 5004);
   const { request: createOrganization } = useApi("post", 5004);
   const { request: getOneOrganization } = useApi("put", 5004);
@@ -82,7 +81,7 @@ const CreateOrganizationForm = () => {
       console.log("Error in fetching Additional data", error);
     }
   };
-
+ 
   const getCountryData = async () => {
     try {
       const url = `${endponits.GET_COUNTRY_DATA}`;
@@ -95,7 +94,7 @@ const CreateOrganizationForm = () => {
       console.log("Error in fetching country data", error);
     }
   };
-
+ 
   const getcurrencyData = async () => {
     try {
       const url = `${endponits.GET_CURRENCY_LIST}`;
@@ -110,7 +109,7 @@ const CreateOrganizationForm = () => {
       console.log("Error in fetching currency data", error);
     }
   };
-
+ 
   const getOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
@@ -118,7 +117,6 @@ const CreateOrganizationForm = () => {
         organizationId: "INDORG0001",
       });
       // console.log(apiResponse);
-
       const { response, error } = apiResponse;
       if (!error && response?.data) {
         // setOneOrganization(response.data);
@@ -151,7 +149,7 @@ const CreateOrganizationForm = () => {
     const { name, value } = e.target;
     setInputData({ ...inputData, [name]: value });
   };
-
+ 
   const handleFileChange = (
     e: ChangeEvent<HTMLInputElement>,
     key: "organizationLogo"
@@ -159,9 +157,9 @@ const CreateOrganizationForm = () => {
     const file = e.target.files?.[0];
     if (file) {
       // if (key === "organizationLogo") setLogo(file);
-
+ 
       const reader = new FileReader();
-
+ 
       reader.onloadend = () => {
         const base64String = reader.result as string;
         // console.log("Base64 String:", base64String);
@@ -170,7 +168,7 @@ const CreateOrganizationForm = () => {
           [key]: base64String,
         }));
       };
-
+ 
       reader.readAsDataURL(file);
     }
   };
@@ -223,7 +221,7 @@ const CreateOrganizationForm = () => {
       const url = `${endponits.CREATE_ORGANIZATION}`;
       const apiResponse = await createOrganization(url, inputData);
       // console.log(apiResponse, "api response");
-
+ 
       const { response, error } = apiResponse;
       if (!error && response) {
         toast.success(response.data.message);
@@ -234,21 +232,19 @@ const CreateOrganizationForm = () => {
       console.log(error, "Error in creating organization");
     }
   };
-
   const handleDeleteImage = () => {
     setInputData((prevDetails: any) => ({
       ...prevDetails,
       organizationLogo: "",
     }));
   };
-
   useEffect(() => {
     getDropdownList();
     getOrganization();
     getCountryData();
     getcurrencyData();
   }, []);
-
+ 
   useEffect(() => {
     if (inputData.organizationCountry) {
       const country = countryData.find(
@@ -256,15 +252,13 @@ const CreateOrganizationForm = () => {
       );
       if (country) {
         setStateList(country.states || []);
-        setPhoneCodeList(country.phoneNumberCode);
       }
     }
   }, [inputData.organizationCountry, countryData, inputData.organizationLogo]);
-
   return (
     <div className=" m-4 overflow-y-scroll hide-scrollbar h-auto">
       <Banner seeOrgDetails />
-
+ 
       {/* FORM */}
       <form className="text-slate-800 text-sm">
         <div className="h-56 p-3 border-dashed border-neutral-400  rounded-md mt-5 border bg-white text-textColor w-[403px]">
@@ -321,11 +315,11 @@ const CreateOrganizationForm = () => {
             </p>
           </div>
         </div>
-
+ 
         <p className="mt-4 text-textColor">
           <b>Organizational Details</b>
         </p>
-
+ 
         <div className="bg-white border-slate-200  border-2 rounded-md mt-4 p-5">
           <div className="grid grid-cols-2 gap-4 ">
             <div className="relative ">
@@ -356,7 +350,7 @@ const CreateOrganizationForm = () => {
                 </div>
               </div>
             </div>
-
+ 
             <div className="relative ">
               <label htmlFor="organizationIndustry" className="text-slate-600">
                 Industry
@@ -370,7 +364,7 @@ const CreateOrganizationForm = () => {
                   className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Industry</option>
-
+ 
                   {additionalData.industry &&
                   additionalData.industry.length > 0 ? (
                     additionalData.industry.map((item: any, index: any) => (
@@ -403,7 +397,7 @@ const CreateOrganizationForm = () => {
                 onChange={handleInputChange}
               />{" "}
             </div>
-
+ 
             <div>
               <input
                 className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
@@ -430,7 +424,7 @@ const CreateOrganizationForm = () => {
                 onChange={handleInputChange}
               />{" "}
             </div>
-
+ 
             <div>
               <div className="-mt-4">
                 <label
@@ -478,13 +472,13 @@ const CreateOrganizationForm = () => {
                     <></>
                   )}
                 </select>
-
+ 
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <CehvronDown color="gray" />
                 </div>
               </div>
             </div>
-
+ 
             <div>
               <div className="-mt-4">
                 <label
@@ -557,7 +551,7 @@ const CreateOrganizationForm = () => {
             </div>
           </div>
         </div>
-
+ 
         <p className="mt-4">
           <b>Website Address</b>
         </p>
@@ -583,7 +577,7 @@ const CreateOrganizationForm = () => {
               <label htmlFor="currency" className="text-slate-600">
                 Base Currency
               </label>
-
+ 
               <div className="relative w-full mt-3">
                 <select
                   value={inputData.baseCurrency}
@@ -604,12 +598,12 @@ const CreateOrganizationForm = () => {
                 </div>
               </div>
             </div>
-
+ 
             <div className="relative">
               <label htmlFor="fiscalYear" className="text-slate-600">
                 Financial Year
               </label>
-
+ 
               <div className="relative w-full mt-3">
                 <select
                   value={inputData.fiscalYear}
@@ -619,7 +613,7 @@ const CreateOrganizationForm = () => {
                   className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Financial Year</option>
-
+ 
                   {additionalData.financialYear &&
                   additionalData.financialYear.length > 0 ? (
                     additionalData.financialYear.map(
@@ -751,7 +745,7 @@ const CreateOrganizationForm = () => {
                     <></>
                   )}
                 </select>
-
+ 
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <CehvronDown color="gray" />
                 </div>
@@ -767,7 +761,7 @@ const CreateOrganizationForm = () => {
                   className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Date Split</option>
-
+ 
                   {additionalData?.dateSplit &&
                   additionalData?.dateSplit.length > 0 ? (
                     additionalData?.dateSplit.map((item: any, index: any) => (
@@ -786,7 +780,7 @@ const CreateOrganizationForm = () => {
             </div>
           </div>
         </div>
-
+ 
         <div className="flex my-4 gap-4">
           <Button
             variant="primary"
@@ -795,16 +789,16 @@ const CreateOrganizationForm = () => {
           >
             Save
           </Button>
-
+ 
           <Button variant="secondary" size="sm">
             Cancel
           </Button>
         </div>
       </form>
-
+ 
       <Toaster position="top-center" reverseOrder={true} />
     </div>
   );
 };
-
+ 
 export default CreateOrganizationForm;
