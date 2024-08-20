@@ -6,6 +6,8 @@ import SearchBar from "../../../../Components/SearchBar";
 import Button from "../../../../Components/Button";
 import ListFilter from "../../../../assets/icons/ListFilter";
 import Delete from "../../../../assets/icons/Delete";
+import Modal from "../../../../Components/model/Modal";
+import bgImage from "../../../../assets/Images/14.png"
 
 type Props = {};
 
@@ -49,6 +51,15 @@ const data = [
 const Categories = ({}: Props) => {
   const [selectedTab, setSelectedTab] = useState<string>("All");
   const [searchValue, setSearchValue] = useState<string>("");
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
 
   return (
     <div className="bg-white p-5 my-4 space-y-5">
@@ -116,7 +127,7 @@ const Categories = ({}: Props) => {
       <td className="py-5 px-6 border-y border-tableBorder">
         <input type="checkbox" className="form-checkbox w-4 h-4" />
       </td>
-      <td className="py-5 px-6 border-y text-center border-tableBorder whitespace-nowrap">
+      <td className="py-5 px-6 border-y text-center border-tableBorder whitespace-nowrap"  onClick={openModal}>
         {item.categoryName}
       </td>
       <td className="py-5 px-24 border-y border-tableBorder whitespace-pre-wrap">
@@ -132,6 +143,70 @@ const Categories = ({}: Props) => {
 
         </table>
       </div>
+
+      <Modal open={isModalOpen} onClose={closeModal}  style={{width:"39%"}}>
+          <div className="p-5 mt-3">
+            <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
+              <div
+                className="absolute top-0 -right-8 w-[178px] h-[89px]"
+                style={{
+                  backgroundImage: `url(${bgImage})`,
+                  backgroundRepeat: "no-repeat",
+                }}
+              ></div>
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold text-textColor">
+                 Edit Category
+                </h3>
+              
+              </div>
+              <div
+                className="ms-auto text-3xl cursor-pointer relative z-10"
+                onClick={closeModal}
+              >
+                &times;
+              </div>
+            </div>
+
+            <form className="">
+              <div className="">
+                <div className="mb-3">
+                  <label className="block text-sm mb-1 text-labelColor">
+                  Category  Name
+                  </label>
+                  <input
+                    type="text"
+                    className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-10 focus:outline-none focus:bg-white focus:border-darkRed"
+                  />
+                </div>
+
+                <div className="">
+                  <label className="block text-sm mb-1 text-labelColor">
+                    Hint <span className="text-neutral-400">(Max 50 chars)</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 focus:outline-none focus:bg-white focus:border-darkRed"
+                  />
+                </div>
+              
+
+                <br />
+                <div className="flex justify-end gap-2 mb-3">
+
+                 
+                  <Button variant="primary" size="sm">
+                    Save
+                  </Button>
+                   <Button onClick={closeModal} variant="secondary" size="sm">
+
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </Modal>
     </div>
   );
 };

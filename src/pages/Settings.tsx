@@ -1,10 +1,24 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import organizationImg from "../assets/Images/Rectangle 5415.png";
+import taximg from "../assets/Images/Rectangle 5415 (1).png";
+import usersImg from "../assets/Images/Rectangle 5415 (2).png";
+import preferencesImg from "../assets/Images/Rectangle 5415 (3).png";
+import salesImg from "../assets/Images/Rectangle 5415 (4).png";
+import purchaseImg from "../assets/Images/Rectangle 5415 (5).png";
+import itemsImg from "../assets/Images/Rectangle 5415 (6).png";
+import paymentImg from "../assets/Images/Rectangle 5415 (7).png";
+import CustomizationImg from "../assets/Images/Rectangle 5415 (8).png";
+import reminderImg from "../assets/Images/Rectangle 5415 (9).png";
+import rewardImg from "../assets/Images/Rectangle 5415 (10).png";
+import Button from "../Components/Button";
+import SearchBar from "../Components/SearchBar";
+import ArrowrightUp from "../assets/icons/ArrowrightUp";
 
 interface Setting {
   title: string;
   description: string;
-  imageUrl: string;
+  imageUrl: any;
   route: string;
 }
 
@@ -12,62 +26,68 @@ const settingsData: Setting[] = [
   {
     title: "Organization",
     description: "Manage organization settings",
-    imageUrl: "url-to-organization-image",
+    imageUrl: organizationImg,
     route: "/settings/organization/profile",
   },
   {
     title: "Taxes & Compliance",
     description: "Manage taxes and compliance settings",
-    imageUrl: "url-to-taxes-image",
-    route: "/settings/taxes-compliance",
+    imageUrl: taximg,
+    route: "/settings/taxes",
   },
   {
     title: "Users & Roles",
     description: "Manage users and roles settings",
-    imageUrl: "url-to-users-image",
+    imageUrl: usersImg,
     route: "/settings/users-roles",
   },
   {
     title: "Preferences",
     description: "Manage system preferences",
-    imageUrl: "url-to-preferences-image",
+    imageUrl: preferencesImg,
     route: "/settings/preferences",
   },
   {
     title: "Sales",
     description: "Manage sales settings",
-    imageUrl: "url-to-sales-image",
+    imageUrl: salesImg,
     route: "/settings/sales",
   },
   {
     title: "Purchases",
     description: "Manage purchases settings",
-    imageUrl: "url-to-purchases-image",
+    imageUrl: purchaseImg,
     route: "/settings/purchases",
   },
   {
     title: "Items",
     description: "Manage item settings",
-    imageUrl: "url-to-items-image",
+    imageUrl: itemsImg,
     route: "/settings/items/item",
   },
   {
     title: "Online Payments",
     description: "Manage online payment settings",
-    imageUrl: "url-to-online-payments-image",
+    imageUrl: paymentImg,
     route: "/settings/online-payments",
   },
   {
     title: "Customization",
     description: "Manage customization settings",
-    imageUrl: "url-to-customization-image",
+    imageUrl: CustomizationImg,
     route: "/settings/customization",
   },
   {
     title: "Reminder & Notification",
     description: "Manage reminder and notification settings",
-    imageUrl: "url-to-reminder-image",
+    imageUrl: reminderImg,
     route: "/settings/reminder-notification",
+  },
+  {
+    title: "Reward Settings",
+    description: "Manage reward settings",
+    imageUrl: rewardImg,
+    route: "settings/rewards",
   },
 ];
 
@@ -77,45 +97,60 @@ const SettingCard: React.FC<Setting> = ({
   imageUrl,
   route,
 }) => (
-  <div className="bg-white rounded-lg shadow-md p-4 text-center">
+  <div className="bg-white rounded-[4px] shadow-md  text-center">
     <img
       src={imageUrl}
       alt={title}
-      className="w-full h-32 object-cover rounded-t-lg"
+      className="w-full h-24 object-cover rounded-t-[4px]"
     />
-    <h3 className="mt-4 text-lg font-semibold">{title}</h3>
-    <p className="text-gray-500">{description}</p>
+  <div className="my-5 mx-8 items-center text-sm text-textColor h-28 flex flex-col justify-between">
+  <div>
+    <h3 className=" text-base font-semibold">{title}</h3>
+    <p className="text-gray-500 text-sm mt-1">{description}</p>
+  </div>
+  <div className="flex items-center justify-center mt-1">
     <Link to={route}>
-      <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-        See Details
-      </button>
+      <Button
+        variant="secondary"
+        size="sm"
+        className="bg-blue-500 rounded hover:bg-blue-600 text-sm"
+      >
+        See Details <ArrowrightUp/>
+      </Button>
     </Link>
+  </div>
+</div>
+
+
   </div>
 );
 
 const Settings: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [searchTerm, setSearchTerm] = useState("");
+  const [searchValue, setSearchValue] = useState<string>("");
 
   const filteredSettings = settingsData.filter((setting) =>
-    setting.title.toLowerCase().includes(searchTerm.toLowerCase())
+    setting.title.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">All Settings</h1>
-        <input
-          type="text"
-          placeholder="Search in Settings"
-          className="border border-gray-300 rounded-lg py-2 px-4"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">
-          Close
-        </button>
+      <div className="flex justify-between items-center mb-6 ">
+        <h1 className="text-2xl font-bold min-w-fit">All Settings</h1>
+        <div className="ml-auto flex gap-4 w-full">
+          <div className="w-[50%] ml-auto">
+            <SearchBar
+              placeholder="Serach"
+              searchValue={searchValue}
+              onSearchChange={setSearchValue}
+            />
+          </div>
+          <button className="bg-white  px-4 py-1   rounded-lg border-textColor border text-sm">
+            Close <span className="text-lg ms-1 -mt-1"> &times;</span>
+          </button>
+        </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-14">
         {filteredSettings.map((setting) => (
           <SettingCard key={setting.title} {...setting} />
         ))}
