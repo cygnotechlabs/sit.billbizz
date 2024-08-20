@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import CalenderIcon from "../../../../assets/icons/CalenderIcon";
 import Button from "../../../../Components/Button";
 import useApi from "../../../../Hooks/useApi";
@@ -21,7 +21,36 @@ function GstSettings({ }: GstSettingsProps) {
   };
 
   const [gstSettings, setGstSettings] = useState(initialGstSettings);
-  const { request: CreateGstSettings } = useApi("post", 5004);
+  const { request: fetchGstSettings } = useApi("put", 5004);
+  const { request: createGstSettings } = useApi("post", 5004);
+
+  // Fetch GST settings
+  const getGstSettings = async () => {
+    try {
+      const url = `${endponits.GET_ALL_TAX}`;
+      const { response, error } = await fetchGstSettings(url, {
+        organizationId: "INDORG0001",
+      });
+
+      if (!error && response?.data) {
+        setGstSettings((prevData) => ({
+          ...prevData,
+          gstIn: response.data.gstIn || "",
+          gstBusinesLegalName: response.data.gstBusinesLegalName || "",
+          gstBusinessTradeName: response.data.gstBusinessTradeName || "",
+          gstRegisteredDate: response.data.gstRegisteredDate || "",
+          compositionSchema: response.data.compositionSchema || "",
+          compositionPercentage: response.data.compositionPercentage || "",
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching GST data:", error);
+    }
+  };
+
+  useEffect(() => {
+    getGstSettings();
+  }, []);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,10 +65,11 @@ function GstSettings({ }: GstSettingsProps) {
     try {
       const url = `${endponits.ADD_NEW_TAX}`;
       const body = gstSettings;
-      const { response, error } = await CreateGstSettings(url, body);
+      const { response, error } = await createGstSettings(url, body);
       if (!error && response) {
         toast.success(response.data.message);
-        setGstSettings(initialGstSettings);
+        // Immediately update the state with the new data
+        setGstSettings(response.data);
       } else {
         toast.error(error.response.data.message);
       }
@@ -67,7 +97,7 @@ function GstSettings({ }: GstSettingsProps) {
               <div className={`w-11 h-6 rounded-full shadow-inner transition-colors ${isGstRegistered ? 'bg-checkBox' : 'bg-dropdownBorder'}`}></div>
               <div className={`dot absolute w-4 h-4 bg-white rounded-full top-1 transition-transform ${isGstRegistered ? 'transform translate-x-full left-2' : 'left-1'}`}></div>
             </div>
-            <div className="ml-3 text-textColor  text-sm">{isGstRegistered ? 'Yes' : 'Yes'}</div>
+            <div className="ml-3 text-textColor  text-sm">{isGstRegistered ? 'Yes' : 'No'}</div>
           </label>
         </div>
       </div>
@@ -103,8 +133,20 @@ function GstSettings({ }: GstSettingsProps) {
                     Composite Scheme
                   </label>
                   <div className="flex items-center gap-3">
-                    <input type="checkbox" className="accent-[#97998E] bg-white h-5 w-5" id="checkbox3" />
-                    <label htmlFor="checkbox3" className="mt-0.5">
+                    <input
+                      type="checkbox"
+                      className="accent-[#97998E] bg-white h-5 w-5"
+                      id="compositionSchema"
+                      name="compositionSchema"
+                      checked={gstSettings.compositionSchema === "1"}
+                      onChange={() =>
+                        setGstSettings((prev) => ({
+                          ...prev,
+                          compositionSchema: prev.compositionSchema === "1" ? "0" : "1",
+                        }))
+                      }
+                    />
+                    <label htmlFor="compositionSchema" className="mt-0.5">
                       My business is registered for Composition Scheme.
                     </label>
                   </div>

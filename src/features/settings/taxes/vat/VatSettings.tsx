@@ -1,10 +1,9 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Button from "../../../../Components/Button";
 import CalenderIcon from "../../../../assets/icons/CalenderIcon";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
- 
 type Props = {};
  
 function VatSettings({}: Props) {
@@ -19,8 +18,36 @@ function VatSettings({}: Props) {
   };
  
   const [vatSettings, setVatSettings] = useState(initialVatSettings);
-  const { request: CreateVatSettings } = useApi("post", 5004);
- 
+  const { request: fetchVatSettings } = useApi("put", 5004);
+  const { request: createVatSettings } = useApi("post", 5004);
+
+  // Fetch VAT settings
+  const getVatSettings = async () => {
+    try {
+      const url = `${endponits.GET_ALL_TAX}`;
+      const { response, error } = await fetchVatSettings(url, {
+        organizationId: "INDORG0001",
+      });
+
+      if (!error && response?.data) {
+        setVatSettings((prevData) => ({
+          ...prevData,
+          vatNumber: response.data.vatNumber || "",
+          vatBusinesLegalName: response.data.vatBusinesLegalName || "",
+          vatBusinessTradeName: response.data.vatBusinessTradeName || "",
+          vatRegisteredDate: response.data.vatRegisteredDate || "",
+          tinNumber: response.data.tinNumber || "",
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching VAT data:", error);
+    }
+  };
+
+  useEffect(() => {
+    getVatSettings();
+  }, []);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setVatSettings((prevVatSettings) => ({
@@ -34,10 +61,10 @@ function VatSettings({}: Props) {
     try {
       const url = `${endponits.ADD_NEW_TAX}`;
       const body = vatSettings;
-      const { response, error } = await CreateVatSettings(url, body);
+      const { response, error } = await createVatSettings(url, body);
       if (!error && response) {
         toast.success(response.data.message);
-        setVatSettings(initialVatSettings);
+        setVatSettings(response.data);
       } else {
         toast.error(error.response.data.message);
       }
