@@ -9,6 +9,7 @@ const categoriesController = require("../../BillBizz/controller/categoriesContro
 const brandController = require('../../BillBizz/controller/brandController')
 const rackController = require('../../BillBizz/controller/rackController')
 const itemDropdownController = require("../../BillBizz/controller/itemDropdownController")
+const itemSettingsController = require("../controller/itemSettingsController")
 
 
 
@@ -68,11 +69,11 @@ router.delete('/delete-rack/:id', rackController.deleteRack);
 
 
 //item dropdowm
-router.put('/get-itemTaxRate', itemDropdownController.getItemDropdowm);
+router.put('/get-itemDropdown', itemDropdownController.getItemDropdowm);
 
 
 //items settings
-// router.post('/add-item-settings',itemSettings.addItemSettings);
+router.put('/add-item-settings',itemSettingsController.addItemSettings);
 // router.post('/get-item-settings',itemSettings.getItemSettings);
 
 

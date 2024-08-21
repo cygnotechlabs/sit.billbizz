@@ -5,9 +5,10 @@ const Brand = require('../database/model/brand');
 const Rack = require('../database/model/rack');
 const Unit = require('../database/model/unit');
 const Categories = require('../database/model/categories');
+const Settings = require('../database/model/settings');
 
 
-//Get tax rate
+//Get ItemDropdowm and get item settings field
 exports.getItemDropdowm = async (req, res) => {
     const { organizationId } = req.body;
     try {
@@ -17,6 +18,14 @@ exports.getItemDropdowm = async (req, res) => {
         if (!existingOrganization) {
         return res.status(404).json({
             message: "No Organization Found.",
+        });
+        }
+
+        // Fetch settings data
+        const settings = await Settings.findOne({ organizationId });
+        if (!settings) {
+        return res.status(500).json({
+            message: "Settings not found for the organization.",
         });
         }
 
@@ -75,6 +84,12 @@ exports.getItemDropdowm = async (req, res) => {
             rackName: rack.map(r => r.rackName),
             categoriesName: categories.map(c => c.name),
             unitName: unit.map(u => u.unitName),
+            itemSettings: {
+                itemDecimal: settings.itemDecimal,
+                itemDuplicateName: settings.itemDuplicateName,
+                hsnSac: settings.hsnSac,
+                fourDigitHsn: settings.fourDigitHsn,
+            },
             taxType: taxData.taxType,
         };
 

@@ -1,6 +1,18 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+const shipSchema = new Schema({
+  shipAttention: { type: String },
+  shipStreet1: { type: String },
+  shipStreet2: { type: String },
+  shipCity: { type: String },
+  shipState: { type: String },
+  shipZip: { type: String },
+  shipCountry: { type: String },
+  shipPhone: { type: String },
+  status: { type: Boolean }
+});
+
 
 const settingSchema = new Schema({
   organizationId: {type:String},
@@ -17,7 +29,7 @@ const settingSchema = new Schema({
   facebookLink: { type: String },  displayFacebookLink: { type: Boolean },
   
   //bankfield
-  accountHolderName: { type: String },  bankName: { type: String },  accNum: { type: String },  ifsc: { type: String },
+  accountHolderName: { type: String },  bankNamse: { type: String },  accNum: { type: String },  ifsc: { type: String },
 
   //Item
   itemDecimal: { type: String },
@@ -27,7 +39,7 @@ const settingSchema = new Schema({
 
   itemDuplicateName: { type: Boolean }, //default:false
   hsnSac: { type: Boolean }, //default:false
-  fourDigitHsn: { type: Boolean }, //default:true  true=4 false=6
+  hsnDigits: { type: String }, // 4, 6
 
   priceList: { type: Boolean }, //default:false
   priceListAtLineLevel: { type: Boolean }, //default:false
@@ -35,7 +47,7 @@ const settingSchema = new Schema({
   compositeItem: { type: Boolean }, //default:false
 
   stockBelowZero: { type: Boolean }, //default:false
-  OutOfStockBelowZero : { type: Boolean }, //default:false
+  outOfStockBelowZero : { type: Boolean }, //default:false
   notifyReorderPoint: { type: Boolean }, //default:false
   trackCostOnItems: { type: Boolean }, //default:false
 
@@ -46,14 +58,46 @@ const settingSchema = new Schema({
 
 
   //Sales Order
-  salesOrderAddress: { type: Boolean },  salesOrderCustomerNote: { type: Boolean },  salesOrderTermsCondition: { type: Boolean },
-  salesOrderClose: { type: String }, //When invoice is created,  When shipment is fulfilled,  When shipment is fulfilled and invoice is created  
-  restrictSalesOrderClose: { type: Boolean },
+  salesOrderAddress: { type: Boolean },//deafult=false
+  salesOrderCustomerNote: { type: Boolean },//deafult=false
+  salesOrderTermsCondition: { type: Boolean },//deafult=false
+  salesOrderClose: { type: String }, //default=invoice    (invoice, shipment, shipmentAndInvoice)
+  restrictSalesOrderClose: { type: Boolean }, //deafult=false
   termCondition: { type: String },
   customerNote: { type: String },
 
   //Shipment
-  carrierNotification: { type: Boolean },  manualNotification: { type: Boolean },
+  carrierNotification: { type: Boolean }, //deafult=false
+  manualNotification: { type: Boolean }, //deafult=false
+
+  shippingAddress:[shipSchema],
+
+  //Invoice
+
+  invoiceEdit: { type: String },
+  displayExpenseReceipt: { type: String },
+  salesOrserNumber: { type: Boolean }, //default=true  true=sales order number   false = Sales Order Reference Number
+  paymentReceipt: { type: Boolean },//default= false
+  invoiceQrCode: { type: Boolean },//default= false
+  invoiceQrType: { type: String },
+  invoiceQrDescription: { type: String },
+  zeroValue: { type: Boolean },
+  salesInvoiceTC: { type: String },
+  salesInvoiceCN: { type: String },
+
+  //Delivery Chellans
+  deliveryChellanTC: { type: String },
+  deliveryChellanCN: { type: String },
+
+  //Credit Note
+  overideCostPrice: { type: Boolean },//default=false
+  creditNoteQr: { type: Boolean },//default=false
+  creditNoteQrType: { type: String },
+  creditNoteQrDespriction: { type: String },
+  recordLocking: { type: Boolean },//default=false
+  creditNoteTC: { type: String },
+  creditNoteCN: { type: String },
+  
 
 
 
