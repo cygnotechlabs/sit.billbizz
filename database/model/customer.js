@@ -5,9 +5,7 @@ const contactPersonSchema = new Schema({
     salutation: {type:String},
     firstName: {type:String},
     lastName: {type:String},
-    companyName: {type:String},
-    customerEmail: {type:String},
-    workPhone: {type:String},
+    email: {type:String},
     mobile: {type:String},
   }, { _id: false });
 
@@ -22,6 +20,7 @@ const customerSchema = new Schema({
     firstName: {type:String},
     lastName: {type:String},
     companyName: {type:String},
+    customerDisplayName: {type:String},
 
     customerEmail: {type:String},
     workPhone: {type:String},
@@ -57,20 +56,24 @@ const customerSchema = new Schema({
     //Billing Address
     billingAttention: {type:String},
     billingCountry: {type:String},
-    billingAddress: {type:String},
+    billingAddressLine1: {type:String},
+    billingAddressLine2: {type:String},
     billingCity: {type:String},
     billingState: {type:String},
     billingPinCode: {type:String},
+    billingPhoneCode: {type:String},
     billingPhone: {type:String},
     billingFaxNumber: {type:String},
 
     //Shipping Address
     shippingAttention: {type:String},
     shippingCountry: {type:String},
-    shippingAddress: {type:String},
+    shippingAddress1: {type:String},
+    shippingAddress2: {type:String},
     shippingCity: {type:String},
     shippingState: {type:String},
     shippingPinCode: {type:String},
+    shippingPhoneCode: {type:String},
     shippingPhone: {type:String},
     shippingFaxNumber: {type:String},
 
