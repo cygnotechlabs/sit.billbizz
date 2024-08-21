@@ -15,7 +15,6 @@ import Modal from "../../../../Components/model/Modal";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import Banner from "../../banner/Banner";
-import PaymentTerms from "./PaymentTerms";
 type Props = {};
 
 function InvoiceSettings({}: Props) {
@@ -357,7 +356,7 @@ function InvoiceSettings({}: Props) {
                 id="customCheckbox"
                 checked={invoiceSettings.displayQrLocation}
               />
-              <label className="text-[14px]">Display QR Code in Invoice</label>
+              <label className="text-[14px]">Display in Invoice</label>
             </div>
           </div>
 
@@ -461,7 +460,7 @@ function InvoiceSettings({}: Props) {
                 type="checkbox"
                 id="customCheckbox"
               />
-              <label className="text-[14px]">Display QR Code in Invoice</label>
+              <label className="text-[14px]">Display in Invoice</label>
             </div>
           </div>
 
@@ -577,7 +576,7 @@ function InvoiceSettings({}: Props) {
                 id="customCheckbox"
               />
               <label className="text-[14px]">
-                Display Digital Signature in Invoice
+                Display in Invoice
               </label>
             </div>
           </div>
@@ -614,7 +613,7 @@ function InvoiceSettings({}: Props) {
           type="checkbox"
           id="customCheckbox"
         />
-        <label className="text-[14px]">Display QR Code in Invoice</label>
+        <label className="text-[14px]">Display in Invoice</label>
       </div>
     </div>
 
@@ -648,7 +647,7 @@ function InvoiceSettings({}: Props) {
           type="checkbox"
           id="customCheckbox"
         />
-        <label className="text-[14px]">Display QR Code in Invoice</label>
+        <label className="text-[14px]">Display in Invoice</label>
       </div>
     </div>
   </div>
@@ -684,7 +683,7 @@ function InvoiceSettings({}: Props) {
           type="checkbox"
           id="customCheckbox"
         />
-        <label className="text-[14px]">Display QR Code in Invoice</label>
+        <label className="text-[14px]">Display in Invoice</label>
       </div>
     </div>
 
@@ -718,7 +717,7 @@ function InvoiceSettings({}: Props) {
           type="checkbox"
           id="customCheckbox"
         />
-        <label className="text-[14px]">Display QR Code in Invoice</label>
+        <label className="text-[14px]">Display in Invoice</label>
       </div>
     </div>
   </div>
@@ -744,8 +743,19 @@ function InvoiceSettings({}: Props) {
         value={invoiceSettings.accountHolderName}
         name="accountHolderName"
       />
+      <div className="flex items-center space-x-2 mt-3">
+        <input
+          checked={invoiceSettings.displayXLink}
+          onChange={(e) =>
+            handleEventBindChange(e.target.checked, "displayXLink")
+          }
+          type="checkbox"
+          id="customCheckbox"
+        />
+        <label className="text-[14px]">Display in Invoice</label>
+      </div>
     </div>
-
+    
     <div>
       <label className="text-slate-600">Bank Name</label>
       <input
@@ -758,6 +768,17 @@ function InvoiceSettings({}: Props) {
         value={invoiceSettings.bankName}
         name="bankName"
       />
+      <div className="flex items-center space-x-2 mt-3">
+        <input
+          checked={invoiceSettings.displayXLink}
+          onChange={(e) =>
+            handleEventBindChange(e.target.checked, "displayXLink")
+          }
+          type="checkbox"
+          id="customCheckbox"
+        />
+        <label className="text-[14px]">Display in Invoice</label>
+      </div>
     </div>
   </div>
 
@@ -774,6 +795,17 @@ function InvoiceSettings({}: Props) {
         value={invoiceSettings.accNum}
         name="accNum"
       />
+      <div className="flex items-center space-x-2 mt-3">
+        <input
+          checked={invoiceSettings.displayXLink}
+          onChange={(e) =>
+            handleEventBindChange(e.target.checked, "displayXLink")
+          }
+          type="checkbox"
+          id="customCheckbox"
+        />
+        <label className="text-[14px]">Display in Invoice</label>
+      </div>
     </div>
 
     <div>
@@ -788,6 +820,17 @@ function InvoiceSettings({}: Props) {
         value={invoiceSettings.ifsc}
         name="ifsc"
       />
+      <div className="flex items-center space-x-2 mt-3">
+        <input
+          checked={invoiceSettings.displayXLink}
+          onChange={(e) =>
+            handleEventBindChange(e.target.checked, "displayXLink")
+          }
+          type="checkbox"
+          id="customCheckbox"
+        />
+        <label className="text-[14px]">Display in Invoice</label>
+      </div>
     </div>
   </div>
   <div />

@@ -237,8 +237,9 @@ export const paymentTermsList = [
 
 export const organizationList = [
   { title: "Profile", route: "/settings/organization/profile" },
-  { title: "Invoice", route: "/settings/invoice" },
   { title: "Currencies", route: "/settings/currencies" },
+  { title: "Additional Details", route: "/settings/invoice" },
+  
 ];
 
 export const taxList = [{ title: "Taxes", route: "/settings/taxes" }];
@@ -323,8 +324,9 @@ export const settingsList = [
     icon: userRound,
     subhead: [
       { headName: "Profile", subRoute: "/settings/organization/profile" },
-      { headName: "Invoice", subRoute: "/settings/organization/invoice" },
       { headName: "Currencies", subRoute: "/settings/organization/currencies" },
+      { headName: "Additional Details", subRoute: "/settings/organization/invoice" },
+      
     ],
   },
   {
