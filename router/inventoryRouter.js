@@ -2,13 +2,13 @@ const express = require("express")
 
 const router = new express.Router()
 
-const itemController = require("../../BillBizz/controller/itemController");
-const unitController = require("../../BillBizz/controller/unitController")
-const manufacturerController = require("../../BillBizz/controller/manufacturerController");
-const categoriesController = require("../../BillBizz/controller/categoriesController")
-const brandController = require('../../BillBizz/controller/brandController')
-const rackController = require('../../BillBizz/controller/rackController')
-const itemDropdownController = require("../../BillBizz/controller/itemDropdownController")
+const itemController = require("../controller/itemController");
+const unitController = require("../controller/unitController")
+const manufacturerController = require("../controller/manufacturerController");
+const categoriesController = require("../controller/categoriesController")
+const brandController = require('../controller/brandController')
+const rackController = require('../controller/rackController')
+const itemDropdownController = require("../controller/itemDropdownController")
 const itemSettingsController = require("../controller/itemSettingsController")
 
 
