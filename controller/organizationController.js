@@ -379,7 +379,7 @@ exports.setupOrganization = async (req, res) => {
       });
     }
 
-    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormat, dateSplit);
+    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
 
           console.log('Generated Date:', generatedDateTime.date);
           console.log('Generated Time:', generatedDateTime.time);

@@ -413,7 +413,11 @@ const createSettingsOrganization = async (organizationId) => {
 
     // Create settings
     const settings = [
-      {organizationId},     
+      {organizationId,
+      //item  
+      itemDuplicateName:false, hsnSac:false, fourDigitHsn:false, priceList:false, priceListAtLineLevel:false, compositeItem:false,
+      stockBelowZero:false, OutOfStockBelowZero :false, notifyReorderPoint:false, trackCostOnItems:false,}
+         
     ];
 
     await Setting.insertMany(settings);

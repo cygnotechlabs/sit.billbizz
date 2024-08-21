@@ -314,6 +314,9 @@ exports.getAllPaymentTerms = async (req, res) => {
 
 
 
+
+
+
 //Tax
 
 // Add Tax
