@@ -5,6 +5,7 @@ export const endponits = {
   GET_ONE_ORGANIZATION: `get-one-organization`,
   GET_COUNTRY_DATA: `get-countries-data`,
   GET_CURRENCY_LIST: `get-currency`,
+  
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_INVOICE_SETTINGS: "get-settings",
@@ -12,6 +13,10 @@ export const endponits = {
   EDIT_PAYMENT_TERMS: `edit-payment-terms/:id`,
   DELETE_PAYMENT_TERMS: `delete-payment-terms`,
   GET_PAYMENT_TERMS: `get-all-payment-terms`,
+
+  // items
+
+ADD_ITEMS:`add-item-settings`,
 
   // Accountant
   Get_ALL_Acounts: "get-all-account",
