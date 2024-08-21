@@ -11,8 +11,15 @@ import SettingsIcons from "../../../assets/icons/SettingsIcon";
 import Category from "../Category/Category";
 import RackModal from "../Rack/RackModal";
 import NewManufacture from "../Manufature/NewManufacture";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
 
 type Props = {};
+interface Account {
+  id: string;
+  accountName: string;
+  accountSubhead: string;
+}
 
 
 
@@ -65,6 +72,47 @@ const AddItem = ({}: Props) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [openDropdownIndex]);
+
+
+  const [accountData, setAccountData] = useState<Account[]>([]);
+  const [itemsData, setItemsData] = useState<[]>([]);
+  console.log(itemsData);
+  
+  
+  const { request: AllAccounts } = useApi("put", 5001);
+  const { request: AllItems } = useApi("put", 5003);
+
+
+  const fetchAllAccounts = async () => {
+    try {
+      const url = `${endponits.Get_ALL_Acounts}`;
+      const body = { organizationId: "INDORG0001" };
+      const { response, error } = await AllAccounts(url, body);
+      if (!error && response) {
+        setAccountData(response.data);
+        console.log(response);
+      }
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+    }
+  };
+  const fetchAllItems = async () => {
+    try {
+      const url = `${endponits.GET_ALL_ITEMS}`;
+      const body = { organizationId: "INDORG0001" };
+      const { response, error } = await AllItems(url, body);
+      if (!error && response) {
+        setItemsData(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    }
+  };
+
+useEffect(()=>{
+fetchAllAccounts()
+fetchAllItems()
+},[])
 
   return (
     <>
@@ -770,20 +818,33 @@ const AddItem = ({}: Props) => {
             />{" "}
           </div>
           
-          <div className="relative ">
-            <label htmlFor="" className="text-slate-600   text-sm  gap-2 ">
-              Account
-            </label>
+          <div className="relative">
+  <label htmlFor="" className="text-slate-600 text-sm gap-2">
+    Account
+  </label>
+  <div className="relative">
+    <div className="relative w-full">
+      <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
+        <option value=""  >
+          select income
+        </option>
+        <optgroup label="Income">
+          {accountData
+            .filter((account) => account.accountSubhead === "Income")
+            .map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.accountName}
+              </option>
+            ))}
+        </optgroup>
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <CehvronDown color="gray" />
+      </div>
+    </div>
+  </div>
+</div>
 
-            <div className="relative w-full ">
-              <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
-                <option value="">Select Account</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <CehvronDown color="gray" />
-              </div>
-            </div>
-          </div>
 
           <div>
             <label
@@ -823,21 +884,38 @@ const AddItem = ({}: Props) => {
               />{" "}
             </div>
           </div>
+          <div className="relative">
+  <label htmlFor="" className="text-slate-600 text-sm gap-2">
+    Account
+  </label>
+  <div className="relative w-full">
+    <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
+      <option value="" disabled hidden>Select Account</option>
+      <optgroup label="Expense">
+        {accountData
+          .filter((account) => account.accountSubhead === "Expense")
+          .map((account) => (
+            <option key={account.id} value={account.id}>
+              {account.accountName}
+            </option>
+          ))}
+      </optgroup>
+      <optgroup label="Cost of Goods Sold">
+        {accountData
+          .filter((account) => account.accountSubhead === "Cost of Goods Sold")
+          .map((account) => (
+            <option key={account.id} value={account.id}>
+              {account.accountName}
+            </option>
+          ))}
+      </optgroup>
+    </select>
+    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+      <CehvronDown color="gray" />
+    </div>
+  </div>
+</div>
 
-          <div className="relative ">
-            <label htmlFor="" className="text-slate-600   text-sm  gap-2 ">
-              Account
-            </label>
-
-            <div className="relative w-full ">
-              <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
-                <option value="">Select Account</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <CehvronDown color="gray" />
-              </div>
-            </div>
-          </div>
 
           <div>
             <label
@@ -909,14 +987,26 @@ const AddItem = ({}: Props) => {
               Inventory Account
             </label>
 
-            <div className="relative w-full ">
-              <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
-                <option value="">Select account</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <CehvronDown color="gray" />
-              </div>
-            </div>
+            <div className="relative w-full">
+  <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
+    <option value="" disabled hidden>Select account</option>
+    <optgroup label="Stock">
+      {accountData
+        .filter((account) => account.accountSubhead === "Stock")
+        .map((account) => (
+          <option key={account.id} value={account.id}>
+            {account.accountName}
+          </option>
+        ))}
+    </optgroup>
+  </select>
+  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+    <CehvronDown color="gray" />
+  </div>
+</div>
+
+
+            
           </div>
           <div>
             <label className="text-slate-600 flex text-sm  gap-2" htmlFor="">
