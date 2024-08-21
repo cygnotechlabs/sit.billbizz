@@ -7,7 +7,9 @@ import CehvronDown from "../../../assets/icons/CehvronDown";
 import Plus from "../../../assets/icons/Plus";
 import Banner from "../banner/Banner";
 import TrashCan from "../../../assets/icons/TrashCan";
- 
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+
 interface InputData {
   organizationId: string;
   organizationLogo: string;
@@ -23,9 +25,10 @@ interface InputData {
   website: string;
   baseCurrency: string;
   fiscalYear: string;
-  reportBasis: string;
   timeZone: string;
+  timeZoneExp:string;
   dateFormat: string;
+  dateFormatExp:string;
   dateSplit: string;
   phoneNumberCode: string;
 }
@@ -36,7 +39,6 @@ const CreateOrganizationForm = () => {
   const [countryData, setcountryData] = useState<any | []>([]);
   const [currencyData, setcurrencyData] = useState<any | []>([]);
   const [stateList, setStateList] = useState<any | []>([]);
-  const [phoneCodeList, setPhoneCodeList] = useState<any | []>([]);
   const { request: getAdditionalData } = useApi("get", 5004);
   const { request: createOrganization } = useApi("post", 5004);
   const { request: getOneOrganization } = useApi("put", 5004);
@@ -56,19 +58,24 @@ const CreateOrganizationForm = () => {
     website: "",
     baseCurrency: "",
     fiscalYear: "",
-    reportBasis: "",
     timeZone: "",
+    timeZoneExp:"",
     dateFormat: "",
+    dateFormatExp:"",
     dateSplit: "",
     phoneNumberCode: "",
   });
- 
+
+  console.log(inputData);
+  
+
   const getDropdownList = async () => {
     try {
       const url = `${endponits.GET_ADDITIONAL_DATA}`;
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setAdditionalData(response.data[0]);
+        console.log(response.data[0], "additionalData");
       }
     } catch (error) {
       console.log("Error in fetching Additional data", error);
@@ -81,7 +88,7 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setcountryData(response.data[0].countries);
-        // console.log(response.data[0].countries);
+        console.log(response.data[0].countries, "CountryData");
       }
     } catch (error) {
       console.log("Error in fetching country data", error);
@@ -96,7 +103,7 @@ const CreateOrganizationForm = () => {
       });
       if (!error && response) {
         setcurrencyData(response.data);
-        // console.log(response);
+        console.log(response.data, "currencyData");
       }
     } catch (error) {
       console.log("Error in fetching currency data", error);
@@ -110,13 +117,12 @@ const CreateOrganizationForm = () => {
         organizationId: "INDORG0001",
       });
       // console.log(apiResponse);
- 
       const { response, error } = apiResponse;
       if (!error && response?.data) {
         // setOneOrganization(response.data);
         setInputData(response.data);
-        // console.log(response.data, "oneOrganization");
- 
+        console.log(response.data, "oneOrganization");
+
         setInputData((prevData) => ({
           ...prevData,
           organizationId: response.data.organizationId,
@@ -129,7 +135,14 @@ const CreateOrganizationForm = () => {
       console.error("Error fetching organization:", error);
     }
   };
- 
+
+  const handlePhoneChange = (value: string) => {
+    setInputData((prevData) => ({
+      ...prevData,
+      organizationPhNum: value,
+    }));
+  };
+
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -159,7 +172,49 @@ const CreateOrganizationForm = () => {
       reader.readAsDataURL(file);
     }
   };
- 
+
+
+  const selectTimeZone = (e:any) => {
+    const selectedZone = e.target.value;
+  
+    const selectedTimeZone = additionalData.timezones.find(
+      (timezone:any) => timezone.zone === selectedZone
+    );
+  
+    console.log(selectedTimeZone);
+  
+    if (selectedTimeZone) {
+      setInputData((prevDetails) => ({
+        ...prevDetails,
+        timeZone: selectedZone,
+        timeZoneExp: selectedTimeZone.timeZone,
+      }));
+    }
+  };
+  
+  const selectDateFormat = (e:any) => {
+    const selectedFormat = e.target.value;
+  
+    const selectedDateFormat = [
+      ...additionalData.dateFormats.short,
+      ...additionalData.dateFormats.medium,
+      ...additionalData.dateFormats.long
+    ].find(
+      (dateFormat) => dateFormat.format === selectedFormat
+    );
+  
+    console.log(selectedDateFormat);
+  
+    if (selectedDateFormat) {
+      setInputData((prevDetails:any) => ({
+        ...prevDetails,
+        dateFormat: selectedFormat,
+        dateFormatExp: selectedDateFormat.dateFormat,
+      }));
+    }
+  };
+  
+
   const handleCreateOrganization = async (e: any) => {
     e.preventDefault();
     try {
@@ -177,14 +232,12 @@ const CreateOrganizationForm = () => {
       console.log(error, "Error in creating organization");
     }
   };
- 
   const handleDeleteImage = () => {
     setInputData((prevDetails: any) => ({
       ...prevDetails,
       organizationLogo: "",
     }));
   };
- 
   useEffect(() => {
     getDropdownList();
     getOrganization();
@@ -199,11 +252,9 @@ const CreateOrganizationForm = () => {
       );
       if (country) {
         setStateList(country.states || []);
-        setPhoneCodeList(country.phoneNumberCode);
       }
     }
   }, [inputData.organizationCountry, countryData, inputData.organizationLogo]);
- 
   return (
     <div className=" m-4 overflow-y-scroll hide-scrollbar h-auto">
       <Banner seeOrgDetails />
@@ -251,7 +302,6 @@ const CreateOrganizationForm = () => {
                 {" "}
                 <TrashCan color={"darkRed"} />
               </div>
-                        
             </div>
           )}
           <div className="text-center">
@@ -440,7 +490,7 @@ const CreateOrganizationForm = () => {
               </div>
               <div className="flex">
                 <div className="relative w-24  mt-2 ">
-                  <select
+                  {/* <select
                     value={inputData.phoneNumberCode}
                     onChange={handleInputChange}
                     name="phoneNumberCode"
@@ -466,20 +516,37 @@ const CreateOrganizationForm = () => {
                           {item.phoneNumberCode}
                         </option>
                       ))}
-                  </select>
- 
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  </select> */}
+
+                  {/* <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <CehvronDown color="gray" height={15} width={15} />
-                  </div>
+                  </div> */}
                 </div>
-                <input
+                {/* <input
                   className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                   placeholder="Phone"
                   type="tel"
                   value={inputData.organizationPhNum}
                   name="organizationPhNum"
                   onChange={handleInputChange}
-                />{" "}
+                />{" "} */}
+              </div>
+              <div className="w-full border-0">
+                <PhoneInput
+                  inputClass=" appearance-none  text-[#495160] bg-white border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  inputStyle={{
+                    height: "38px",
+                    width:"100%"
+                  }}
+                  containerStyle={{ width: "100%" }}
+                  country={
+                    inputData.organizationCountry
+                      ? inputData.organizationCountry.toLowerCase()
+                      : "in"
+                  }
+                  value={inputData.organizationPhNum}
+                  onChange={handlePhoneChange}
+                />
               </div>
             </div>
           </div>
@@ -581,7 +648,7 @@ const CreateOrganizationForm = () => {
                 <select
                   value={inputData.timeZone}
                   name="timeZone"
-                  onChange={handleInputChange}
+                  onChange={selectTimeZone}
                   id="timeZone"
                   className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
@@ -612,20 +679,23 @@ const CreateOrganizationForm = () => {
               <div className="relative w-full mt-3">
                 <select
                   value={inputData.dateFormat}
-                  onChange={handleInputChange}
+                  onChange={selectDateFormat}
                   name="dateFormat"
                   id="dateFormat"
                   className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 >
                   <option value="">Select Date Format</option>
-                  {additionalData?.dateFormat?.short &&
-                  additionalData?.dateFormat.short.length > 0 ? (
+                  {additionalData?.dateFormats?.short &&
+                  additionalData?.dateFormats.short.length > 0 ? (
                     <>
                       <optgroup label="Short">
-                        {additionalData.dateFormat.short.map(
+                        {additionalData.dateFormats.short.map(
                           (item: any, index: any) => (
-                            <option key={`short-${index}`} value={item}>
-                              {item}
+                            <option
+                              key={`short-${index}`}
+                              value={item.format}
+                            >
+                              {item.format}
                             </option>
                           )
                         )}
@@ -634,15 +704,18 @@ const CreateOrganizationForm = () => {
                   ) : (
                     <></>
                   )}
- 
-                  {additionalData?.dateFormat?.medium &&
-                  additionalData?.dateFormat.medium.length > 0 ? (
+
+                  {additionalData?.dateFormats?.medium &&
+                  additionalData?.dateFormats.medium.length > 0 ? (
                     <>
                       <optgroup label="Medium">
-                        {additionalData.dateFormat.medium.map(
+                        {additionalData.dateFormats.medium.map(
                           (item: any, index: any) => (
-                            <option key={`medium-${index}`} value={item}>
-                              {item}
+                            <option
+                              key={`medium-${index}`}
+                              value={item.format}
+                            >
+                              {item.format}
                             </option>
                           )
                         )}
@@ -651,15 +724,18 @@ const CreateOrganizationForm = () => {
                   ) : (
                     <></>
                   )}
- 
-                  {additionalData?.dateFormat?.long &&
-                  additionalData?.dateFormat.long.length > 0 ? (
+
+                  {additionalData?.dateFormats?.long &&
+                  additionalData?.dateFormats.long.length > 0 ? (
                     <>
                       <optgroup label="Long">
-                        {additionalData.dateFormat.long.map(
+                        {additionalData.dateFormats.long.map(
                           (item: any, index: any) => (
-                            <option key={`long-${index}`} value={item}>
-                              {item}
+                            <option
+                              key={`long-${index}`}
+                              value={item.format}
+                            >
+                              {item.format}
                             </option>
                           )
                         )}

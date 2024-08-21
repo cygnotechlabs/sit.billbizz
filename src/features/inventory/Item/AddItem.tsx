@@ -14,6 +14,8 @@ import NewManufacture from "../Manufature/NewManufacture";
 
 type Props = {};
 
+
+
 const items = [
   "BOX-box",
   "CMS-cm",
@@ -173,7 +175,6 @@ const AddItem = ({}: Props) => {
                 </div>
               </div>
             </div>
-            
 
             <div className="grid grid-cols-12 gap-4">
               <div className="grid grid-cols-2 gap-4 mt-3 col-span-9">
@@ -239,9 +240,7 @@ const AddItem = ({}: Props) => {
                         </div>
                       </div>
                     ))}
-                    <div
-                      className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer"
-                    >
+                    <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer">
                       <SettingsIcons color="darkRed" bold={2} />{" "}
                       <p className="mt-0.5">Manage Unit</p>
                     </div>
@@ -315,22 +314,25 @@ const AddItem = ({}: Props) => {
                 </div>
               </div>
             </div>
-             <div>
-                  <label
-                    className="text-slate-600 flex text-sm items-center gap-2"
-                    htmlFor=""
-                  >
-                    SAC
-                  </label>
-                  <input
-                    className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                    placeholder=" SAC"
-                    name=""
-                  />{" "}
-                </div>
           </div>
-         
-
+        </div>
+        <div className="grid grid-cols-12 gap-4 my-3">
+          <div className="col-span-2"></div>
+          <div className="col-span-10">
+            <div>
+              <label
+                className="text-slate-600 flex text-sm items-center gap-2"
+                htmlFor=""
+              >
+                Product Usage
+              </label>
+              <input
+                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[55px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+              
+                name=""
+              />{" "}
+            </div>
+          </div>
         </div>
 
         <p className="text-textColor text-base font-semibold">
@@ -371,34 +373,56 @@ const AddItem = ({}: Props) => {
                 </div>
               </label>
 
-              <div>
-                <label
-                  className="text-slate-600 text-sm"
-                  htmlFor="organizationAddress"
-                >
-                  Weight
-                  <div className="flex">
-                    <input
-                      className="pl-3 text-sm w-[100%]  rounded-l-md text-start mt-1.5 bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                      placeholder="Weghit"
-                    />{" "}
-                    <div className="relative w-20 mt-1.5">
-                      <select
-                        name="organizationCountry"
-                        id="Location"
-                        className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-r-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                      >
-                        <option value="">KG</option>
+            <div className="grid grid-cols-2 gap-4">
+            <div className="relative  mt-1.5">
+            <label
+                className="text-slate-600 flex text-sm items-center gap-2"
+                htmlFor=""
+              >
+                Warranty
+              </label>
+                    <select
+                      name="organizationCountry"
+                      id="Location"
+                      className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    >
+                      <option value="">Select Warranty</option>
 
-                        <option></option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <CehvronDown color="gray" />
-                      </div>
+                      <option></option>
+                    </select>
+                    <div className="pointer-events-none mt-6 absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <CehvronDown color="gray" />
                     </div>
                   </div>
-                </label>
-              </div>
+                <div>
+                  <label
+                    className="text-slate-600 text-sm "
+                    htmlFor="organizationAddress"
+                  >
+                    Weight
+                    <div className="flex">
+                      <input
+                        className="pl-3 text-sm w-[100%]  rounded-l-md mt-0.5 text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                        placeholder="Weghit"
+                      />{" "}
+                      <div className="relative w-20 mt-0.5">
+                        <select
+                          name="organizationCountry"
+                          id="Location"
+                          className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-r-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                        >
+                          <option value="">KG</option>
+  
+                          <option></option>
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                          <CehvronDown color="gray" />
+                        </div>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+            </div>
 
               <div className="relative ">
                 <label
@@ -628,66 +652,91 @@ const AddItem = ({}: Props) => {
           ) : (
             <div></div>
           )}
+  </div>
+        <div className="grid grid-flow-col-dense mt-4 gap-4">
+       {isService&& <div className="relative  mt-1.5">
+            <label
+                className="text-slate-600 flex text-sm items-center gap-2"
+                htmlFor=""
+              >
+                Warranty
+              </label>
+                    <select
+                      name="organizationCountry"
+                      id="Location"
+                      className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    >
+                      <option value="">Select Warranty</option>
 
-          <div>
-            <label
-              className="text-slate-600 flex text-sm items-center gap-2"
-              htmlFor="organizationAddress"
-            >
-              UPC
-            </label>
-            <input
-              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-              placeholder="Enter UPC"
-              name=""
-            />{" "}
-          </div>
-
-          <div>
-            <label
-              className="text-slate-600 flex text-sm items-center gap-2"
-              htmlFor="organizationAddress"
-            >
-              MPN
-            </label>
-            <input
-              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-              placeholder="Enter MPN"
-              name=""
-            />{" "}
-          </div>
-          <div>
-            <label
-              className="text-slate-600 flex text-sm items-center gap-2"
-              htmlFor="organizationAddress"
-            >
-              EAN
-            </label>
-            <input
-              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-              placeholder="Enter EAN"
-              name=""
-            />{" "}
-          </div>
-          <div>
-            <label
-              className="text-slate-600 flex text-sm items-center gap-2"
-              htmlFor="organizationAddress"
-            >
-              ISBN
-            </label>
-            <input
-              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-              placeholder="Enter ISBN"
-              name=""
-            />{" "}
-          </div>
+                      <option></option>
+                    </select>
+                    <div className="pointer-events-none mt-6 absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <CehvronDown color="gray" />
+                    </div>
+                  </div>}
+            <div>
+              <label
+                className="text-slate-600 flex text-sm items-center gap-2"
+                htmlFor="organizationAddress"
+              >
+                UPC
+              </label>
+              <input
+                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                placeholder="Enter UPC"
+                name=""
+              />{" "}
+            </div>
+  
+            <div>
+              <label
+                className="text-slate-600 flex text-sm items-center gap-2"
+                htmlFor="organizationAddress"
+              >
+                MPN
+              </label>
+              <input
+                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                placeholder="Enter MPN"
+                name=""
+              />{" "}
+            </div>
         </div>
+
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <label
+                className="text-slate-600 flex text-sm items-center gap-2"
+                htmlFor="organizationAddress"
+              >
+                EAN
+              </label>
+              <input
+                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                placeholder="Enter EAN"
+                name=""
+              />{" "}
+            </div>
+            <div>
+              <label
+                className="text-slate-600 flex text-sm items-center gap-2"
+                htmlFor="organizationAddress"
+              >
+                ISBN
+              </label>
+              <input
+                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                placeholder="Enter ISBN"
+                name=""
+              />{" "}
+            </div>
+          </div>
+      
 
         <p className="text-textColor text-base font-semibold mt-4">
           Sales Information
         </p>
-        <div className="grid grid-cols-3 gap-4 my-6">
+        <div className="grid grid-cols-4 gap-4 my-6">
           <div className="relative ">
             <label
               className="text-slate-600 flex text-sm  gap-2"
@@ -706,6 +755,21 @@ const AddItem = ({}: Props) => {
               />{" "}
             </div>
           </div>
+
+          <div>
+            <label
+              className="text-slate-600 flex text-sm items-center gap-2"
+              htmlFor="organizationAddress"
+            >
+              MRP
+            </label>
+            <input
+              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+              placeholder="Enter MRP"
+              name=""
+            />{" "}
+          </div>
+          
           <div className="relative ">
             <label htmlFor="" className="text-slate-600   text-sm  gap-2 ">
               Account
