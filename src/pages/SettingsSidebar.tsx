@@ -10,6 +10,8 @@ type Props = {};
 
 const SettingsSidebar = ({}: Props) => {
   const [search, setSearch] = useState("");
+  console.log(search);
+  
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,7 +51,7 @@ const SettingsSidebar = ({}: Props) => {
   };
 
   return (
-    <div className="overflow-y-scroll pt-6 hide-scrollbar col-span-3 border-neutral-300 text-textColor h-auto border-r-2 px-7 bg-white w-[27%]">
+    <div className="overflow-y-scroll  pt-6 hide-scrollbar col-span-3 border-neutral-300 text-textColor h-auto border-r-2 px-7 bg-white w-[27%]">
       <Button onClick={handleBackClick} variant="secondary" size="sm">
         <ChevronLeft
           color="currentColor"

@@ -81,7 +81,7 @@ function InvoiceSettings({}: Props) {
     displayAccNum:false,
     ifsc: "",
     displayIfsc:false,
-    termsConditions:""
+    defaultTermsAndCondition:""
   });
 
   const handleInvoiceSettings = async (e: any) => {
@@ -119,6 +119,8 @@ function InvoiceSettings({}: Props) {
       const { response, error } = await GetInvoiceSettings(url, body);
       if (!error && response) {
         const data = response.data[0];
+        console.log(data);
+        
         setInvoiceSettings({ ...invoiceSettings, ...data });
       } else {
         toast.error(`API Error: ${error}`);
@@ -181,7 +183,7 @@ function InvoiceSettings({}: Props) {
   };
 
   return (
-    <div className="m-4 ">
+    <div className="m-4">
       <Banner seeOrgDetails />
 
       <form onSubmit={(e) => handleInvoiceSettings(e)}>
@@ -842,7 +844,9 @@ function InvoiceSettings({}: Props) {
 </div>
 <p className="font-bold text-textColor text-sm mb-3">Terms & Condition</p>
 <div className="mt-4 p-6 rounded-lg bg-white">
-  <textarea className="w-full h-32 p-3 border border-inputBorder rounded-lg resize-none focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]" />
+  <textarea value={invoiceSettings.defaultTermsAndCondition} onChange={(e) =>
+          handleEventBindChange(e.target.value, "defaultTermsAndCondition")
+        } className="w-full h-32 p-3 border border-inputBorder rounded-lg resize-none focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]" />
 </div>
 </div>
         <div className="flex my-4 gap-4">
