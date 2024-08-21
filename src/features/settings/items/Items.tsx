@@ -39,6 +39,10 @@ function Items({}: Props) {
     quantityReachesReorderPoint:false,
     trackLandedCost:false 
   })
+  console.log(selectedRadio);
+  console.log(enableCheckBox);
+  
+  
   return (
     <div className="m-4 text-[#303F58]">
       <Banner/>

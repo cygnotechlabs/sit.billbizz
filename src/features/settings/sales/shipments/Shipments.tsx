@@ -20,7 +20,7 @@ function Shipments({}: Props) {
           <input
             type="checkbox"
             className="accent-[#97998E] bg-white h-5 w-5 mr-2"
-            id="compositionSchemeCheckbox"
+            id="customCheckbox"
           />
           <label htmlFor="compositionSchemeCheckbox" className="text-textColor text-sm">
           Do you want to send notifications to customers for carrier shipments?
@@ -29,8 +29,9 @@ function Shipments({}: Props) {
         <div className="flex items-center mt-3">
           <input
             type="checkbox"
+            id="customCheckbox"
             className="accent-[#97998E] bg-white h-5 w-5 mr-2"
-            id="compositionScheme"
+            
           />
           <label htmlFor="compositionScheme" className="text-textColor text-sm">
           Do you want to send notifications to customers for manual shipments?

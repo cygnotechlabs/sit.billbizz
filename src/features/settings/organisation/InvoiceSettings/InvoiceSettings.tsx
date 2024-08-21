@@ -23,7 +23,9 @@ function InvoiceSettings({}: Props) {
   const { request: GetInvoiceSettings } = useApi("put", 5004);
   const [isAddPlaceHolderOpen, setAddPlaceHolderOpen] = useState(false);
   const [isSeePreviewOpen, setSeePreviewOpen] = useState(false);
-  const [showQROpen,setShowQROpen]=useState(false)
+  const [showQROpenLocation, setShowQROpenLocation] = useState(false);
+  const [showQROpenPayment, setShowQROpenPayment] = useState(false);
+  const [showSignOpen, setShowSignOpen] = useState(false);
   const [isOrganisationAddressOpen, setOrganisationAddressOpen] =
     useState(false);
   const organizationDetails = [
@@ -80,7 +82,7 @@ function InvoiceSettings({}: Props) {
 
   const handleInvoiceSettings = async (e: any) => {
     e.preventDefault();
-    
+
     try {
       const url = `${endponits.ADD_INVOICE_SETTINGS}`;
       const apiResponse = await AddInvoiceSettings(url, invoiceSettings);
@@ -95,7 +97,7 @@ function InvoiceSettings({}: Props) {
     }
   };
 
-  const encodeFileToBase64 = (file:any) => {
+  const encodeFileToBase64 = (file: any) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -118,35 +120,48 @@ function InvoiceSettings({}: Props) {
         toast.error(`API Error: ${error}`);
       }
     } catch (error) {
-        toast.error(`Error fetching invoice settings:${error}`);
+      toast.error(`Error fetching invoice settings:${error}`);
     }
   };
 
-  
-  useEffect(()=>{
-    getInvoiceSettings()
-  },[])
+  useEffect(() => {
+    getInvoiceSettings();
+  }, []);
 
-  const openModal = (placeholder?: boolean, seePreview?: boolean,showQR?:boolean) => {
-    setAddPlaceHolderOpen(placeholder || false);
-    setSeePreviewOpen(seePreview || false);
-    setShowQROpen(showQR || false)
+  const openModal = (
+    placeholder = false,
+    seePreview = false,
+    showQRLocation = false,
+    showSign = false,
+    showQRPayment = false
+  ) => {
+    setAddPlaceHolderOpen(placeholder);
+    setSeePreviewOpen(seePreview);
+    setShowQROpenLocation(showQRLocation);
+    setShowSignOpen(showSign);
+    setShowQROpenPayment(showQRPayment);
   };
 
-  const closeModal = (placeholder?: boolean, seePreview?: boolean,showQR?:boolean) => {
-    setAddPlaceHolderOpen(placeholder || false);
-    setSeePreviewOpen(seePreview || false);
-    setShowQROpen(showQR || false)
+  const closeModal = (
+    placeholder = false,
+    seePreview = false,
+    showQRLocation = false,
+    showSign = false,
+    showQRPayment = false
+  ) => {
+    setAddPlaceHolderOpen(placeholder);
+    setSeePreviewOpen(seePreview);
+    setShowQROpenLocation(showQRLocation);
+    setShowSignOpen(showSign);
+    setShowQROpenPayment(showQRPayment);
   };
 
-  
-
-  const handleFileChange = async(e: any, type: any) => {
+  const handleFileChange = async (e: any, type: any) => {
     const file = e.target.files[0];
     if (file) {
       const base64 = await encodeFileToBase64(file);
       console.log(base64);
-      
+
       setInvoiceSettings((prevState) => ({
         ...prevState,
         [type]: base64,
@@ -164,7 +179,7 @@ function InvoiceSettings({}: Props) {
   return (
     <div className="m-4 ">
       <Banner seeOrgDetails />
-      
+
       <form onSubmit={(e) => handleInvoiceSettings(e)}>
         {/* Org Adresss format */}
         <div className="space-y-4 text-sm text-[#303F58]">
@@ -241,81 +256,97 @@ function InvoiceSettings({}: Props) {
             </div>
           </div>
 
-          {/* QR code Location*/}
-
+          {/* QR code Location */}
           <div className="space-y-3">
             <p className="font-bold">QR code Location</p>
             <div>
-            <label >
-              <div className="  rounded-md  p-5  bg-white grid grid-cols-12 gap-4 cursor-pointer">
-                <div className="col-span-10 flex ">
-                  <div className="w-20 h-20 rounded-md flex items-center justify-center bg-[#F7E7CE]">
-              
+              <label>
+                <div className="rounded-md p-5 bg-white grid grid-cols-12 gap-4 cursor-pointer">
+                  <div className="col-span-10 flex">
+                    <div className="w-20 h-20 rounded-md flex items-center justify-center bg-[#F7E7CE]">
                       <img src={QrCode} alt="Default QR Code Type 1" />
-                    
+                    </div>
+                    <div className="ms-3 flex items-center h-full">
+                      <div className="space-y-2">
+                        <p>
+                          <b>Upload Organization's Location QR Code</b>
+                        </p>
+                        <p>
+                          Upload or configure the location of your QR code on
+                          the invoice
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="ms-3 flex items-center  h-full">
-                    <div className="space-y-2">
-                      <p>
-                        <b>Upload Organization's Location QR Code</b>
-                      </p>
-                      <p>
-                        Upload or configure the location of your QR code on the
-                        invoice
-                      </p>
+                  <div className="col-span-2 flex items-center justify-end gap-8">
+                    {invoiceSettings.qrLocation && (
+                      <Button
+                        onClick={() => openModal(false, false, true)}
+                        variant="secondary"
+                        className="h-[26px] w-[68px] flex justify-center"
+                        size="sm"
+                      >
+                        <p className="text-[10px] font-medium">Show QR</p>
+                      </Button>
+                    )}
+                    <div className="bg-darkRed text-white items-center justify-center rounded-full flex h-8 w-8">
+                      <Plus color="white" />
                     </div>
                   </div>
                 </div>
-                <div className="col-span-2 flex items-center justify-end gap-8">
-                {invoiceSettings.qrLocation &&<Button onClick={()=>openModal(false,false,true)} variant="secondary" className="h-[26px] w-[68px] flex justify-center" size="sm">
-                     <p className="text-[10px] font-medium">Show QR</p>
-                </Button>}
-                  <div className="bg-darkRed text-white items-center justify-center rounded-full flex h-8 w-8">
-                    <Plus color="white" />
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => handleFileChange(e, "qrLocation")}
+                />
+              </label>
+              <Modal
+                open={showQROpenLocation}
+                onClose={() => closeModal()}
+                style={{
+                  width: "360px",
+                  padding: "32px",
+                  borderRadius: "16px",
+                }}
+              >
+                <div className="flex flex-col items-center justify-center space-y-6 my-6">
+                  <p className="w-[220px] text-center text-[18px] font-bold">
+                    Organization’s Location QR Code
+                  </p>
+                  <div className="px-4 py-2 border border-[#ABABAB] rounded-lg">
+                    <img
+                      src={invoiceSettings.qrLocation}
+                      alt="QR Code Type 1"
+                      width={150}
+                    />
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <label htmlFor="qrLocation" className="cursor-pointer">
+                      <div className="h-[32px] w-[92px] flex justify-center items-center rounded-lg bg-[#820000] hover:bg-[#820000]">
+                        <p className="text-xs font-medium text-white">
+                          Replace QR
+                        </p>
+                      </div>
+                      <input
+                        type="file"
+                        id="qrLocation"
+                        className="hidden"
+                        onChange={(e) => handleFileChange(e, "qrLocation")}
+                      />
+                    </label>
+                    <Button
+                      onClick={() => closeModal()}
+                      variant="secondary"
+                      className="h-[32px] w-[92px] flex justify-center rounded-lg"
+                      size="sm"
+                    >
+                      <p className="text-xs font-medium text-[#565148]">
+                        Close
+                      </p>
+                    </Button>
                   </div>
                 </div>
-                <Modal 
-  open={showQROpen}
-  onClose={() => closeModal()}
-  style={{ width: "360px", padding: "32px", borderRadius: "16px" }}
->
-  <div className="flex flex-col items-center justify-center space-y-6 my-6">
-    <p className="w-[220px] text-center text-[18px] font-bold">
-      Organization’s Location QR Code
-    </p>
-    <div className="px-4 py-2 border  border-[#ABABAB] rounded-lg">
-    <img
-      src={invoiceSettings.qrLocation}
-      alt="QR Code Type 1"
-      width={150}
-      className=""
-    />
-    </div>
-    <div className="flex items-center gap-4">
-    <label htmlFor="qrLocation" className="cursor-pointer">
-  <div className="h-[32px] w-[92px] flex justify-center items-center rounded-lg bg-[#820000] hover:bg-[#820000]">
-    <p className="text-xs font-medium text-white">Replace QR</p>
-  </div>
-  <input
-    type="file"
-    id="qrLocation"
-    className="hidden"
-    onChange={(e) => handleFileChange(e, "qrLocation")}
-  />
-</label>
-      <Button onClick={()=>closeModal()} variant="secondary" className="h-[32px] w-[92px] flex justify-center rounded-lg" size="sm">
-                     <p className="text-xs font-medium text-[#565148]">Close</p>
-                </Button>
-    </div>                  
-  </div>
-</Modal>
-              </div>
-              <input
-                type="file"
-                className="hidden"
-                onChange={(e) => handleFileChange(e, "qrLocation")}
-              />
-            </label>
+              </Modal>
             </div>
             <div className="flex items-center space-x-2">
               <input
@@ -329,41 +360,97 @@ function InvoiceSettings({}: Props) {
               <label className="text-[14px]">Display QR Code in Invoice</label>
             </div>
           </div>
+
           {/* QR code Payment */}
           <div className="space-y-3">
             <p className="font-bold">QR code Payment</p>
             <div>
-            <label>
-              <div className="  rounded-md  p-5  bg-white grid grid-cols-12 gap-4 cursor-pointer">
-                <div className="col-span-10 flex ">
-                  <div className="w-20 h-20 rounded-md flex items-center justify-center bg-[#F7E7CE]">
-                    {invoiceSettings.qrPayment ? (
-                      <img src={invoiceSettings.qrPayment} alt="" />
-                    ) : (
+              <label>
+                <div className="rounded-md p-5 bg-white grid grid-cols-12 gap-4 cursor-pointer">
+                  <div className="col-span-10 flex">
+                    <div className="w-20 h-20 rounded-md flex items-center justify-center bg-[#F7E7CE]">
                       <img src={QrCode} alt="" />
-                    )}
+                    </div>
+                    <div className="ms-3 flex items-center h-full">
+                      <div className="space-y-2">
+                        <p>
+                          <b>Upload Payment Based QR Code</b>
+                        </p>
+                        <p>Upload Payment Based QR Code on the Invoice</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="ms-3 flex items-center  h-full">
-                    <div className="space-y-2">
-                      <p>
-                        <b>Upload Payment Based QR Code</b>
-                      </p>
-                      <p>Upload Payment Based QR Code on the Invoice</p>
+                  <div className="col-span-2 flex items-center justify-end gap-8">
+                    {invoiceSettings.qrPayment && (
+                      <Button
+                        onClick={() =>
+                          openModal(false, false, false, false, true)
+                        }
+                        variant="secondary"
+                        className="h-[26px] w-[68px] flex justify-center"
+                        size="sm"
+                      >
+                        <p className="text-[10px] font-medium">Show QR</p>
+                      </Button>
+                    )}
+                    <div className="bg-darkRed text-white items-center justify-center rounded-full flex h-8 w-8">
+                      <Plus color="white" />
                     </div>
                   </div>
                 </div>
-                <div className="col-span-2 flex items-center justify-end">
-                  <div className="bg-darkRed text-white items-center justify-center rounded-full flex h-8 w-8">
-                    <Plus color="white" />
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => handleFileChange(e, "qrPayment")}
+                />
+              </label>
+              <Modal
+                open={showQROpenPayment}
+                onClose={() => closeModal()}
+                style={{
+                  width: "360px",
+                  padding: "32px",
+                  borderRadius: "16px",
+                }}
+              >
+                <div className="flex flex-col items-center justify-center space-y-6 my-6">
+                  <p className="w-[220px] text-center text-[18px] font-bold">
+                    Payment Based QR Code
+                  </p>
+                  <div className="px-4 py-2 border border-[#ABABAB] rounded-lg">
+                    <img
+                      src={invoiceSettings.qrPayment}
+                      alt="QR Code Type 1"
+                      width={150}
+                    />
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <label htmlFor="qrPayment" className="cursor-pointer">
+                      <div className="h-[32px] w-[92px] flex justify-center items-center rounded-lg bg-[#820000] hover:bg-[#820000]">
+                        <p className="text-xs font-medium text-white">
+                          Replace QR
+                        </p>
+                      </div>
+                      <input
+                        type="file"
+                        id="qrPayment"
+                        className="hidden"
+                        onChange={(e) => handleFileChange(e, "qrPayment")}
+                      />
+                    </label>
+                    <Button
+                      onClick={() => closeModal()}
+                      variant="secondary"
+                      className="h-[32px] w-[92px] flex justify-center rounded-lg"
+                      size="sm"
+                    >
+                      <p className="text-xs font-medium text-[#565148]">
+                        Close
+                      </p>
+                    </Button>
                   </div>
                 </div>
-              </div>
-              <input
-                type="file"
-                className="hidden"
-                onChange={(e) => handleFileChange(e, "qrPayment")}
-              />
-            </label>
+              </Modal>
             </div>
             <div className="flex items-center space-x-2">
               <input
@@ -377,44 +464,105 @@ function InvoiceSettings({}: Props) {
               <label className="text-[14px]">Display QR Code in Invoice</label>
             </div>
           </div>
-          {/* Invoice signatory */}
+
+          {/* Invoice Signatory */}
           <div className="space-y-3">
             <p className="font-bold">Invoice Signatory</p>
             <div>
-            <label>
-              <div className="  rounded-md  p-5  bg-white grid grid-cols-12 gap-4 cursor-pointer">
-                <div className="col-span-10 flex ">
-                  <div className="w-20 h-20 rounded-md flex items-center justify-center bg-[#F7E7CE]">
-                    {invoiceSettings.digitalSignature ? (
-                      <img src={invoiceSettings.digitalSignature} alt="" />
-                    ) : (
-                      <img src={Qrsign} alt="" />
-                    )}
+              <label>
+                <div className="rounded-md p-5 bg-white grid grid-cols-12 gap-4 cursor-pointer">
+                  <div className="col-span-10 flex">
+                    <div className="w-20 h-20 rounded-md flex items-center justify-center bg-[#F7E7CE]">
+                        
+                        <img src={Qrsign} alt="Default Signature" />
+                      
+                    </div>
+                    <div className="ms-3 flex items-center h-full">
+                      <div className="space-y-2">
+                        <p>
+                          <b>Upload Organisation Digital Signature</b>
+                        </p>
+                        <p>
+                          Upload the digital signature of the person authorized
+                          to sign invoices
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="ms-3 flex items-center  h-full">
-                    <div className="space-y-2">
-                      <p>
-                        <b>Upload Organisation Digital Signature</b>
-                      </p>
-                      <p>
-                        Upload the digital signature of the person authorized to
-                        sign invoices
-                      </p>
+                  <div className="col-span-2 flex items-center justify-end gap-8">
+                    {invoiceSettings.digitalSignature && (
+                      <Button
+                        onClick={() => openModal(false, false, false, true)}
+                        variant="secondary"
+                        className="h-[26px] w-[74px] flex justify-center"
+                        size="sm"
+                      >
+                        <p className="text-[10px] font-medium">Show Sign</p>
+                      </Button>
+                    )}
+                    <div className="bg-darkRed text-white items-center justify-center rounded-full flex h-8 w-8">
+                      <Plus color="white" />
                     </div>
                   </div>
                 </div>
-                <div className="col-span-2 flex items-center justify-end">
-                  <div className="bg-darkRed text-white items-center justify-center rounded-full flex h-8 w-8">
-                    <Plus color="white" />
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => handleFileChange(e, "digitalSignature")}
+                />
+              </label>
+              <Modal
+                open={showSignOpen}
+                onClose={() => closeModal()}
+                style={{
+                  width: "360px",
+                  padding: "32px",
+                  borderRadius: "16px",
+                }}
+              >
+                <div className="flex flex-col items-center justify-center space-y-6 my-6">
+                  <p className="w-[220px] text-center text-[18px] font-bold">
+                    Organization’s Digital Signature
+                  </p>
+                  <div className="px-4 py-2 border border-[#ABABAB] rounded-lg">
+                    <img
+                      src={invoiceSettings.digitalSignature}
+                      alt="Digital Signature"
+                      width={150}
+                    />
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <label
+                      htmlFor="digitalSignature"
+                      className="cursor-pointer"
+                    >
+                      <div className="h-[32px] w-[92px] flex justify-center items-center rounded-lg bg-[#820000] hover:bg-[#820000]">
+                        <p className="text-xs font-medium text-white">
+                          Replace Sign
+                        </p>
+                      </div>
+                      <input
+                        type="file"
+                        id="digitalSignature"
+                        className="hidden"
+                        onChange={(e) =>
+                          handleFileChange(e, "digitalSignature")
+                        }
+                      />
+                    </label>
+                    <Button
+                      onClick={() => closeModal()}
+                      variant="secondary"
+                      className="h-[32px] w-[92px] flex justify-center rounded-lg"
+                      size="sm"
+                    >
+                      <p className="text-xs font-medium text-[#565148]">
+                        Close
+                      </p>
+                    </Button>
                   </div>
                 </div>
-              </div>
-              <input
-                type="file"
-                className="hidden"
-                onChange={(e) => handleFileChange(e, "digitalSignature")}
-              />
-            </label>
+              </Modal>
             </div>
             <div className="flex items-center space-x-2">
               <input
@@ -428,244 +576,227 @@ function InvoiceSettings({}: Props) {
                 type="checkbox"
                 id="customCheckbox"
               />
-              <label className="text-[14px]">Display QR Code in Invoice</label>
+              <label className="text-[14px]">
+                Display Digital Signature in Invoice
+              </label>
             </div>
           </div>
+
           <p className=" my-4">
-            <b>Add Social Media</b>
-          </p>
-          <div className="  rounded-md  p-5 bg-white ">
-            <div className="grid grid-cols-2 gap-4 ">
-              <div>
-                <label htmlFor="" className="text-slate-600">
-                  {" "}
-                  Twitter
-                </label>
-                <div className="flex gap-2 items-center justify-center">
-                  <div className="flex items-center justify-center align-middle  bg-slate-100 p-2 h-10 rounded-md mt-2 ">
-                    {" "}
-                    <img width={25} src={twitterLogo} alt="" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Add Twitter Link"
-                    onChange={(e) =>
-                      handleEventBindChange(e.target.value, "xLink")
-                    }
-                    value={invoiceSettings.xLink}
-                    className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-[39px] p-2"
-                    name="twitter"
-                  />
-                  <img src={xMark} className="mt-3" alt="" />
-                </div>
-                <div className="flex items-center space-x-2 mt-3">
-                  <input
-                    checked={invoiceSettings.displayXLink}
-                    onChange={(e) =>
-                      handleEventBindChange(e.target.checked, "displayXLink")
-                    }
-                    type="checkbox"
-                    id="customCheckbox"
-                  />
-                  <label className="text-[14px]">
-                    Display QR Code in Invoice
-                  </label>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-slate-600">Instagram</label>
-                <div className="flex gap-2 items-center justify-center">
-                  <div className="flex items-center justify-center bg-slate-100 p-2 h-10 rounded-md mt-2 ">
-                    {" "}
-                    <img src={instagramLogo} alt="" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Add Instagram Link"
-                    className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
-                    value={invoiceSettings.instagramLink}
-                    name="insta"
-                    onChange={(e) =>
-                      handleEventBindChange(e.target.value, "instagramLink")
-                    }
-                  />
-                  <img src={xMark} className="mt-3" alt="" />
-                </div>
-                <div className="flex items-center space-x-2 mt-3">
-                  <input
-                    checked={invoiceSettings.displayInstagramLink}
-                    onChange={(e) =>
-                      handleEventBindChange(
-                        e.target.checked,
-                        "displayInstagramLink"
-                      )
-                    }
-                    type="checkbox"
-                    id="customCheckbox"
-                  />
-                  <label className="text-[14px]">
-                    Display QR Code in Invoice
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div>
-                <label htmlFor="" className="text-slate-600">
-                  Linkedin
-                </label>
-
-                <div className="flex gap-2 items-center justify-center">
-                  <div className="flex items-center justify-center bg-slate-100 p-2 h-10 rounded-md mt-2 ">
-                    {" "}
-                    <img src={linkedinlog} alt="" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Add Linkedin Link"
-                    className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
-                    name="linkedin"
-                    onChange={(e) =>
-                      handleEventBindChange(e.target.value, "linkedinLink")
-                    }
-                    value={invoiceSettings.linkedinLink}
-                  />
-                  <img src={xMark} className="mt-3" alt="" />
-                </div>
-                <div className="flex items-center space-x-2 mt-3">
-                  <input
-                    checked={invoiceSettings.displayLinkedinLink}
-                    onChange={(e) =>
-                      handleEventBindChange(
-                        e.target.checked,
-                        "displayLinkedinLink"
-                      )
-                    }
-                    type="checkbox"
-                    id="customCheckbox"
-                  />
-                  <label className="text-[14px]">
-                    Display QR Code in Invoice
-                  </label>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-slate-600">Facebook</label>
-
-                <div className="flex gap-2 items-center justify-center">
-                  <div className="flex items-center justify-center bg-slate-100 p-2 h-10 rounded-md mt-2 ">
-                    {" "}
-                    <img src={facebooklogo} alt="" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Add Facebook Link"
-                    className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
-                    onChange={(e) =>
-                      handleEventBindChange(e.target.value, "facebookLink")
-                    }
-                    value={invoiceSettings.facebookLink}
-                    name="facebook"
-                  />
-                  <div></div>
-                  <img src={xMark} className="mt-3" alt="" />
-                </div>
-                <div className="flex items-center space-x-2 mt-3">
-                  <input
-                    checked={invoiceSettings.displayFacebookLink}
-                    onChange={(e) =>
-                      handleEventBindChange(
-                        e.target.checked,
-                        "displayFacebookLink"
-                      )
-                    }
-                    type="checkbox"
-                    id="customCheckbox"
-                  />
-                  <label className="text-[14px]">
-                    Display QR Code in Invoice
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className=" my-4">
-            <b>Add Payment Information</b>
-          </p>
-          <div className="bg-white  rounded-md mt-4 p-5">
-            <p className=" my-4">
-              <b>Enter Bank account Details</b>
-            </p>
-
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div>
-                <label className="text-slate-600">Account Holder Name</label>
-
-                <input
-                  type="text"
-                  placeholder="Enter Account Holder Name"
-                  className="pl-4 text-sm w-[100%] mt-3 rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
-                  onChange={(e) =>
-                    handleEventBindChange(e.target.value, "accountHolderName")
-                  }
-                  value={invoiceSettings.accountHolderName}
-                  name="accountHolderName"
-                />
-              </div>
-
-              <div>
-                <label className="text-slate-600">Bank Name</label>
-
-                <input
-                  type="text"
-                  placeholder="Enter Bank Name"
-                  className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
-                  onChange={(e) =>
-                    handleEventBindChange(e.target.value, "bankName")
-                  }
-                  value={invoiceSettings.bankName}
-                  name="bankName"
-                  // onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div>
-                <label className="text-slate-600">Account Number</label>
-                <input
-                  type="rating"
-                  placeholder="Enter Account Number"
-                  className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
-                  onChange={(e) =>
-                    handleEventBindChange(e.target.value, "accNum")
-                  }
-                  value={invoiceSettings.accNum}
-                  name="accNum"
-                />
-              </div>
-
-              <div>
-                <label className="text-slate-600">IFSC Code </label>
-                <input
-                  type="text"
-                  placeholder="Enter IFSC Code"
-                  className="pl-4 text-sm mt-3 w-[100%] rounded-md text-start bg-white border border-slate-300  h-[39px] p-2"
-                  onChange={(e) =>
-                    handleEventBindChange(e.target.value, "ifsc")
-                  }
-                  value={invoiceSettings.ifsc}
-                  name="ifsc"
-                />
-              </div>
-            </div>
-            <PaymentTerms />
-            <div />
-          </div>
+  <b>Add Social Media</b>
+</p>
+<div className="rounded-md p-5 bg-white">
+  <div className="grid grid-cols-2 gap-4">
+    <div>
+      <label htmlFor="" className="text-slate-600">Twitter</label>
+      <div className="flex gap-2 items-center justify-center">
+        <div className="flex items-center justify-center align-middle bg-slate-100 p-2 h-10 rounded-md mt-2">
+          <img width={25} src={twitterLogo} alt="" />
         </div>
+        <input
+          type="text"
+          placeholder="Add Twitter Link"
+          onChange={(e) =>
+            handleEventBindChange(e.target.value, "xLink")
+          }
+          value={invoiceSettings.xLink}
+          className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-[39px] p-2 focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
+          name="twitter"
+        />
+        <img src={xMark} className="mt-3" alt="" />
+      </div>
+      <div className="flex items-center space-x-2 mt-3">
+        <input
+          checked={invoiceSettings.displayXLink}
+          onChange={(e) =>
+            handleEventBindChange(e.target.checked, "displayXLink")
+          }
+          type="checkbox"
+          id="customCheckbox"
+        />
+        <label className="text-[14px]">Display QR Code in Invoice</label>
+      </div>
+    </div>
+
+    <div>
+      <label className="text-slate-600">Instagram</label>
+      <div className="flex gap-2 items-center justify-center">
+        <div className="flex items-center justify-center bg-slate-100 p-2 h-10 rounded-md mt-2">
+          <img src={instagramLogo} alt="" />
+        </div>
+        <input
+          type="text"
+          placeholder="Add Instagram Link"
+          className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-[39px] p-2 focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
+          value={invoiceSettings.instagramLink}
+          name="insta"
+          onChange={(e) =>
+            handleEventBindChange(e.target.value, "instagramLink")
+          }
+        />
+        <img src={xMark} className="mt-3" alt="" />
+      </div>
+      <div className="flex items-center space-x-2 mt-3">
+        <input
+          checked={invoiceSettings.displayInstagramLink}
+          onChange={(e) =>
+            handleEventBindChange(
+              e.target.checked,
+              "displayInstagramLink"
+            )
+          }
+          type="checkbox"
+          id="customCheckbox"
+        />
+        <label className="text-[14px]">Display QR Code in Invoice</label>
+      </div>
+    </div>
+  </div>
+
+  <div className="grid grid-cols-2 gap-4 mt-4">
+    <div>
+      <label htmlFor="" className="text-slate-600">Linkedin</label>
+      <div className="flex gap-2 items-center justify-center">
+        <div className="flex items-center justify-center bg-slate-100 p-2 h-10 rounded-md mt-2">
+          <img src={linkedinlog} alt="" />
+        </div>
+        <input
+          type="text"
+          placeholder="Add Linkedin Link"
+          className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-[39px] p-2 focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
+          name="linkedin"
+          onChange={(e) =>
+            handleEventBindChange(e.target.value, "linkedinLink")
+          }
+          value={invoiceSettings.linkedinLink}
+        />
+        <img src={xMark} className="mt-3" alt="" />
+      </div>
+      <div className="flex items-center space-x-2 mt-3">
+        <input
+          checked={invoiceSettings.displayLinkedinLink}
+          onChange={(e) =>
+            handleEventBindChange(
+              e.target.checked,
+              "displayLinkedinLink"
+            )
+          }
+          type="checkbox"
+          id="customCheckbox"
+        />
+        <label className="text-[14px]">Display QR Code in Invoice</label>
+      </div>
+    </div>
+
+    <div>
+      <label className="text-slate-600">Facebook</label>
+      <div className="flex gap-2 items-center justify-center">
+        <div className="flex items-center justify-center bg-slate-100 p-2 h-10 rounded-md mt-2">
+          <img src={facebooklogo} alt="" />
+        </div>
+        <input
+          type="text"
+          placeholder="Add Facebook Link"
+          className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-[39px] p-2 focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
+          onChange={(e) =>
+            handleEventBindChange(e.target.value, "facebookLink")
+          }
+          value={invoiceSettings.facebookLink}
+          name="facebook"
+        />
+        <img src={xMark} className="mt-3" alt="" />
+      </div>
+      <div className="flex items-center space-x-2 mt-3">
+        <input
+          checked={invoiceSettings.displayFacebookLink}
+          onChange={(e) =>
+            handleEventBindChange(
+              e.target.checked,
+              "displayFacebookLink"
+            )
+          }
+          type="checkbox"
+          id="customCheckbox"
+        />
+        <label className="text-[14px]">Display QR Code in Invoice</label>
+      </div>
+    </div>
+  </div>
+</div>
+<p className="my-4">
+  <b>Add Payment Information</b>
+</p>
+<div className="bg-white rounded-md mt-4 p-5">
+  <p className="my-4">
+    <b>Enter Bank account Details</b>
+  </p>
+
+  <div className="grid grid-cols-2 gap-4 mt-4">
+    <div>
+      <label className="text-slate-600">Account Holder Name</label>
+      <input
+        type="text"
+        placeholder="Enter Account Holder Name"
+        className="pl-4 text-sm w-[100%] mt-3 rounded-md text-start bg-white border border-slate-300 h-[39px] p-2 focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
+        onChange={(e) =>
+          handleEventBindChange(e.target.value, "accountHolderName")
+        }
+        value={invoiceSettings.accountHolderName}
+        name="accountHolderName"
+      />
+    </div>
+
+    <div>
+      <label className="text-slate-600">Bank Name</label>
+      <input
+        type="text"
+        placeholder="Enter Bank Name"
+        className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-[39px] p-2 focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
+        onChange={(e) =>
+          handleEventBindChange(e.target.value, "bankName")
+        }
+        value={invoiceSettings.bankName}
+        name="bankName"
+      />
+    </div>
+  </div>
+
+  <div className="grid grid-cols-2 gap-4 mt-4">
+    <div>
+      <label className="text-slate-600">Account Number</label>
+      <input
+        type="rating"
+        placeholder="Enter Account Number"
+        className="pl-4 mt-3 text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-[39px] p-2 focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
+        onChange={(e) =>
+          handleEventBindChange(e.target.value, "accNum")
+        }
+        value={invoiceSettings.accNum}
+        name="accNum"
+      />
+    </div>
+
+    <div>
+      <label className="text-slate-600">IFSC Code</label>
+      <input
+        type="text"
+        placeholder="Enter IFSC Code"
+        className="pl-4 text-sm mt-3 w-[100%] rounded-md text-start bg-white border border-slate-300 h-[39px] p-2 focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
+        onChange={(e) =>
+          handleEventBindChange(e.target.value, "ifsc")
+        }
+        value={invoiceSettings.ifsc}
+        name="ifsc"
+      />
+    </div>
+  </div>
+  <div />
+</div>
+<p className="font-bold text-textColor text-sm mb-3">Terms & Condition</p>
+<div className="mt-4 p-6 rounded-lg bg-white">
+  <textarea className="w-full h-32 p-3 border border-inputBorder rounded-lg resize-none focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]" />
+</div>
+</div>
         <div className="flex my-4 gap-4">
           <Button
             variant="primary"
