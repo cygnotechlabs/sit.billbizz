@@ -14,7 +14,7 @@ const BASE_URLS: Record<number, string> = {
 
   5001: "https://billbizz-alb-front-269260655.ap-south-1.elb.amazonaws.com:5001/",
   // 5001: "http://billbizz-acounts.dev-billbizz-connection:5001",
-  5004: "https://billbiz-organization.dev-billbizz-connection:5004",
+  5004: "https://billbizz-alb-front-269260655.ap-south-1.elb.amazonaws.com:5004",
   
 };
 
