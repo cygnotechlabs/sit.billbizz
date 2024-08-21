@@ -40,6 +40,10 @@ export const endponits = {
   ADD_NEW_TAX: "add-tax",
   UPDATE_TAX_VAT: `edit-tax`,
 
+
+  //Get All Items
+GET_ALL_ITEMS:"get-itemDropdown",
+
   // Inventory
   // Brand
   GET_ALL_BRAND: "get-all-brands",
