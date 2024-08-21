@@ -6,6 +6,8 @@ export const endponits = {
   GET_COUNTRY_DATA: `get-countries-data`,
   GET_CURRENCY_LIST: `get-currency`,
   
+    //Sales
+     ADD_SALES_SETTINGS:``,
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_INVOICE_SETTINGS: "get-settings",
@@ -44,6 +46,10 @@ ADD_ITEMS:`add-item-settings`,
   GET_ALL_TAX: "get-tax",
   ADD_NEW_TAX: "add-tax",
   UPDATE_TAX_VAT: `edit-tax`,
+
+
+  //Get All Items
+GET_ALL_ITEMS:"get-itemDropdown",
 
   // Inventory
   // Brand

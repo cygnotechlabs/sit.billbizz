@@ -6,9 +6,10 @@ type Props = {
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties; 
+  align?: 'top' | 'center' | 'left' | 'right'; // Add align prop
 };
 
-const Modal = ({ onClose, open, children, className, style }: Props) => {
+const Modal = ({ onClose, open, children, className, style, align = 'center' }: Props) => {
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -27,17 +28,32 @@ const Modal = ({ onClose, open, children, className, style }: Props) => {
     event.stopPropagation();
   };
 
+  const getPositionStyles = () => {
+    switch (align) {
+      case 'top':
+        return 'justify-center items-start';
+      case 'center':
+        return 'justify-center items-center';
+      case 'left':
+        return 'justify-start items-center';
+      case 'right':
+        return 'justify-end items-center';
+      default:
+        return 'justify-center items-center';
+    }
+  };
+
   return (
     <>
       {open && (
         <div
-          className="fixed inset-0 z-20 flex justify-center items-center bg-black/20"
+          className={`fixed inset-0 z-20 flex ${getPositionStyles()} bg-black/20`}
           onClick={onClose}
         >
-           <div
+          <div
             className={`bg-white rounded-lg h-auto ${className || 'w-[60%]'}`}
             onClick={handleModalClick}
-            style={style} 
+            style={style}
           >
             {children}
           </div>

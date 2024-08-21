@@ -32,7 +32,7 @@ function Invoices({}: Props) {
         <p className="text-[20px] font-bold mt-3">Invoices</p>
         <div className="space-y-4 mt-2">
         <div className="bg-white  w-full p-6 text-[14px] rounded-lg space-y-3">
-            <div className='flex items-center space-x-2 '>
+          <div className='flex items-center space-x-2 '>
           <input onChange={(e)=>setEnableCheckBox({...enableCheckBox,editingOfSentInvoice:e.target.checked})} type="checkbox" id='customCheckbox' />
           <label >Allow editing of sent invoice</label>
           </div>
@@ -120,7 +120,7 @@ function Invoices({}: Props) {
               <div className={`w-9 h-5 rounded-full shadow-inner transition-colors ${isInvoiceQR ? 'bg-checkBox' : 'bg-dropdownBorder'}`}></div>
               <div className={`dot absolute w-3 h-3 bg-white rounded-full top-1 transition-transform ${isInvoiceQR ? 'transform translate-x-full left-2' : 'left-1'}`}></div>
             </div>
-            <div className="ml-2 text-textColor font-bold text-sm">{isInvoiceQR ? 'Enabled' : 'Disabled'}</div>
+            <div className="ml-2 text-textColor font-semibold text-sm">{isInvoiceQR ? 'Enabled' : 'Disabled'}</div>
           </label>        
         </div>
         {isInvoiceQR&&
@@ -214,15 +214,15 @@ function Invoices({}: Props) {
         <div className="bg-white  w-full p-6 text-[14px] rounded-lg space-y-2">
         <p className="font-bold text-textColor text-sm ">Terms & Condition</p>
         <textarea
-          className="w-full h-32 p-3 border focus:outline-none focus:border-[#820000] border-inputBorder rounded-lg resize-none"
+          className="w-full h-32 p-3 border border-inputBorder rounded-lg resize-none focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
         />
         <p className="text-[12px] text-[#8F99A9]">Payment should be pay before due date</p>
         </div>
-        {/* Terms & Condition */}
+        {/* Customer Notes */}
         <div className="bg-white  w-full p-6 text-[14px] rounded-lg space-y-2">
         <p className="font-bold text-textColor text-sm ">Customer Notes</p>
         <textarea
-          className="w-full h-32 p-3 border focus:outline-none focus:border-[#820000] border-inputBorder rounded-lg resize-none"
+          className="w-full h-32 p-3 border border-inputBorder rounded-lg resize-none focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
         />
         <p className="text-[12px] text-[#8F99A9]">Thank you for your payment.You just made our day</p>
         </div>
