@@ -1,5 +1,6 @@
 const Organization = require("../database/model/organization");
-const manufacturer = require ('../database/model/manufacturer');
+const Manufacturer = require ('../database/model/manufacturer');
+const Item = require("../database/model/item"); 
 
 
 exports.addManufacturer = async (req, res) => {
@@ -20,7 +21,7 @@ exports.addManufacturer = async (req, res) => {
             });
         }
         // Check if a manufacturer with the same name already exists within the same organization
-        const existingManufacturerByName = await manufacturer.findOne({ name, organizationId });
+        const existingManufacturerByName = await Manufacturer.findOne({ name, organizationId });
 
         if (existingManufacturerByName) {
             console.log("Manufacturer with name already exists:", existingManufacturerByName);
@@ -30,7 +31,7 @@ exports.addManufacturer = async (req, res) => {
         }
 
         // Create a new manufacturer
-        const newManufacturer = new manufacturer({
+        const newManufacturer = new Manufacturer({
             organizationId,
             name,
             description,
@@ -60,7 +61,7 @@ exports.getAllManufacturer = async (req, res) => {
             message: "No Organization Found.",
         });
         }
-        const allOrganizations = await manufacturer.find({ organizationId })
+        const allOrganizations = await Manufacturer.find({ organizationId })
         res.status(200).json(allOrganizations);
         
     } catch (error) {
@@ -83,7 +84,7 @@ exports.getAManufacturer = async(req,res)=>{
             message: "No Organization Found.",
         });
         }
-        const aManufacturer = await manufacturer.findById(manufacturerId);
+        const aManufacturer = await Manufacturer.findById(manufacturerId);
         if (!aManufacturer) {
             return res.status(404).json({ message: "Manufacturer not found" });
         }
@@ -111,7 +112,7 @@ exports.updateManufacturer = async (req, res) => {
         console.log("Updating manufacturer with ID:", _id);
 
         // Update the manufacturer
-        const updatedManufacturer = await manufacturer.findByIdAndUpdate(
+        const updatedManufacturer = await Manufacturer.findByIdAndUpdate(
             _id,
             {
                 organizationId,
@@ -150,16 +151,28 @@ exports.deletedManufacturer = async (req, res) => {
       const { id } = req.params;
        
       // Check if the unit exists
-      const manufacture  = await manufacturer.findById(id);
+      const manufacture  = await Manufacturer.findById(id);
  
       if (!manufacture) {
         return res.status(404).json({
           message: "manufacturer not found.",
         });
       }
+
+      // Check if there are any items inside the manufacturer
+        const itemsInManufacturer = await Item.find({ 
+        manufacturer: manufacturer.name, 
+        organizationId: manufacturer.organizationId 
+        });
+
+        if (itemsInManufacturer.length > 0) {
+        return res.status(400).json({
+            message: "Manufacturer cannot be deleted as it contains items.",
+        });
+        }
  
       // Delete the unit
-      await manufacturer.findByIdAndDelete(id);
+      await Manufacturer.findByIdAndDelete(id);
  
       res.status(200).json({
         message: "manufacturer deleted successfully.",

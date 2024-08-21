@@ -1,5 +1,6 @@
 const Brand = require('../database/model/brand');
-const Organization = require('../database/model/organization')
+const Organization = require('../database/model/organization');
+const Item = require('../database/model/item');
 
 // Add a new brand
 exports.addBrand = async (req, res) => {
@@ -151,6 +152,18 @@ exports.deleteBrand = async (req, res) => {
         if (!deletedBrand) {
             return res.status(404).json({ error: 'Brand not found' });
         }
+
+        // Check if there are any items inside the brand
+        const itemsInBrand = await Item.find({ 
+            brand: brand.name, 
+            organizationId: brand.organizationId 
+        });
+    
+        if (itemsInBrand.length > 0) {
+            return res.status(400).json({
+            message: "Brand cannot be deleted as it contains items.",
+            });
+        }  
 
         res.status(200).json({ message: 'Brand deleted successfully' });
     } catch (error) {

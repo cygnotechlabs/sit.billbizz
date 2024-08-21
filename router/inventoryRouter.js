@@ -8,6 +8,8 @@ const manufacturerController = require("../../BillBizz/controller/manufacturerCo
 const categoriesController = require("../../BillBizz/controller/categoriesController")
 const brandController = require('../../BillBizz/controller/brandController')
 const rackController = require('../../BillBizz/controller/rackController')
+const itemDropdownController = require("../../BillBizz/controller/itemDropdownController")
+
 
 
 // Item
@@ -63,6 +65,15 @@ router.put('/get-all-rack', rackController.getAllRack);
 router.get('/get-one-rack/:id', rackController.getOneRack);
 router.put('/update-rack', rackController.updateRacks);
 router.delete('/delete-rack/:id', rackController.deleteRack);
+
+
+//item dropdowm
+router.put('/get-itemTaxRate', itemDropdownController.getItemDropdowm);
+
+
+//items settings
+// router.post('/add-item-settings',itemSettings.addItemSettings);
+// router.post('/get-item-settings',itemSettings.getItemSettings);
 
 
 module.exports = router

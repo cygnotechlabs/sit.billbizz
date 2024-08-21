@@ -176,7 +176,10 @@ exports.deleteRack = async (req, res) => {
     }
 
     // Check if there are any items inside the rack
-    const itemsInRack = await Item.find({ rack: rack.rackName, organizationId: rack.organizationId });
+    const itemsInRack = await Item.find({ 
+      rack: rack.rackName, 
+      organizationId: rack.organizationId 
+    });
 
     if (itemsInRack.length > 0) {
       return res.status(400).json({

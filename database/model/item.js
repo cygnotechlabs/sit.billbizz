@@ -7,7 +7,7 @@ const itemSchema = new Schema({
     itemName: { type: String},
     sku: { type: String,},
     unit: { type: String },
-    returnableItem: { type: String },
+    returnableItem: { type: Boolean },
     length:{type: String},
     width:{type: String},
     height:{type: String},
@@ -42,7 +42,7 @@ const itemSchema = new Schema({
     createdDate: { type: String },
     updatedDate: { type: String },
     warranty: { type: String },
-    trackInventory:{type:String},
+    trackInventory:{type:Boolean},
     itemImage: { type: String },
     currentStock:{type:String},
 

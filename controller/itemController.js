@@ -1,6 +1,7 @@
 const Organization = require("../database/model/organization");
 const Item = require("../database/model/item");
-// const Rack = require("../database/model/rack")
+const Settings = require("../database/model/settings");
+const Tax = require("../database/model/tax");
 
 
 // Add item
@@ -54,11 +55,38 @@ exports.addItem = async (req, res) => {
         status
       } = req.body;
 
-      const existingItem = await Item.findOne({ sku });     
-      if (existingItem) {       
-        console.error("Item with this SKU already exists.");       
-        return res.status(400).json({ message: "Item with this SKU already exists." }); 
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+
+    // Fetch settings to check itemDuplicateName configuration
+    const settings = await Settings.findOne({ organizationId });
+
+    if (!settings) {
+      return res.status(500).json({
+        message: "Settings not found for the organization.",
+      });
+    }
+
+    // If itemDuplicateName is false, check for duplicate itemName
+    if (!settings.itemDuplicateName) {
+      const existingItemName = await Item.findOne({ itemName, organizationId });
+      if (existingItemName) {
+        console.error("Item with this name already exists.");
+        return res.status(400).json({ message: "Item with this name already exists." });
       }
+    }
+
+    const existingItem = await Item.findOne({ sku });     
+    if (existingItem) {       
+      console.error("Item with this SKU already exists.");       
+      return res.status(400).json({ message: "Item with this SKU already exists." }); 
+    }
 
     const currentDate = new Date();
     const day = String(currentDate.getDate()).padStart(2, '0');
@@ -125,7 +153,7 @@ exports.addItem = async (req, res) => {
       console.error("Error creating Item:", error);
       res.status(500).json({ message: "Internal server error." });
     }
-  };
+};
 
 
 
@@ -133,6 +161,15 @@ exports.addItem = async (req, res) => {
 exports.getAllItem = async (req, res) => {
   try {
     const { organizationId } = req.body;
+
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+    
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
 
     const allItem = await Item.find({ organizationId });
     if (allItem.length > 0) {
@@ -149,6 +186,17 @@ exports.getAllItem = async (req, res) => {
 // Get a particular item
 exports.getAItem = async (req, res) => {
   const itemId = req.params.id;
+  const { organizationId } = req.body;
+
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+
   try {
     const singleItem = await Item.findById(itemId);
     if (singleItem) {
@@ -317,6 +365,7 @@ exports.deleteItem = async (req, res) => {
       res.status(500).json({ message: 'Server error', error });
   }
 };
+
 
 
 

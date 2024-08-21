@@ -1,5 +1,6 @@
 const Organization = require("../database/model/organization");
 const Unit = require("../database/model/unit");
+const Item = require("../database/model/item");
 
 
 //1. Add unit
@@ -56,6 +57,15 @@ exports.getAllUnit = async (req, res) => {
     try {
         const { organizationId } = req.body;
         console.log(organizationId);
+
+        // Check if an Organization already exists
+        const existingOrganization = await Organization.findOne({ organizationId });
+    
+        if (!existingOrganization) {
+          return res.status(404).json({
+            message: "No Organization Found.",
+          });
+        }
 
         // Find all unit where organizationId matches
         const allUnit = await Unit.find({ organizationId })
@@ -182,6 +192,18 @@ exports.deleteUnit = async (req, res) => {
       if (!unit) {
         return res.status(404).json({
           message: "Unit not found.",
+        });
+      }
+
+      // Check if there are any items inside the unit
+      const itemsInUnit = await Item.find({ 
+        unit: unit.unitName, 
+        organizationId: unit.organizationId 
+      });
+
+      if (itemsInUnit.length > 0) {
+        return res.status(400).json({
+          message: "Unit cannot be deleted as it contains items.",
         });
       }
   

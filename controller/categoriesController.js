@@ -1,5 +1,6 @@
 const Organization = require('../database/model/organization')
 const Categories = require("../database/model/categories");
+const Item = require("../database/model/item"); 
 
 // Add a new category
 exports.addCategory = async (req, res) => {
@@ -162,6 +163,18 @@ exports.deleteCategory = async (req, res) => {
 
         if (!deletedCategory) {
             return res.status(404).json({ error: 'Category not found' });
+        }
+
+        // Check if there are any items inside the category
+        const itemsInCategory  = await Item.find({ 
+            categories: categories.name, 
+            organizationId: categories.organizationId 
+        });
+    
+        if (itemsInCategory.length > 0) {
+            return res.status(400).json({
+            message: "Category cannot be deleted as it contains items.",
+            });
         }
 
         res.status(200).json({ message: 'Category deleted successfully' });
