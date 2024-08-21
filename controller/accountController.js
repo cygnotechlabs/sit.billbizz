@@ -77,10 +77,11 @@ exports.addAccount = async (req, res) => {
 
     // Validate accountGroup, accountHead, and accountSubhead
     if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
+      console.log("Invalid account group, head, or subhead.");
       return res.status(400).json({
         message: "Invalid account group, head, or subhead."
       });
-      console.log("Invalid account group, head, or subhead.");
+      
     }
 
 
