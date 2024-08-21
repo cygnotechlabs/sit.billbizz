@@ -74,9 +74,14 @@ function InvoiceSettings({}: Props) {
     facebookLink: "",
     displayFacebookLink: false,
     accountHolderName: "",
+    displayAccountHolderName:false,
     bankName: "",
+    displayBankName:false,
     accNum: "",
+    displayAccNum:false,
     ifsc: "",
+    displayIfsc:false,
+    termsConditions:""
   });
 
   const handleInvoiceSettings = async (e: any) => {
@@ -745,9 +750,9 @@ function InvoiceSettings({}: Props) {
       />
       <div className="flex items-center space-x-2 mt-3">
         <input
-          checked={invoiceSettings.displayXLink}
+          checked={invoiceSettings.displayAccountHolderName}
           onChange={(e) =>
-            handleEventBindChange(e.target.checked, "displayXLink")
+            handleEventBindChange(e.target.checked, "displayAccountHolderName")
           }
           type="checkbox"
           id="customCheckbox"
@@ -770,9 +775,9 @@ function InvoiceSettings({}: Props) {
       />
       <div className="flex items-center space-x-2 mt-3">
         <input
-          checked={invoiceSettings.displayXLink}
+          checked={invoiceSettings.displayBankName}
           onChange={(e) =>
-            handleEventBindChange(e.target.checked, "displayXLink")
+            handleEventBindChange(e.target.checked, "displayBankName")
           }
           type="checkbox"
           id="customCheckbox"
@@ -797,9 +802,9 @@ function InvoiceSettings({}: Props) {
       />
       <div className="flex items-center space-x-2 mt-3">
         <input
-          checked={invoiceSettings.displayXLink}
+          checked={invoiceSettings.displayAccNum}
           onChange={(e) =>
-            handleEventBindChange(e.target.checked, "displayXLink")
+            handleEventBindChange(e.target.checked, "displayAccNum")
           }
           type="checkbox"
           id="customCheckbox"
@@ -822,9 +827,9 @@ function InvoiceSettings({}: Props) {
       />
       <div className="flex items-center space-x-2 mt-3">
         <input
-          checked={invoiceSettings.displayXLink}
+          checked={invoiceSettings.displayIfsc}
           onChange={(e) =>
-            handleEventBindChange(e.target.checked, "displayXLink")
+            handleEventBindChange(e.target.checked, "displayIfsc")
           }
           type="checkbox"
           id="customCheckbox"
