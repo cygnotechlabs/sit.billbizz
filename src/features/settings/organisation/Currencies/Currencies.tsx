@@ -1,16 +1,16 @@
-import CurrencyTable from "./CurrencyTable";
-import Button from "../../../../Components/Button";
-import PlusCircle from "../../../../assets/icons/PlusCircle";
-import Banner from "../../banner/Banner";
-import { ChangeEvent, FormEvent, useContext, useState } from "react";
-import Modal from "../../../../Components/model/Modal";
+import { ChangeEvent, useContext, useState } from "react";
+import { toast } from "react-hot-toast";
 import CehvronDown from "../../../../assets/icons/CehvronDown";
-import CurrencyBro from "../../../../assets/Images/Currency-bro 1.png";
+import PlusCircle from "../../../../assets/icons/PlusCircle";
 import topImg from "../../../../assets/Images/14.png";
-import { endponits } from "../../../../Services/apiEndpoints";
-import useApi from "../../../../Hooks/useApi";
-import { toast, Toaster } from "react-hot-toast";
+import CurrencyBro from "../../../../assets/Images/Currency-bro 1.png";
+import Button from "../../../../Components/Button";
+import Modal from "../../../../Components/model/Modal";
 import { CurrencyResponseContext } from "../../../../context/ContextShare";
+import useApi from "../../../../Hooks/useApi";
+import { endponits } from "../../../../Services/apiEndpoints";
+import Banner from "../../banner/Banner";
+import CurrencyTable from "./CurrencyTable";
 
 interface InputCurrencyData {
   organizationId: string;
@@ -63,17 +63,19 @@ const Currencies: React.FC<Props> = () => {
     }));
   };
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+
+
+  const onSubmit = async () => {
     try {
       const url = `${endponits.ADD_CURRENCIES}`;
-
       const { response, error } = await CreateNewCurrency(url, newCurrency);
-      console.log(response);
-      console.log(error);
-      
+      console.log("response",response);
+      console.log("Error",error.response);
+
       if (!error && response) {
         closeModal();
+        console.log(response.data);
+        
         toast.success(response.data.message	);
         setCurrencyResponse((prevCurrencyResponse: any) => ({
           ...prevCurrencyResponse,
@@ -81,16 +83,15 @@ const Currencies: React.FC<Props> = () => {
         }));
        
       } else {
-        toast.error(response?.data?.message);
+        toast.error(error.response?.data?.message);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error due to add currency!",error);
     }
   };
 
-
-
   return (
+    <>
     <div className="m-4 overflow-y-scroll hide-scrollbar text-[#303F58]">
       <Banner seeOrgDetails />
       <div className="p-2 flex items-center ">
@@ -298,10 +299,10 @@ value={newCurrency.decimalPlaces}
                   <p className="text-sm">Cancel</p>
                 </Button>
                 <Button
-  onClick={(e) => {
+  onClick={
    
-    onSubmit(e);
-  }}
+    onSubmit
+  }
   variant="primary"
   className="h-[38px] w-[120px] flex justify-center"
 >
@@ -313,8 +314,10 @@ value={newCurrency.decimalPlaces}
           </form>
         </div>
       </Modal>
-      <Toaster position="top-center" reverseOrder={true} />
+      
     </div>
+    {/* <Toaster position="top-center" reverseOrder={true} /> */}
+    </>
   );
 };
 

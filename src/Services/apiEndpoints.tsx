@@ -4,7 +4,12 @@ export const endponits = {
   CREATE_ORGANIZATION: `setup-organization`,
   GET_ONE_ORGANIZATION: `get-one-organization`,
   GET_COUNTRY_DATA: `get-countries-data`,
+
   GET_CURRENCY_LIST: `get-currency`,
+  
+
+    //Sales
+     ADD_SALES_SETTINGS:`add-sales-settings`,
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_SETTINGS: "get-settings",
@@ -12,6 +17,10 @@ export const endponits = {
   EDIT_PAYMENT_TERMS: `edit-payment-terms/:id`,
   DELETE_PAYMENT_TERMS: `delete-payment-terms`,
   GET_PAYMENT_TERMS: `get-all-payment-terms`,
+
+  // items
+
+ADD_ITEMS:`add-item-settings`,
 
   // Accountant
   Get_ALL_Acounts: "get-all-account",
@@ -35,6 +44,8 @@ EDIT_CURRENCIES:`edit-currency`,
 GET_ONE_CURRENCY:(id:string)=>`/view-currency/${id}`,
 
 
+ 
+  
 
   // Inventory
   // Settings/Taxes
@@ -43,26 +54,30 @@ GET_ONE_CURRENCY:(id:string)=>`/view-currency/${id}`,
   ADD_NEW_TAX: "add-tax",
   UPDATE_TAX_VAT: `edit-tax`,
 
+
+  //Get All Items
+GET_ALL_ITEMS:"get-itemDropdown",
+
   // Inventory
   // Brand
   GET_ALL_BRAND: "get-all-brands",
   GET_BRAND: (id: string) => `get-one-brand/${id}`,
-  UPDATE_BRAND: (id: string) => `update-brand/${id}`,
+  UPDATE_BRAND: `update-brand`,
   DELETE_BRAND: (id: string) => `delete-brand/${id}`,
   ADD_BRAND: "add-brand",
 
   // Category
   GET_ALL_CATEGORIES: "get-all-category",
-  ADD_CATEGORY: "get-all-category",
+  ADD_CATEGORY: "add-category",
   DELETE_CATEGORY: (id: string) => `delete-category/${id}`,
-  UPDATE_CATEGORY: (id: string) => `update-category/${id}`,
+  UPDATE_CATEGORY: `update-category`,
   GET_CATEGORY: (id: string) => `get-one-category/${id}`,
 
   // Manufacturer
   GET_ALL_MANUFACTURER: "get-all-manufacturer",
   ADD_MANUFACTURER: "add-manufacturer",
   DELETE_MANUFACTURER: (id: string) => `delete-manufacturer/${id}`,
-  UPDATE_MANUFACTURER: (id: string) => `update-manufacturer/${id}`,
+  UPDATE_MANUFACTURER: `update-manufacturer`,
 
   // Rack
   GET_ALL_RACK: "get-all-rack",

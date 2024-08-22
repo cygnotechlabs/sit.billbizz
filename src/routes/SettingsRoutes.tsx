@@ -17,9 +17,10 @@ import Invoices from "../features/settings/sales/invoice/Invoices";
 
 import SalesOrder from "../features/settings/sales/salesOrder/SalesOrder";
 import CreditNotes from "../features/settings/sales/creditnote/CreditNotes";
-import ExpensesHome from "../features/settings/Purchases/Expense/ExpensesHome";
+import ExpensesHome from "../features/settings/Purcahse/Expense/ExpensesHome";
 import PurchaseOrders from "../features/settings/Purcahse/PuchaseOrder";
 import MsmeSettings from "../features/settings/taxes/msmeSettings/MsmeSettings";
+import TransactionNumber from "../features/settings/customization/TransactionNumber";
 
 // import Users from "../features/settings/users/Users";
 // import Preferences from "../features/settings/preferences/Preferences";
@@ -56,6 +57,8 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings/sales/CreditNotes", element: <CreditNotes /> },
   { path: "/settings/purchases/expenses", element: <ExpensesHome /> },
   { path: "/settings/purchase/puschaseOrder", element: <PurchaseOrders /> },
+  { path: "/settings/transaction-number-series", element: <TransactionNumber /> },
+
 
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },

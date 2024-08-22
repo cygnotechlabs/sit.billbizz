@@ -237,8 +237,9 @@ export const paymentTermsList = [
 
 export const organizationList = [
   { title: "Profile", route: "/settings/organization/profile" },
-  { title: "Invoice", route: "/settings/invoice" },
   { title: "Currencies", route: "/settings/currencies" },
+  { title: "Additional Details", route: "/settings/invoice" },
+  
 ];
 
 export const taxList = [{ title: "Taxes", route: "/settings/taxes" }];
@@ -287,8 +288,8 @@ export const customizationList = [
   { title: "Web Tabs", route: "/settings/web-tabs" },
   { title: "Digital Signature", route: "/settings/digital-signature" },
   {
-    title: "Transaction Rating Series",
-    route: "/settings/transaction-rating-series",
+    title: "Transaction Number Series",
+    route: "/settings/transaction-number-series",
   },
   { title: "PDF Templates", route: "/settings/pdf-templates" },
 ];
@@ -323,8 +324,9 @@ export const settingsList = [
     icon: userRound,
     subhead: [
       { headName: "Profile", subRoute: "/settings/organization/profile" },
-      { headName: "Invoice", subRoute: "/settings/organization/invoice" },
       { headName: "Currencies", subRoute: "/settings/organization/currencies" },
+      { headName: "Additional Details", subRoute: "/settings/organization/invoice" },
+      
     ],
   },
   {
@@ -393,8 +395,8 @@ export const settingsList = [
         subRoute: "/settings/digital-signature",
       },
       {
-        headName: "Transaction Rating Series",
-        subRoute: "/settings/transaction-rating-series",
+        headName: "Transaction Number Series",
+        subRoute: "/settings/transaction-number-series",
       },
       { headName: "PDF Templates", subRoute: "/settings/pdf-templates" },
     ],
