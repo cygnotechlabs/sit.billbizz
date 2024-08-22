@@ -28,8 +28,13 @@ const settingSchema = new Schema({
   linkedinLink: { type: String },  displayLinkedinLink: { type: Boolean },
   facebookLink: { type: String },  displayFacebookLink: { type: Boolean },
   
-  //bankfield
-  accountHolderName: { type: String },  bankNamse: { type: String },  accNum: { type: String },  ifsc: { type: String },
+  //Bankfield
+  accountHolderName: { type: String },  displayAccountHolderName: { type: Boolean },
+  bankName: { type: String },  displayBankName: { type: Boolean },
+  accNum: { type: String },  displayAccNum: { type: Boolean },
+  ifsc: { type: String }, displayIfsc: { type: Boolean },
+
+  defaultTermsAndCondition: { type: String },
 
   //Item
   itemDecimal: { type: String },
@@ -53,10 +58,6 @@ const settingSchema = new Schema({
 
 
 
-
-
-
-
   //Sales Order
   salesOrderAddress: { type: Boolean },//deafult=false
   salesOrderCustomerNote: { type: Boolean },//deafult=false
@@ -66,14 +67,14 @@ const settingSchema = new Schema({
   termCondition: { type: String },
   customerNote: { type: String },
 
+
   //Shipment
   carrierNotification: { type: Boolean }, //deafult=false
   manualNotification: { type: Boolean }, //deafult=false
-
   shippingAddress:[shipSchema],
 
-  //Invoice
 
+  //Invoice
   invoiceEdit: { type: String },
   displayExpenseReceipt: { type: String },
   salesOrserNumber: { type: Boolean }, //default=true  true=sales order number   false = Sales Order Reference Number
@@ -85,9 +86,11 @@ const settingSchema = new Schema({
   salesInvoiceTC: { type: String },
   salesInvoiceCN: { type: String },
 
+
   //Delivery Chellans
   deliveryChellanTC: { type: String },
   deliveryChellanCN: { type: String },
+
 
   //Credit Note
   overideCostPrice: { type: Boolean },//default=false
@@ -97,10 +100,11 @@ const settingSchema = new Schema({
   recordLocking: { type: Boolean },//default=false
   creditNoteTC: { type: String },
   creditNoteCN: { type: String },
-  
 
-
-
+  //Purchase order
+  purchaseOrderClose: { type: String }, // Purchase recorder, Bill created, Purchase & Bill recorded
+  purchaseTC: { type: String },
+  purchaseNote: { type: String },
 
 
 });

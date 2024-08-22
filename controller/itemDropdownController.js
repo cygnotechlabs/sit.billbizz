@@ -13,9 +13,9 @@ exports.getItemDropdowm = async (req, res) => {
     const { organizationId } = req.body;
     try {
         // Check if an Organization already exists
-        const existingOrganization = await Organization.findOne({ organizationId });
+        const organization = await Organization.findOne({ organizationId });
     
-        if (!existingOrganization) {
+        if (!organization) {
         return res.status(404).json({
             message: "No Organization Found.",
         });
@@ -91,13 +91,18 @@ exports.getItemDropdowm = async (req, res) => {
                 fourDigitHsn: settings.fourDigitHsn,
             },
             taxType: taxData.taxType,
+            organization: {
+                baseCurrency: organization.baseCurrency,
+                timeZoneExp: organization.timeZoneExp,
+                dateFormatExp: organization.dateFormatExp,
+            }
         };
 
         // Check taxType and add the appropriate tax rate to the response
         if (taxData.taxType === 'GST') {
-            response.gstTaxRate = taxData.gstTaxRate;
+            response.taxRate = taxData.gstTaxRate;
         } else if (taxData.taxType === 'VAT') {
-            response.vatTaxRate = taxData.vatTaxRate;
+            response.taxRate = taxData.vatTaxRate;
         } else {
             response.message = "No tax type selected.";
         }
