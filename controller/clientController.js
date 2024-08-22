@@ -415,7 +415,7 @@ const createSettingsOrganization = async (organizationId) => {
     const settings = [
       {organizationId,
       //item  
-      itemDuplicateName:false, hsnSac:false, fourDigitHsn:false, priceList:false, priceListAtLineLevel:false, compositeItem:false,
+      itemDuplicateName:false, hsnSac:false, priceList:false, priceListAtLineLevel:false, compositeItem:false,
       stockBelowZero:false, OutOfStockBelowZero :false, notifyReorderPoint:false, trackCostOnItems:false,}
          
     ];

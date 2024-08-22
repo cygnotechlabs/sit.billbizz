@@ -28,8 +28,13 @@ const settingSchema = new Schema({
   linkedinLink: { type: String },  displayLinkedinLink: { type: Boolean },
   facebookLink: { type: String },  displayFacebookLink: { type: Boolean },
   
-  //bankfield
-  accountHolderName: { type: String },  bankNamse: { type: String },  accNum: { type: String },  ifsc: { type: String },
+  //Bankfield
+  accountHolderName: { type: String },  displayAccountHolderName: { type: Boolean },
+  bankName: { type: String },  displayBankName: { type: Boolean },
+  accNum: { type: String },  displayAccNum: { type: Boolean },
+  ifsc: { type: String }, displayIfsc: { type: Boolean },
+
+  defaultTermsAndCondition: { type: String },
 
   //Item
   itemDecimal: { type: String },
@@ -39,7 +44,7 @@ const settingSchema = new Schema({
 
   itemDuplicateName: { type: Boolean }, //default:false
   hsnSac: { type: Boolean }, //default:false
-  hsnDigits: { type: String }, 
+  hsnDigits: { type: String }, // 4, 6
 
   priceList: { type: Boolean }, //default:false
   priceListAtLineLevel: { type: Boolean }, //default:false
@@ -53,10 +58,6 @@ const settingSchema = new Schema({
 
 
 
-
-
-
-
   //Sales Order
   salesOrderAddress: { type: Boolean },//deafult=false
   salesOrderCustomerNote: { type: Boolean },//deafult=false
@@ -66,28 +67,30 @@ const settingSchema = new Schema({
   termCondition: { type: String },
   customerNote: { type: String },
 
+
   //Shipment
   carrierNotification: { type: Boolean }, //deafult=false
   manualNotification: { type: Boolean }, //deafult=false
-
   shippingAddress:[shipSchema],
 
-  //Invoice
 
-  invoiceEdit: { type: String },
-  displayExpenseReceipt: { type: String },
-  salesOrserNumber: { type: Boolean }, //default=true  true=sales order number   false = Sales Order Reference Number
-  paymentReceipt: { type: Boolean },//default= false
-  invoiceQrCode: { type: Boolean },//default= false
+  //Invoice
+  invoiceEdit: { type: Boolean }, //deafult=false
+  displayExpenseReceipt: { type: Boolean }, //deafult=false
+  salesOrderNumber: { type: String }, // orderNum, refNum
+  paymentReceipt: { type: Boolean }, // default= false
+  invoiceQrCode: { type: Boolean }, // default= false
   invoiceQrType: { type: String },
   invoiceQrDescription: { type: String },
   zeroValue: { type: Boolean },
   salesInvoiceTC: { type: String },
   salesInvoiceCN: { type: String },
 
+
   //Delivery Chellans
   deliveryChellanTC: { type: String },
   deliveryChellanCN: { type: String },
+
 
   //Credit Note
   overideCostPrice: { type: Boolean },//default=false
@@ -97,10 +100,11 @@ const settingSchema = new Schema({
   recordLocking: { type: Boolean },//default=false
   creditNoteTC: { type: String },
   creditNoteCN: { type: String },
-  
 
-
-
+  //Purchase order
+  purchaseOrderClose: { type: String }, // Purchase recorder, Bill created, Purchase & Bill recorded
+  purchaseTC: { type: String },
+  purchaseNote: { type: String },
 
 
 });

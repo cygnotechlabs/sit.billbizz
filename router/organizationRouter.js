@@ -78,7 +78,7 @@ router.put('/edit-prefix',settingController.updatePrefix)
 
 router.delete('/delete-prefix',settingController.deletePrefix)
 
-router.put('/status-prefix',settingController.setPrfixSeriesStatusTrue)
+router.put('/status-prefix',settingController.setPrefixSeriesStatusTrue)
 
 
 

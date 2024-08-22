@@ -51,7 +51,6 @@ exports.viewCurrency = async (req, res) => {
   }
 };
 
-
 // Add currency
 exports.addCurrency = async (req, res) => {
   try {
@@ -147,7 +146,7 @@ exports.deleteCurrency = async (req, res) => {
 
 
 
-// Invoice
+// More details
 // Setup Invoice settings
 exports.updateInvoiceSettings = async (req, res) => {
   try {
@@ -172,9 +171,14 @@ exports.updateInvoiceSettings = async (req, res) => {
       displayFacebookLink: req.body.displayFacebookLink,
 
       accountHolderName: req.body.accountHolderName,
+      displayAccountHolderName: req.body.displayAccountHolderName,
       bankName: req.body.bankName,
+      displayBankName: req.body.displayBankName,
       accNum: req.body.accNum,
+      displayAccNum: req.body.displayAccNum,
       ifsc: req.body.ifsc,
+      displayIfsc: req.body.displayIfsc,
+      defaultTermsAndCondition: req.body.defaultTermsAndCondition
     };
 
     // Find the document by organizationId
@@ -318,7 +322,6 @@ exports.getAllPaymentTerms = async (req, res) => {
 
 
 //Tax
-
 // Add Tax
 exports.addTax = async (req, res) => {
   try {
@@ -591,7 +594,7 @@ exports.deletePrefix = async (req, res) => {
 
 
 //Status True 
-exports.setPrfixSeriesStatusTrue = async (req, res) => {
+exports.setPrefixSeriesStatusTrue = async (req, res) => {
   try {
     const { organizationId, seriesId } = req.body;
 
