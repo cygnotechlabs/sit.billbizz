@@ -9,7 +9,7 @@ export const endponits = {
   
 
     //Sales
-     ADD_SALES_SETTINGS:``,
+     ADD_SALES_SETTINGS:`add-sales-settings`,
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_SETTINGS: "get-settings",
