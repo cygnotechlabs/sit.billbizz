@@ -83,7 +83,6 @@ const EditCurrencyModal = ({ selectedCurrency }: { selectedCurrency: any }) => {
         format: selectedCurrency.format,
         currencyId:selectedCurrency._id
       });
-      setModalOpen(true);
     }
   }, [selectedCurrency]);
 
