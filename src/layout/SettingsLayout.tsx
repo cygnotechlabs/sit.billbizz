@@ -2,7 +2,7 @@ import { useState } from "react";
 import Header from "./Header/Header";
 import SideBar from "./SideBar/SideBar";
 import { Outlet } from "react-router-dom";
-import Organization from "../pages/Organization";
+import Organization from "../pages/SettingsSidebar";
 
 type Props = {
   children: React.ReactNode;
