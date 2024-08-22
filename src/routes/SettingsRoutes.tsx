@@ -39,7 +39,7 @@ const SettingsRoutes: RouteObject[] = [
   },
   { path: "/settings/organization/invoice", element: <InvoiceSettings /> },
   { path: "/settings/organization/currencies", element: <Currencies /> },
-  { path: "/settings/currencies/exchange-rates", element: <ExchangeRates /> },
+  { path: "/settings/currencies/exchange-rates/:_id", element: <ExchangeRates/> },
   { path: "/settings/organization/invoice", element: <InvoiceSettings /> },
   { path: "/settings/taxes", element: <Taxes /> },
   { path: "/settings/taxes/GST", element: <GSTComponent /> },

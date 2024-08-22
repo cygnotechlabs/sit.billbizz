@@ -12,6 +12,7 @@ const CurrencyTable = () => {
   const { request: get_currencies } = useApi("put", 5004);
   const tableHeaders = ["Name", "Symbol", "Actions"];
   const [currenciesData, setCurrenciesData] = useState<any[]>([]);
+
   const [selectedCurrency, setSelectedCurrency] = useState<any | null>(null);
   const { currencyResponse } = useContext(CurrencyResponseContext)!;
   const { request: deleteCurrencyRequest } = useApi("delete", 5004);
@@ -75,7 +76,7 @@ const CurrencyTable = () => {
             {currenciesData.map((item: any, index: number) => (
               <tr className="relative" key={index}>
                 <td className="py-4 px-4 border-y border-tableBorder">
-                  <Link to={"/expense/view"}>
+               
                     <p>
                       {item.currencyCode}-{item.currencyName}{" "}
                       {item.baseCurrency && (
@@ -84,7 +85,7 @@ const CurrencyTable = () => {
                         </span>
                       )}
                     </p>
-                  </Link>
+                
                 </td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   {item.currencySymbol}
@@ -94,7 +95,7 @@ const CurrencyTable = () => {
                     <div className="h-[26px] justify-start items-start inline-flex">
                       <div className="#fefdfa">
                         <div className="#565148 border px-[10px] py-1 rounded-lg">
-                          <Link to="/settings/currencies/exchange-rates">
+                          <Link to={`/settings/currencies/exchange-rates/${item._id}`}>
                             View Exchange Rate
                           </Link>
                         </div>

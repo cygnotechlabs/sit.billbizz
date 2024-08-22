@@ -75,7 +75,7 @@ const CreateOrganizationForm = () => {
     phoneNumberCode: "",
   });
 
-  console.log(inputData);
+  // console.log(inputData);
 
   const getDropdownList = async () => {
     try {
@@ -83,7 +83,7 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setAdditionalData(response.data[0]);
-        console.log(response.data[0], "additionalData");
+        // console.log(response.data[0], "additionalData");
       }
     } catch (error) {
       console.log("Error in fetching Additional data", error);
@@ -96,7 +96,7 @@ const CreateOrganizationForm = () => {
       const { response, error } = await getAdditionalData(url);
       if (!error && response) {
         setcountryData(response.data[0].countries);
-        console.log(response.data[0].countries, "CountryData");
+        // console.log(response.data[0].countries, "CountryData");
       }
     } catch (error) {
       console.log("Error in fetching country data", error);
@@ -111,7 +111,7 @@ const CreateOrganizationForm = () => {
       });
       if (!error && response) {
         setcurrencyData(response.data);
-        console.log(response.data, "currencyData");
+        // console.log(response.data, "currencyData");
       }
     } catch (error) {
       console.log("Error in fetching currency data", error);
@@ -127,9 +127,8 @@ const CreateOrganizationForm = () => {
       // console.log(apiResponse);
       const { response, error } = apiResponse;
       if (!error && response?.data) {
-        // setOneOrganization(response.data);
         setInputData(response.data);
-        console.log(response.data, "oneOrganization");
+        // console.log(response.data, "oneOrganization");
 
         setInputData((prevData) => ({
           ...prevData,
