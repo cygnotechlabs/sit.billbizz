@@ -6,7 +6,6 @@ export const endponits = {
   GET_COUNTRY_DATA: `get-countries-data`,
 
   GET_CURRENCY_LIST: `get-currency`,
-  
 
     //Sales
      ADD_SALES_SETTINGS:`add-sales-settings`,
@@ -20,7 +19,7 @@ export const endponits = {
 
   // items
 
-ADD_ITEMS:`add-item-settings`,
+  ADD_ITEMS: `add-item-settings`,
 
   // Accountant
   Get_ALL_Acounts: "get-all-account",
@@ -54,9 +53,12 @@ GET_ONE_CURRENCY:(id:string)=>`/view-currency/${id}`,
   ADD_NEW_TAX: "add-tax",
   UPDATE_TAX_VAT: `edit-tax`,
 
-
   //Get All Items
-GET_ALL_ITEMS:"get-itemDropdown",
+  GET_ALL_ITEMS: "get-itemDropdown",
+
+  // settings > slaes > creditNote
+
+  ADD_CREDIT_NOTE_SETTINGS:`add-creditNote-settings`,
 
   // Inventory
   // Brand
