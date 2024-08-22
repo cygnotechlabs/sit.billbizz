@@ -20,21 +20,21 @@ interface Account {
   accountName: string;
   accountSubhead: string;
 }
+interface ItemsData {
+  manufacturerName: string[];
+  brandName: [];
+  categoriesName: [];
+  rackName: [];
+  gstTaxRate: TaxRate[];
+  unitName: [];
+}
+interface TaxRate {
+  taxName: string;
+}
 
 
 
-const items = [
-  "BOX-box",
-  "CMS-cm",
-  "DOZ-dz",
-  "GMS-gm",
-  "INC-in",
-  "KGS-kg",
-  "FTS-ft",
-  "GMS-gm",
-];
-
-const AddItem = ({}: Props) => {
+const AddItem = ({ }: Props) => {
   const [selected, setSelected] = useState<string | null>(null);
   const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
   const [isService, setIsService] = useState<boolean>(false);
@@ -75,14 +75,7 @@ const AddItem = ({}: Props) => {
 
 
   const [accountData, setAccountData] = useState<Account[]>([]);
-  const [itemsData, setItemsData] = useState<[]>([]);
-  console.log(itemsData);
-  
-  
   const { request: AllAccounts } = useApi("put", 5001);
-  const { request: AllItems } = useApi("put", 5003);
-
-
   const fetchAllAccounts = async () => {
     try {
       const url = `${endponits.Get_ALL_Acounts}`;
@@ -96,6 +89,19 @@ const AddItem = ({}: Props) => {
       console.error("Error fetching accounts:", error);
     }
   };
+
+
+  const [itemsData, setItemsData] = useState<ItemsData>({
+    manufacturerName: [],
+    brandName: [],
+    categoriesName: [],
+    rackName: [],
+    gstTaxRate: [],
+    unitName: [],
+  });
+  console.log(itemsData);
+
+  const { request: AllItems } = useApi("put", 5003);
   const fetchAllItems = async () => {
     try {
       const url = `${endponits.GET_ALL_ITEMS}`;
@@ -103,16 +109,62 @@ const AddItem = ({}: Props) => {
       const { response, error } = await AllItems(url, body);
       if (!error && response) {
         setItemsData(response.data);
+        console.log("Fetched Items Data:", response.data);
       }
     } catch (error) {
       console.error("Error fetching items:", error);
     }
   };
+  useEffect(() => {
+    fetchAllItems();
+  }, []);
 
-useEffect(()=>{
-fetchAllAccounts()
-fetchAllItems()
-},[])
+
+  useEffect(() => {
+    fetchAllAccounts()
+  }, [])
+
+  const [selectedManufacturer, setSelectedManufacturer] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedRack, setSelectedRack] = useState("");
+  const [selectedTaxRate, setSelectedTaxRate] = useState("");
+  const [selectedUnit, setSelectedUnit] = useState("");
+  const [isInventoryTracked, setIsInventoryTracked] = useState(false);
+
+  const handleManufacturerSelect = (manufacturer: string) => {
+    setSelectedManufacturer(manufacturer);
+    setOpenDropdownIndex(null);
+  };
+  const handleBrandSelect = (brand: string) => {
+    setSelectedBrand(brand);
+    setOpenDropdownIndex(null);
+  };
+
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    setOpenDropdownIndex(null);
+  };
+  const handleRackSelect = (rack: string) => {
+    setSelectedRack(rack);
+    setOpenDropdownIndex(null);
+  };
+
+  const handleTaxRateSelect = (taxName: string) => {
+    setSelectedTaxRate(taxName);
+    setOpenDropdownIndex(null);
+  };
+
+  const handleUnitSelect = (unit: string) => {
+    setSelectedUnit(unit);
+    setOpenDropdownIndex(null);
+  };
+
+  const handleCheckboxChange = () => {
+    setIsInventoryTracked(!isInventoryTracked);
+  };
+
+
 
   return (
     <>
@@ -170,20 +222,18 @@ fetchAllItems()
                       id="goods"
                       type="radio"
                       name=""
-                      className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${
-                        selected === "goods"
+                      className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${selected === "goods"
                           ? "border-8 border-[#97998E]"
                           : "border-1 border-[#97998E]"
-                      }`}
+                        }`}
                       checked={selected === "goods"}
                     />
                     <div
                       id="goods"
-                      className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
-                        selected === "goods"
+                      className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${selected === "goods"
                           ? "bg-neutral-50"
                           : "bg-transparent"
-                      }`}
+                        }`}
                     />
                   </div>
                   <label htmlFor="goods" className="text-start font-medium">
@@ -201,20 +251,18 @@ fetchAllItems()
                       id="service"
                       type="radio"
                       name=""
-                      className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${
-                        selected === "service"
+                      className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${selected === "service"
                           ? "border-8 border-[#97998E]"
                           : "border-1 border-[#97998E]"
-                      }`}
+                        }`}
                       checked={selected === "service"}
                     />
                     <div
                       id="service"
-                      className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
-                        selected === "service"
+                      className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${selected === "service"
                           ? "bg-neutral-50"
                           : "bg-transparent"
-                      }`}
+                        }`}
                     />
                   </div>
                   <label htmlFor="service" className="text-start font-medium">
@@ -253,48 +301,56 @@ fetchAllItems()
                   />{" "}
                 </div>
               </div>
-              <div className="relative col-span-3  mt-3">
+
+              <div className="relative col-span-3 mt-3">
                 <label
-                  htmlFor="location"
+                  htmlFor="unit-input"
                   className="text-slate-600 flex items-center gap-2"
                 >
                   Unit <CircleHelp />
                 </label>
                 <div className="relative w-full mt-1.5">
-                  <div
+                  <input
+                    id="unit-input"
+                    type="text"
+                    value={selectedUnit}
                     onClick={() => toggleDropdown("unit")}
-                    className="cursor-pointer appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  >
-                    <p>Select Unit</p>
-                  </div>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    readOnly
+                    className="cursor-pointer appearance-none w-full items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    placeholder="Select Unit"
+                  />
+                  <div className="cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <CehvronDown color="gray" />
                   </div>
                 </div>
                 {openDropdownIndex === "unit" && (
                   <div
                     ref={dropdownRef}
-                    className="absolute z-10 bg-white    rounded-md mt-1 p-2  space-y-1 border border-inputBorder"
+                    className="absolute z-10 bg-white rounded-md mt-1 p-2 space-y-1 border border-inputBorder"
                   >
-                    {items.map((item, index) => (
+                    {itemsData.unitName && itemsData.unitName.map((unit: string, index: number) => (
                       <div
                         key={index}
-                        className="flex p-2 hover:bg-gray-100 cursor-pointe border-b border-slate-300 text-sm w-[268px] text-textColor "
+                        onClick={() => handleUnitSelect(unit)}
+                        className="flex p-2 mb-4 hover:bg-gray-100 cursor-pointer border-b border-slate-300 text-sm w-[268px] text-textColor"
                       >
-                        {item}
-
-                        <div className="ml-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
+                        {unit}
+                        <div className="ml-auto text-2xl cursor-pointer relative -mt-2 pe-2">
                           &times;
                         </div>
                       </div>
                     ))}
-                    <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer">
-                      <SettingsIcons color="darkRed" bold={2} />{" "}
+                    <div
+                      className="hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold"
+                    >
+                      <SettingsIcons color="darkRed" bold={2} />
                       <p className="mt-0.5">Manage Unit</p>
                     </div>
                   </div>
                 )}
               </div>
+
+
             </div>
 
             {!isService && (
@@ -376,7 +432,7 @@ fetchAllItems()
               </label>
               <input
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[55px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-              
+
                 name=""
               />{" "}
             </div>
@@ -421,27 +477,27 @@ fetchAllItems()
                 </div>
               </label>
 
-            <div className="grid grid-cols-2 gap-4">
-            <div className="relative  mt-1.5">
-            <label
-                className="text-slate-600 flex text-sm items-center gap-2"
-                htmlFor=""
-              >
-                Warranty
-              </label>
-                    <select
-                      name="organizationCountry"
-                      id="Location"
-                      className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                    >
-                      <option value="">Select Warranty</option>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative  mt-1.5">
+                  <label
+                    className="text-slate-600 flex text-sm items-center gap-2"
+                    htmlFor=""
+                  >
+                    Warranty
+                  </label>
+                  <select
+                    name="organizationCountry"
+                    id="Location"
+                    className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  >
+                    <option value="">Select Warranty</option>
 
-                      <option></option>
-                    </select>
-                    <div className="pointer-events-none mt-6 absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <CehvronDown color="gray" />
-                    </div>
+                    <option></option>
+                  </select>
+                  <div className="pointer-events-none mt-6 absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <CehvronDown color="gray" />
                   </div>
+                </div>
                 <div>
                   <label
                     className="text-slate-600 text-sm "
@@ -460,7 +516,7 @@ fetchAllItems()
                           className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-r-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                         >
                           <option value="">KG</option>
-  
+
                           <option></option>
                         </select>
                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -470,114 +526,131 @@ fetchAllItems()
                     </div>
                   </label>
                 </div>
-            </div>
+              </div>
 
-              <div className="relative ">
+              <div className="relative">
                 <label
-                  htmlFor=""
+                  htmlFor="manufacturer-input"
                   className="text-slate-600 text-sm flex items-center gap-2"
                 >
                   Manufacturer
                 </label>
                 <div className="relative w-full mt-1.5">
-                  <div
+                  <input
+                    id="manufacturer-input"
+                    type="text"
+                    value={selectedManufacturer}
                     onClick={() => toggleDropdown("Manufacturer")}
-                    className="cursor-pointer appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  >
-                    <p>Select or add Manufacturer</p>
-                  </div>
-                  <div className=" cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    readOnly
+                    className="cursor-pointer appearance-none w-full items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    placeholder="Select or add Manufacturer"
+                  />
+                  <div className="cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <CehvronDown color="gray" />
                   </div>
                 </div>
                 {openDropdownIndex === "Manufacturer" && (
                   <div
                     ref={dropdownRef}
-                    className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  w-[50%] space-y-1"
+                    className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
                   >
                     <SearchBar
                       searchValue={searchValue}
                       onSearchChange={setSearchValue}
                       placeholder="Select Supplier"
                     />
-                    <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
-                      <div className="col-span-2 flex items-center justify-center">
-                        <img
-                          src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="col-span-10 flex">
-                        <div>
-                          <p className="font-bold text-sm">Soney Corporation</p>
-                          <p className="text-xs text-gray-500">Lorem ipusm</p>
+                    {itemsData.manufacturerName && itemsData.manufacturerName.map((manufacturer: string, index: number) => (
+                      <div
+                        key={index}
+                        onClick={() => handleManufacturerSelect(manufacturer)}
+                        className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
+                      >
+                        <div className="col-span-2 flex items-center justify-center">
+                          <img
+                            src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
+                            alt=""
+                          />
                         </div>
-                        <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
-                          &times;
+                        <div className="col-span-10 flex">
+                          <div>
+                            <p className="font-bold text-sm">{manufacturer}</p>
+                          </div>
+                          <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
+                            &times;
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ))}
                     <div
                       onClick={() => setIsManufatureModalOpen(true)}
-                      className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer"
+                      className="hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold"
                     >
-                      <SettingsIcons color="darkRed" bold={2} />{" "}
+                      <SettingsIcons color="darkRed" bold={2} />
                       <p className="mt-0.5">Manage Manufacturer</p>
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="relative ">
+
+              <div className="relative">
                 <label
-                  htmlFor="brand"
+                  htmlFor="brand-input"
                   className="text-slate-600 text-sm flex items-center gap-2"
                 >
                   Brand
                 </label>
                 <div className="relative w-full mt-1.5">
-                  <div
+                  <input
+                    id="brand-input"
+                    type="text"
+                    value={selectedBrand}
                     onClick={() => toggleDropdown("Brand")}
-                    className="cursor-pointer appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  >
-                    <p>Select or add Brand</p>
-                  </div>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    readOnly
+                    className="cursor-pointer appearance-none w-full items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    placeholder="Select or add Brand"
+                  />
+                  <div className="cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <CehvronDown color="gray" />
                   </div>
                 </div>
                 {openDropdownIndex === "Brand" && (
                   <div
                     ref={dropdownRef}
-                    className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  w-[50%] space-y-1"
+                    className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
                   >
                     <SearchBar
                       searchValue={searchValue}
                       onSearchChange={setSearchValue}
                       placeholder="Select Supplier"
                     />
-                    <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
-                      <div className="col-span-2 flex items-center justify-center">
-                        <img
-                          src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="col-span-10 flex">
-                        <div>
-                          <p className="font-bold text-sm">Soney Corporation</p>
-                          <p className="text-xs text-gray-500">Lorem ipusm</p>
+                    {itemsData.brandName && itemsData.brandName.map((brand: string, index: number) => (
+                      <div
+                        key={index}
+                        onClick={() => handleBrandSelect(brand)}
+                        className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
+                      >
+                        <div className="col-span-2 flex items-center justify-center">
+                          <img
+                            src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
+                            alt=""
+                          />
                         </div>
-                        <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
-                          &times;
+                        <div className="col-span-10 flex">
+                          <div>
+                            <p className="font-bold text-sm">{brand}</p>
+                          </div>
+                          <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
+                            &times;
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ))}
                     <div
                       onClick={() => setIsBrandModalOpen(true)}
-                      className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer"
+                      className="hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold"
                     >
-                      <SettingsIcons color="darkRed" bold={2} />{" "}
+                      <SettingsIcons color="darkRed" bold={2} />
                       <p className="mt-0.5">Manage Brand</p>
                     </div>
                   </div>
@@ -586,91 +659,43 @@ fetchAllItems()
             </>
           )}
 
-          <div className="relative ">
+          <div className="relative">
             <label
-              htmlFor=""
+              htmlFor="category-input"
               className="text-slate-600 text-sm flex items-center gap-2"
             >
               Category
             </label>
             <div className="relative w-full mt-1.5">
-              <div
+              <input
+                id="category-input"
+                type="text"
+                value={selectedCategory}
                 onClick={() => toggleDropdown("category")}
-                className="cursor-pointer appearance-none w-full  items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-              >
-                <p>Select or add Category</p>
-              </div>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                readOnly
+                className="cursor-pointer appearance-none w-full items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                placeholder="Select or add Category"
+              />
+              <div className="cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <CehvronDown color="gray" />
               </div>
             </div>
             {openDropdownIndex === "category" && (
               <div
                 ref={dropdownRef}
-                className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  w-[50%] space-y-1"
+                className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
               >
                 <SearchBar
                   searchValue={searchValue}
                   onSearchChange={setSearchValue}
                   placeholder="Select Supplier"
                 />
-                <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
-                  <div className="col-span-2 flex items-center justify-center">
-                    <img
-                      src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
-                      alt=""
-                    />
-                  </div>
-                  <div className="col-span-10 flex">
-                    <div>
-                      <p className="font-bold text-sm">Soney Corporation</p>
-                      <p className="text-xs text-gray-500">Lorem ipusm</p>
-                    </div>
-                    <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
-                      &times;
-                    </div>
-                  </div>
-                </div>
-                <div
-                  onClick={() => setIsCategoryModalOpen(true)}
-                  className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer"
-                >
-                  <SettingsIcons color="darkRed" bold={2} />{" "}
-                  <p className="mt-0.5">Manage Category</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {!isService ? (
-            <div className="relative ">
-              <label
-                htmlFor=""
-                className="text-slate-600 text-sm flex items-center gap-2"
-              >
-                Rack
-              </label>
-              <div
-                onClick={() => toggleDropdown("Rack")}
-                className="cursor-pointer appearance-none w-full mt-1.5 items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-              >
-                <p>Select or add Rack</p>
-
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 mt-6">
-                  <CehvronDown color="gray" />
-                </div>
-              </div>
-              {openDropdownIndex === "Rack" && (
-                <div
-                  ref={dropdownRef}
-                  className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  w-[50%] space-y-1"
-                >
-                  <SearchBar
-                    searchValue={searchValue}
-                    onSearchChange={setSearchValue}
-                    placeholder="Select Supplier"
-                  />
-                  <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
+                {itemsData.categoriesName && itemsData.categoriesName.map((category: string, index: number) => (
+                  <div
+                    key={index}
+                    onClick={() => handleCategorySelect(category)}
+                    className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
+                  >
                     <div className="col-span-2 flex items-center justify-center">
                       <img
                         src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
@@ -679,19 +704,84 @@ fetchAllItems()
                     </div>
                     <div className="col-span-10 flex">
                       <div>
-                        <p className="font-bold text-sm">Soney Corporation</p>
-                        <p className="text-xs text-gray-500">Lorem ipusm</p>
+                        <p className="font-bold text-sm">{category}</p>
                       </div>
-                      <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2 p-">
+                      <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
                         &times;
                       </div>
                     </div>
                   </div>
+                ))}
+                <div
+                  onClick={() => setIsCategoryModalOpen(true)}
+                  className="hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold"
+                >
+                  <SettingsIcons color="darkRed" bold={2} />
+                  <p className="mt-0.5">Manage Category</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {!isService ? (
+            <div className="relative">
+              <label
+                htmlFor="rack-input"
+                className="text-slate-600 text-sm flex items-center gap-2"
+              >
+                Rack
+              </label>
+              <div className="relative w-full mt-1.5">
+                <input
+                  id="rack-input"
+                  type="text"
+                  value={selectedRack}
+                  onClick={() => toggleDropdown("Rack")}
+                  readOnly
+                  className="cursor-pointer appearance-none w-full items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  placeholder="Select or add Rack"
+                />
+                <div className="cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 mt-6">
+                  <CehvronDown color="gray" />
+                </div>
+              </div>
+              {openDropdownIndex === "Rack" && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
+                >
+                  <SearchBar
+                    searchValue={searchValue}
+                    onSearchChange={setSearchValue}
+                    placeholder="Select Supplier"
+                  />
+                  {itemsData.rackName && itemsData.rackName.map((rack: string, index: number) => (
+                    <div
+                      key={index}
+                      onClick={() => handleRackSelect(rack)}
+                      className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
+                    >
+                      <div className="col-span-2 flex items-center justify-center">
+                        <img
+                          src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
+                          alt=""
+                        />
+                      </div>
+                      <div className="col-span-10 flex">
+                        <div>
+                          <p className="font-bold text-sm">{rack}</p>
+                        </div>
+                        <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
+                          &times;
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                   <div
                     onClick={() => setIsRackModalOpen(true)}
-                    className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold cursor-pointer"
+                    className="hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold"
                   >
-                    <SettingsIcons color="darkRed" bold={2} />{" "}
+                    <SettingsIcons color="darkRed" bold={2} />
                     <p className="mt-0.5">Manage Rack</p>
                   </div>
                 </div>
@@ -700,86 +790,86 @@ fetchAllItems()
           ) : (
             <div></div>
           )}
-  </div>
+        </div>
         <div className="grid grid-flow-col-dense mt-4 gap-4">
-       {isService&& <div className="relative  mt-1.5">
+          {isService && <div className="relative  mt-1.5">
             <label
-                className="text-slate-600 flex text-sm items-center gap-2"
-                htmlFor=""
-              >
-                Warranty
-              </label>
-                    <select
-                      name="organizationCountry"
-                      id="Location"
-                      className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                    >
-                      <option value="">Select Warranty</option>
+              className="text-slate-600 flex text-sm items-center gap-2"
+              htmlFor=""
+            >
+              Warranty
+            </label>
+            <select
+              name="organizationCountry"
+              id="Location"
+              className="block appearance-none w-full   text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+            >
+              <option value="">Select Warranty</option>
 
-                      <option></option>
-                    </select>
-                    <div className="pointer-events-none mt-6 absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <CehvronDown color="gray" />
-                    </div>
-                  </div>}
-            <div>
-              <label
-                className="text-slate-600 flex text-sm items-center gap-2"
-                htmlFor="organizationAddress"
-              >
-                UPC
-              </label>
-              <input
-                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                placeholder="Enter UPC"
-                name=""
-              />{" "}
+              <option></option>
+            </select>
+            <div className="pointer-events-none mt-6 absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <CehvronDown color="gray" />
             </div>
-  
-            <div>
-              <label
-                className="text-slate-600 flex text-sm items-center gap-2"
-                htmlFor="organizationAddress"
-              >
-                MPN
-              </label>
-              <input
-                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                placeholder="Enter MPN"
-                name=""
-              />{" "}
-            </div>
+          </div>}
+          <div>
+            <label
+              className="text-slate-600 flex text-sm items-center gap-2"
+              htmlFor="organizationAddress"
+            >
+              UPC
+            </label>
+            <input
+              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+              placeholder="Enter UPC"
+              name=""
+            />{" "}
+          </div>
+
+          <div>
+            <label
+              className="text-slate-600 flex text-sm items-center gap-2"
+              htmlFor="organizationAddress"
+            >
+              MPN
+            </label>
+            <input
+              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+              placeholder="Enter MPN"
+              name=""
+            />{" "}
+          </div>
         </div>
 
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <div>
-              <label
-                className="text-slate-600 flex text-sm items-center gap-2"
-                htmlFor="organizationAddress"
-              >
-                EAN
-              </label>
-              <input
-                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                placeholder="Enter EAN"
-                name=""
-              />{" "}
-            </div>
-            <div>
-              <label
-                className="text-slate-600 flex text-sm items-center gap-2"
-                htmlFor="organizationAddress"
-              >
-                ISBN
-              </label>
-              <input
-                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                placeholder="Enter ISBN"
-                name=""
-              />{" "}
-            </div>
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <div>
+            <label
+              className="text-slate-600 flex text-sm items-center gap-2"
+              htmlFor="organizationAddress"
+            >
+              EAN
+            </label>
+            <input
+              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+              placeholder="Enter EAN"
+              name=""
+            />{" "}
           </div>
-      
+          <div>
+            <label
+              className="text-slate-600 flex text-sm items-center gap-2"
+              htmlFor="organizationAddress"
+            >
+              ISBN
+            </label>
+            <input
+              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+              placeholder="Enter ISBN"
+              name=""
+            />{" "}
+          </div>
+        </div>
+
 
         <p className="text-textColor text-base font-semibold mt-4">
           Sales Information
@@ -817,33 +907,33 @@ fetchAllItems()
               name=""
             />{" "}
           </div>
-          
+
           <div className="relative">
-  <label htmlFor="" className="text-slate-600 text-sm gap-2">
-    Account
-  </label>
-  <div className="relative">
-    <div className="relative w-full">
-      <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
-        <option value=""  >
-          select income
-        </option>
-        <optgroup label="Income">
-          {accountData
-            .filter((account) => account.accountSubhead === "Income")
-            .map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.accountName}
-              </option>
-            ))}
-        </optgroup>
-      </select>
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-        <CehvronDown color="gray" />
-      </div>
-    </div>
-  </div>
-</div>
+            <label htmlFor="" className="text-slate-600 text-sm gap-2">
+              Account
+            </label>
+            <div className="relative">
+              <div className="relative w-full">
+                <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
+                  <option value=""  >
+                    select income
+                  </option>
+                  <optgroup label="Income">
+                    {accountData
+                      .filter((account) => account.accountSubhead === "Income")
+                      .map((account) => (
+                        <option key={account.id} value={account.id}>
+                          {account.accountName}
+                        </option>
+                      ))}
+                  </optgroup>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <CehvronDown color="gray" />
+                </div>
+              </div>
+            </div>
+          </div>
 
 
           <div>
@@ -885,36 +975,36 @@ fetchAllItems()
             </div>
           </div>
           <div className="relative">
-  <label htmlFor="" className="text-slate-600 text-sm gap-2">
-    Account
-  </label>
-  <div className="relative w-full">
-    <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
-      <option value="" disabled hidden>Select Account</option>
-      <optgroup label="Expense">
-        {accountData
-          .filter((account) => account.accountSubhead === "Expense")
-          .map((account) => (
-            <option key={account.id} value={account.id}>
-              {account.accountName}
-            </option>
-          ))}
-      </optgroup>
-      <optgroup label="Cost of Goods Sold">
-        {accountData
-          .filter((account) => account.accountSubhead === "Cost of Goods Sold")
-          .map((account) => (
-            <option key={account.id} value={account.id}>
-              {account.accountName}
-            </option>
-          ))}
-      </optgroup>
-    </select>
-    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-      <CehvronDown color="gray" />
-    </div>
-  </div>
-</div>
+            <label htmlFor="" className="text-slate-600 text-sm gap-2">
+              Account
+            </label>
+            <div className="relative w-full">
+              <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
+                <option value="" disabled hidden>Select Account</option>
+                <optgroup label="Expense">
+                  {accountData
+                    .filter((account) => account.accountSubhead === "Expense")
+                    .map((account) => (
+                      <option key={account.id} value={account.id}>
+                        {account.accountName}
+                      </option>
+                    ))}
+                </optgroup>
+                <optgroup label="Cost of Goods Sold">
+                  {accountData
+                    .filter((account) => account.accountSubhead === "Cost of Goods Sold")
+                    .map((account) => (
+                      <option key={account.id} value={account.id}>
+                        {account.accountName}
+                      </option>
+                    ))}
+                </optgroup>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <CehvronDown color="gray" />
+              </div>
+            </div>
+          </div>
 
 
           <div>
@@ -946,19 +1036,67 @@ fetchAllItems()
             </div>
           </div>
 
-          <div className="relative ">
-            <label htmlFor="" className="text-slate-600   text-sm  gap-2 ">
-              State Tax Rate
+          <div className="relative">
+            <label
+              htmlFor="tax-rate-input"
+              className="text-slate-600 text-sm flex items-center gap-2"
+            >
+              Tax Rate
             </label>
-
-            <div className="relative w-full ">
-              <select className="block appearance-none w-full mt-0.5 text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
-                <option value="">Select State Tax Rate</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <div className="relative w-full mt-1.5">
+              <input
+                id="tax-rate-input"
+                type="text"
+                value={selectedTaxRate}
+                onClick={() => toggleDropdown("TaxRate")}
+                readOnly
+                className="cursor-pointer appearance-none w-full mt-0.5 items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                placeholder="Select State Tax Rate"
+              />
+              <div className="cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <CehvronDown color="gray" />
               </div>
             </div>
+            {openDropdownIndex === "TaxRate" && (
+              <div
+                ref={dropdownRef}
+                className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
+              >
+                <SearchBar
+                  searchValue={searchValue}
+                  onSearchChange={setSearchValue}
+                  placeholder="Select Tax Rate"
+                />
+                {itemsData.gstTaxRate && itemsData.gstTaxRate.map((tax, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleTaxRateSelect(tax.taxName)}
+                    className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
+                  >
+                    <div className="col-span-2 flex items-center justify-center">
+                      <img
+                        src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
+                        alt=""
+                      />
+                    </div>
+                    <div className="col-span-10 flex">
+                      <div>
+                        <p className="font-bold text-sm">{tax.taxName}</p>
+                      </div>
+                      <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
+                        &times;
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div
+                  className="hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold"
+                >
+                  <SettingsIcons color="darkRed" bold={2} />
+                  <p className="mt-0.5">Manage Tax Rates</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <>
@@ -966,10 +1104,12 @@ fetchAllItems()
             <input
               type="checkbox"
               className="accent-[#97998E] bg-white h-6 w-5 mx-1"
-              id="checkbox3"
+              id="checkboxTrack"
+              checked={isInventoryTracked}
+              onChange={handleCheckboxChange}
             />
             <label
-              htmlFor=""
+              htmlFor="checkboxTrack"
               className="text-textColor text-base font-semibold"
             >
               Track Inventory for this item
@@ -979,68 +1119,72 @@ fetchAllItems()
             You cannot enable/disable inventory tracking once you've created
             transactions for this item
           </p>
+
+          {isInventoryTracked && (
+            <div className="grid grid-cols-2 gap-4 my-3">
+              <div className="relative">
+                <label htmlFor="" className="text-slate-600 text-sm gap-2">
+                  Inventory Account
+                </label>
+                <div className="relative w-full">
+                  <select
+                    className="block appearance-none w-full text-zinc-400 bg-white border
+                 border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md 
+                 leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  >
+                    <option value="" disabled hidden>
+                      Select account
+                    </option>
+                    <optgroup label="Stock">
+                      {accountData
+                        .filter((account) => account.accountSubhead === "Stock")
+                        .map((account) => (
+                          <option key={account.id} value={account.id}>
+                            {account.accountName}
+                          </option>
+                        ))}
+                    </optgroup>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <CehvronDown color="gray" />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="text-slate-600 flex text-sm gap-2" htmlFor="">
+                  Opening Balance
+                </label>
+                <input
+                  className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  placeholder="Value"
+                  name=""
+                />{" "}
+              </div>
+
+              <div>
+                <label className="text-slate-600 flex text-sm gap-2" htmlFor="">
+                  Opening Stock Rate Per Unit
+                </label>
+                <input
+                  className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  placeholder="Value"
+                  name=""
+                />{" "}
+              </div>
+
+              <div>
+                <label className="text-slate-600 flex text-sm gap-2" htmlFor="">
+                  Recorder Point
+                </label>
+                <input
+                  className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  placeholder="Value"
+                  name=""
+                />{" "}
+              </div>
+            </div>
+          )}
         </>
-
-        <div className="grid grid-cols-2 gap-4 my-3">
-          <div className="relative ">
-            <label htmlFor="" className="text-slate-600   text-sm  gap-2 ">
-              Inventory Account
-            </label>
-
-            <div className="relative w-full">
-  <select className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed">
-    <option value="" disabled hidden>Select account</option>
-    <optgroup label="Stock">
-      {accountData
-        .filter((account) => account.accountSubhead === "Stock")
-        .map((account) => (
-          <option key={account.id} value={account.id}>
-            {account.accountName}
-          </option>
-        ))}
-    </optgroup>
-  </select>
-  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-    <CehvronDown color="gray" />
-  </div>
-</div>
-
-
-            
-          </div>
-          <div>
-            <label className="text-slate-600 flex text-sm  gap-2" htmlFor="">
-              Opening Balance
-            </label>
-            <input
-              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-              placeholder="Value"
-              name=""
-            />{" "}
-          </div>
-
-          <div>
-            <label className="text-slate-600 flex text-sm  gap-2" htmlFor="">
-              Opening Stock Rate Per Unit
-            </label>
-            <input
-              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-              placeholder="Value"
-              name=""
-            />{" "}
-          </div>
-
-          <div>
-            <label className="text-slate-600 flex text-sm  gap-2" htmlFor="">
-              Recorder Point
-            </label>
-            <input
-              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-              placeholder="Value"
-              name=""
-            />{" "}
-          </div>
-        </div>
       </div>{" "}
       <div className="justify-end m-5 flex gap-4">
         <Button variant="secondary" size="sm" className="text-sm">
@@ -1073,3 +1217,4 @@ fetchAllItems()
 };
 
 export default AddItem;
+
