@@ -4,11 +4,12 @@ export const endponits = {
   CREATE_ORGANIZATION: `setup-organization`,
   GET_ONE_ORGANIZATION: `get-one-organization`,
   GET_COUNTRY_DATA: `get-countries-data`,
-
+  
   GET_CURRENCY_LIST: `get-currency`,
 
     //Sales
      ADD_SALES_SETTINGS:`add-sales-settings`,
+     ADD_SALES_INVOICE_SETTINGS:"add-salesInvoice-settings",
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_SETTINGS: "get-settings",
