@@ -36,11 +36,16 @@ ADD_ITEMS:`add-item-settings`,
   // Supplier
   GET_ALL_SUPPLIER: "",
 
-  //Currency
-  GET_CURRENCIES: "get-currency",
-  ADD_CURRENCIES: "add-currency",
-  DELETE_CURRENCIES: (id: string) => `delete-currency/${id}`,
-  EDIT_CURRENCIES: `edit-currency`,
+  //Currency 
+  GET_CURRENCIES:"get-currency",
+  ADD_CURRENCIES:"add-currency",
+DELETE_CURRENCIES:(id:string)=>`delete-currency/${id}`,
+EDIT_CURRENCIES:`edit-currency`,
+GET_ONE_CURRENCY:(id:string)=>`/view-currency/${id}`,
+
+
+ 
+  
 
   // Inventory
   // Settings/Taxes
