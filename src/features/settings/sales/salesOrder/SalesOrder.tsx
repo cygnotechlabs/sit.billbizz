@@ -30,7 +30,6 @@ function SalesOrder({}: Props) {
     }));
   };
 
-  console.log(salesOrderState);
 
   const handleSalesOrderSettings = async (e: any) => {
     e.preventDefault();
@@ -55,8 +54,6 @@ function SalesOrder({}: Props) {
       const { response, error } = await GetSalesOrderSettings(url, body);
       if (!error && response) {
         const data = response.data[0];
-        console.log(data);
-        
         setSalesOrderState({ ...salesOrderState, ...data });
       } else {
         toast.error(`API Error: ${error}`);
