@@ -287,8 +287,8 @@ export const customizationList = [
   { title: "Web Tabs", route: "/settings/web-tabs" },
   { title: "Digital Signature", route: "/settings/digital-signature" },
   {
-    title: "Transaction Rating Series",
-    route: "/settings/transaction-rating-series",
+    title: "Transaction Number Series",
+    route: "/settings/transaction-number-series",
   },
   { title: "PDF Templates", route: "/settings/pdf-templates" },
 ];
@@ -393,8 +393,8 @@ export const settingsList = [
         subRoute: "/settings/digital-signature",
       },
       {
-        headName: "Transaction Rating Series",
-        subRoute: "/settings/transaction-rating-series",
+        headName: "Transaction Number Series",
+        subRoute: "/settings/transaction-number-series",
       },
       { headName: "PDF Templates", subRoute: "/settings/pdf-templates" },
     ],

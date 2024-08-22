@@ -106,7 +106,7 @@ function InvoiceSettings({}: Props) {
 
   const getInvoiceSettings = async () => {
     try {
-      const url = `${endponits.GET_INVOICE_SETTINGS}`;
+      const url = `${endponits.GET_SETTINGS}`;
       const body = { organizationId: "INDORG0001" };
       console.log("Request URL:", url);
       console.log("Request Body:", body);
