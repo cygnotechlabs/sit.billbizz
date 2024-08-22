@@ -7,11 +7,11 @@ export const endponits = {
 
   GET_CURRENCY_LIST: `get-currency`,
 
-  //Sales
-  ADD_SALES_SETTINGS: ``,
+    //Sales
+     ADD_SALES_SETTINGS:`add-sales-settings`,
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
-  GET_INVOICE_SETTINGS: "get-settings",
+  GET_SETTINGS: "get-settings",
   ADD_PAYMENT_TERMS: `add-payment-terms`,
   EDIT_PAYMENT_TERMS: `edit-payment-terms/:id`,
   DELETE_PAYMENT_TERMS: `delete-payment-terms`,
@@ -35,11 +35,16 @@ export const endponits = {
   // Supplier
   GET_ALL_SUPPLIER: "",
 
-  //Currency
-  GET_CURRENCIES: "get-currency",
-  ADD_CURRENCIES: "add-currency",
-  DELETE_CURRENCIES: (id: string) => `delete-currency/${id}`,
-  EDIT_CURRENCIES: `edit-currency`,
+  //Currency 
+  GET_CURRENCIES:"get-currency",
+  ADD_CURRENCIES:"add-currency",
+DELETE_CURRENCIES:(id:string)=>`delete-currency/${id}`,
+EDIT_CURRENCIES:`edit-currency`,
+GET_ONE_CURRENCY:(id:string)=>`/view-currency/${id}`,
+
+
+ 
+  
 
   // Inventory
   // Settings/Taxes

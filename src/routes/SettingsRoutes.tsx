@@ -20,6 +20,7 @@ import CreditNotes from "../features/settings/sales/creditnote/CreditNotes";
 import ExpensesHome from "../features/settings/Purcahse/Expense/ExpensesHome";
 import PurchaseOrders from "../features/settings/Purcahse/PuchaseOrder";
 import MsmeSettings from "../features/settings/taxes/msmeSettings/MsmeSettings";
+import TransactionNumber from "../features/settings/customization/TransactionNumber";
 
 // import Users from "../features/settings/users/Users";
 // import Preferences from "../features/settings/preferences/Preferences";
@@ -38,7 +39,7 @@ const SettingsRoutes: RouteObject[] = [
   },
   { path: "/settings/organization/invoice", element: <InvoiceSettings /> },
   { path: "/settings/organization/currencies", element: <Currencies /> },
-  { path: "/settings/currencies/exchange-rates", element: <ExchangeRates /> },
+  { path: "/settings/currencies/exchange-rates/:_id", element: <ExchangeRates/> },
   { path: "/settings/organization/invoice", element: <InvoiceSettings /> },
   { path: "/settings/taxes", element: <Taxes /> },
   { path: "/settings/taxes/GST", element: <GSTComponent /> },
@@ -56,6 +57,8 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings/sales/CreditNotes", element: <CreditNotes /> },
   { path: "/settings/purchases/expenses", element: <ExpensesHome /> },
   { path: "/settings/purchase/puschaseOrder", element: <PurchaseOrders /> },
+  { path: "/settings/transaction-number-series", element: <TransactionNumber /> },
+
 
   //   { path: "/settings/users", element: <Users /> },
   //   { path: "/settings/preferences", element: <Preferences /> },
