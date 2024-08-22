@@ -6,10 +6,10 @@ export const endponits = {
   GET_COUNTRY_DATA: `get-countries-data`,
   GET_CURRENCY_LIST: `get-currency`,  
     //Sales
-     ADD_SALES_SETTINGS:``,
+     ADD_SALES_SETTINGS:`add-sales-settings`,
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
-  GET_INVOICE_SETTINGS: "get-settings",
+  GET_SETTINGS: "get-settings",
   ADD_PAYMENT_TERMS: `add-payment-terms`,
   EDIT_PAYMENT_TERMS: `edit-payment-terms/:id`,
   DELETE_PAYMENT_TERMS: `delete-payment-terms`,
