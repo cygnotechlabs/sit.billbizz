@@ -22,6 +22,9 @@ export const endponits = {
 
   ADD_ITEMS: `add-item-settings`,
 
+  // get settingsData
+GET_SETTINGS_DATA:`get-settings`,
+
   // Accountant
   Get_ALL_Acounts: "get-all-account",
   Get_LAST_Journel_Prefix: "get-last-journal-prefix",
