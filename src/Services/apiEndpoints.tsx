@@ -23,6 +23,10 @@ export const endponits = {
 
   ADD_ITEMS: `add-item-settings`,
 
+//Add Item Inventory
+ADD_ITEM:"add-item",
+GET_ALL_ITEM:"get-all-item",
+
   // Accountant
   Get_ALL_Acounts: "get-all-account",
   Get_LAST_Journel_Prefix: "get-last-journal-prefix",
@@ -50,6 +54,9 @@ export const endponits = {
   GET_ALL_TAX: "get-tax",
   ADD_NEW_TAX: "add-tax",
   UPDATE_TAX_VAT: `edit-tax`,
+
+  //Purchase Order Settings
+  ADD_PURCHASE_ORDER_SETTINGS:"add-purchase-settings",
 
   //Get All Items
   GET_ALL_ITEMS: "get-itemDropdown",

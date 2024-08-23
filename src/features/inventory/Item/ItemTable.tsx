@@ -1,4 +1,7 @@
+import { useEffect, useState } from "react";
 import Button from "../../../Components/Button";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
 import CustomiseColmn from "./CustomiseColum";
 
 const ItemTable = () => {
@@ -40,6 +43,31 @@ const ItemTable = () => {
     { text: "", icon: <CustomiseColmn /> },
     { text: "", icon: null },
   ];
+  const [itemsData, setItemsData] = useState<any>({})
+  console.log(itemsData);
+  
+
+  const { request: GetAllItems } = useApi("put", 5003);
+  const fetchAllItems = async () => {
+    try {
+      const url = `${endponits.GET_ALL_ITEM}`;
+      const body = { organizationId: "INDORG0001" };
+      const { response, error } = await GetAllItems(url, body);
+  
+      if (!error && response) {
+        setItemsData(response.data); 
+      } else {
+        console.error("Error in response:", error); 
+      }
+    } catch (error) {
+      console.error("Error fetching items:", error); 
+    }
+  };
+  
+  useEffect(() => {
+    fetchAllItems();
+  }, []); 
+  
 
   return (
     <div className="overflow-x-auto">
