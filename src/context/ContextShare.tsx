@@ -22,6 +22,10 @@ interface CurrencyResponseContextType {
   currencyResponse: any;
   setCurrencyResponse: React.Dispatch<React.SetStateAction<any>>;
 }
+interface SettingsResponseType{
+  settingsResponse:any;
+  setSettingsesponse:React.Dispatch<React.SetStateAction<any>>;
+}
 
 export const cashResponseContext = createContext<
   CashResponseContextType | undefined
@@ -41,6 +45,11 @@ export const VatResponseContext = createContext<
   VatResponseContextType | undefined
 >(undefined);
 
+export const settingsdataResponseContext=createContext<
+SettingsResponseType | undefined
+>(undefined);
+
+
 interface ContextShareProps {
   children: ReactNode;
 }
@@ -51,6 +60,7 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
   const [currencyResponse, setCurrencyResponse] = useState<any>({});
   const [gstResponse, setGstResponse] = useState<any>({});
   const [vatResponse, setVatResponse] = useState<any>({});
+  const [settingsResponse, setSettingsesponse] = useState<any>({});
 
   return (
     <cashResponseContext.Provider value={{ cashResponse, setCashResponse }}>
@@ -62,7 +72,9 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
             <VatResponseContext.Provider
               value={{ vatResponse, setVatResponse }}
             >
-              {children}
+              <settingsdataResponseContext.Provider value={{settingsResponse,setSettingsesponse}}>
+                {children}
+                </settingsdataResponseContext.Provider>
             </VatResponseContext.Provider>
           </GstResponseContext.Provider>
         </CurrencyResponseContext.Provider>

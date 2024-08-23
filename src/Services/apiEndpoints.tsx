@@ -23,6 +23,8 @@ export const endponits = {
 
   ADD_ITEMS: `add-item-settings`,
 
+  // get settingsData
+GET_SETTINGS_DATA:`get-settings`,
 //Add Item Inventory
 ADD_ITEM:"add-item",
 GET_ALL_ITEM:"get-all-item",
