@@ -1,51 +1,23 @@
 import { useEffect, useState } from "react";
-import Button from "../../../Components/Button";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
 import CustomiseColmn from "./CustomiseColum";
 
 const ItemTable = () => {
-  const data = [
-    {
-      id: "1",
-      name: "John Doe",
-      companyName: "Electrotech Solution",
-      contact: "9643658765",
-      email: "electrotech@gmail.com",
-      receivables: "electrotech@gmail.com",
-    },
-    {
-      id: "2",
-      name: "Divya Kumar",
-      companyName: "Max Lab",
-      contact: "9643658765",
-      email: "John123@gmail.com",
-      receivables: "John123@gmail.com",
-    },
-    {
-      id: "3",
-      name: "Kiran Kammath",
-      companyName: "ABC Electronics",
-      contact: "9643658765",
-      email: "John123@gmail.com",
-      receivables: "John123@gmail.com",
-    },
-  ];
-
   const tableHeaders = [
     { text: "Name", icon: null },
-    { text: "Company Name", icon: null },
-    { text: "Contact", icon: null },
-    { text: "Email", icon: null },
-    { text: "Customer details", icon: null },
-    { text: "Receivables(BCY)", icon: null },
+    { text: "SKU", icon: null },
+    { text: "Description", icon: null },
+    { text: "Purchase Description", icon: null },
+    { text: "Rate", icon: null },
+    { text: "Purchase Rate ", icon: null },
+    { text: "Stock On Hand ", icon: null },
     { text: "", icon: null },
     { text: "", icon: <CustomiseColmn /> },
     { text: "", icon: null },
   ];
-  const [itemsData, setItemsData] = useState<any>({})
-  console.log(itemsData);
-  
+
+  const [itemsData, setItemsData] = useState<any[]>([]); // Assuming itemsData is an array
 
   const { request: GetAllItems } = useApi("put", 5003);
   const fetchAllItems = async () => {
@@ -53,21 +25,20 @@ const ItemTable = () => {
       const url = `${endponits.GET_ALL_ITEM}`;
       const body = { organizationId: "INDORG0001" };
       const { response, error } = await GetAllItems(url, body);
-  
+
       if (!error && response) {
-        setItemsData(response.data); 
+        setItemsData(response.data); // Assuming response.data is the array of items
       } else {
-        console.error("Error in response:", error); 
+        console.error("Error in response:", error);
       }
     } catch (error) {
-      console.error("Error fetching items:", error); 
+      console.error("Error fetching items:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchAllItems();
-  }, []); 
-  
+  }, []);
 
   return (
     <div className="overflow-x-auto">
@@ -89,30 +60,33 @@ const ItemTable = () => {
           </tr>
         </thead>
         <tbody className="text-dropdownText text-center text-[13px]">
-          {data.map((item) => (
+          {itemsData.map((item) => (
             <tr key={item.id} className="relative">
               <td className="py-2.5 px-4 border-y border-tableBorder">
                 <input type="checkbox" className="form-checkbox w-4 h-4" />
               </td>
               <td className="py-2.5 px-4 border-y border-tableBorder">
-                {item.name}
+                {item.itemName}
               </td>
               <td className="py-2.5 px-4 border-y border-tableBorder">
-                {item.companyName}
+                {item.sku}
               </td>
               <td className="py-2.5 px-4 border-y border-tableBorder">
-                {item.contact}
+                {item.productUsage}
               </td>
               <td className="py-2.5 px-4 border-y border-tableBorder">
-                {item.email}
-              </td>
-              <td className="py-2.5 px-4 border-y border-tableBorder flex justify-center">
-                <Button variant="secondary" size="sm">
-                  <p className="text-[10px]">See details</p>
-                </Button>
+                {item.purchaseDescription}
               </td>
               <td className="py-2.5 px-4 border-y border-tableBorder">
-                {item.receivables}
+                {item.costPrice}
+              </td>
+              <td className="py-2.5 px-4 border-y border-tableBorder">
+                {item.saleMrp }
+              </td>
+              <td className="py-2.5 px-4 border-y border-tableBorder">
+                {item.status}
+              </td>
+              <td className="py-2.5 px-4 border-y border-tableBorder">
               </td>
             </tr>
           ))}
