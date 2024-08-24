@@ -1,9 +1,52 @@
-import bgimage from "../../../../assets/Images/Organization-banner.png";
+import { ChangeEvent, useState } from "react";
 import Button from "../../../../Components/Button";
+import bgimage from "../../../../assets/Images/Organization-banner.png";
+import useApi from "../../../../Hooks/useApi";
+import toast, { Toaster } from "react-hot-toast";
+import { endponits } from "../../../../Services/apiEndpoints";
 
-type Props = {}
+type Props = {};
+
+interface DeliveryChallan {
+  organizationId: string;
+  deliveryChellanTC: string;
+  deliveryChellanCN: string;
+}
 
 function DeliveryChallans({}: Props) {
+  const { request: addDeliveryChallan } = useApi("put", 5007);
+
+  const [inputData, setInputData] = useState<DeliveryChallan>({
+    organizationId: "INDORG0001",
+    deliveryChellanTC: "",
+    deliveryChellanCN: "",
+  });
+
+  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setInputData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSaveDeliveryChallan = async () => {
+    try {
+      const url = `${endponits.ADD_SALES_DELIVARY_CHALLANS}`;
+      const apiResponse = await addDeliveryChallan(url, inputData);
+      console.log(apiResponse);
+      const { response, error } = apiResponse;
+      if (!error && response) {
+        toast.success("Delivery Challan saved successfully!");
+      } else {
+        toast.error("Failed to save Delivery Challan.");
+      }
+    } catch (error) {
+      console.log(error, "Error in saving Delivery Challan");
+      toast.error("An unexpected error occurred.");
+    }
+  };
+
   return (
     <div className="p-5">
       <div
@@ -14,8 +57,13 @@ function DeliveryChallans({}: Props) {
       <p className="text-textColor font-bold text-xl mt-4">Delivery Challans</p>
 
       <div className="mt-4 p-6 rounded-lg bg-white">
-        <p className="font-bold text-textColor text-sm mb-3">Terms & Condition</p>
+        <p className="font-bold text-textColor text-sm mb-3">
+          Terms & Condition
+        </p>
         <textarea
+          name="deliveryChellanTC"
+          value={inputData.deliveryChellanTC}
+          onChange={handleInputChange}
           className="w-full h-32 p-3 border border-inputBorder rounded-lg resize-none focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
         />
       </div>
@@ -23,13 +71,23 @@ function DeliveryChallans({}: Props) {
       <div className="mt-4 p-6 rounded-lg bg-white">
         <p className="font-bold text-textColor text-sm mb-3">Customer Notes</p>
         <textarea
+          name="deliveryChellanCN"
+          value={inputData.deliveryChellanCN}
+          onChange={handleInputChange}
           className="w-full h-32 p-3 border border-inputBorder rounded-lg resize-none focus:outline-none focus:ring-1 focus:ring-[#7E0D0B]"
         />
       </div>
 
       <div className="mt-4 flex justify-end">
-      <Button size="sm" className="text-sm  pl-10 pr-10">Save</Button>
+        <Button
+          size="sm"
+          className="text-sm  pl-10 pr-10"
+          onClick={handleSaveDeliveryChallan}
+        >
+          Save
+        </Button>
       </div>
+      <Toaster position="top-center" reverseOrder={true} />
     </div>
   );
 }

@@ -6,10 +6,11 @@ export const endponits = {
   GET_COUNTRY_DATA: `get-countries-data`,
 
   GET_CURRENCY_LIST: `get-currency`,
-  
 
-    //Sales
-     ADD_SALES_SETTINGS:`add-sales-settings`,
+  //Sales
+  ADD_SALES_SETTINGS: `add-sales-settings`,
+  ADD_SALES_INVOICE_SETTINGS: "add-salesInvoice-settings",
+  ADD_SALES_DELIVARY_CHALLANS: "add-deliveryChellans",
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_SETTINGS: "get-settings",
@@ -20,7 +21,13 @@ export const endponits = {
 
   // items
 
-ADD_ITEMS:`add-item-settings`,
+  ADD_ITEMS: `add-item-settings`,
+
+  // get settingsData
+GET_SETTINGS_DATA:`get-settings`,
+//Add Item Inventory
+ADD_ITEM:"add-item",
+GET_ALL_ITEM:"get-all-item",
 
   // Accountant
   Get_ALL_Acounts: "get-all-account",
@@ -36,16 +43,12 @@ ADD_ITEMS:`add-item-settings`,
   // Supplier
   GET_ALL_SUPPLIER: "",
 
-  //Currency 
-  GET_CURRENCIES:"get-currency",
-  ADD_CURRENCIES:"add-currency",
-DELETE_CURRENCIES:(id:string)=>`delete-currency/${id}`,
-EDIT_CURRENCIES:`edit-currency`,
-GET_ONE_CURRENCY:(id:string)=>`/view-currency/${id}`,
-
-
- 
-  
+  //Currency
+  GET_CURRENCIES: "get-currency",
+  ADD_CURRENCIES: "add-currency",
+  DELETE_CURRENCIES: (id: string) => `delete-currency/${id}`,
+  EDIT_CURRENCIES: `edit-currency`,
+  GET_ONE_CURRENCY: (id: string) => `/view-currency/${id}`,
 
   // Inventory
   // Settings/Taxes
@@ -54,9 +57,15 @@ GET_ONE_CURRENCY:(id:string)=>`/view-currency/${id}`,
   ADD_NEW_TAX: "add-tax",
   UPDATE_TAX_VAT: `edit-tax`,
 
+  //Purchase Order Settings
+  ADD_PURCHASE_ORDER_SETTINGS:"add-purchase-settings",
 
   //Get All Items
-GET_ALL_ITEMS:"get-itemDropdown",
+  GET_ALL_ITEMS: "get-itemDropdown",
+
+  // settings > slaes > creditNote
+
+  ADD_CREDIT_NOTE_SETTINGS: `add-creditNote-settings`,
 
   // Inventory
   // Brand
