@@ -27,209 +27,194 @@ const createRolesForOrganization = async (organizationId) => {
 
     // Create admin and staff roles
     const roles = [
-      { organizationId, description: 'Admin',roleName: 'Admin', permissions: [
-        //Customers
-        "CustomersView","CustomersCreate","CustomersEdit","CustomersDelete",
-        //Vendors
-        "VendorsView","VendorsCreate","VendorsEdit","VendorsDelete",
-        //Item
-        "ItemView","ItemCreate","ItemEdit","ItemDelete",
-        //Inventory Adjustments
-        "InventoryAdjustmentsView","InventoryAdjustmentsCreate","InventoryAdjustmentsDelete",
-        //Warehouses
-        "WarehousesView","WarehousesCreate","WarehousesEdit","WarehousesDelete",
-        //Price List
-        "PriceListView","PriceListCreate","PriceListEdit","PriceListDelete",
-        //Banking
-        "BankingView","BankingCreate","BankingEdit","BankingDelete",
-        //Invoices
-        "InvoicesView","InvoicesCreate","InvoicesEdit","InvoicesDelete",
-        //Customer Payments
-        "CustomerPaymentsView","CustomerPaymentsCreate","CustomerPaymentsEdit","CustomerPaymentsDelete",
-        //Quotes
-        "QuotesView","QuotesCreate",'QuotesEdit',"QuotesDelete",
-        //Delivery Challan
-        "DeliveryChallanView","DeliveryChallanCreate","DeliveryChallanEdit","DeliveryChallanDelete",
-        //Sales Orders
-        "SalesOrdersView","SalesOrdersCreate","SalesOrdersEdit","SalesOrdersDelete",
-        //Credit Notes
-        "CreditNotesView","CreditNotesCreate","CreditNotesEdit","CreditNotesDelete",
-        //Bills
-        "BillsView","BillsCreate","BillsEdit",'BillsDelete',
-        //Vendor Payments
-        "VendorPaymentsView","VendorPaymentsCreate","VendorPaymentsEdit","VendorPaymentsDelete",
-        //Expenses
-        'ExpensesView',"ExpensesCreate",'ExpensesEdit','ExpensesDelete',
-        //Purchase Orders
-        'PurchaseOrdersView','PurchaseOrdersCreate','PurchaseOrdersEdit','PurchaseOrdersDelete',
-        //Vendor Credits
-        'VendorCreditsView','VendorCreditsCreate','VendorCreditsEdit','VendorCreditsDelete',
-        //Chart of Accounts
-        'ChartofAccountsView','ChartofAccountsCreate','ChartofAccountsEdit','ChartofAccountsDelete',
-        //Journals
-        'JournalsView','JournalsCreate','JournalsEdit','JournalsDelete',
-        //Budget
-        'BudgetView','BudgetCreate','BudgetEdit','BudgetDelete',
-        //Tasks
-        'TasksView','TasksCreate','TasksEdit','TasksDelete',
-        //Projects
-        'ProjectsView','ProjectsCreate','ProjectsEdit','ProjectsDelete',
-        //GST 
-        "GSTViewReturnDetails","GSTPushTransactions","GSTReconcileTransactions","GSTFileReturns",
-        //Documents
-        "DocumentsViewDocuments","DocumentsUploadDocuments","DocumentsDeleteDocuments","DocumentsManageFolder",
-        //e-Way Bill
-        "GenerateEWayBill","CancelEWayBill",
-        //Settings
-        "UpdateOrganizationProfile","Users","ExportData","GeneralPreferences","AccountantPreferences","Taxes","ProvideAccessToProtectedData","PaymentTerms","Templates","EmailTemplate","ReportingTags","ManageIntegration","Automation","IncomingWebhook",'Signal',
-        //Dashboard
-        "TotalPayables","TotalReceivables","CashFlow","IncomeAndExpenses","YourTopExpense","Projects","BankAndCreditCards","AccountWatchlist",
-
-        // //REPORT
-
-        // //Business Overview
-        // //Profit And Loss
-        // "ProfitAndLossView","ProfitAndLossExport","ProfitAndLossSchedule","ProfitAndLossShare",
-        // //Profit and Loss (Schedule III)
-        // "ProfitAndLossScheduleView","ProfitAndLossScheduleExport","ProfitAndLossScheduleSchedule","ProfitAndLossScheduleShare",
-        // //Horizontal Profit and Loss
-        // "HorizontalProfitAndLossView","HorizontalProfitAndLossExport","HorizontalProfitAndLossSchedule","HorizontalProfitAndLossShare",
-        // //Cash Flow Statement
-        // "CashFlowStatementView","CashFlowStatementExport","CashFlowStatementSchedule","CashFlowStatementShare",
-        // //Balance Sheet
-        // "BalanceSheetView","BalanceSheetExport","BalanceSheetSchedule","BalanceSheetShare",
-        // //Horizontal Balance Sheet
-        // "HorizontalBalanceSheetView","HorizontalBalanceSheetExport","HorizontalBalanceSheetSchedule","HorizontalBalanceSheetShare",
-        // //Balance Sheet (Schedule III)
-        // "BalanceSheetScheduleView","BalanceSheetScheduleExport","BalanceSheetScheduleSchedule","BalanceSheetScheduleShare",
-        // //Business Performance Ratios
-        // "BusinessPerformanceRatiosView","BusinessPerformanceRatiosExport","BusinessPerformanceRatiosSchedule","BusinessPerformanceRatiosShare",
-        // //Movement Of Equity
-        // "MovementOfEquityView","MovementOfEquityExport","MovementOfEquitySchedule","MovementOfEquityShare",
-        
-        
-        // //Sales
-        // //Sales by Customer
-        // "SalesByCustomerView","SalesByCustomerExport","SalesByCustomerSchedule","SalesByCustomerShare",
-        // //Sales by Item
-        // "SalesByItemView","SalesByItemExport","SalesByItemSchedule","SalesByItemShare",
-        // //Order Fulfillment By Item
-        // "OrderFulfillmentByItemView","OrderFulfillmentByItemExport","OrderFulfillmentByItemSchedule","OrderFulfillmentByItemShare",
-        // //Sales Return History
-        // "SalesReturnHistoryView","SalesReturnHistoryExport","SalesReturnHistorySchedule","SalesReturnHistoryShare",
-        // //Sales By Salesperson
-        // "SalesBySalespersonView","SalesBySalespersonExport","SalesBySalespersonSchedule","SalesBySalespersonShare",
-
-
-        // //Inventory
-        // //Inventory Summary Report
-        // "InventorySummaryReportView","InventorySummaryReportExport","InventorySummaryReportSchedule","InventorySummaryReportShare",
-        // //Committed Stock Details
-        // "CommittedStockDetailsView","CommittedStockDetailsExport","CommittedStockDetailsSchedule","CommittedStockDetailsShare",
-        // //Inventory Valuation Summary
-        // "InventoryValuationSummaryView","InventoryValuationSummaryExport","InventoryValuationSummarySchedule","InventoryValuationSummaryShare",
-        // //FIFO Cost Lot Tracking
-        // "FIFOCostLotTrackingView","FIFOCostLotTrackingExport","FIFOCostLotTrackingSchedule","FIFOCostLotTrackingShare",        
-        // //Inventory Aging Summary
-        // "InventoryAgingSummaryView","InventoryAgingSummaryExport","InventoryAgingSummarySchedule","InventoryAgingSummaryShare",
-        // //Product Sales Report
-        // "ProductSalesReportView","ProductSalesReportExport","ProductSalesReportSchedule","ProductSalesReportShare",
-        // //Product Purchase Report
-        // "ProductPurchaseReportView","ProductPurchaseReportExport","ProductPurchaseReportSchedule","ProductPurchaseReportShare",
-        // //Stock Summary Report
-        // "StockSummaryReportView","StockSummaryReportExport","StockSummaryReportSchedule","StockSummaryReportShare",
-        // //Landed Cost Summary
-        // "LandedCostSummaryView","LandedCostSummaryExport","LandedCostSummarySchedule","LandedCostSummaryShare",
-
-        // //Receivables
-        // //Customer Balances
-        // "CustomerBalancesView","CustomerBalancesExport", "CustomerBalancesSchedule", "CustomerBalancesShare",
-        // //A/R Aging Summary
-        // "ARAgingSummaryView","ARAgingSummaryExport","ARAgingSummarySchedule","ARAgingSummaryShare",
-        // //A/R Aging Details
-        // "ARAgingDetailsView","ARAgingDetailsExport","ARAgingDetailsSchedule","ARAgingDetailsShare",
-        // //Invoice Details
-        // "InvoiceDetailsView","InvoiceDetailsExport","InvoiceDetailsSchedule","InvoiceDetailsShare",
-        // //Retainer Invoice Details
-        // "RetainerInvoiceDetailsView","RetainerInvoiceDetailsExport","RetainerInvoiceDetailsSchedule","RetainerInvoiceDetailsShare",
-        // //Sales Order Details
-        // "SalesOrderDetailsView","SalesOrderDetailsExport","SalesOrderDetailsSchedule","SalesOrderDetailsShare",
-        // //Delivery Challan Details
-        // "DeliveryChallanDetailsView","DeliveryChallanDetailsExport","DeliveryChallanDetailsSchedule","DeliveryChallanDetailsShare",
-        // //Quote Details
-        // "QuoteDetailsView","QuoteDetailsExport","QuoteDetailsSchedule","QuoteDetailsShare",
-        // //Customer Balance Summary
-        // "CustomerBalanceSummaryView","CustomerBalanceSummaryExport","CustomerBalanceSummarySchedule","CustomerBalanceSummaryShare",
-        // //Receivable Summary
-        // "ReceivableSummaryView","ReceivableSummaryExport","ReceivableSummarySchedule","ReceivableSummaryShare",
-        // //Receivable Details
-        // "ReceivableDetailsView","ReceivableDetailsExport","ReceivableDetailsSchedule","ReceivableDetailsShare",
-
-        
-        
-        // //Payments Received
-        // //Payments Received
-        // "PaymentsReceivedView","PaymentsReceivedExport","PaymentsReceivedSchedule","PaymentsReceivedShare",
-        // //Time Taken to Get Paid
-        // "TimeTakenToGetPaidView","TimeTakenToGetPaidExport","TimeTakenToGetPaidSchedule","TimeTakenToGetPaidShare",
-        // //Credit Notes Details
-        // "CreditNotesDetailsView","CreditNotesDetailsExport","CreditNotesDetailsSchedule","CreditNotesDetailsShare",
-        // //Refund History
-        // "RefundHistoryView","RefundHistoryExport","RefundHistorySchedule","RefundHistoryShare",
-
-
-        // //Recurring Invoices
-        // //Recurring Invoice Details
-        // "RecurringInvoiceDetailsView","RecurringInvoiceDetailsExport","RecurringInvoiceDetailsSchedule","RecurringInvoiceDetailsShare",
-        // // Recurring Invoice - Payment Failure Report
-        // "RecurringInvoicePaymentFailureReportView","RecurringInvoicePaymentFailureReportExport","RecurringInvoicePaymentFailureReportSchedule","RecurringInvoicePaymentFailureReportShare",
-        // // Recurring Invoice - Payment Retry Report
-        // "RecurringInvoicePaymentRetryReportView","RecurringInvoicePaymentRetryReportExport","RecurringInvoicePaymentRetryReportSchedule","RecurringInvoicePaymentRetryReportShare",
-        // // Recurring Invoice - Card Expiry Report
-        // "RecurringInvoiceCardExpiryReportView","RecurringInvoiceCardExpiryReportExport","RecurringInvoiceCardExpiryReportSchedule","RecurringInvoiceCardExpiryReportShare"
-
-        ] },
-      // { organizationId, description: 'Staff',roleName: 'Staff', permissions: [
-      //   //Customers
-      //   "CustomersView","CustomersCreate","CustomersEdit","CustomersDelete",
-      //   //Vendors
-      //   "VendorsView","VendorsCreate","VendorsEdit","VendorsDelete",
-      //   //Item
-      //   "ItemView","ItemCreate","ItemEdit","ItemDelete",
-      //   //Inventory Adjustments
-      //   "InventoryAdjustmentsView","InventoryAdjustmentsCreate","InventoryAdjustmentsDelete",
-      //   //Price List
-      //   "PriceListView","PriceListCreate","PriceListEdit","PriceListDelete",
-      //   //Banking
-      //   "BankingView","BankingCreate","BankingEdit","BankingDelete",
-      //   //Invoices
-      //   "InvoicesView","InvoicesCreate","InvoicesEdit","InvoicesDelete",
-      //   //Customer Payments
-      //   "CustomerPaymentsView","CustomerPaymentsCreate","CustomerPaymentsEdit","CustomerPaymentsDelete",
-      //   //Quotes
-      //   "QuotesView","QuotesCreate",'QuotesEdit',"QuotesDelete",
-      //   //Delivery Challan
-      //   "DeliveryChallanView","DeliveryChallanCreate","DeliveryChallanEdit","DeliveryChallanDelete",
-      //   //Sales Orders
-      //   "SalesOrdersView","SalesOrdersCreate","SalesOrdersEdit","SalesOrdersDelete",
-      //   //Credit Notes
-      //   "CreditNotesView","CreditNotesCreate","CreditNotesEdit","CreditNotesDelete",
-      //   //Bills
-      //   "BillsView","BillsCreate","BillsEdit",'BillsDelete',
-      //   //Vendor Payments
-      //   "VendorPaymentsView","VendorPaymentsCreate","VendorPaymentsEdit","VendorPaymentsDelete",
-      //   //Expenses
-      //   'ExpensesView',"ExpensesCreate",'ExpensesEdit','ExpensesDelete',
-      //   //Purchase Orders
-      //   'PurchaseOrdersView','PurchaseOrdersCreate','PurchaseOrdersEdit','PurchaseOrdersDelete',
-      //   //Vendor Credits
-      //   'VendorCreditsView','VendorCreditsCreate','VendorCreditsEdit','VendorCreditsDelete',        
-      //   //Projects
-      //   'ProjectsView',
-      //   //Documents
-      //   "DocumentsViewDocuments","DocumentsUploadDocuments","DocumentsDeleteDocuments","DocumentsManageFolder"
-      // ] }
+      {
+        organizationId,
+        description: 'Admin',
+        roleName: 'Admin',
+        permissions: [
+          // Customers
+          { action: "CustomersView", note: "Viewed customer details" },
+          { action: "CustomersCreate", note: "Created a new customer" },
+          { action: "CustomersEdit", note: "Edited customer information" },
+          { action: "CustomersDelete", note: "Deleted a customer" },
+    
+          // Vendors
+          { action: "VendorsView", note: "Viewed vendor details" },
+          { action: "VendorsCreate", note: "Created a new vendor" },
+          { action: "VendorsEdit", note: "Edited vendor information" },
+          { action: "VendorsDelete", note: "Deleted a vendor" },
+    
+          // Item
+          { action: "ItemView", note: "Viewed item details" },
+          { action: "ItemCreate", note: "Created a new item" },
+          { action: "ItemEdit", note: "Edited item information" },
+          { action: "ItemDelete", note: "Deleted an item" },
+    
+          // Inventory Adjustments
+          { action: "InventoryAdjustmentsView", note: "Viewed inventory adjustments" },
+          { action: "InventoryAdjustmentsCreate", note: "Created inventory adjustment" },
+          { action: "InventoryAdjustmentsDelete", note: "Deleted inventory adjustment" },
+    
+          // Warehouses
+          { action: "WarehousesView", note: "Viewed warehouse details" },
+          { action: "WarehousesCreate", note: "Created a new warehouse" },
+          { action: "WarehousesEdit", note: "Edited warehouse information" },
+          { action: "WarehousesDelete", note: "Deleted a warehouse" },
+    
+          // Price List
+          { action: "PriceListView", note: "Viewed price list" },
+          { action: "PriceListCreate", note: "Created a new price list" },
+          { action: "PriceListEdit", note: "Edited price list" },
+          { action: "PriceListDelete", note: "Deleted a price list" },
+    
+          // Banking
+          { action: "BankingView", note: "Viewed banking details" },
+          { action: "BankingCreate", note: "Created a new banking entry" },
+          { action: "BankingEdit", note: "Edited banking details" },
+          { action: "BankingDelete", note: "Deleted banking entry" },
+    
+          // Invoices
+          { action: "InvoicesView", note: "Viewed invoice details" },
+          { action: "InvoicesCreate", note: "Created a new invoice" },
+          { action: "InvoicesEdit", note: "Edited invoice details" },
+          { action: "InvoicesDelete", note: "Deleted an invoice" },
+    
+          // Customer Payments
+          { action: "CustomerPaymentsView", note: "Viewed customer payments" },
+          { action: "CustomerPaymentsCreate", note: "Created a new customer payment" },
+          { action: "CustomerPaymentsEdit", note: "Edited customer payment details" },
+          { action: "CustomerPaymentsDelete", note: "Deleted customer payment" },
+    
+          // Quotes
+          { action: "QuotesView", note: "Viewed quotes" },
+          { action: "QuotesCreate", note: "Created a new quote" },
+          { action: "QuotesEdit", note: "Edited quote details" },
+          { action: "QuotesDelete", note: "Deleted a quote" },
+    
+          // Delivery Challan
+          { action: "DeliveryChallanView", note: "Viewed delivery challan" },
+          { action: "DeliveryChallanCreate", note: "Created a new delivery challan" },
+          { action: "DeliveryChallanEdit", note: "Edited delivery challan details" },
+          { action: "DeliveryChallanDelete", note: "Deleted a delivery challan" },
+    
+          // Sales Orders
+          { action: "SalesOrdersView", note: "Viewed sales orders" },
+          { action: "SalesOrdersCreate", note: "Created a new sales order" },
+          { action: "SalesOrdersEdit", note: "Edited sales order details" },
+          { action: "SalesOrdersDelete", note: "Deleted a sales order" },
+    
+          // Credit Notes
+          { action: "CreditNotesView", note: "Viewed credit notes" },
+          { action: "CreditNotesCreate", note: "Created a new credit note" },
+          { action: "CreditNotesEdit", note: "Edited credit note details" },
+          { action: "CreditNotesDelete", note: "Deleted a credit note" },
+    
+          // Bills
+          { action: "BillsView", note: "Viewed bills" },
+          { action: "BillsCreate", note: "Created a new bill" },
+          { action: "BillsEdit", note: "Edited bill details" },
+          { action: "BillsDelete", note: "Deleted a bill" },
+    
+          // Vendor Payments
+          { action: "VendorPaymentsView", note: "Viewed vendor payments" },
+          { action: "VendorPaymentsCreate", note: "Created a new vendor payment" },
+          { action: "VendorPaymentsEdit", note: "Edited vendor payment details" },
+          { action: "VendorPaymentsDelete", note: "Deleted a vendor payment" },
+    
+          // Expenses
+          { action: "ExpensesView", note: "Viewed expenses" },
+          { action: "ExpensesCreate", note: "Created a new expense" },
+          { action: "ExpensesEdit", note: "Edited expense details" },
+          { action: "ExpensesDelete", note: "Deleted an expense" },
+    
+          // Purchase Orders
+          { action: "PurchaseOrdersView", note: "Viewed purchase orders" },
+          { action: "PurchaseOrdersCreate", note: "Created a new purchase order" },
+          { action: "PurchaseOrdersEdit", note: "Edited purchase order details" },
+          { action: "PurchaseOrdersDelete", note: "Deleted a purchase order" },
+    
+          // Vendor Credits
+          { action: "VendorCreditsView", note: "Viewed vendor credits" },
+          { action: "VendorCreditsCreate", note: "Created a new vendor credit" },
+          { action: "VendorCreditsEdit", note: "Edited vendor credit details" },
+          { action: "VendorCreditsDelete", note: "Deleted a vendor credit" },
+    
+          // Chart of Accounts
+          { action: "ChartofAccountsView", note: "Viewed chart of accounts" },
+          { action: "ChartofAccountsCreate", note: "Created a new chart of accounts" },
+          { action: "ChartofAccountsEdit", note: "Edited chart of accounts details" },
+          { action: "ChartofAccountsDelete", note: "Deleted chart of accounts" },
+    
+          // Journals
+          { action: "JournalsView", note: "Viewed journals" },
+          { action: "JournalsCreate", note: "Created a new journal" },
+          { action: "JournalsEdit", note: "Edited journal details" },
+          { action: "JournalsDelete", note: "Deleted a journal" },
+    
+          // Budget
+          { action: "BudgetView", note: "Viewed budget" },
+          { action: "BudgetCreate", note: "Created a new budget" },
+          { action: "BudgetEdit", note: "Edited budget details" },
+          { action: "BudgetDelete", note: "Deleted a budget" },
+    
+          // Tasks
+          { action: "TasksView", note: "Viewed tasks" },
+          { action: "TasksCreate", note: "Created a new task" },
+          { action: "TasksEdit", note: "Edited task details" },
+          { action: "TasksDelete", note: "Deleted a task" },
+    
+          // Projects
+          { action: "ProjectsView", note: "Viewed projects" },
+          { action: "ProjectsCreate", note: "Created a new project" },
+          { action: "ProjectsEdit", note: "Edited project details" },
+          { action: "ProjectsDelete", note: "Deleted a project" },
+    
+          // GST
+          { action: "GSTViewReturnDetails", note: "Viewed GST return details" },
+          { action: "GSTPushTransactions", note: "Pushed GST transactions" },
+          { action: "GSTReconcileTransactions", note: "Reconciled GST transactions" },
+          { action: "GSTFileReturns", note: "Filed GST returns" },
+    
+          // Documents
+          { action: "DocumentsViewDocuments", note: "Viewed documents" },
+          { action: "DocumentsUploadDocuments", note: "Uploaded documents" },
+          { action: "DocumentsDeleteDocuments", note: "Deleted documents" },
+          { action: "DocumentsManageFolder", note: "Managed document folders" },
+    
+          // e-Way Bill
+          { action: "GenerateEWayBill", note: "Generated an e-Way bill" },
+          { action: "CancelEWayBill", note: "Cancelled an e-Way bill" },
+    
+          // Settings
+          { action: "UpdateOrganizationProfile", note: "Updated organization profile" },
+          { action: "Users", note: "Managed users" },
+          { action: "ExportData", note: "Exported data" },
+          { action: "GeneralPreferences", note: "Updated general preferences" },
+          { action: "AccountantPreferences", note: "Updated accountant preferences" },
+          { action: "Taxes", note: "Managed taxes" },
+          { action: "ProvideAccessToProtectedData", note: "Provided access to protected data" },
+          { action: "PaymentTerms", note: "Managed payment terms" },
+          { action: "Templates", note: "Managed templates" },
+          { action: "EmailTemplate", note: "Managed email templates" },
+          { action: "ReportingTags", note: "Managed reporting tags" },
+          { action: "ManageIntegration", note: "Managed integrations" },
+          { action: "Automation", note: "Managed automation" },
+          { action: "IncomingWebhook", note: "Managed incoming webhook" },
+          { action: "Signal", note: "Managed signal settings" },
+    
+          // Dashboard
+          { action: "TotalPayables", note: "Viewed total payables" },
+          { action: "TotalReceivables", note: "Viewed total receivables" },
+          { action: "CashFlow", note: "Viewed cash flow" },
+          { action: "IncomeAndExpenses", note: "Viewed income and expenses" },
+          { action: "YourTopExpense", note: "Viewed top expense" },
+          { action: "Projects", note: "Viewed projects on dashboard" },
+          { action: "BankAndCreditCards", note: "Viewed bank and credit cards" },
+          { action: "AccountWatchlist", note: "Viewed account watchlist" },
+        ],
+      },
     ];
+    
 
     await Role.insertMany(roles);
     console.log("Roles created successfully for organization:", organizationId);
@@ -425,6 +410,24 @@ const createSettingsOrganization = async (organizationId) => {
     return { success: false, message: "Failed to create tax." };
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Create New Client, Organization, Prefix, Role

@@ -378,6 +378,7 @@ exports.setupOrganization = async (req, res) => {
       addline2,
       city,
       pincode,
+      phoneNumberCode,
       state,
       organizationPhNum,
       website,
@@ -387,8 +388,7 @@ exports.setupOrganization = async (req, res) => {
       timeZone,
       timeZoneExp,
       dateFormat,
-      dateSplit,
-      phoneNumberCode
+      dateSplit      
     } = req.body;
 
     // Check if an Organization already exists

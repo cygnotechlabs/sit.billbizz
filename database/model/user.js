@@ -13,6 +13,8 @@ const userSchema = new Schema({
     
 });
 
+userSchema.index({ organizationId: 1, useremail: 1 });
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
