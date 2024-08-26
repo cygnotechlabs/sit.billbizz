@@ -67,6 +67,14 @@ export default {
         membershipText:"#FCF8ED",
         inputBorder:"#CECECE"
       },
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
+        '9999': '9999',
+      },
       placeholderColor: {
         labelColor: "#495160",
       },
