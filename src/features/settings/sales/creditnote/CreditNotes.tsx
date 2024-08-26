@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import Button from "../../../../Components/Button";
 import Banner from "../../banner/Banner";
 import CehvronDown from "../../../../assets/icons/CehvronDown";
@@ -10,6 +10,7 @@ import CirclePlus from "../../../../assets/icons/circleplus";
 import { endponits } from "../../../../Services/apiEndpoints";
 import useApi from "../../../../Hooks/useApi";
 import toast, { Toaster } from "react-hot-toast";
+import { settingsdataResponseContext } from "../../../../context/ContextShare";
 type Props = {};
 
 interface creditNote {
@@ -69,10 +70,14 @@ function CreditNotes({}: Props) {
       "Fax#",
     ],
   };
+
+
+
   const { request: addCrditNote } = useApi("put", 5007);
   const [invoiceURLDropdown, setInvoiceURLDropdown] = useState(false);
   const [configureModal, setConfigureModal] = useState(false);
   const [placeHolderModal, setPlaceHolderModal] = useState(false);
+  const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
 
   const [inputData, setInputData] = useState<creditNote>({
     organizationId: "INDORG0001",
@@ -85,7 +90,7 @@ function CreditNotes({}: Props) {
     creditNoteCN: "",
   });
 
-  console.log(inputData);
+  // console.log(inputData);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -109,15 +114,7 @@ function CreditNotes({}: Props) {
     }
   };
 
-  useEffect(() => {
-    if (!inputData.creditNoteQr) {
-      setInputData((prevData) => ({
-        ...prevData,
-        creditNoteQrDescription: "",
-        creditNoteQrType: "",
-      }));
-    }
-  }, [inputData.creditNoteQr]);
+
 
   const handleOptionClick = (option: string) => {
     setInputData((prevData) => ({
@@ -158,6 +155,33 @@ function CreditNotes({}: Props) {
       setPlaceHolderModal(placeholder);
     }
   };
+
+
+  useEffect(() => {
+    if (!inputData.creditNoteQr) {
+      setInputData((prevData) => ({
+        ...prevData,
+        creditNoteQrDescription: "",
+        creditNoteQrType: "",
+      }));
+    }
+    getSettingsData()
+
+
+  }, [inputData.creditNoteQr]);
+
+
+  useEffect(() => {
+    console.log("Settings Response: ", settingsResponse);
+    console.log("Input Data: ", inputData);
+    if (settingsResponse) {
+      setInputData((prevData) => ({
+        ...prevData,
+        ...settingsResponse?.data?.creditNoteSettings,
+      }));
+    }
+  }, []);
+  
 
   return (
     <div className="p-5 text-[#303F58]">
@@ -512,7 +536,6 @@ function CreditNotes({}: Props) {
         </Button>
       </div>
       <Toaster position="top-center" reverseOrder={true} />
-
     </div>
   );
 }

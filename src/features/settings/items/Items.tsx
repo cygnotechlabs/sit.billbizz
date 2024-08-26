@@ -1,10 +1,11 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import CehvronDown from "../../../assets/icons/CehvronDown";
 import Banner from "../banner/Banner";
 import Button from "../../../Components/Button";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
+import { settingsdataResponseContext } from "../../../context/ContextShare"
 
 type Props = {};
 
@@ -23,7 +24,6 @@ interface item {
   priceListAtLineLevel: boolean;
 
   compositeItem: boolean;
-
   stockBelowZero: boolean;
   outOfStockBelowZero: boolean;
   notifyReorderPoint: boolean;
@@ -32,6 +32,13 @@ interface item {
 
 function Items({}: Props) {
   const [selectedRadio, setSelectedRadio] = useState<string>("");
+  const context = useContext(settingsdataResponseContext);
+  if (!context) {
+    throw new Error('Context not found');
+  }
+  const { settingsResponse,getSettingsData } = context;
+console.log(settingsResponse,"context");
+
   const { request: addItem } = useApi("put", 5003);
   const [inputData, setInputData] = useState<item>({
     organizationId: "INDORG0001",
@@ -56,15 +63,28 @@ function Items({}: Props) {
   });
 
 
-  console.log(inputData);
+  // console.log(inputData);
 
   useEffect(() => {
+    getSettingsData()
     if (inputData.hsnSac) {
       setSelectedRadio(inputData.hsnDigits || "4");
     } else {
       setSelectedRadio("");
     }
-  }, [inputData.hsnSac, inputData.hsnDigits]);
+    
+  }, [inputData.hsnSac, inputData.hsnDigits,inputData]);
+
+  useEffect(() => {
+    console.log("Settings Response: ", settingsResponse);
+    console.log("InputData: ", inputData);
+    if (settingsResponse) {
+      setInputData((prevData) => ({
+        ...prevData,
+        ...settingsResponse?.data?.itemSettings,
+      }));
+    }
+  }, []);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>

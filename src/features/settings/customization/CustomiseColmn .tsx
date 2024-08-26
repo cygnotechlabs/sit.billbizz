@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import ListFilter from "../../../assets/icons/ListFilter";
-import Modal from "../../../Components/model/Modal";
-import MoveIcon from "../../../assets/icons/MoveIcon";
-import Button from "../../../Components/Button";
-import PlusCircle from "../../../assets/icons/PlusCircle";
-import SearchBar from "../../../Components/SearchBar";
 import ListIcon from '../../../assets/icons/ListIcon';
+import MoveIcon from "../../../assets/icons/MoveIcon";
+import PlusCircle from "../../../assets/icons/PlusCircle";
+import Button from "../../../Components/Button";
+import Modal from "../../../Components/model/Modal";
+import SearchBar from "../../../Components/SearchBar";
 
 type Column = {
   id: string;
