@@ -364,32 +364,10 @@ exports.setupOrganization = async (req, res) => {
   console.log("Setup Organization:", req.body);
   try {
     const {
-<<<<<<< HEAD
-      organizationId,
-      organizationLogo,
-      organizationCountry,
-      organizationIndustry,
-      addline1,
-      addline2,
-      city,
-      pincode,
-      phoneNumberCode,
-      state,
-      organizationPhNum,
-      website,
-      baseCurrency,
-      fiscalYear,
-      reportBasis,
-      timeZone,
-      timeZoneExp,
-      dateFormat,
-      dateSplit      
-=======
       organizationId, organizationLogo, organizationCountry, organizationIndustry, addline1, addline2, city, pincode, state, phoneNumberCode, organizationPhNum, 
       website, 
       baseCurrency, fiscalYear,
       timeZone, timeZoneExp, dateFormat, dateFormatExp, dateSplit, 
->>>>>>> 99a455418576ba817a71f2e553a367311792b179
     } = req.body;
 
     // Check if an Organization already exists
