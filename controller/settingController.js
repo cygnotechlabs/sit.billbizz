@@ -15,7 +15,7 @@ exports.getCurrency = async (req, res) => {
     const { organizationId } = req.body;
 
     // Log the ID being fetched
-    console.log("Fetching organization with ID:", organizationId);
+    // console.log("Fetching organization with ID:", organizationId);
 
     const currencies = await Currency.find({organizationId:organizationId});
 
@@ -26,6 +26,27 @@ exports.getCurrency = async (req, res) => {
     }
   } catch (error) {
     console.error("Error fetching Currencies:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+//get single currency
+exports.viewCurrency = async (req, res) => {
+  try {
+    const { id } = req.params; // Assuming you're passing the _id as a route parameter
+
+    // Log the ID being fetched
+    console.log("Fetching currency with ID:", id);
+
+    const currency = await Currency.findById(id);
+
+    if (currency) {
+      res.status(200).json(currency);
+    } else {
+      res.status(404).json({ message: "Currency not found" });
+    }
+  } catch (error) {
+    console.error("Error fetching currency:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -125,7 +146,7 @@ exports.deleteCurrency = async (req, res) => {
 
 
 
-// Invoice
+// More details
 // Setup Invoice settings
 exports.updateInvoiceSettings = async (req, res) => {
   try {
@@ -150,9 +171,14 @@ exports.updateInvoiceSettings = async (req, res) => {
       displayFacebookLink: req.body.displayFacebookLink,
 
       accountHolderName: req.body.accountHolderName,
+      displayAccountHolderName: req.body.displayAccountHolderName,
       bankName: req.body.bankName,
+      displayBankName: req.body.displayBankName,
       accNum: req.body.accNum,
+      displayAccNum: req.body.displayAccNum,
       ifsc: req.body.ifsc,
+      displayIfsc: req.body.displayIfsc,
+      defaultTermsAndCondition: req.body.defaultTermsAndCondition
     };
 
     // Find the document by organizationId
@@ -180,16 +206,106 @@ exports.getSettings = async (req, res) => {
   try {
     const { organizationId } = req.body;
 
-    // Find documents that match the organizationId
-    const settings = await Settings.find({ organizationId });
+    // Find the settings document that matches the organizationId
+    const settings = await Settings.findOne({ organizationId });
 
     // If no settings are found for the provided organizationId
-    if (!settings || settings.length === 0) {
+    if (!settings) {
       return res.status(404).json({ message: "No settings found for this organization" });
     }
 
-    // Return the retrieved settings
-    res.status(200).json(settings);
+    // Organize the settings into categories
+    const organizedSettings = {
+      invoice: {
+        organizationAddressFormat: settings.organizationAddressFormat,
+        qrLocation: settings.qrLocation,
+        displayQrLocation: settings.displayQrLocation,
+        qrPayment: settings.qrPayment,
+        displayQrPayment: settings.displayQrPayment,
+        digitalSignature: settings.digitalSignature,
+        displayDigitalSignature: settings.displayDigitalSignature,
+        xLink: settings.xLink,
+        displayXLink: settings.displayXLink,
+        instagramLink: settings.instagramLink,
+        displayInstagramLink: settings.displayInstagramLink,
+        linkedinLink: settings.linkedinLink,
+        displayLinkedinLink: settings.displayLinkedinLink,
+        facebookLink: settings.facebookLink,
+        displayFacebookLink: settings.displayFacebookLink,
+        accountHolderName: settings.accountHolderName,
+        displayAccountHolderName: settings.displayAccountHolderName,
+        bankName: settings.bankName,
+        displayBankName: settings.displayBankName,
+        accNum: settings.accNum,
+        displayAccNum: settings.displayAccNum,
+        ifsc: settings.ifsc,
+        displayIfsc: settings.displayIfsc,
+        defaultTermsAndCondition: settings.defaultTermsAndCondition
+      },
+      itemSettings: {
+        itemDecimal: settings.itemDecimal,
+        itemDimensions: settings.itemDimensions,
+        itemWeights: settings.itemWeights,
+        barcodeScan: settings.barcodeScan,
+        itemDuplicateName: settings.itemDuplicateName,
+        hsnSac: settings.hsnSac,
+        hsnDigits: settings.hsnDigits,
+        priceList: settings.priceList,
+        priceListAtLineLevel: settings.priceListAtLineLevel,
+        compositeItem: settings.compositeItem,
+        stockBelowZero: settings.stockBelowZero,
+        outOfStockBelowZero: settings.outOfStockBelowZero,
+        notifyReorderPoint: settings.notifyReorderPoint,
+        trackCostOnItems: settings.trackCostOnItems
+      },
+      salesOrderSettings: {
+        salesOrderAddress: settings.salesOrderAddress,
+        salesOrderCustomerNote: settings.salesOrderCustomerNote,
+        salesOrderTermsCondition: settings.salesOrderTermsCondition,
+        salesOrderClose: settings.salesOrderClose,
+        restrictSalesOrderClose: settings.restrictSalesOrderClose,
+        termCondition: settings.termCondition,
+        customerNote: settings.customerNote
+      },
+      shipmentSettings: {
+        carrierNotification: settings.carrierNotification,
+        manualNotification: settings.manualNotification,
+        shippingAddress: settings.shippingAddress
+      },
+      salesInvoiceSettings: {
+        invoiceEdit: settings.invoiceEdit,
+        displayExpenseReceipt: settings.displayExpenseReceipt,
+        salesOrderNumber: settings.salesOrderNumber,
+        paymentReceipt: settings.paymentReceipt,
+        invoiceQrCode: settings.invoiceQrCode,
+        invoiceQrType: settings.invoiceQrType,
+        invoiceQrDescription: settings.invoiceQrDescription,
+        zeroValue: settings.zeroValue,
+        salesInvoiceTC: settings.salesInvoiceTC,
+        salesInvoiceCN: settings.salesInvoiceCN
+      },
+      deliveryChellans: {
+        deliveryChellanTC: settings.deliveryChellanTC,
+        deliveryChellanCN: settings.deliveryChellanCN
+      },
+      creditNoteSettings: {
+        overideCostPrice: settings.overideCostPrice,
+        creditNoteQr: settings.creditNoteQr,
+        creditNoteQrType: settings.creditNoteQrType,
+        creditNoteQrDespriction: settings.creditNoteQrDespriction,
+        recordLocking: settings.recordLocking,
+        creditNoteTC: settings.creditNoteTC,
+        creditNoteCN: settings.creditNoteCN
+      },
+      purchaseOrderSettings: {
+        purchaseOrderClose: settings.purchaseOrderClose,
+        purchaseTC: settings.purchaseTC,
+        purchaseNote: settings.purchaseNote
+      }
+    };
+
+    // Return the organized settings
+    res.status(200).json(organizedSettings);
   } catch (error) {
     console.error("Error retrieving settings:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -292,13 +408,15 @@ exports.getAllPaymentTerms = async (req, res) => {
 
 
 
-//Tax
 
+
+
+//Tax
 // Add Tax
 exports.addTax = async (req, res) => {
   try {
     const { organizationId, taxType, gstIn, gstBusinesLegalName, gstBusinessTradeName, gstRegisteredDate, gstTaxRate, compositionSchema, compositionPercentage, vatNumber, vatBusinesLegalName, vatBusinessTradeName, vatRegisteredDate, tinNumber, vatTaxRate, msmeType, msmeRegistrationNumber } = req.body;
-    console.log(req.body);
+    console.log("Add Tax :",req.body);
     
     // Find the tax record by organizationId and taxType
     let taxRecord = await Tax.findOne({ organizationId });
@@ -342,6 +460,7 @@ exports.addTax = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 //Edit Tax
 exports.editTaxRate = async (req, res) => {
@@ -393,6 +512,7 @@ exports.editTaxRate = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // Get Tax 
 exports.getTax = async (req, res) => {
@@ -564,7 +684,7 @@ exports.deletePrefix = async (req, res) => {
 
 
 //Status True 
-exports.setPrfixSeriesStatusTrue = async (req, res) => {
+exports.setPrefixSeriesStatusTrue = async (req, res) => {
   try {
     const { organizationId, seriesId } = req.body;
 
