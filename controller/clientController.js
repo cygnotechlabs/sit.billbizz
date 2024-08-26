@@ -81,7 +81,7 @@ const createRolesForOrganization = async (organizationId) => {
         //e-Way Bill
         "GenerateEWayBill","CancelEWayBill",
         //Settings
-        "UpdateOrganizationProfile","Users","ExportData","GeneralPreferences","AccountantPreferences","Taxes","ProvideAccessToProtectedData","PaymentTerms","Templates","EmailTemplate","ReportingTags","ManageIntegration","Automation","IncomingWebhook",'Signal',
+        "UpOrganizationProfile","Users","ExportData","GeneralPreferences","AccountantPreferences","Taxes","ProvideAccessToProtectedData","PaymentTerms","Templates","EmailTemplate","ReportingTags","ManageIntegration","Automation","IncomingWebhook",'Signal',
         //Dashboard
         "TotalPayables","TotalReceivables","CashFlow","IncomeAndExpenses","YourTopExpense","Projects","BankAndCreditCards","AccountWatchlist",
 
@@ -298,10 +298,10 @@ const createPaymentTermForOrganization = async (organizationId) => {
       { organizationId, name: 'Due on Receipt',description:"Payment is required immediately after receiving the invoice"},
       { organizationId, name: 'Due end of the month',description:"Payment is due by the last day of the month in which the invoice is issued"},
       { organizationId, name: 'Due end of next month',description:"Payment is due by the last day of the next month in which the invoice is issued"},
-      { organizationId, name: 'Net 15',days: '15',description:"Payment is due within 15 days from the invoice date"},
-      { organizationId, name: 'Net 30',days: '30',description:"Payment is due within 30 days from the invoice date"},
-      { organizationId, name: 'Net 45',days: '45',description:"Payment is due within 45 days from the invoice date"},
-      { organizationId, name: 'Net 60',days: '60',description:"Payment is due within 60 days from the invoice date"},
+      { organizationId, name: 'Net 15',days: '15',description:"Payment is due within 15 days from the invoice "},
+      { organizationId, name: 'Net 30',days: '30',description:"Payment is due within 30 days from the invoice "},
+      { organizationId, name: 'Net 45',days: '45',description:"Payment is due within 45 days from the invoice "},
+      { organizationId, name: 'Net 60',days: '60',description:"Payment is due within 60 days from the invoice "},
                   
     ];
 
@@ -331,7 +331,7 @@ const createPrefixForOrganization = async (organizationId) => {
     // Create Prefix
     const prefix = [
       { organizationId, series: [{
-        seriesName: 'Default Transaction Series',
+        seriesName: 'Default Series',
         status:true,
         journal:"JN-",journalNum:1,        
         creditNote: "CN-",creditNoteNum: 1,        
