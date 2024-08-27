@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import PlusCircle from "../../../assets/icons/PlusCircle";
-import Button from "../../../Components/Button";
-import SearchBar from "../../../Components/SearchBar";
-import Banner from "../banner/Banner";
-import Pen from "../../../assets/icons/Pen";
-import Modal from "../../../Components/model/Modal";
-import CustomiseColmn from "./CustomiseColmn ";
-import bgImage from "../../../assets/Images/14.png";
-import useApi from "../../../Hooks/useApi";
-import { endponits } from "../../../Services/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
 import Ellipsis from "../../../assets/icons/Ellipsis";
-import MenuDropdown from "../../../Components/menu/MenuDropdown";
-import RefreshIcon from "../../../assets/icons/RefreshIcon";
+import Pen from "../../../assets/icons/Pen";
+import PlusCircle from "../../../assets/icons/PlusCircle";
+import StarYellow from "../../../assets/icons/StarYellow";
 import TrashCan from "../../../assets/icons/TrashCan";
+import bgImage from "../../../assets/Images/14.png";
+import Button from "../../../Components/Button";
+import MenuDropdown from "../../../Components/menu/MenuDropdown";
+import Modal from "../../../Components/model/Modal";
+import SearchBar from "../../../Components/SearchBar";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
+import Banner from "../banner/Banner";
+import CustomiseColmn from "./CustomiseColmn ";
 
 // Define the data types
 type Column = {
@@ -38,7 +38,7 @@ function TransactionNumber() {
   const { request: GetPrefix } = useApi("put", 5004);
   const { request: AddPrefix } = useApi("post", 5004);
   const { request: EditPrefix } = useApi("put", 5004);
-
+  const { request:StatusPrefix }=useApi("put",5004)
   const modules = [
     "journal",
     "creditNote",
@@ -97,6 +97,9 @@ function TransactionNumber() {
     setModalOpen(true);
   };
   
+  console.log(editData);
+  
+
   const closeModal = () => {
     setModalOpen(false);
   };
@@ -135,8 +138,6 @@ function TransactionNumber() {
       const url = `${endponits.ADD_PREFIX}`;
       const apiResponse = await AddPrefix(url, data);
       const { response, error } = apiResponse;
-      console.log("response",response);
-      console.log("error",error);
       if (!error && response) {
         toast.success(response.data.message);
         closeModal();
@@ -174,16 +175,17 @@ function TransactionNumber() {
   
       if (!error && response) {
         const data = response.data.prefix.series;
-        console.log("Api data",response.data);
-
+        console.log("Api data", response.data);
+  
         // Initial data
         const initialData: SeriesData[] = data.map((item: any) => ({
+          orgId:response.data.prefix.organizationId,          
           _id: item._id,  // Include _id in the initialData
           seriesName: item.seriesName,
+          status: item.status,  // Add status from item.status
           ...modules.reduce((acc, module) => {
             const prefix = item[module];
             const num = item[`${module}Num`];
-            
             acc[module] = `${prefix}${num}`;
             return acc;
           }, {} as Record<string, string>)
@@ -199,8 +201,9 @@ function TransactionNumber() {
             seriesName: item.seriesName || "",
             organizationId: response.data.prefix.organizationId || "",  // Ensure organizationId is added here
             seriesId: item._id || "",
+            status: item.status,  // Add status from item.status
           };
-  
+          console.log("status",item.status);
           // Add all dynamic modules
           Object.keys(item).forEach((key) => {
             if (key !== "seriesName" && key !== "_id" && key !== "status") {
@@ -220,7 +223,6 @@ function TransactionNumber() {
       toast.error(`Error fetching invoice settings: ${error}`);
     }
   };
-  
   
   const editPrefixData=async(e:any)=>{
     e.preventDefault();
@@ -291,36 +293,32 @@ function TransactionNumber() {
     setModalData(updatedData);
   };
   
+  const handleStatusPrefix=async(orgId:any,sId:any)=>{
+    const payload={
+      organizationId:orgId,
+      seriesId:sId
+    }
+    try {
+      const url = `${endponits.STATUS_PREFIX}`;
+      const apiResponse = await StatusPrefix(url, payload);
+      const { response, error } = apiResponse;
+      if (!error && response) {
+        toast.success(response.data.message);
+        getPrefixDatas();
+      } else {
+        toast.error(`${error.response.data.message}`);
+      }
+    } catch (error) {
+      toast.error(`Error during API call: ${error}`);
+    }
+  }
   
 
   
  console.log(data);
  
-  const menuItems = [
-    {
-      label: 'Edit',
-      icon: <Pen color="blue" />,
-      onClick: (params:any) => {
-        openModal(params.name,params.id)
-      },
-    },
-    {
-      label: 'Mark as Default',
-      icon: <RefreshIcon color="red" />,
-      onClick: (params:any) => {
-        console.log('Mark as Default clicked with params Name:', params.name);
-        // handleMarkAsDefault(params); // Call your mark as default handler here
-      },
-    },
-    {
-      label: 'Delete',
-      icon: <TrashCan color="red" />,
-      onClick: (params:any) => {
-        console.log('Delete clicked with params:', params);
-        // handleDelete(params); // Call your delete handler here
-      },
-    },
-  ];
+ 
+  
   return (
     <div className="p-5 w-[1100px]">
       <Banner />
@@ -604,73 +602,101 @@ function TransactionNumber() {
       </div>
 
       <div className="overflow-x-auto mt-3 relative">
-        <table className="bg-white mb-5 relative z-10">
-          <thead className="text-[12px] text-center text-dropdownText">
-            <tr style={{ backgroundColor: "#F9F7F0" }}>
-              {columns.map(
-                (col) =>
-                  col.visible && (
-                    <th
-                      key={col.id}
-                      className="py-2 px-8 font-medium border-b border-tableBorder"
-                      style={{ whiteSpace: "nowrap" }}
-                    >
-                      <p>{col.label}</p>
-                    </th>
-                  )
-              )}
-            </tr>
-          </thead>
-          <tbody className="text-dropdownText text-center text-[13px]">
-            {data
-              .filter((item) =>
-                item.seriesName.toLowerCase().includes(search.toLowerCase())
-              )
-              .map((item, index) => (
-                <tr style={{ whiteSpace: "nowrap" }} key={index}>
-                  {columns.map(
-                    (col) =>
-                      col.visible && (
-                        <td
-                          key={col.id}
-                          className="py-2.5 px-4 border-y border-tableBorder relative"
-                        >
-                          {col.id === "seriesName" && item.seriesName}
-                          {col.id !== "seriesName" &&
-                            col.id !== "actions" &&
-                            item[col.id] && (
-                              <>
-                                {`${item[col.id].replace(
-                                  /(\D+)(\d+)/,
-                                  (_, prefix, number) =>
-                                    `${prefix}${number.padStart(4, "0")}`
-                                )}`}
-                              </>
-                            )}
-                          {col.id === "actions" && (
-                            <div className="flex justify-center items-center cursor-pointer relative">
-<MenuDropdown
-  menuItems={menuItems}
+  <table className="bg-white mb-5 relative z-10">
+    <thead className="text-[12px] text-center text-dropdownText">
+      <tr style={{ backgroundColor: "#F9F7F0" }}>
+        {columns.map(
+          (col) =>
+            col.visible && (
+              <th
+                key={col.id}
+                className="py-2 px-8 font-medium border-b border-tableBorder"
+                style={{ whiteSpace: "nowrap" }}
+              >
+                <p>{col.label}</p>
+              </th>
+            )
+        )}
+      </tr>
+    </thead>
+    <tbody className="text-dropdownText text-center text-[13px]">
+      {data
+        .filter((item) =>
+          item.seriesName.toLowerCase().includes(search.toLowerCase())
+        )
+        .map((item, index) => (
+          <tr style={{ whiteSpace: "nowrap" }} key={index}>
+            {columns.map(
+              (col) =>
+                col.visible && (
+                  <td
+                    key={col.id}
+                    className="py-2.5 px-4 border-y border-tableBorder relative"
+                  >
+                    {col.id === "seriesName" && (
+                      <div className="flex items-center gap-1 justify-center">
+                        {item.seriesName}
+                        {item.status && <StarYellow size={16} />}
+                      </div>
+                    )}
+                    {col.id !== "seriesName" &&
+                      col.id !== "actions" &&
+                      item[col.id] && (
+                        <>
+                          {`${item[col.id].replace(
+                            /(\D+)(\d+)/,
+                            (_, prefix, number) =>
+                              `${prefix}${number.padStart(4, "0")}`
+                          )}`}
+                        </>
+                      )}
+                    {col.id === "actions" && (
+                      <div className="flex justify-center items-center cursor-pointer relative">
+                        {/* Dynamically create menuItems based on item.status */}
+                        <MenuDropdown
+  menuItems={[
+    {
+      label: 'Edit',
+      icon: <Pen color="blue" />,
+      onClick: () => {
+        openModal('Edit', item._id); // Directly use item properties
+      },
+    },
+    ...(!item.status
+      ? [
+          {
+            label: 'Mark as Default',
+            icon: <StarYellow />,
+            onClick: () => {
+              handleStatusPrefix(item.orgId, item._id); // Directly use item properties
+            },
+          },
+        ]
+      : []),
+    {
+      label: 'Delete',
+      icon: <TrashCan color="red" />,
+      onClick: () => {
+        console.log('Delete clicked with id:', item._id);
+        // handleDelete(item._id); // Directly use item properties
+      },
+    },
+  ]}
   backgroundColor="bg-white"
   trigger={<Ellipsis height={16} />}
   position="center"
-  triggerParam={[
-    { label: "Edit", parameters: { id: item._id, name: 'Edit'} },
-    { label: "Delete", parameters: { id: 456, name: 'bar', boolean: false } },
-  ]}
-  hoverColor="bg-blue-200" 
 />
+                      </div>
+                    )}
+                  </td>
+                )
+            )}
+          </tr>
+        ))}
+    </tbody>
+  </table>
+</div>
 
-                            </div>
-                          )}
-                        </td>
-                      )
-                  )}
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </div>
     </div>
 
 

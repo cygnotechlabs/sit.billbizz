@@ -4,12 +4,7 @@ import ReactDOM from "react-dom";
 interface MenuItem {
   label: string;
   icon?: ReactNode;
-  onClick: (params: any) => void;
-}
-
-interface TriggerParam {
-  label: string;
-  parameters: { [key: string]: any };
+  onClick: () => void;
 }
 
 interface MenuDropdownProps {
@@ -17,8 +12,6 @@ interface MenuDropdownProps {
   backgroundColor?: string;
   trigger: ReactNode;
   position?: 'left' | 'right' | 'center';
-  triggerParam?: TriggerParam[];
-  hoverColor?: string;
 }
 
 const MenuDropdown: React.FC<MenuDropdownProps> = ({
@@ -26,8 +19,6 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
   backgroundColor = "bg-white",
   trigger,
   position = 'right',
-  triggerParam,
-  hoverColor = 'bg-gray-100',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -40,11 +31,6 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
 
   const closeDropdown = () => {
     setIsOpen(false);
-  };
-
-  const getParametersForLabel = (label: string): any => {
-    const matchingParam = triggerParam?.find(param => param.label === label);
-    return matchingParam ? matchingParam.parameters : {};
   };
 
   useEffect(() => {
@@ -130,22 +116,19 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
             className={`absolute mt-2 rounded-md shadow-lg ${backgroundColor} z-50`}
           >
             <div className="py-1">
-              {menuItems.map((item, index) => {
-                const params = getParametersForLabel(item.label);
-                return (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      item.onClick(params);
-                      closeDropdown();
-                    }}
-                    className={`flex items-center w-full text-left px-4 py-2 text-sm rounded hover:${hoverColor} focus:outline-none`}
-                  >
-                    {item.icon && <span className="mr-2">{item.icon}</span>}
-                    {item.label}
-                  </button>
-                );
-              })}
+              {menuItems.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    item.onClick();  // Directly call the onClick without parameters
+                    closeDropdown();
+                  }}
+                  className="flex items-center w-full text-left px-4 py-2 text-sm rounded hover:bg-blue-200 focus:outline-none"
+                >
+                  {item.icon && <span className="mr-2">{item.icon}</span>}
+                  {item.label}
+                </button>
+              ))}
             </div>
           </div>,
           document.body
