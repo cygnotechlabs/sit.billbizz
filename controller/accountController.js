@@ -1,6 +1,7 @@
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account")
 const crypto = require('crypto');
+const moment = require('moment-timezone');
 
 
 const key = Buffer.from(process.env.ENCRYPTION_KEY, 'utf8'); 
@@ -39,9 +40,7 @@ function decrypt(encryptedText) {
 
 //Add Account
 exports.addAccount = async (req, res) => {
-    // console.log("Add Account:", req.body);
-    console.log('IV Length:', iv.length);
-    console.log('Key Length:', key.length);
+    console.log("Add Account:", req.body);
 
     try {
       const {       
@@ -53,8 +52,6 @@ exports.addAccount = async (req, res) => {
         accountHead,
         accountGroup,
 
-        openingBalance,
-        openingBalanceDate,
         description,
         bankAccNum,
         bankIfsc,
@@ -93,19 +90,24 @@ exports.addAccount = async (req, res) => {
       console.log("Bank Details (Account Number, IFSC, Currency) are required");
     }
 
-    // Find the account by accountId and organizationId
-    const organization = await Account.findOne({
-      organizationId: organizationId,
-    });
-
-  if (!organization) {
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
       return res.status(404).json({
-          message: "Organization not found",
+        message: "No Organization Found.",
       });
-  }
+    }
+
+    const timeZoneExp = existingOrganization.timeZoneExp;
+    const dateFormatExp = existingOrganization.dateFormatExp;
+    const dateSplit = existingOrganization.dateSplit;
+    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+    const openingDate = generatedDateTime.dateTime;
+    
     
   
-      // Check if an organization with the same organizationName already exists
+      // Check if an accounts with the same name already exists
       const existingAccount = await Account.findOne({
         accountName: accountName,
         organizationId: organizationId,
@@ -130,8 +132,7 @@ exports.addAccount = async (req, res) => {
         accountHead,
         accountGroup,
 
-        openingBalance,
-        openingBalanceDate,
+        openingDate,
         description,
         bankAccNum: encryptedBankAccNum,
         bankIfsc,
@@ -145,7 +146,7 @@ exports.addAccount = async (req, res) => {
       res.status(201).json({
         message: "Account created successfully."
       });
-      console.log("Account created successfully:");
+      console.log("Account created successfully",newAccount);
     } catch (error) {
       console.error("Error creating Account:", error);
       res.status(500).json({ message: "Internal server error." });
@@ -161,8 +162,7 @@ exports.getAllAccount = async (req, res) => {
 
         // Find all accounts where organizationId matches
         const accounts = await Account.find(
-          { organizationId: organizationId },
-          { bankAccNum: 0 } 
+          { organizationId: organizationId },{ bankAccNum: 0 } 
       );
 
         if (!accounts.length) {
@@ -190,7 +190,7 @@ exports.getOneAccount = async (req, res) => {
       const account = await Account.findOne({
           _id: accountId,
           organizationId: organizationId,
-      });
+      },{ bankAccNum: 0 });
 
       if (!account) {
           return res.status(404).json({
@@ -251,10 +251,8 @@ exports.editAccount = async (req, res) => {
 
           accountSubhead,
           accountHead,
-          accountHeads,
+          accountGroup,
 
-          openingBalance,
-          openingBalanceDate,
           description,
           bankAccNum,
           bankIfsc,
@@ -281,9 +279,6 @@ exports.editAccount = async (req, res) => {
       account.accountHead = accountHead;
       account.accountGroup = accountGroup;
 
-      account.openingBalance = openingBalance;
-      account.openingBalanceDate = openingBalanceDate;
-      
       account.description = description;
       account.bankAccNum = bankAccNum;
       account.bankIfsc = bankIfsc;
@@ -340,3 +335,29 @@ exports.deleteAccount = async (req, res) => {
 
 
 
+// Function to generate time and date for storing in the database
+function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = new Date(), timeFormat = 'HH:mm:ss', timeSplit = ':') {
+  // Convert the base time to the desired time zone
+  const localDate = moment.tz(baseTime, timeZone);
+
+  // Format date and time according to the specified formats
+  let formattedDate = localDate.format(dateFormat);
+  
+  // Handle date split if specified
+  if (dateSplit) {
+    // Replace default split characters with specified split characters
+    formattedDate = formattedDate.replace(/[-/]/g, dateSplit); // Adjust regex based on your date format separators
+  }
+
+  const formattedTime = localDate.format(timeFormat);
+  const timeZoneName = localDate.format('z'); // Get time zone abbreviation
+
+  // Combine the formatted date and time with the split characters and time zone
+  const dateTime = `${formattedDate} ${formattedTime.split(':').join(timeSplit)} (${timeZoneName})`;
+
+  return {
+    date: formattedDate,
+    time: `${formattedTime} (${timeZoneName})`,
+    dateTime: dateTime
+  };
+}

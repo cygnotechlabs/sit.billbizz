@@ -3,6 +3,9 @@ const Account = require("../database/model/account");
 const Prefix = require("../database/model/prefix");
 const Journal = require("../database/model/journal");
 const TrialBalance = require("../database/model/trialBalance");
+const moment = require('moment-timezone');
+
+
 
 // Add Journal Entry
 exports.addJournalEntry = async (req, res) => {
@@ -27,6 +30,12 @@ exports.addJournalEntry = async (req, res) => {
                 message: "No Organization Found.",
             });
         }
+        
+        const timeZoneExp = existingOrganization.timeZoneExp;
+        const dateFormatExp = existingOrganization.dateFormatExp;
+        const dateSplit = existingOrganization.dateSplit;
+        const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+        const entryDate = generatedDateTime.dateTime;
 
         // Check if all accounts exist for the given organization
         const allAccountIds = transaction.map(trans => trans.accountId);
@@ -95,6 +104,7 @@ exports.addJournalEntry = async (req, res) => {
             organizationId: organizationId,
             journalId,
             date,
+            entryDate,
             reference,
             note,
             cashBasedJournal,
@@ -119,8 +129,9 @@ exports.addJournalEntry = async (req, res) => {
         for (const trans of transaction) {
             const newTrialEntry = new TrialBalance({
                 organizationId,
+                operationId:newJournalEntry._id,
                 transactionId: journalId,
-                date,
+                date:entryDate,
                 account_id: trans.accountId,
                 accountName: trans.accountName,
                 action: "Journal",
@@ -196,3 +207,39 @@ exports.getLastJournalPrefix = async (req, res) => {
         res.status(500).json({ message: "Internal server error." });
     }
 };
+
+
+
+
+
+
+
+
+
+// Function to generate time and date for storing in the database
+function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = new Date(), timeFormat = 'HH:mm:ss', timeSplit = ':') {
+    // Convert the base time to the desired time zone
+    const localDate = moment.tz(baseTime, timeZone);
+  
+    // Format date and time according to the specified formats
+    let formattedDate = localDate.format(dateFormat);
+    
+    // Handle date split if specified
+    if (dateSplit) {
+      // Replace default split characters with specified split characters
+      formattedDate = formattedDate.replace(/[-/]/g, dateSplit); // Adjust regex based on your date format separators
+    }
+  
+    const formattedTime = localDate.format(timeFormat);
+    const timeZoneName = localDate.format('z'); // Get time zone abbreviation
+  
+    // Combine the formatted date and time with the split characters and time zone
+    const dateTime = `${formattedDate} ${formattedTime.split(':').join(timeSplit)} (${timeZoneName})`;
+  
+    return {
+      date: formattedDate,
+      time: `${formattedTime} (${timeZoneName})`,
+      dateTime: dateTime
+    };
+  }
+  
