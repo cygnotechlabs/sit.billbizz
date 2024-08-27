@@ -1,14 +1,19 @@
-import { useState } from "react";
-import ListIcon from "../../../assets/icons/ListIcon";
+import { useEffect, useState } from "react";
 import PlusCircle from "../../../assets/icons/PlusCircle";
 import Button from "../../../Components/Button";
 import SearchBar from "../../../Components/SearchBar";
 import Banner from "../banner/Banner";
-import Ellipsis from "../../../assets/icons/Ellipsis";
 import Pen from "../../../assets/icons/Pen";
 import Modal from "../../../Components/model/Modal";
 import CustomiseColmn from "./CustomiseColmn ";
 import bgImage from "../../../assets/Images/14.png";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
+import toast, { Toaster } from "react-hot-toast";
+import Ellipsis from "../../../assets/icons/Ellipsis";
+import MenuDropdown from "../../../Components/menu/MenuDropdown";
+import RefreshIcon from "../../../assets/icons/RefreshIcon";
+import TrashCan from "../../../assets/icons/TrashCan";
 
 // Define the data types
 type Column = {
@@ -19,10 +24,7 @@ type Column = {
 
 type SeriesData = {
   seriesName: string;
-  vendorPayment: string;
-  retainerInvoice: string;
-  purchaseOrder: string;
-  creditNote: string;
+  [key: string]: string;  // Allow dynamic keys
 };
 
 type SeriesModalData = {
@@ -33,63 +35,294 @@ type SeriesModalData = {
 };
 
 function TransactionNumber() {
-  const initialData: SeriesData[] = [
-    { seriesName: "Default Transaction Series", vendorPayment: "VP-0001", retainerInvoice: "RET-0001", purchaseOrder: "PO-0001", creditNote: "CN-0001" },
-    { seriesName: "Data series", vendorPayment: "VO-0001", retainerInvoice: "ROT-0002", purchaseOrder: "YU-0001", creditNote: "AC-0001" },
-  ];
+  const { request: GetPrefix } = useApi("put", 5004);
+  const { request: AddPrefix } = useApi("post", 5004);
+  const { request: EditPrefix } = useApi("put", 5004);
 
-  const initialModalData: SeriesModalData[] = [
-    { module: "Credit Note", prefix: "CN-", startingNumber: "0001", preview: "CN-0001" },
-    { module: "Customer Payment", prefix: "CP", startingNumber: "0001", preview: "CP-0001" },
-    { module: "Purchase Order", prefix: "PO-", startingNumber: "0001", preview: "PO-0001" },
-    { module: "Sales Order", prefix: "SO-", startingNumber: "0001", preview: "SO-0001" },
-    { module: "Vendor Payment", prefix: "VP-", startingNumber: "0001", preview: "VP-0001" },
-    { module: "Retainer Invoice", prefix: "RI-", startingNumber: "0001", preview: "RI-0001" },
-    { module: "Bill Of Supply", prefix: "BS-", startingNumber: "0001", preview: "BS-0001" },
-    { module: "Invoice", prefix: "IN-", startingNumber: "0001", preview: "IN-0001" },
-    { module: "Delivery Challan", prefix: "DC-", startingNumber: "0001", preview: "DC-0001" },
+  const modules = [
+    "journal",
+    "creditNote",
+    "customerPayment",
+    "purchaseOrder",
+    "salesOrder",
+    "vendorPayment",
+    "retainerInvoice",
+    "vendorCredits",
+    "billOfSupply",
+    "debitNote",
+    "invoice",
+    "quote",
+    "deliveryChallan"
   ];
 
   const initialColumns: Column[] = [
-    { id: "seriesName", label: "Series Name", visible: true },
-    { id: "vendorPayment", label: "Vendor Payment", visible: true },
-    { id: "retainerInvoice", label: "Retainer Invoice", visible: true },
-    { id: "purchaseOrder", label: "Purchase Order", visible: true },
-    { id: "creditNote", label: "Credit Note", visible: true },
-    { id: "actions", label: "Actions", visible: true },
-  ];
+  { id: "seriesName", label: "Series Name", visible: true },
+  ...modules.map((module) => ({
+    id: module,
+    label: module
+      .split(/(?=[A-Z])/)
+      .join(" ")
+      .replace(/^\w/, (c) => c.toUpperCase()),
+    visible: true,
+  })),
+  { id: "actions", label: "Actions", visible: true },
+];
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState<string>("New Transaction Number Series");
-  const [modalAction, setModalAction] = useState<string>("Create"); // "Create" or "Edit"
-  const [editData, setEditData] = useState<SeriesData | null>(null);
-
-  const [data, setData] = useState<SeriesData[]>(initialData);
-  console.log(setData);
-
-  const [modalData] = useState<SeriesModalData[]>(initialModalData);
+  const [modalAction, setModalAction] = useState<string>("Add"); // "Add" or "Edit"
+  const [editDatas, setEditDatas] = useState([]);
+  const [editData, setEditData] = useState<Record<string, any>>({});
+  const [data, setData] = useState<SeriesData[]>([]);
+  const [modalData,setModalData] = useState<SeriesModalData[]>([]); // modalData could be populated based on the 
+  const [newSeriesData,setNewSeriesData]=useState({
+    seriesName: "", // This could be a dynamic value based on user input
+    organizationId: "INDORG0001"
+  })
+  // requirement
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [search, setSearch] = useState<string>("");
 
-  const openModal = (action: string, seriesData?: SeriesData) => {
-    if (action === "Edit" && seriesData) {
-      setEditData(seriesData);
+  const openModal = (action: string, id?: any) => {
+    if (action === "Edit" && id) {
+      const editableData = editDatas?.find((item: any) => item.seriesId === id) || null;
+      console.log("editable", editableData);
+      setEditData(editableData || {}); // Set it directly, null is handled by the state type
       setModalTitle("Edit Transaction Number Series");
       setModalAction("Edit");
     } else {
-      setEditData(null);
       setModalTitle("New Transaction Number Series");
-      setModalAction("Create");
+      setModalAction("Add");
     }
     setModalOpen(true);
   };
-
+  
   const closeModal = () => {
     setModalOpen(false);
   };
 
+  const addPrefixDatas = async (e: any) => {
+    e.preventDefault();
+  
+    // Format the data to store prefix and number separately
+    const formattedData = modalData.reduce((acc, item) => {
+      acc[item.module] = item.prefix;  // Store prefix separately
+      acc[`${item.module}Num`] = item.startingNumber;  // Store number separately
+      return acc;
+    }, {} as Record<string, string>);
+  
+    // Update the state with the new formatted data
+    const updatedData = {
+      ...newSeriesData,
+      ...formattedData
+    };
+  
+    setNewSeriesData(updatedData);
+  
+    // Now that the state is updated, make the API call
+    await makeApiCall(updatedData);
+  };
+  
+  const makeApiCall = async (data: Record<string, string>) => {
+    const emptyField = validateData(data);
+  
+    if (emptyField) {
+      toast.error(`The field "${emptyField}" is empty. Please fill it out.`);
+      return;
+    }
+  
+    try {
+      const url = `${endponits.ADD_PREFIX}`;
+      const apiResponse = await AddPrefix(url, data);
+      const { response, error } = apiResponse;
+      console.log("response",response);
+      console.log("error",error);
+      if (!error && response) {
+        toast.success(response.data.message);
+        closeModal();
+        getPrefixDatas();
+      } else {
+        toast.error(`${error.response.data.message}`);
+      }
+    } catch (error) {
+      toast.error(`Error during API call: ${error}`);
+    }
+  };
+
+  const validateData = (data: Record<string, any>) => {
+    for (const key in data) {
+      const value = data[key];
+  
+      // Check for empty strings, null, undefined, or NaN (for numbers)
+      if (
+        value === null ||
+        value === undefined ||
+        (typeof value === "string" && value.trim() === "") ||
+        (typeof value === "number" && isNaN(value))
+      ) {
+        return key;
+      }
+    }
+    return null;
+  };
+
+  const getPrefixDatas = async () => {
+    try {
+      const url = `${endponits.GET_PREFIX}`;
+      const body = { organizationId: "INDORG0001" };
+      const { response, error } = await GetPrefix(url, body);
+  
+      if (!error && response) {
+        const data = response.data.prefix.series;
+        console.log("Api data",response.data);
+
+        // Initial data
+        const initialData: SeriesData[] = data.map((item: any) => ({
+          _id: item._id,  // Include _id in the initialData
+          seriesName: item.seriesName,
+          ...modules.reduce((acc, module) => {
+            const prefix = item[module];
+            const num = item[`${module}Num`];
+            
+            acc[module] = `${prefix}${num}`;
+            return acc;
+          }, {} as Record<string, string>)
+        }));
+  
+        // Update state with fetched data
+        setData(initialData);
+  
+        // Dynamically create the editDatas array
+        const formattedData = data.map((item: any) => {
+          // Define seriesData with organizationId
+          const seriesData: Record<string, string | number> = {
+            seriesName: item.seriesName || "",
+            organizationId: response.data.prefix.organizationId || "",  // Ensure organizationId is added here
+            seriesId: item._id || "",
+          };
+  
+          // Add all dynamic modules
+          Object.keys(item).forEach((key) => {
+            if (key !== "seriesName" && key !== "_id" && key !== "status") {
+              seriesData[key] = item[key] || (typeof item[key] === "number" ? 0 : "");
+            }
+          });
+  
+          return seriesData;
+        });
+  
+        // Update state with fetched and formatted data
+        setEditDatas(formattedData);
+      } else {
+        toast.error(`API Error: ${error}`);
+      }
+    } catch (error) {
+      toast.error(`Error fetching invoice settings: ${error}`);
+    }
+  };
+  
+  
+  const editPrefixData=async(e:any)=>{
+    e.preventDefault();
+    const emptyField = validateData(editData);
+  
+    if (emptyField) {
+      toast.error(`The field "${emptyField}" is empty. Please fill it out.`);
+      return;
+    }
+    try {
+      const url = `${endponits.EDIT_PREFIX}`;
+      const apiResponse = await EditPrefix(url, editData);
+      const { response, error } = apiResponse;
+      if (!error && response) {
+        toast.success(response.data.message);
+        closeModal();
+        getPrefixDatas();
+      } else {
+        toast.error(`${error.response.data.message}`);
+      }
+    } catch (error) {
+      toast.error(`Error during API call: ${error}`);
+    }
+  }
+  
+  useEffect(() => {
+    getPrefixDatas();
+  }, []);
+  
+  useEffect(() => {
+    if (data.length > 0) {
+      const firstSeriesData = data[0];
+  
+      const constructedModalData = modules.map((module) => {
+        const fullString = firstSeriesData[module] || '';
+        const prefix = fullString.match(/^[^\d]+/)?.[0] || ''; // Extract non-digit prefix
+        const startingNumber = fullString.match(/\d+$/)?.[0] || ''; // Extract digit suffix
+  
+        // No padding in preview
+        const preview = `${prefix}${startingNumber}`;
+  
+        return {
+          module,
+          prefix,
+          startingNumber,
+          preview
+        };
+      });
+  
+      setModalData(constructedModalData);
+    }
+  }, [data]);
+  
+  
+
+  const handleInputChange = (index: number, field: string, value: string) => {
+    const updatedData = [...modalData];
+  
+    // Update the prefix and starting number separately, and construct the preview
+    if (field === 'startingNumber') {
+      updatedData[index].startingNumber = value;  // Store the number as is
+    } else if (field === 'prefix') {
+      updatedData[index].prefix = value;  // Store the prefix as is
+    }
+  
+    updatedData[index].preview = `${updatedData[index].prefix}${updatedData[index].startingNumber}`;
+  
+    setModalData(updatedData);
+  };
+  
+  
+
+  
+ console.log(data);
+ 
+  const menuItems = [
+    {
+      label: 'Edit',
+      icon: <Pen color="blue" />,
+      onClick: (params:any) => {
+        openModal(params.name,params.id)
+      },
+    },
+    {
+      label: 'Mark as Default',
+      icon: <RefreshIcon color="red" />,
+      onClick: (params:any) => {
+        console.log('Mark as Default clicked with params Name:', params.name);
+        // handleMarkAsDefault(params); // Call your mark as default handler here
+      },
+    },
+    {
+      label: 'Delete',
+      icon: <TrashCan color="red" />,
+      onClick: (params:any) => {
+        console.log('Delete clicked with params:', params);
+        // handleDelete(params); // Call your delete handler here
+      },
+    },
+  ];
   return (
-    <div className="p-5">
+    <div className="p-5 w-[1100px]">
       <Banner />
       <div className="mt-5 flex gap-7 rounded-[40px] bg-[#EAEBEB] p-3">
         <button
@@ -102,166 +335,346 @@ function TransactionNumber() {
       <div className="flex justify-between mt-4">
         <p className="text-textColor font-bold text-lg">Transaction Number Series</p>
         <div className="flex gap-4">
-          <Button className="text-sm font-medium" onClick={() => openModal("Create")} size="sm">
+          <Button className="text-sm font-medium" onClick={() => openModal("Add")} size="sm">
             <PlusCircle color="white" /> New Series
           </Button>
         </div>
       </div>
 
       <Modal
-        open={isModalOpen}
-        onClose={closeModal}
-        className="px-8 py-4 w-[52.5%]"
+  open={isModalOpen && modalAction === "Add"}
+  onClose={closeModal}
+  className="px-8 py-4 w-[55.5%]"
+>
+  <div className="mb-5">
+    <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
+      <div
+        className="absolute top-0 -right-8 w-[178px] h-[89px]"
+        style={{
+          backgroundImage: `url(${bgImage})`,
+          backgroundRepeat: "no-repeat",
+        }}
+      ></div>
+      <div className="relative z-10">
+        <h3 className="text-xl font-bold text-textColor">{modalTitle}</h3>
+      </div>
+      <div
+        className="ms-auto text-3xl cursor-pointer relative z-10"
+        onClick={closeModal}
       >
-        <div className="mb-5">
-          <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
-            <div
-              className="absolute top-0 -right-8 w-[178px] h-[89px]"
-              style={{
-                backgroundImage: `url(${bgImage})`,
-                backgroundRepeat: "no-repeat",
-              }}
-            ></div>
-            <div className="relative z-10">
-              <h3 className="text-xl font-bold text-textColor">{modalTitle}</h3>
-            </div>
-            <div
-              className="ms-auto text-3xl cursor-pointer relative z-10"
-              onClick={closeModal}
-            >
-              &times;
-            </div>
-          </div>
-          <form>
-            <div className="text-dropdownText text-sm mb-5 flex items-center gap-2">
-              <label htmlFor="seriesName" className="font-semibold">Series Name</label>
-              <input
-                type="text"
-                id="seriesName"
-                className="pl-2 text-sm w-[40%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
-                placeholder="Series Name"
-                defaultValue={editData ? editData.seriesName : ""}
-              />
-            </div>
+        &times;
+      </div>
+    </div>
+    <form onSubmit={(e) => addPrefixDatas(e)}>
+      <div className="text-dropdownText text-sm mb-5 flex items-center gap-2">
+        <label htmlFor="seriesName" className="font-semibold">
+          Series Name
+        </label>
+        <input
+          type="text"
+          id="seriesName"
+          onChange={(e) =>
+            setNewSeriesData({ ...newSeriesData, seriesName: e.target.value })
+          }
+          className="pl-2 text-sm w-[40%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+          placeholder="Series Name"
+        />
+      </div>
 
-            <table className="min-w-full bg-white mb-5">
-              <thead className="text-[12px] text-left text-dropdownText">
-                <tr style={{ backgroundColor: "#F9F7F0" }}>
-                  <th className="py-2 px-4 font-medium border-b border-tableBorder">Module</th>
-                  <th className="py-2 px-4 font-medium border-b border-tableBorder">Prefix</th>
-                  <th className="py-2 px-4 font-medium border-b border-tableBorder">Starting Number</th>
-                  <th className="py-2 px-4 font-medium border-b border-tableBorder">Preview</th>
-                </tr>
-              </thead>
-              <tbody className="text-dropdownText text-left text-[13px]">
-                {modalData.map((item, index) => (
-                  <tr key={index}>
-                    <td className="py-2.5 px-4 border-y border-tableBorder">{item.module}</td>
-                    <td className="py-2.5 px-4 border-y border-tableBorder"> {item.prefix}</td>
-                    <td className="py-2.5 px-4 border-y border-tableBorder">{item.startingNumber}</td>
-                    <td className="py-2.5 px-4 border-y border-tableBorder">{item.preview}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div className="flex justify-end items-center mt-6 gap-2">
-              <Button
-                variant="secondary"
-                onClick={closeModal}
-                className="pl-10 pr-10 h-[38px] text-sm"
-                size="sm"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                className="pl-10 pr-10 h-[38px] text-sm"
-                size="sm"
-              >
-                {modalAction === "Edit" ? "Update" : "Save"}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-
-      <div className="bg-white rounded-lg p-5 mt-3">
-        <div className="flex justify-between items-center">
-          <div className="w-[89%]">
-            <SearchBar
-              placeholder="Search"
-              onSearchChange={setSearch}
-              searchValue={search}
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button variant="secondary" size="sm">
-              <ListIcon color="#565148" />{" "}
-              <p className="text-sm font-medium text-outlineButton">Sort By</p>
-            </Button>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto mt-3">
-          <table className="min-w-full bg-white mb-5">
-            <thead className="text-[12px] text-center text-dropdownText">
-              <tr style={{ backgroundColor: "#F9F7F0" }}>
-                {columns.map(
-                  (col) =>
-                    col.visible && (
-                      <th key={col.id} className="py-2 px-4 font-medium border-b border-tableBorder">
-                        {col.label}
-                      </th>
-                    )
-                )}
-                {/* CustomiseColmn as the last column header */}
-                <th className="py-2 px-4 font-medium border-b border-tableBorder">
-                  <div className="flex justify-center">
-                    <CustomiseColmn columns={columns} setColumns={setColumns} />
-                  </div>
-                </th>
+      <div className="max-h-[380px] overflow-y-auto">
+        <table className="min-w-full bg-white mb-5">
+          <thead
+            className="text-[12px] text-center text-dropdownText sticky top-0 z-10"
+            style={{ backgroundColor: "#F9F7F0" }}
+          >
+            <tr>
+              <th className="py-2 px-4 font-medium border-b border-tableBorder">
+                Module
+              </th>
+              <th className="py-2 px-4 font-medium border-b border-tableBorder">
+                Prefix
+              </th>
+              <th className="py-2 px-4 font-medium border-b border-tableBorder">
+                Starting Number
+              </th>
+              <th className="py-2 px-4 font-medium border-b border-tableBorder">
+                Preview
+              </th>
+            </tr>
+          </thead>
+          <tbody className="text-dropdownText text-[13px]">
+            {modalData.map((item, index) => (
+              <tr key={index}>
+                <td className="py-2.5 px-4 border-y border-tableBorder">
+                  {item.module}
+                </td>
+                <td className="py-2.5 px-4 border-y border-tableBorder">
+                  <input
+                    type="text"
+                    className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+                    value={item.prefix}
+                    onChange={(e) =>
+                      handleInputChange(index, "prefix", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="py-2.5 px-4 border-y border-tableBorder">
+                  <input
+                    type="number"
+                    className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+                    value={item.startingNumber}
+                    onChange={(e) =>
+                      handleInputChange(index, "startingNumber", e.target.value)
+                    }
+                  />
+                </td>
+                <td className="py-2.5 px-4 border-y border-tableBorder">
+                  {`${item.prefix}${item.startingNumber.padStart(4, "0")}`}
+                </td>
               </tr>
-            </thead>
-            <tbody className="text-dropdownText text-center text-[13px]">
-              {data
-                .filter((item) =>
-                  item.seriesName.toLowerCase().includes(search.toLowerCase())
-                )
-                .map((item, index) => (
-                  <tr key={index}>
-                    {columns.map(
-                      (col) =>
-                        col.visible && (
-                          <td key={col.id} className="py-2.5 px-4 border-y border-tableBorder">
-                            {col.id === "seriesName" && item.seriesName}
-                            {col.id === "vendorPayment" && item.vendorPayment}
-                            {col.id === "retainerInvoice" && item.retainerInvoice}
-                            {col.id === "purchaseOrder" && item.purchaseOrder}
-                            {col.id === "creditNote" && item.creditNote}
-                            {col.id === "actions" && (
-                              <Button
-                                variant="secondary"
-                                className="h-7 pr-3.5 text-xs font-medium"
-                                onClick={() => openModal("Edit", item)}
-                              >
-                                <Pen color="#565148" /> Edit
-                              </Button>
-                            )}
-                          </td>
-                        )
-                    )}
-                    <td className="py-2.5 px-5 border-y border-tableBorder">
-                      <div className="flex justify-center">
-                        <Ellipsis height={16} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-end items-center mt-6 gap-2">
+        <Button
+          variant="secondary"
+          onClick={closeModal}
+          className="pl-10 pr-10 h-[38px] text-sm"
+          size="sm"
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          className="pl-10 pr-10 h-[38px] text-sm"
+          size="sm"
+          type="submit"
+        >
+          Save
+        </Button>
+      </div>
+    </form>
+  </div>
+</Modal>
+
+<Modal
+  open={isModalOpen && modalAction === "Edit"}
+  onClose={closeModal}
+  className="px-8 py-4 w-[55.5%]"
+>
+  <div className="mb-5">
+    <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
+      <div
+        className="absolute top-0 -right-8 w-[178px] h-[89px]"
+        style={{
+          backgroundImage: `url(${bgImage})`,
+          backgroundRepeat: "no-repeat",
+        }}
+      ></div>
+      <div className="relative z-10">
+        <h3 className="text-xl font-bold text-textColor">{modalTitle}</h3>
+      </div>
+      <div
+        className="ms-auto text-3xl cursor-pointer relative z-10"
+        onClick={closeModal}
+      >
+        &times;
+      </div>
+    </div>
+    <form onSubmit={(e) => editPrefixData(e)}>
+      <div className="text-dropdownText text-sm mb-5 flex items-center gap-2">
+        <label htmlFor="seriesName" className="font-semibold">
+          Series Name
+        </label>
+        <input
+          type="text"
+          id="seriesName"
+          onChange={(e) =>
+            setEditData({ ...editData, seriesName: e.target.value })
+          }
+          className="pl-2 text-sm w-[40%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+          placeholder="Series Name"
+          value={editData?.seriesName}
+        />
+      </div>
+
+      <div className="max-h-[380px] overflow-y-auto">
+        <table className="min-w-full bg-white mb-5">
+          <thead
+            className="text-[12px] text-center text-dropdownText sticky top-0 z-10"
+            style={{ backgroundColor: "#F9F7F0" }}
+          >
+            <tr>
+              <th className="py-2 px-4 font-medium border-b border-tableBorder">
+                Module
+              </th>
+              <th className="py-2 px-4 font-medium border-b border-tableBorder">
+                Prefix
+              </th>
+              <th className="py-2 px-4 font-medium border-b border-tableBorder">
+                Starting Number
+              </th>
+              <th className="py-2 px-4 font-medium border-b border-tableBorder">
+                Preview
+              </th>
+            </tr>
+          </thead>
+          <tbody className="text-dropdownText text-[13px]">
+  {modalData.map((item, index) => (
+    <tr key={index}>
+      <td className="py-2.5 px-4 border-y border-tableBorder">
+        {item.module}
+      </td>
+      <td className="py-2.5 px-4 border-y border-tableBorder">
+        <input
+          type="text"
+          className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+          value={editData[item.module] || ""} // Ensure safe access with a default value
+          onChange={(e) => {
+            setEditData((prevState) => ({
+              ...prevState,
+              [item.module]: e.target.value, // Update the specific prefix in editData
+            }));
+          }}
+        />
+      </td>
+      <td className="py-2.5 px-4 border-y border-tableBorder">
+        <input
+          type="number"
+          className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+          value={editData[`${item.module}Num`] || ""} // Ensure safe access with a default value
+          onChange={(e) => {
+            setEditData((prevState) => ({
+              ...prevState,
+              [`${item.module}Num`]: e.target.value, // Update the specific starting number in editData
+            }));
+          }}
+        />
+      </td>
+      <td className="py-2.5 px-4 border-y border-tableBorder">
+        {`${editData[item.module] || ""}${(editData[`${item.module}Num`] || 0).toString().padStart(4, "0")}`}
+      </td>
+    </tr>
+  ))}
+</tbody>
+
+
+
+
+        </table>
+       
+      </div>
+
+      <div className="flex justify-end items-center mt-6 gap-2">
+        <Button
+          variant="secondary"
+          onClick={closeModal}
+          className="pl-10 pr-10 h-[38px] text-sm"
+          size="sm"
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          className="pl-10 pr-10 h-[38px] text-sm"
+          size="sm"
+          type="submit"
+        >
+          Update
+        </Button>
+      </div>
+    </form>
+  </div>
+</Modal>
+
+<div className="bg-white rounded-lg p-5 mt-3">
+      <div className="flex justify-between items-center">
+        <div className="w-[89%]">
+          <SearchBar
+            placeholder="Search"
+            onSearchChange={setSearch}
+            searchValue={search}
+          />
+        </div>
+        <div className="flex gap-2">
+          <CustomiseColmn columns={columns} setColumns={setColumns} />
         </div>
       </div>
+
+      <div className="overflow-x-auto mt-3 relative">
+        <table className="bg-white mb-5 relative z-10">
+          <thead className="text-[12px] text-center text-dropdownText">
+            <tr style={{ backgroundColor: "#F9F7F0" }}>
+              {columns.map(
+                (col) =>
+                  col.visible && (
+                    <th
+                      key={col.id}
+                      className="py-2 px-8 font-medium border-b border-tableBorder"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      <p>{col.label}</p>
+                    </th>
+                  )
+              )}
+            </tr>
+          </thead>
+          <tbody className="text-dropdownText text-center text-[13px]">
+            {data
+              .filter((item) =>
+                item.seriesName.toLowerCase().includes(search.toLowerCase())
+              )
+              .map((item, index) => (
+                <tr style={{ whiteSpace: "nowrap" }} key={index}>
+                  {columns.map(
+                    (col) =>
+                      col.visible && (
+                        <td
+                          key={col.id}
+                          className="py-2.5 px-4 border-y border-tableBorder relative"
+                        >
+                          {col.id === "seriesName" && item.seriesName}
+                          {col.id !== "seriesName" &&
+                            col.id !== "actions" &&
+                            item[col.id] && (
+                              <>
+                                {`${item[col.id].replace(
+                                  /(\D+)(\d+)/,
+                                  (_, prefix, number) =>
+                                    `${prefix}${number.padStart(4, "0")}`
+                                )}`}
+                              </>
+                            )}
+                          {col.id === "actions" && (
+                            <div className="flex justify-center items-center cursor-pointer relative">
+<MenuDropdown
+  menuItems={menuItems}
+  backgroundColor="bg-white"
+  trigger={<Ellipsis height={16} />}
+  position="center"
+  triggerParam={[
+    { label: "Edit", parameters: { id: item._id, name: 'Edit'} },
+    { label: "Delete", parameters: { id: 456, name: 'bar', boolean: false } },
+  ]}
+  hoverColor="bg-blue-200" 
+/>
+
+                            </div>
+                          )}
+                        </td>
+                      )
+                  )}
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+      <Toaster position="top-center" reverseOrder={false} />
     </div>
   );
 }

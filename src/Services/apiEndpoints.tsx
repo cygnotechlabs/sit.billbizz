@@ -8,8 +8,11 @@ export const endponits = {
   GET_CURRENCY_LIST: `get-currency`,
 
   //Sales
-  ADD_SALES_SETTINGS: `add-sales-settings`,
-  ADD_SALES_INVOICE_SETTINGS: "add-salesInvoice-settings",
+  ADD_SALES_SETTINGS:`add-sales-settings`,
+  ADD_SALES_INVOICE_SETTINGS:"add-salesInvoice-settings",
+  GET_PREFIX:"get-prefix",
+  ADD_PREFIX:"add-prefix",
+  EDIT_PREFIX:'edit-prefix',
   ADD_SALES_DELIVARY_CHALLANS: "add-deliveryChellans",
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
