@@ -16,7 +16,6 @@ function PurchaseOrders({}: Props) {
   };
 
   const [purchaseOrderData, setPurchaseOrderData] = useState(initialPurchaseOrder);
-console.log(purchaseOrderData);
 
   const { request: fetchPurchaseOrderSettings } = useApi("put", 5004);
   const { request: savePurchaseOrderSettings } = useApi("put", 5005);
@@ -29,9 +28,8 @@ console.log(purchaseOrderData);
         const { response, error } = await fetchPurchaseOrderSettings(url, body);
         
         if (!error && response) {
-          const settings = response.data[0];
+          const settings = response.data.purchaseOrderSettings;
           const { purchaseOrderClose, purchaseTC, purchaseNote } = settings;
-          console.log("purchaseOrderClose:", purchaseOrderClose);
           setPurchaseOrderData({
             ...purchaseOrderData,
             purchaseOrderClose: purchaseOrderClose || "",
@@ -48,7 +46,6 @@ console.log(purchaseOrderData);
   
     fetchAllSettings();
   }, []);
-  
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -85,54 +82,68 @@ console.log(purchaseOrderData);
     <div className="p-5">
       <Banner />
 
-      <p className="text-textColor font-bold mt-4">Purchase Orders</p>
-      <div className="p-6 rounded-lg bg-white mt-4">
+      <p className="text-textColor font-bold mt-4 text-xl">Purchase Orders</p>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
           {/* Closure Option Radio Buttons */}
           <div className="mt-4 p-6 rounded-lg bg-white">
-            <p className="font-semibold text-sm text-textColor mb-3">
+            <p className="font-bold  text-base text-textColor mb-3">
               When do you want your Purchase Orders to be closed?
             </p>
             <div className="flex flex-col">
-              <div className="flex items-center mb-2">
-                <input
-                  type="radio"
-                  name="purchaseOrderClose"
-                  className="accent-[#97998E] bg-white h-5 w-5 mr-2"
-                  checked={purchaseOrderData.purchaseOrderClose === "When a Purchase Receive is recorded"}
-                  onChange={() => handleRadioChange("When a Purchase Receive is recorded")}
-                  id="receiveRadio"
-                />
-                <label htmlFor="receiveRadio" className="text-textColor text-sm">
+              <div className="flex gap-1 items-center mt-3">
+                <div
+                  onClick={() => handleRadioChange("When a Purchase Receive is recorded")}
+                  className="grid place-items-center cursor-pointer"
+                >
+                  <input
+                    id="receiveRadio"
+                    type="radio"
+                    name="purchaseOrderClose"
+                    value="When a Purchase Receive is recorded"
+                    checked={purchaseOrderData.purchaseOrderClose === "When a Purchase Receive is recorded"}
+                    className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${purchaseOrderData.purchaseOrderClose === "When a Purchase Receive is recorded" ? "border-8 border-neutral-400" : "border-1 border-neutral-400"}`}
+                  />
+                  <div className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${purchaseOrderData.purchaseOrderClose === "When a Purchase Receive is recorded" ? "bg-neutral-100" : "bg-transparent"}`} />
+                </div>
+                <label htmlFor="receiveRadio" className="text-slate-600 ms-2">
                   When a Purchase Receive is recorded
                 </label>
               </div>
-              <div className="flex items-center mb-2">
-                <input
-                  type="radio"
-                  name="purchaseOrderClose"
-                  className="accent-[#97998E] bg-white h-5 w-5 mr-2"
-                  checked={purchaseOrderData.purchaseOrderClose === "When a Bill is created"}
-                  onChange={() => handleRadioChange("When a Bill is created")}
-                  id="billRadio"
-                />
-                <label htmlFor="billRadio" className="text-textColor text-sm">
+              <div className="flex gap-1 items-center mt-3">
+                <div
+                  onClick={() => handleRadioChange("When a Bill is created")}
+                  className="grid place-items-center cursor-pointer"
+                >
+                  <input
+                    id="billRadio"
+                    type="radio"
+                    name="purchaseOrderClose"
+                    value="When a Bill is created"
+                    checked={purchaseOrderData.purchaseOrderClose === "When a Bill is created"}
+                    className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${purchaseOrderData.purchaseOrderClose === "When a Bill is created" ? "border-8 border-neutral-400" : "border-1 border-neutral-400"}`}
+                  />
+                  <div className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${purchaseOrderData.purchaseOrderClose === "When a Bill is created" ? "bg-neutral-100" : "bg-transparent"}`} />
+                </div>
+                <label htmlFor="billRadio" className="text-slate-600 ms-2">
                   When a Bill is created
                 </label>
               </div>
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  name="purchaseOrderClose"
-                  className="accent-[#97998E] bg-white h-5 w-5 mr-2"
-                  checked={purchaseOrderData.purchaseOrderClose === "When Receives and Bills are recorded"}
-                  onChange={() => handleRadioChange("When Receives and Bills are recorded")}
-                  id="receiveBillRadio"
-                />
-                <label
-                  htmlFor="receiveBillRadio"
-                  className="text-textColor text-sm"
+              <div className="flex gap-1 items-center mt-3">
+                <div
+                  onClick={() => handleRadioChange("When Receives and Bills are recorded")}
+                  className="grid place-items-center cursor-pointer"
                 >
+                  <input
+                    id="receiveBillRadio"
+                    type="radio"
+                    name="purchaseOrderClose"
+                    value="When Receives and Bills are recorded"
+                    checked={purchaseOrderData.purchaseOrderClose === "When Receives and Bills are recorded"}
+                    className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${purchaseOrderData.purchaseOrderClose === "When Receives and Bills are recorded" ? "border-8 border-neutral-400" : "border-1 border-neutral-400"}`}
+                  />
+                  <div className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${purchaseOrderData.purchaseOrderClose === "When Receives and Bills are recorded" ? "bg-neutral-100" : "bg-transparent"}`} />
+                </div>
+                <label htmlFor="receiveBillRadio" className="text-slate-600 ms-2">
                   When Receives and Bills are recorded
                 </label>
               </div>
@@ -146,10 +157,9 @@ console.log(purchaseOrderData);
             </p>
             <textarea
               name="purchaseTC"
-              className="w-full h-32 p-3 border border-inputBorder rounded-lg resize-none"
+              className="w-full h-36 p-3 border border-inputBorder rounded-lg resize-none"
               value={purchaseOrderData.purchaseTC}
               onChange={handleChange}
-              placeholder="Enter terms and conditions"
             />
           </div>
 
@@ -158,10 +168,9 @@ console.log(purchaseOrderData);
             <p className="font-bold text-textColor text-sm mb-3">Notes</p>
             <textarea
               name="purchaseNote"
-              className="w-full h-32 p-3 border border-inputBorder rounded-lg resize-none"
+              className="w-full h-36 p-3 border border-inputBorder rounded-lg resize-none"
               value={purchaseOrderData.purchaseNote}
               onChange={handleChange}
-              placeholder="Enter any notes"
             />
           </div>
 
@@ -172,7 +181,6 @@ console.log(purchaseOrderData);
             </Button>
           </div>
         </form>
-      </div>
       <Toaster position="top-center" reverseOrder={false} />
     </div>
   );
