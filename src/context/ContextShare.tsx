@@ -25,7 +25,7 @@ interface CurrencyResponseContextType {
   setCurrencyResponse: React.Dispatch<React.SetStateAction<any>>;
 }
 interface SettingsResponseType{
-  settingsResponse:any;
+   settingsResponse:any;
   getSettingsData: () => void; }
 
 export const cashResponseContext = createContext<
