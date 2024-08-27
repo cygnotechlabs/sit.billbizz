@@ -1,7 +1,9 @@
 const Organization = require("../database/model/organization");
 const Item = require("../database/model/item");
+const ItemTrack = require("../database/model/itemTrack");
 const Settings = require("../database/model/settings");
 const Tax = require("../database/model/tax");
+const moment = require('moment-timezone');
 
 
 // Add item
@@ -9,48 +11,59 @@ exports.addItem = async (req, res) => {
     console.log("Add Item:", req.body);
     try {
       const {    
+        //Basics
         organizationId,   
         itemType,
         itemName,
+        itemImage,
         sku,
         unit,
         returnableItem,
+        hsnCode,
+        sac,
+        taxPreference,
+        productUsage,
+
+        //Storage & Classification
         length,
         width,
         height,
         dimensionUnit,
+
+        warranty,
         weight,
         weightUnit,
+
         manufacturer,
         brand,
-        sellingPrice,
-        salesAccount,
-        salesDescription,
         categories,
         rack,
+
         upc,
         mpn,
         ean,
         isbn,
+
+        //Sale Info
+        baseCurrency,
+        sellingPrice,
+        saleMrp,
+        salesAccount,
+        salesDescription,
+        
+        //Purchase Info
         costPrice,
         purchaseAccount,
         purchaseDescription,
         preferredVendor,
-        mrp,
-        taxPreference,
-        hsnCode,
-        sac,
         taxRate,
+
+        trackInventory,
         inventoryAccount,
         openingStock,
         openingStockRatePerUnit,
         reorderPOint,
-        productUsage,
-        createdDate,
-        barcodePrefix,
-        warranty,
-        trackInventory,
-        itemImage,
+        
         currentStock,
         status
       } = req.body;
@@ -88,60 +101,86 @@ exports.addItem = async (req, res) => {
       return res.status(400).json({ message: "Item with this SKU already exists." }); 
     }
 
-    const currentDate = new Date();
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
-    const year = currentDate.getFullYear();
-    const formattedDate = `${day}-${month}-${year}`;
+    const timeZoneExp = existingOrganization.timeZoneExp;
+    const dateFormatExp = existingOrganization.dateFormatExp;
+    const dateSplit = existingOrganization.dateSplit;
+    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+    const createdDate = generatedDateTime.dateTime;
   
       // Create a new item
       const newItem = new Item({
+        //Basics
         organizationId,   
         itemType,
         itemName,
+        itemImage,
         sku,
         unit,
         returnableItem,
+        hsnCode,
+        sac,
+        taxPreference,
+        productUsage,
+
+        //Storage & Classification
         length,
         width,
         height,
         dimensionUnit,
+
+        warranty,
         weight,
         weightUnit,
+
         manufacturer,
         brand,
-        sellingPrice,
-        salesAccount,
-        salesDescription,
         categories,
         rack,
+
         upc,
         mpn,
         ean,
         isbn,
+
+        //Sale Info
+        baseCurrency,
+        sellingPrice,
+        saleMrp,
+        salesAccount,
+        salesDescription,
+        
+        //Purchase Info
         costPrice,
         purchaseAccount,
         purchaseDescription,
         preferredVendor,
-        mrp,
-        taxPreference,
-        hsnCode,
-        sac,
         taxRate,
+
+        trackInventory,
         inventoryAccount,
         openingStock,
         openingStockRatePerUnit,
         reorderPOint,
-        productUsage,
-        createdDate:formattedDate,
-        barcodePrefix,
-        warranty,
-        trackInventory,
-        itemImage,
+        
         currentStock,
-        status: status || 'Active' // Default to 'Active' if not provided
+        createdDate,
+        status
       });
       await newItem.save();
+
+
+      const trackEntry = new ItemTrack({
+        organizationId,
+        operationId: newItem._id,
+        action: "Opening Stock", //Opening Stock
+        date: createdDate,
+        itemId: newItem._id,
+        itemName ,
+        creditQuantity: openingStock,
+        currentStock: openingStock,
+    });
+
+    await trackEntry.save();
 
 
   
@@ -183,6 +222,8 @@ exports.getAllItem = async (req, res) => {
   }
 };
 
+
+
 // Get a particular item
 exports.getAItem = async (req, res) => {
   const itemId = req.params.id;
@@ -218,51 +259,62 @@ exports.updateItem = async (req, res) => {
  
   try {
       const {
-          _id,
-          organizationId,   
-          itemType,
-          itemName,
-          sku,
-          unit,
-          returnableItem,
-          length,
-          width,
-          height,
-          dimensionUnit,
-          weight,
-          weightUnit,
-          manufacturer,
-          brand,
-          sellingPrice,
-          salesAccount,
-          salesDescription,
-          categories,
-          rack,
-          upc,
-          mpn,
-          ean,
-          isbn,
-          costPrice,
-          purchaseAccount,
-          purchaseDescription,
-          preferredVendor,
-          mrp,
-          taxPreference,
-          hsnCode,
-          sac,
-          taxRate,
-          inventoryAccount,
-          openingStock,
-          openingStockRatePerUnit,
-          reorderPOint,
-          productUsage,
-          updatedDate,
-          barcodePrefix,
-          warranty,
-          trackInventory,
-          itemImage,
-          currentStock,
-          status
+        _id,
+        //Basics
+        organizationId,   
+        itemType,
+        itemName,
+        itemImage,
+        sku,
+        unit,
+        returnableItem,
+        hsnCode,
+        sac,
+        taxPreference,
+        productUsage,
+
+        //Storage & Classification
+        length,
+        width,
+        height,
+        dimensionUnit,
+
+        warranty,
+        weight,
+        weightUnit,
+
+        manufacturer,
+        brand,
+        categories,
+        rack,
+
+        upc,
+        mpn,
+        ean,
+        isbn,
+
+        //Sale Info
+        baseCurrency,
+        sellingPrice,
+        saleMrp,
+        salesAccount,
+        salesDescription,
+        
+        //Purchase Info
+        costPrice,
+        purchaseAccount,
+        purchaseDescription,
+        preferredVendor,
+        taxRate,
+
+        trackInventory,
+        inventoryAccount,
+        openingStock,
+        openingStockRatePerUnit,
+        reorderPOint,
+        
+        currentStock,
+        status
       } = req.body;
 
       // Log the ID being updated
@@ -286,51 +338,61 @@ exports.updateItem = async (req, res) => {
       const updatedItem = await Item.findByIdAndUpdate(
         _id,
           {
-            organizationId,   
-            itemType,
-            itemName,
-            sku,
-            unit,
-            returnableItem,
-            length,
-            width,
-            height,
-            dimensionUnit,
-            weight,
-            weightUnit,
-            manufacturer,
-            brand,
-            sellingPrice,
-            salesAccount,
-            salesDescription,
-            categories,
-            rack,
-            upc,
-            mpn,
-            ean,
-            isbn,
-            costPrice,
-            purchaseAccount,
-            purchaseDescription,
-            preferredVendor,
-            mrp,
-            taxPreference,
-            hsnCode,
-            sac,
-            taxRate,
-            inventoryAccount,
-            openingStock,
-            openingStockRatePerUnit,
-            reorderPOint,
-            productUsage,
-          
-            updatedDate: formattedDate ,
-            barcodePrefix,
-            warranty,
-            trackInventory,
-            itemImage,
-            currentStock,
-            status
+            //Basics
+        organizationId,   
+        itemType,
+        itemName,
+        itemImage,
+        sku,
+        unit,
+        returnableItem,
+        hsnCode,
+        sac,
+        taxPreference,
+        productUsage,
+
+        //Storage & Classification
+        length,
+        width,
+        height,
+        dimensionUnit,
+
+        warranty,
+        weight,
+        weightUnit,
+
+        manufacturer,
+        brand,
+        categories,
+        rack,
+
+        upc,
+        mpn,
+        ean,
+        isbn,
+
+        //Sale Info
+        baseCurrency,
+        sellingPrice,
+        saleMrp,
+        salesAccount,
+        salesDescription,
+        
+        //Purchase Info
+        costPrice,
+        purchaseAccount,
+        purchaseDescription,
+        preferredVendor,
+        taxRate,
+
+        trackInventory,
+        inventoryAccount,
+        openingStock,
+        openingStockRatePerUnit,
+        reorderPOint,
+        
+        currentStock,
+        status
           },
           { new: true, runValidators: true }
       );
@@ -369,4 +431,31 @@ exports.deleteItem = async (req, res) => {
 
 
 
+
+// Function to generate time and date for storing in the database
+function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = new Date(), timeFormat = 'HH:mm:ss', timeSplit = ':') {
+  // Convert the base time to the desired time zone
+  const localDate = moment.tz(baseTime, timeZone);
+
+  // Format date and time according to the specified formats
+  let formattedDate = localDate.format(dateFormat);
+  
+  // Handle date split if specified
+  if (dateSplit) {
+    // Replace default split characters with specified split characters
+    formattedDate = formattedDate.replace(/[-/]/g, dateSplit); // Adjust regex based on your date format separators
+  }
+
+  const formattedTime = localDate.format(timeFormat);
+  const timeZoneName = localDate.format('z'); // Get time zone abbreviation
+
+  // Combine the formatted date and time with the split characters and time zone
+  const dateTime = `${formattedDate} ${formattedTime.split(':').join(timeSplit)} (${timeZoneName})`;
+
+  return {
+    date: formattedDate,
+    time: `${formattedTime} (${timeZoneName})`,
+    dateTime: dateTime
+  };
+}
 

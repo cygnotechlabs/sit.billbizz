@@ -15,7 +15,7 @@ const itemSettingsController = require("../controller/itemSettingsController")
 
 // Item
 router.post('/add-item', itemController.addItem);
-router.get('/get-all-item', itemController.getAllItem);
+router.put('/get-all-item', itemController.getAllItem);
 router.get('/get-one-item/:id', itemController.getAItem)
 router.put('/edit-item',itemController.updateItem)
 router.delete('/delete-item/:id',itemController.deleteItem)
