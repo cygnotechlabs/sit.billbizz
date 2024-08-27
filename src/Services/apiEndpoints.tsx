@@ -10,10 +10,11 @@ export const endponits = {
   //Sales
   ADD_SALES_SETTINGS:`add-sales-settings`,
   ADD_SALES_INVOICE_SETTINGS:"add-salesInvoice-settings",
+  ADD_SALES_DELIVARY_CHALLANS: "add-deliveryChellans",
   GET_PREFIX:"get-prefix",
   ADD_PREFIX:"add-prefix",
   EDIT_PREFIX:'edit-prefix',
-  ADD_SALES_DELIVARY_CHALLANS: "add-deliveryChellans",
+  STATUS_PREFIX:'status-prefix',
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_SETTINGS: "get-settings",
