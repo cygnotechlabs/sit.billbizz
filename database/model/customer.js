@@ -35,6 +35,7 @@ const customerSchema = new Schema({
     currency: {type:String},
     openingBalance: {type:String},
     paymentTerms: {type:String},
+    enablePortal:{type:Boolean},
     documents: {type:String},
     department: {type:String},
     designation: {type:String},
