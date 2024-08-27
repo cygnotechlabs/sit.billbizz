@@ -32,12 +32,7 @@ interface item {
 
 function Items({}: Props) {
   const [selectedRadio, setSelectedRadio] = useState<string>("");
-  const context = useContext(settingsdataResponseContext);
-  if (!context) {
-    throw new Error('Context not found');
-  }
-  const { settingsResponse,getSettingsData } = context;
-console.log(settingsResponse,"context");
+  const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
 
   const { request: addItem } = useApi("put", 5003);
   const [inputData, setInputData] = useState<item>({
@@ -66,25 +61,26 @@ console.log(settingsResponse,"context");
   // console.log(inputData);
 
   useEffect(() => {
-    getSettingsData()
-    if (inputData.hsnSac) {
-      setSelectedRadio(inputData.hsnDigits || "4");
-    } else {
-      setSelectedRadio("");
-    }
-    
-  }, [inputData.hsnSac, inputData.hsnDigits,inputData]);
-
+    getSettingsData();
+  }, []); 
+  
   useEffect(() => {
-    console.log("Settings Response: ", settingsResponse);
-    console.log("InputData: ", inputData);
     if (settingsResponse) {
       setInputData((prevData) => ({
         ...prevData,
         ...settingsResponse?.data?.itemSettings,
       }));
     }
-  }, []);
+  }, [settingsResponse]); 
+  
+  useEffect(() => {
+    if (inputData.hsnSac) {
+      setSelectedRadio(inputData.hsnDigits || "4");
+    } else {
+      setSelectedRadio("");
+    }
+  }, [inputData.hsnSac, inputData.hsnDigits]); 
+  
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
