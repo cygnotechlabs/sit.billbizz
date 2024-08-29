@@ -88,6 +88,7 @@ exports.getItemDropdowm = async (req, res) => {
                 itemDecimal: settings.itemDecimal,
                 itemDuplicateName: settings.itemDuplicateName,
                 hsnSac: settings.hsnSac,
+                hsnDigits: settings.hsnDigits,
                 fourDigitHsn: settings.fourDigitHsn,
             },
             taxType: taxData.taxType,
