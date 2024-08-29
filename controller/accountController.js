@@ -120,7 +120,11 @@ exports.addAccount = async (req, res) => {
       }
 
       // Encrypt bankAccNum before storing it
-      const encryptedBankAccNum = encrypt(bankAccNum);
+      let encryptedBankAccNum = null;
+      if(bankAccNum){
+        encryptedBankAccNum = encrypt(bankAccNum);        
+      }
+      
   
       // Create a new Account
       const newAccount = new Account({
