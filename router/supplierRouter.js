@@ -8,10 +8,15 @@ const supplierController = require('../controller/supplierController');
 
 // supplier
 router.post('/add-suppliers', supplierController.addSupplier);
-router.get('/get-all-supplier', supplierController.getAllSuppliers);
+router.put('/get-all-supplier', supplierController.getAllSuppliers);
 router.get('/get-supplier/:id', supplierController.getASupplier);
 router.put('/update-supplier/:id', supplierController.updateSupplier);
-router.delete('/delete-supplier/:id', supplierController.deleteSupplier);
+router.put('/update-supplier-status/:supplierId' ,supplierController.updateSupplierStatus)
+router.put('/customer-additional-data', supplierController.getSupplierAdditionalData);
+
+
+
+// router.delete('/delete-supplier/:id', supplierController.deleteSupplier);
 //Contact Persons
 // router.post('/add-contactPersons', supplierController.addContactPerson);
 // router.get('/get-all-contactPersons', supplierController.getAllContactPerson);

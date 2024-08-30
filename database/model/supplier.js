@@ -16,7 +16,7 @@ const bankDetailsSchema = new Schema({
     accountHolderName: {type:String},
     bankName: {type:String},
     accountNum: {type:String},
-    reEnterAccountNumber:{type:String},
+    //reEnterAccountNumber:{type:String},
     ifscCode: {type:String},
 }, { _id: false });
  
@@ -29,6 +29,7 @@ const supplierSchema = new Schema({
     lastName: {type:String},
 
     companyName: {type:String},
+    supplierDisplayName:{type:String},
     supplierEmail: {type:String},
     workPhone: {type:String},
     mobile: {type:String},
@@ -97,3 +98,5 @@ const supplierSchema = new Schema({
 const Supplier = mongoose.model("Supplier", supplierSchema);
  
 module.exports = Supplier;
+
+
