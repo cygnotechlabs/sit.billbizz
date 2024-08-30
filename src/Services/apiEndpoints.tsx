@@ -43,6 +43,8 @@ GET_ALL_ITEM:"get-all-item",
   // Customer
   GET_ALL_CUSTOMER: "get-all-customer",
   ADD_CUSTOMER: "add-customer",
+  GET_TAX:`customer-additional-data`,
+  GET_ONE_CUSTOMER:`/get-one-customer`,
 
   // Supplier
   GET_ALL_SUPPLIER: "",

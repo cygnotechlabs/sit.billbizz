@@ -1,10 +1,9 @@
 // src/components/LandingHome.tsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import ArrowIconNoUnderline from "../../assets/icons/ArrowIconNoUnderline";
 import ArrowrightUp from "../../assets/icons/ArrowrightUp";
 import CehvronDown from "../../assets/icons/CehvronDown";
-import Pen from "../../assets/icons/Pen";
-import SearchIcon from "../../assets/icons/SearchIcon";
 import TimerIcon from "../../assets/icons/TimerIcon";
 import accVector1 from "../../assets/Images/AccVector1.png";
 import accVector2 from "../../assets/Images/AccVector2.png";
@@ -19,7 +18,6 @@ import purchaseVector from "../../assets/Images/purchaseVector.png";
 import salesVector from "../../assets/Images/salesVector.png";
 import supplierVector from "../../assets/Images/supplierVector.png";
 import LandingHeader from "./LandingHeader";
-import { useNavigate } from "react-router-dom";
 
 
 const LandingHome: React.FC = () => {

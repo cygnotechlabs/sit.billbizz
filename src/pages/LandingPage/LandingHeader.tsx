@@ -1,16 +1,13 @@
-import React from 'react';
 import logo from "../../../public/bill-bizz-logo.png";
-import SearchIcon from '../../assets/icons/SearchIcon';
-import BellDot from '../../assets/icons/BellDot';
 import ArrowrightUp from '../../assets/icons/ArrowrightUp';
-import Sun from '../../assets/icons/Sun';
-import TrashCan from '../../assets/icons/TrashCan';
-import Pen from '../../assets/icons/Pen';
-import MenuDropdown from '../../Components/menu/MenuDropdown';
-import UserRound from '../../assets/icons/UserRound';
-import UserRoundCog from '../../assets/icons/UserRoundCog';
+import BellDot from '../../assets/icons/BellDot';
 import BellRing from '../../assets/icons/BellRing';
 import LogOut from '../../assets/icons/LogOut';
+import SearchIcon from '../../assets/icons/SearchIcon';
+import Sun from '../../assets/icons/Sun';
+import UserRound from '../../assets/icons/UserRound';
+import UserRoundCog from '../../assets/icons/UserRoundCog';
+import MenuDropdown from '../../Components/menu/MenuDropdown';
 
 type Props = {};
 
