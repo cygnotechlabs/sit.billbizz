@@ -16,7 +16,7 @@ function ArrowIconNoUnderline({ size = 24, color = "black" }: Props) {
         <path
           d="M5 12L12 5M12 5L19 12M12 5V19"
           stroke={color}
-          stroke-width="3"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
         />

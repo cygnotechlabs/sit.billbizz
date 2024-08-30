@@ -13,7 +13,7 @@ const ArrowrightUp = ({}: Props) => {
         <path
           d="M7 7H17M17 7V17M17 7L7 17"
           stroke="currentColor"
-          stroke-width="2"
+          strokeWidth="2"
           stroke-linecap="round"
           stroke-linejoin="round"
         />
