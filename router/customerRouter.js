@@ -17,9 +17,9 @@ router.put('/get-one-customer/:customerId',customerController.getOneCustomer)
 
 router.put('/edit-customer/:customerId', customerController.editCustomer);
 
-router.delete('/delete-customer/:customerId', customerController.deleteCustomer);
+router.put('/update-customer-status/:customerId', customerController.updateCustomerStatus);
 
-router.get('/customer-additional-data', customerController.getCustomerAdditionalData);
+router.put('/customer-additional-data', customerController.getCustomerAdditionalData);
 
 
 module.exports = router

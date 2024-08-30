@@ -1,6 +1,8 @@
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account");
 const Customer = require("../database/model/customer");
+const Tax = require('../database/model/tax');
+const moment = require('moment-timezone');
 
 
 // Add Customer
@@ -11,11 +13,11 @@ exports.addCustomer = async (req, res) => {
       //Basic Info
       organizationId,
       customerType,
-
       salutation,
       firstName,
       lastName,
       companyName,
+      customerDisplayName,
 
       customerEmail,
       workPhone,
@@ -29,12 +31,14 @@ exports.addCustomer = async (req, res) => {
       currency,
       openingBalance,
       paymentTerms,
+      enablePortal,
       documents,
       department,
       designation,
       websiteURL,
 
       //Taxes
+      taxType,
       gstTreatment,
       gstin_uin,
       msmeType,
@@ -47,7 +51,8 @@ exports.addCustomer = async (req, res) => {
       // Billing Address
       billingAttention,
       billingCountry,
-      billingAddress,
+      billingAddressLine1,
+      billingAddressLine2,
       billingCity,
       billingState,
       billingPinCode,
@@ -57,7 +62,8 @@ exports.addCustomer = async (req, res) => {
       // Shipping Address
       shippingAttention,
       shippingCountry,
-      shippingAddress,
+      shippingAddress1,
+      shippingAddress2,
       shippingCity,
       shippingState,
       shippingPinCode,
@@ -71,12 +77,6 @@ exports.addCustomer = async (req, res) => {
       remark,
     } = req.body;
 
-    const currentDate = new Date();
-    const day = String(currentDate.getDate()).padStart(2, "0");
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const year = currentDate.getFullYear();
-    const formattedDate = `${day}-${month}-${year}`;
-
     // Validate organizationId
     const organizationExists = await Organization.findOne({
       organizationId: organizationId,
@@ -87,16 +87,24 @@ exports.addCustomer = async (req, res) => {
       });
     }
 
-    // Check if customer with the same email already exists in the organization
-    // const existingCustomer = await Customer.findOne({
-    //   customerEmail: customerEmail,
-    //   organizationId: organizationId,
-    // });
-    // if (existingCustomer) {
-    //   return res.status(409).json({
-    //     message: "Customer with the provided email already exists.",
-    //   });
-    // }
+   
+
+    const timeZoneExp = organizationExists.timeZoneExp;
+    const dateFormatExp = organizationExists.dateFormatExp;
+    const dateSplit = organizationExists.dateSplit;
+    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+    const openingDate = generatedDateTime.dateTime;   
+
+   //Check if customer with the same email already exists in the organization
+    const existingCustomer = await Customer.findOne({
+      customerEmail: customerEmail,
+      organizationId: organizationId,
+    });
+    if (existingCustomer) {
+      return res.status(409).json({
+        message: "Customer with the provided email already exists.",
+      });
+    }
 
     // Create a new customer
     const newCustomer = new Customer({
@@ -108,6 +116,7 @@ exports.addCustomer = async (req, res) => {
       firstName,
       lastName,
       companyName,
+      customerDisplayName,
 
       customerEmail,
       workPhone,
@@ -121,12 +130,14 @@ exports.addCustomer = async (req, res) => {
       currency,
       openingBalance,
       paymentTerms,
+      enablePortal,
       documents,
       department,
       designation,
       websiteURL,
 
       //Taxes
+      taxType,
       gstTreatment,
       gstin_uin,
       msmeType,
@@ -139,7 +150,8 @@ exports.addCustomer = async (req, res) => {
       // Billing Address
       billingAttention,
       billingCountry,
-      billingAddress,
+      billingAddressLine1,
+      billingAddressLine2,
       billingCity,
       billingState,
       billingPinCode,
@@ -149,7 +161,8 @@ exports.addCustomer = async (req, res) => {
       // Shipping Address
       shippingAttention,
       shippingCountry,
-      shippingAddress,
+      shippingAddress1,
+      shippingAddress2,
       shippingCity,
       shippingState,
       shippingPinCode,
@@ -164,6 +177,8 @@ exports.addCustomer = async (req, res) => {
 
       //Status
       status: "Active",
+      
+      createdDate:openingDate,
     });
 
     
@@ -172,7 +187,7 @@ exports.addCustomer = async (req, res) => {
     // Create a new Customer Account
     const newAccount = new Account({
       organizationId,
-      accountName: firstName + " " + lastName,
+      accountName: customerDisplayName,
       accountCode: savedCustomer._id,
 
       accountSubhead: "Sundry Debtors",
@@ -180,7 +195,7 @@ exports.addCustomer = async (req, res) => {
       accountGroup: "Asset",
 
       openingBalance: openingBalance,
-      openingBalanceDate: formattedDate,
+      openingBalanceDate: openingDate,
       description:"Customer"
     });
 
@@ -250,45 +265,75 @@ exports.editCustomer = async (req, res) => {
   try {
     const { customerId } = req.params;
     const {
+      //Basic Info
       organizationId,
       customerType,
+
       salutation,
       firstName,
       lastName,
       companyName,
+      customerDisplayName,
+
       customerEmail,
       workPhone,
       mobile,
+
       dob,
       cardNumber,
+
+      //Other details
       pan,
       currency,
       openingBalance,
       paymentTerms,
+      enablePortal,
       documents,
-      websiteURL,
       department,
-      twitter,
-      skypeNameNumber,
-      facebook,
+      designation,
+      websiteURL,
+
+      //Taxes
+      taxType,
+      gstTreatment,
+      gstin_uin,
+      msmeType,
+      msmeNumber,
+      placeOfSupply,
+      businessLegalName,
+      businessTradeName,
+      vatNumber,
+      
+      // Billing Address
       billingAttention,
       billingCountry,
-      billingAddress,
+      billingAddressLine1,
+      billingAddressLine2,
       billingCity,
       billingState,
       billingPinCode,
       billingPhone,
       billingFaxNumber,
+
+      // Shipping Address
       shippingAttention,
       shippingCountry,
-      shippingAddress,
+      shippingAddress1,
+      shippingAddress2,
       shippingCity,
       shippingState,
       shippingPinCode,
       shippingPhone,
       shippingFaxNumber,
+
+      //Contact Person
       contactPerson,
+
+      //Remark
       remark,
+
+      //status
+      status
     } = req.body;
 
     // Validate organizationId
@@ -312,12 +357,47 @@ exports.editCustomer = async (req, res) => {
       });
     }
 
+    // Find the existing customer to get the old customerDisplayName
+    const existingCustomer = await Customer.findById(customerId);
+    if (!existingCustomer) {
+      console.log("Customer not found with ID:", customerId);
+      return res.status(404).json({ message: "Customer not found." });
+    }
+
+    const oldCustomerDisplayName = existingCustomer.customerDisplayName;
+
+    // Check if customerEmail already exists for another supplier
+    if (customerEmail && customerEmail !== existingCustomer.customerEmail) {
+      const emailExists = await Customer.findOne({
+        customerEmail,
+        organizationId,
+      });
+      if (emailExists && emailExists._id.toString() !== customerId) {
+        return res
+          .status(400)
+          .json({ message: "Email already exists for another customer" });
+      }
+    }
+
+    // Check if phone number already exists for another customer
+    if (mobile && mobile !== existingCustomer.mobile) {
+      const phoneExists = await Customer.findOne({ mobile, organizationId });
+      if (phoneExists && phoneExists._id.toString() !== customerId) {
+        return res
+          .status(400)
+          .json({
+            message: "Phone number already exists for another customer",
+          });
+      }
+    }
+
     // Update customer details
     customer.customerType = customerType || customer.customerType;
     customer.salutation = salutation || customer.salutation;
     customer.firstName = firstName || customer.firstName;
     customer.lastName = lastName || customer.lastName;
     customer.companyName = companyName || customer.companyName;
+    customer.customerDisplayName = customerDisplayName || customer.customerDisplayName;
     customer.customerEmail = customerEmail || customer.customerEmail;
     customer.workPhone = workPhone || customer.workPhone;
     customer.mobile = mobile || customer.mobile;
@@ -327,32 +407,60 @@ exports.editCustomer = async (req, res) => {
     customer.currency = currency || customer.currency;
     customer.openingBalance = openingBalance || customer.openingBalance;
     customer.paymentTerms = paymentTerms || customer.paymentTerms;
+    customer.enablePortal = enablePortal || customer.enablePortal;
     customer.documents = documents || customer.documents;
-    customer.websiteURL = websiteURL || customer.websiteURL;
     customer.department = department || customer.department;
-    customer.twitter = twitter || customer.twitter;
-    customer.skypeNameNumber = skypeNameNumber || customer.skypeNameNumber;
-    customer.facebook = facebook || customer.facebook;
+    customer.designation = designation || customer.designation;
+    customer.websiteURL = websiteURL || customer.websiteURL;
+    customer.taxType = taxType || customer.taxType;
+    customer.gstTreatment = gstTreatment || customer.gstTreatment;
+    customer.gstin_uin = gstin_uin || customer.gstin_uin;
+    customer.msmeType = msmeType || customer.msmeType;
+    customer.msmeNumber = msmeNumber || customer.msmeNumber;
+    customer.placeOfSupply = placeOfSupply || customer.placeOfSupply;
+    customer.businessLegalName = businessLegalName || customer.businessLegalName;
+    customer.businessTradeName = businessTradeName || customer.businessTradeName;
+    customer.vatNumber = vatNumber || customer.vatNumber;
+    // Update Billing Address
     customer.billingAttention = billingAttention || customer.billingAttention;
     customer.billingCountry = billingCountry || customer.billingCountry;
-    customer.billingAddress = billingAddress || customer.billingAddress;
+    customer.billingAddressLine1 = billingAddressLine1 || customer.billingAddressLine1;
+    customer.billingAddressLine2 = billingAddressLine2 || customer.billingAddressLine2;
     customer.billingCity = billingCity || customer.billingCity;
     customer.billingState = billingState || customer.billingState;
     customer.billingPinCode = billingPinCode || customer.billingPinCode;
     customer.billingPhone = billingPhone || customer.billingPhone;
     customer.billingFaxNumber = billingFaxNumber || customer.billingFaxNumber;
+    // Update Shipping Address
     customer.shippingAttention = shippingAttention || customer.shippingAttention;
     customer.shippingCountry = shippingCountry || customer.shippingCountry;
-    customer.shippingAddress = shippingAddress || customer.shippingAddress;
+    customer.shippingAddress1 = shippingAddress1 || customer.shippingAddress1;
+    customer.shippingAddress2 = shippingAddress2 || customer.shippingAddress2;
     customer.shippingCity = shippingCity || customer.shippingCity;
     customer.shippingState = shippingState || customer.shippingState;
     customer.shippingPinCode = shippingPinCode || customer.shippingPinCode;
     customer.shippingPhone = shippingPhone || customer.shippingPhone;
     customer.shippingFaxNumber = shippingFaxNumber || customer.shippingFaxNumber;
+    // Update Contact Person
     customer.contactPerson = contactPerson || customer.contactPerson;
+    // Update Remark
     customer.remark = remark || customer.remark;
+    // Optional: Update Status if needed
+    // customer.status = status || customer.status;
 
     await customer.save();
+
+    // Update the customerDisplayName in associated Account documents
+    if (customerDisplayName && customerDisplayName !== oldCustomerDisplayName) {
+      const updatedAccount = await Account.updateMany(
+        { 
+          accountName: oldCustomerDisplayName,  // Match the old customerDisplayName
+          organizationId: organizationId  // Match the organizationId from the request
+        },
+        { $set: { accountName: customerDisplayName } }  // Update with the new customerDisplayName
+      );
+      console.log(`${updatedAccount.modifiedCount} account associated with the accountName have been updated with the new customerDisplayName.`);
+    }
 
     res.status(200).json({
       message: "Customer updated successfully.",
@@ -364,12 +472,13 @@ exports.editCustomer = async (req, res) => {
   }
 };
 
-//Delete Customer
-exports.deleteCustomer = async (req, res) => {
-  console.log("Delete Customer:", req.body);
+
+// Update the status of a Customer based on the provided status value
+exports.updateCustomerStatus = async (req, res) => {
+  console.log("Update Customer Status:", req.body);
   try {
     const { customerId } = req.params;
-    const { organizationId } = req.body;
+    const { organizationId, status } = req.body; // Status is now taken from the request body
 
     // Validate organizationId
     const organizationExists = await Organization.findOne({
@@ -392,54 +501,102 @@ exports.deleteCustomer = async (req, res) => {
       });
     }
 
-    // Delete the customer
-    await Customer.deleteOne({
-      _id: customerId,
-      organizationId: organizationId,
-    });
+    // Update the customer status with the value provided by the frontend
+    customer.status = status;
+
+    // Save the updated customer
+    await customer.save();
 
     res.status(200).json({
-      message: "Customer deleted successfully.",
+      message: "Customer status updated successfully.",
     });
-    console.log("Customer deleted successfully:");
+    console.log("Customer status updated successfully.", customer);
   } catch (error) {
-    console.error("Error deleting customer:", error);
+    console.error("Error updating customer status:", error);
     res.status(500).json({ message: "Internal server error." });
   }
 };
 
 
-// Customer Additional data
-exports.getCustomerAdditionalData = (req, res) => {
-  try {
-    const additionalData = [
-      {
-        gstTreatment: [
-          "Registered Business -Regular",
-          "Registered Business -Composition",
-          "Unregistered Business",
-          "Consumer",
-          "Overseas",
-          "Special Economic Zone",
-          "Deemed Export",
-          "Tax Deductor",
-          "SEZ Developer",          
-          ],
-          msmeType: [
-            "Micro",
-            "Small",
-            "Medium"        
-            ],        
-      }
-    ];
 
-    if (additionalData.length > 0) {
-      res.status(200).json(additionalData);
-    } else {
-      res.status(404).json("No Additional Data found");
+// Customer Additional data
+exports.getCustomerAdditionalData = async (req, res) => {
+  const { organizationId } = req.body;
+  
+  try {
+    // Check if an Organization already exists
+    const organization = await Organization.findOne({ organizationId });
+    if (!organization) {
+    return res.status(404).json({
+        message: "No Organization Found.",
+    });
     }
+
+    // Fetch tax data to check tax type
+    const taxData = await Tax.findOne({ organizationId });
+    if (!taxData) {
+        return res.status(404).json({
+            message: "No tax data found for the organization.",
+        });
+    }
+
+    // Prepare the response object
+    const response = {
+      taxType: taxData.taxType,
+      gstTreatment: [
+        "Registered Business -Regular",
+        "Registered Business -Composition",
+        "Unregistered Business",
+        "Consumer",
+        "Overseas",
+        "Special Economic Zone",
+        "Deemed Export",
+        "Tax Deductor",
+        "SEZ Developer",          
+      ],    
+    };
+  
+    // Return the combined response data
+    return res.status(200).json(response);
   } catch (error) {
-    console.error(error);
-    res.status(500).json("Internal server error");
+    console.error("Error fetching customer additional data:", error);
+    res.status(500).json({ message: "Internal server error." });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+// Function to generate time and date for storing in the database
+function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = new Date(), timeFormat = 'HH:mm:ss', timeSplit = ':') {
+  // Convert the base time to the desired time zone
+  const localDate = moment.tz(baseTime, timeZone);
+
+  // Format date and time according to the specified formats
+  let formattedDate = localDate.format(dateFormat);
+  
+  // Handle date split if specified
+  if (dateSplit) {
+    // Replace default split characters with specified split characters
+    formattedDate = formattedDate.replace(/[-/]/g, dateSplit); // Adjust regex based on your date format separators
+  }
+
+  const formattedTime = localDate.format(timeFormat);
+  const timeZoneName = localDate.format('z'); // Get time zone abbreviation
+
+  // Combine the formatted date and time with the split characters and time zone
+  const dateTime = `${formattedDate} ${formattedTime.split(':').join(timeSplit)} (${timeZoneName})`;
+
+  return {
+    date: formattedDate,
+    time: `${formattedTime} (${timeZoneName})`,
+    dateTime: dateTime
+  };
+}

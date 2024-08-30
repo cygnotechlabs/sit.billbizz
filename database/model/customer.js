@@ -46,8 +46,6 @@ const customerSchema = new Schema({
     taxType: {type:String},
     gstTreatment: {type:String},
     gstin_uin: {type:String},
-    msmeType: {type:String},
-    msmeNumber: {type:String},
     placeOfSupply: {type:String},
     businessLegalName: {type:String},
     businessTradeName: {type:String},
@@ -62,7 +60,6 @@ const customerSchema = new Schema({
     billingCity: {type:String},
     billingState: {type:String},
     billingPinCode: {type:String},
-    billingPhoneCode: {type:String},
     billingPhone: {type:String},
     billingFaxNumber: {type:String},
 
@@ -74,7 +71,6 @@ const customerSchema = new Schema({
     shippingCity: {type:String},
     shippingState: {type:String},
     shippingPinCode: {type:String},
-    shippingPhoneCode: {type:String},
     shippingPhone: {type:String},
     shippingFaxNumber: {type:String},
 
@@ -84,6 +80,9 @@ const customerSchema = new Schema({
 
     //Status
     status : {type:String},
+
+    //Create info
+    createdDate: {type:String},
 
 });
 
