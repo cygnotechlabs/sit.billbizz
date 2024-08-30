@@ -64,28 +64,28 @@ const accounts = [
 
 async function insertAccounts(accounts,organizationId,createdDateAndTime) {
 
-const accountDocuments = accounts.map(account => {
-    return {
-        organizationId: organizationId, 
-        accountName: account.accountName,
-        accountCode: account.accountCode, 
+        const accountDocuments = accounts.map(account => {
+            return {
+                organizationId: organizationId, 
+                accountName: account.accountName,
+                accountCode: account.accountCode, 
 
-        accountSubhead: account.accountSubhead,
-        accountHead: account.accountHead,
-        accountGroup: account.accountGroup,
+                accountSubhead: account.accountSubhead,
+                accountHead: account.accountHead,
+                accountGroup: account.accountGroup,
 
-        balance: 0, 
-        openingDate: createdDateAndTime, 
-        description: account.description
-    };});
+                balance: 0, 
+                openingDate: createdDateAndTime, 
+                description: account.description
+            };});
 
-  try {
-      await Account.insertMany(accountDocuments);
-      console.log('Accounts created successfully');
-  } catch (error) {
-      console.error('Error inserting accounts:', error);
-  }
-}
+          try {
+              await Account.insertMany(accountDocuments);
+              console.log('Accounts created successfully');
+          } catch (error) {
+              console.error('Error inserting accounts:', error);
+          }
+        }
 
 
 // Get all organizations - Internal

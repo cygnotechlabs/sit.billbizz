@@ -24,15 +24,23 @@ const checkPermission = (permissionAction) => {
       if (permission) {
         const activity = new ActivityLog({
           username: user.username, // Assuming your User model has a username field
-          activity: permission.note, // Log the note associated with the permission
+          activity: `Accessed ${permission.note}`, // Log the note associated with the permission
           timestamp: new Date(),
         });
         await activity.save();
 
         return next();  // Permission granted, move to next middleware or route handler
       } else {
+        // Log the unauthorized access attempt
+        const unauthorizedActivity = new ActivityLog({
+          username: user.username,
+          activity: `Tried to access ${permissionAction} without proper permissions`,
+          timestamp: new Date(),
+        });
+        await unauthorizedActivity.save();
+
         // Permission not found, deny access
-        return res.status(403).json({ message: 'Access denied: Insufficient permissions' });
+        return res.status(403).json({ message: `Access denied: Insufficient permissions to perform ${permissionAction}` });
       }
     } catch (err) {
       console.error('Error in checkPermission:', err);
