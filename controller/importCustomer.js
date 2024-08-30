@@ -1,15 +1,15 @@
-// const express = require("express");
-// const multer = require('multer');
-// const path = require('path');
-// const fs = require('fs').promises;
-// const xlsx = require('xlsx');
-// const csv = require('csvtojson');
-// const moment = require('moment-timezone');
+const express = require("express");
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs').promises;
+const xlsx = require('xlsx');
+const csv = require('csvtojson');
+const moment = require('moment-timezone');
 
-// const Organization = require("../database/model/organization");
-// const Account = require("../database/model/account");
-// const Customer = require("../database/model/customer");
-// const Tax = require('../database/model/tax');
+const Organization = require("../database/model/organization");
+const Account = require("../database/model/account");
+const Customer = require("../database/model/customer");
+const Tax = require('../database/model/tax');
 
 
 
@@ -119,7 +119,11 @@ exports.importCustomer = async (req, res) => {
           ]
         }).fromFile(req.file.path);
 
-            // Validate organizationId
+    // Validate organizationId
+    
+    const organizationId = "INDORG0001";
+    // const organizationId = req.user.organizationId;
+
     const organizationExists = await Organization.findOne({
         organizationId: organizationId,
       });
@@ -135,80 +139,210 @@ exports.importCustomer = async (req, res) => {
       const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
       const openingDate = generatedDateTime.dateTime;
 
-        let userData = [];
+      const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
+      const validCustomerTypes = ['Individual', 'Business'];
+      const validGSTTreatments = ["Registered Business -Regular","Registered Business -Composition","Unregistered Business","Consumer","Overseas","Special Economic Zone","Deemed Export","Tax Deductor","SEZ Developer"];
+      
+      const validCurrencies = ["USD", "EUR", "INR"]; 
+      const validTaxTypes = ["GST", "VAT"]; 
+      
 
-        for (let x = 0; x < response.length; x++) {
-            userData.push({
-                customerType: response[x]['Customer Type'],
-                salutation: response[x]['Salutation'],
-                firstName: response[x]['First Name'],
-                lastName: response[x]['Last Name'],
-                companyName: response[x]['Company Name'],
-                customerDisplayName: response[x]['Customer Display Name'],
-                customerEmail: response[x]['Customer Email'],
-                workPhone: response[x]['Work Phone'],
-                mobile: response[x]['Mobile'],
-                dob: response[x]['DOB'],
-                cardNumber: response[x]['Card Number'],
-                pan: response[x]['PAN'],
-                currency: response[x]['Currency'],
-                openingBalance: parseFloat(response[x]['Opening Balance']),
-                department: response[x]['Department'],
-                designation: response[x]['Designation'],
-                websiteUrl: response[x]['Website URL'],
-                taxType: response[x]['Tax Type'],
-                gstTreatment: response[x]['GST Treatment'],
-                gstinUin: response[x]['GSTIN/UIN'],
-                placeOfSupply: response[x]['Place Of Supply'],
-                businessLegalName: response[x]['Business Legal Name'],
-                businessTradeName: response[x]['Business Trade Name'],
-                vatNumber: response[x]['VAT Number'],
-                billingAttention: response[x]['Billing Attention'],
-                billingCountry: response[x]['Billing Country'],
-                billingAddressLine1: response[x]['Billing AddressLine1'],
-                billingAddressLine2: response[x]['Billing AddressLine2'],
-                billingCity: response[x]['Billing City'],
-                billingState: response[x]['Billing State'],
-                billingPinCode: response[x]['Billing PinCode'],
-                billingPhone: response[x]['Billing Phone'],
-                billingFaxNumber: response[x]['Billing FaxNumber'],
-                shippingAttention: response[x]['Shipping Attention'],
-                shippingCountry: response[x]['Shipping Country'],
-                shippingAddressLine1: response[x]['Shipping AddressLine1'],
-                shippingAddressLine2: response[x]['Shipping AddressLine2'],
-                shippingCity: response[x]['Shipping City'],
-                shippingState: response[x]['Shipping State'],
-                shippingPinCode: response[x]['Shipping PinCode'],
-                shippingPhone: response[x]['Shipping Phone'],
-                shippingFaxNumber: response[x]['Shipping FaxNumber'],
-                remark: response[x]['Remark'],
-                createdDate: generatedDateTime,
-            });
+      function isAlphabets(value) {
+        return /^[A-Za-z\s]+$/.test(value);
         }
-
-
-
     
-
-
-
-
-
-
-        if (userData.length > 0) {
-          await Customer.insertMany(userData);
+      function isInteger(value) {
+        return /^[0-9]+$/.test(value);
         }
+    
+      function isValidDate(value) {
+        return !isNaN(Date.parse(value));
+        }
+    
+      function isAlphanumeric(value) {
+        return /^[A-Za-z0-9]+$/.test(value);
+        }
+    
+      function isValidUrl(value) {
+        try {
+            new URL(value);
+            return true;
+        } catch {
+            return false;
+        }
+        }
+      function isValidEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        }
+      
+      
+      
+    let userData = [];
 
-        
-
-        res.status(200).send({ success: true, msg: 'Customer XLSX Extracted Successfully' });
-
-      } catch (error) {
+    for (let x = 0; x < response.length; x++) {
+        const salutation = response[x]['Salutation'];
+        const customerType = response[x]['Customer Type'];
+        const firstName = response[x]['First Name'];
+        const lastName = response[x]['Last Name'];
+        const companyName = response[x]['Company Name'];
+        const customerDisplayName = response[x]['Customer Display Name'];
+        const customerEmail = response[x]['Customer Email'];
+        const workPhone = response[x]['Work Phone'];
+        const mobile = response[x]['Mobile'];
+        const dob = response[x]['DOB'];
+        const cardNumber = response[x]['Card Number'];
+        const pan = response[x]['PAN'];
+        const currency = response[x]['Currency'];
+        const openingBalance = response[x]['Opening Balance'];
+        const department = response[x]['Department'];
+        const designation = response[x]['Designation'];
+        const websiteUrl = response[x]['Website URL'];
+        const taxType = response[x]['Tax Type'];
+        const gstTreatment = response[x]['GST Treatment'];
+        const gstinUin = response[x]['GSTIN/UIN'];
+        const vatNumber = response[x]['VAT Number'];
+        const placeOfSupply = response[x]['Place Of Supply'];
+        const businessLegalName = response[x]['Business Legal Name'];
+        const businessTradeName = response[x]['Business Trade Name'];
+    
+        // Validation checks
+        if (!validSalutations.includes(salutation)) {
+            console.error(`Invalid salutation at row ${x + 1}: ${salutation}`);
+            continue;
+        }
+    
+        if (!validCustomerTypes.includes(customerType)) {
+            console.error(`Invalid customer type at row ${x + 1}: ${customerType}`);
+            continue;
+        }
+    
+        if (!isAlphabets(firstName) || !isAlphabets(lastName) || !isAlphabets(companyName) || !isAlphabets(customerDisplayName)) {
+            console.error(`Invalid name fields at row ${x + 1}`);
+            continue;
+        }
+    
+        if (!isValidEmail(customerEmail)) {
+            console.error(`Invalid email at row ${x + 1}: ${customerEmail}`);
+            continue;
+        }
+    
+        if (!isInteger(workPhone) || !isInteger(mobile)) {
+            console.error(`Invalid phone numbers at row ${x + 1}`);
+            continue;
+        }
+    
+        if (!isValidDate(dob)) {
+            console.error(`Invalid date of birth at row ${x + 1}`);
+            continue;
+        }
+    
+        if (!isInteger(cardNumber) || !isInteger(pan) || !isInteger(openingBalance)) {
+            console.error(`Invalid integer fields at row ${x + 1}`);
+            continue;
+        }
+    
+        if (!currencyCollection.includes(currency)) {
+            console.error(`Invalid currency at row ${x + 1}`);
+            continue;
+        }
+    
+        if (!isAlphabets(department) || !isAlphabets(designation)) {
+            console.error(`Invalid department or designation at row ${x + 1}`);
+            continue;
+        }
+    
+        if (!isValidUrl(websiteUrl)) {
+            console.error(`Invalid website URL at row ${x + 1}`);
+            continue;
+        }
+    
+        if (!taxCollection.includes(taxType)) {
+            console.error(`Invalid tax type at row ${x + 1}`);
+            continue;
+        }
+    
+        if (taxType === 'GST') {
+            if (!validGstTreatments.includes(gstTreatment)) {
+                console.error(`Invalid GST treatment at row ${x + 1}`);
+                continue;
+            }
+    
+            if (!isAlphanumeric(gstinUin)) {
+                console.error(`Invalid GSTIN/UIN at row ${x + 1}`);
+                continue;
+            }
+        } else if (taxType === 'VAT') {
+            if (!isAlphanumeric(vatNumber)) {
+                console.error(`Invalid VAT number at row ${x + 1}`);
+                continue;
+            }
+        }
+    
+        if (!isAlphabets(placeOfSupply) || !isAlphabets(businessLegalName) || !isAlphabets(businessTradeName)) {
+            console.error(`Invalid Place of Supply, Business Legal Name, or Business Trade Name at row ${x + 1}`);
+            continue;
+        }
+    
+        // Push valid data to userData arrayN
+        userData.push({
+            customerType,
+            salutation,
+            firstName,
+            lastName,
+            companyName,
+            customerDisplayName,
+            customerEmail,
+            workPhone,
+            mobile,
+            dob,
+            cardNumber,
+            pan,
+            currency,
+            openingBalance: parseFloat(openingBalance),
+            department,
+            designation,
+            websiteUrl,
+            taxType,
+            gstTreatment,
+            gstinUin,
+            placeOfSupply,
+            businessLegalName,
+            businessTradeName,
+            vatNumber,
+            billingAttention: response[x]['Billing Attention'],
+            billingCountry: response[x]['Billing Country'],
+            billingAddressLine1: response[x]['Billing AddressLine1'],
+            billingAddressLine2: response[x]['Billing AddressLine2'],
+            billingCity: response[x]['Billing City'],
+            billingState: response[x]['Billing State'],
+            billingPinCode: response[x]['Billing PinCode'],
+            billingPhone: response[x]['Billing Phone'],
+            billingFaxNumber: response[x]['Billing FaxNumber'],
+            shippingAttention: response[x]['Shipping Attention'],
+            shippingCountry: response[x]['Shipping Country'],
+            shippingAddressLine1: response[x]['Shipping AddressLine1'],
+            shippingAddressLine2: response[x]['Shipping AddressLine2'],
+            shippingCity: response[x]['Shipping City'],
+            shippingState: response[x]['Shipping State'],
+            shippingPinCode: response[x]['Shipping PinCode'],
+            shippingPhone: response[x]['Shipping Phone'],
+            shippingFaxNumber: response[x]['Shipping FaxNumber'],
+            remark: response[x]['Remark'],
+            createdDate: openingDate,
+        });
+    }
+    
+    if (userData.length > 0) {
+        await Customer.insertMany(userData);
+    }
+    
+    res.status(200).send({ success: true, msg: 'Customer XLSX Extracted Successfully' });
+    
+    } catch (error) {
         console.error("Error during Importing Customer process:", error);
         res.status(500).json({ message: "Internal server error." });
-
-        
-      }
+    }
+      
     });
 
   } catch (error) {
