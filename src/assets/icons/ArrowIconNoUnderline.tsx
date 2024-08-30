@@ -1,11 +1,13 @@
 type Props = {
-  size: number;
-  color: string;
+  size?: number;
+  color?: string;
+  className?: string;
+  stroke?:number
 };
 
-function ArrowIconNoUnderline({ size = 24, color = "black" }: Props) {
+function ArrowIconNoUnderline({ size = 24, color = "black", className = "",stroke }: Props) {
   return (
-    <div>
+    <div className={className}>
       <svg
         width={size}
         height={size}
@@ -16,7 +18,7 @@ function ArrowIconNoUnderline({ size = 24, color = "black" }: Props) {
         <path
           d="M5 12L12 5M12 5L19 12M12 5V19"
           stroke={color}
-          stroke-width="3"
+          strokeWidth={stroke||"3"}
           strokeLinecap="round"
           strokeLinejoin="round"
         />

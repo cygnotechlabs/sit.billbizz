@@ -5,7 +5,7 @@ const SearchIcon = ({color,width}: Props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
-      viewBox="0 0 24 24"
+      viewBox="0 0 22 22"
       strokeWidth={width?width:1.5}
       stroke={color?color:"currentColor"}
       className="size-4 absolute left-3 text-gray-500"

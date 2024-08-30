@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../public/bill-bizz-logo.png";
 import navlist from "../../assets/constants";
 import { useEffect } from "react";
@@ -20,11 +20,11 @@ const SideBar = ({ activeIndex, setActiveIndex }: Props) => {
     setActiveIndex(index);
     localStorage.setItem("savedIndex", index.toString());
   };
-
+  const navigate=useNavigate()
   return (
     <aside className="bg-primary_main h- w-[72px]">
       <nav>
-        <div className="flex justify-between items-center px-6 pt-7 pb-5">
+        <div onClick={()=>navigate('/landing')} className="flex justify-between items-center px-6 pt-7 pb-5 cursor-pointer">
           <img src={logo} alt="logo" />
         </div>
       </nav>

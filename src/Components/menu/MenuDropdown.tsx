@@ -12,6 +12,9 @@ interface MenuDropdownProps {
   backgroundColor?: string;
   trigger: ReactNode;
   position?: 'left' | 'right' | 'center';
+  underline?: boolean;
+  underlineColor?: string;
+  textColor?: string;
 }
 
 const MenuDropdown: React.FC<MenuDropdownProps> = ({
@@ -19,6 +22,9 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
   backgroundColor = "bg-white",
   trigger,
   position = 'right',
+  underline = false,
+  underlineColor = "text-white",  // Default underline color
+  textColor = "black"
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -70,7 +76,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
       const triggerRect = triggerRef.current.getBoundingClientRect();
       const dropdownRect = dropdownRef.current.getBoundingClientRect();
       let leftPosition = triggerRect.left;
-      let topPosition = triggerRect.bottom + window.scrollY + 8; // 8px offset for spacing
+      let topPosition = triggerRect.bottom + window.scrollY + 8;
 
       switch (position) {
         case 'left':
@@ -113,17 +119,31 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
               top: dropdownPosition.top,
               left: dropdownPosition.left,
             }}
-            className={`absolute mt-2 rounded-md shadow-lg ${backgroundColor} z-50`}
+            className={`absolute mt-2 rounded-md shadow-lg ${textColor} ${backgroundColor} z-50`}
           >
             <div className="py-1">
               {menuItems.map((item, index) => (
                 <button
                   key={index}
                   onClick={() => {
-                    item.onClick();  // Directly call the onClick without parameters
+                    item.onClick();
                     closeDropdown();
                   }}
-                  className="flex items-center w-full text-left px-4 py-2 text-sm rounded hover:bg-blue-200 focus:outline-none"
+                  className={`flex items-center w-full text-left px-4 py-2 text-sm ${
+                    underline && index !== menuItems.length - 1
+                      ? 'relative after:content-[""] after:block after:w-[90%] after:border-b after:absolute after:bottom-0 after:left-[5%]'
+                      : ''
+                  } focus:outline-none`}
+                  style={{
+                    borderRadius:
+                      index === 0
+                        ? '8px 8px 0 0' // Top items have top radius
+                        : index === menuItems.length - 1
+                        ? '0 0 8px 8px' // Last item has bottom radius
+                        : '0', // Middle items have no radius
+                    color: textColor,
+                    borderBottomColor: underlineColor, // Set the custom underline color
+                  }}
                 >
                   {item.icon && <span className="mr-2">{item.icon}</span>}
                   {item.label}
