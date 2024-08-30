@@ -64,7 +64,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
     if (colId === "supplierDetails") {
       return (
         <div className="flex justify-center">
-          <Link to={"/customer/view"}>
+          <Link to={`/customer/view/${item._id}`}>
             <Button
               variant="secondary"
               className="font-medium rounded-lg h-[1rem] text-[9.5px]"
