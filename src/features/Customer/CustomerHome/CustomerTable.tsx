@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CustomiseColmn from "./CustomiseColmn";
 import Button from "../../../Components/Button";
 import { Link } from "react-router-dom";
@@ -7,6 +7,7 @@ import { endponits } from "../../../Services/apiEndpoints";
 import SearchBar from "../../../Components/SearchBar";
 import SortBy from "./SortBy";
 import Print from "../../sales/salesOrder/Print";
+import { CustomerResponseContext } from "../../../context/ContextShare";
 
 interface Column {
   id: string;
@@ -27,7 +28,7 @@ const Table = () => {
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [customerData, setCustomerData] = useState<any[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
-
+const {customerResponse}=useContext(CustomerResponseContext)!;
   const { request: AllCustomers } = useApi("put", 5002);
 
   const fetchAllCustomers = async () => {
@@ -46,7 +47,7 @@ const Table = () => {
 
   useEffect(() => {
     fetchAllCustomers();
-  }, []);
+  }, [customerResponse]);
 
   const filteredAccounts = customerData.filter((account) => {
     const searchValueLower = searchValue.toLowerCase();

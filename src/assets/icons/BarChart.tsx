@@ -14,7 +14,7 @@ const BarChart = ({ color }: Props) => {
         <path
           d="M3 3V21H21M18 17V9M13 17V5M8 17V14"
           stroke={color}
-          stroke-width="2"
+          strokeWidth="2"
           strokeLinecap="round"
         strokeLinejoin="round"
         />
