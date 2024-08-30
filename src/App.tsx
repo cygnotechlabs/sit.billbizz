@@ -12,6 +12,8 @@ import SalesRoutes from "./routes/SalesRoutes";
 import SettingsRoutes from "./routes/SettingsRoutes";
 import StaffRoutes from "./routes/StaffRoutes";
 import SupplierRoutes from "./routes/SupplierRoutes";
+import LandingHome from "./pages/LandingPage/LandingHome";
+
 
 function App() {
   const routes = [
@@ -20,6 +22,7 @@ function App() {
       element: <Layout children />,
       children: [
         { path: "dashboard", element: <Dashboard /> },
+        
         ...AccountantRoutes,
         ...CustomerRoutes,
         ...InventoryRoutes,
@@ -34,6 +37,10 @@ function App() {
       path: "/",
       element: <SettingsLayout children />,
       children: [{ path: "" }, ...SettingsRoutes],
+    },
+    {
+      path: "/landing",
+      element: <LandingHome/>,
     },
   ];
 
