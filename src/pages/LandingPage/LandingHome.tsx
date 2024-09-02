@@ -142,7 +142,7 @@ const LandingHome: React.FC = () => {
            Expense
           </button>
           <button onClick={()=>navigate('/expense')} className={`${mode?'bg-[#FEFBF8]':'bg-[#283035]'} text-white h-[42px] w-[42px] flex items-center justify-center rounded-full`}>
-            <ArrowrightUp color={mode&&'black'} size={30} stroke={1}/>
+            <ArrowrightUp color={mode?'black':'currentColor'} size={30} stroke={1}/>
           </button>
            </div>
            <div className="flex flex-col  justify-center h-[85%] z-40">
@@ -158,7 +158,7 @@ const LandingHome: React.FC = () => {
            Supplier
           </button>
           <button onClick={()=>navigate('/supplier')} className={`${mode?'bg-[#DED0B9]':'bg-[#97998E]'}  text-white h-[42px] w-[42px] flex items-center justify-center rounded-full`}>
-            <ArrowrightUp color={mode&&'#303F58'} size={30} stroke={1}/>
+            <ArrowrightUp color={mode?'#303F58':'currentColor'} size={30} stroke={1}/>
           </button>
            </div>
            <div className="flex flex-col  justify-center h-[85%] z-40">
