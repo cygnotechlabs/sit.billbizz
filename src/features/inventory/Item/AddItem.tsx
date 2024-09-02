@@ -21,14 +21,21 @@ interface Account {
   accountName: string;
   accountSubhead: string;
 }
+interface ItemSettings {
+  itemDuplicateName: boolean;
+  hsnSac: boolean;
+  hsnDigits:string
+}
+
 interface ItemsData {
   manufacturerName: string[];
-  brandName: [];
-  categoriesName: [];
-  rackName: [];
+  brandName: string[];
+  categoriesName: string[];
+  rackName: string[];
   taxRate: TaxRate[];
-  unitName: [];
+  unitName: string[];
   organization: baseCurrency;
+  itemSettings?: ItemSettings;
 }
 interface TaxRate {
   taxName: string;
@@ -36,6 +43,7 @@ interface TaxRate {
 interface baseCurrency {
   baseCurrency: string;
 }
+
 const initialItemDataState = {
   organizationId: "INDORG0001",
   itemType: "",
@@ -82,16 +90,17 @@ const initialItemDataState = {
   status: "",
 };
 
-
 const AddItem = ({}: Props) => {
   const [initialItemData, setInitialItemData] = useState(initialItemDataState);
-  console.log(initialItemData);
-  
 
   const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
   const [isService, setIsService] = useState<boolean>(false);
   const [isRackModalOpen, setIsRackModalOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchValueManufacturer, setSearchValueManufacturer] = useState<string>("");
+  const [searchValueBrand, setSearchValueBrand] = useState<string>("");
+  const [searchValueCategory, setSearchValueCategory] = useState<string>("");
+  const [searchValueRack, setSearchValueRack] = useState<string>("");
+  const [searchValueTaxRate, setSearchValueTaxRate] = useState<string>("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -108,7 +117,6 @@ const AddItem = ({}: Props) => {
       const { response, error } = await AllAccounts(url, body);
       if (!error && response) {
         setAccountData(response.data);
-        console.log(response);
       }
     } catch (error) {
       console.error("Error fetching accounts:", error);
@@ -133,7 +141,8 @@ const AddItem = ({}: Props) => {
       const { response, error } = await AllItems(url, body);
       if (!error && response) {
         setItemsData(response.data);
-        console.log("Fetched Items Data:", response.data);
+        console.log(response.data);
+        
       }
     } catch (error) {
       console.error("Error fetching items:", error);
@@ -144,17 +153,40 @@ const AddItem = ({}: Props) => {
     fetchAllItems();
     fetchAllAccounts();
   }, []);
+  const [itemsDataName, setItemsDataName] = useState<string[]>([]);
+  const { request: GetAllItemsName } = useApi("put", 5003);
+  
+  const fetchAllItemName = async () => {
+    try {
+      const url = `${endponits.GET_ALL_ITEM}`;
+      const body = { organizationId: "INDORG0001" };
+      const { response, error } = await GetAllItemsName(url, body);
+      if (!error && response) {
+        const itemNames = response.data.map((item: any) => item.itemName).filter(Boolean);
+        setItemsDataName(itemNames); 
+      } else {
+        console.error("Error in response:", error);
+      }
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    }
+  };
+  useEffect(() => {
+    fetchAllItemName();
+  }, []);
+  
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = event.target;
-    
+
     setInitialItemData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? (event.target as HTMLInputElement).checked : value,
     }));
   };
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -172,7 +204,6 @@ const AddItem = ({}: Props) => {
     }
   };
 
-  
   const toggleDropdown = (key: string | null) => {
     setOpenDropdownIndex(key === openDropdownIndex ? null : key);
   };
@@ -180,21 +211,26 @@ const AddItem = ({}: Props) => {
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
       setOpenDropdownIndex(null);
+      setSearchValueManufacturer("");
+      setSearchValueBrand("");
+      setSearchValueCategory("");
+      setSearchValueRack("");
+      setSearchValueTaxRate("");
     }
   };
-
+  
   useEffect(() => {
     if (openDropdownIndex !== null) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-
+  
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [openDropdownIndex]);
-
+  
   const handleDropdownSelect = (key: string, value: string) => {
     setInitialItemData((prev) => ({
       ...prev,
@@ -202,9 +238,16 @@ const AddItem = ({}: Props) => {
     }));
     setOpenDropdownIndex(null);
   };
+
   const { request: CreateItem } = useApi("post", 5003);
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
+    if (itemsData?.itemSettings?.itemDuplicateName === false) {
+      if (itemsDataName.includes(initialItemData.itemName)) {
+        toast.error("Item with this name already exists.")
+        return; 
+      }
+    }
     try {
       const url = `${endponits.ADD_ITEM}`;
       const body = initialItemData;
@@ -237,46 +280,45 @@ const AddItem = ({}: Props) => {
         <div className="grid grid-cols-12 gap-4 my-6">
           {/* Add Image */}
           <div className="col-span-2 border border-inputBorder border-dashed rounded-lg items-center justify-center flex text-center p-6">
-      <div>
-        <label htmlFor="image">
-          <div
-            className={`bg-lightPink flex items-center justify-center h-24 w-44 rounded-lg ${
-              initialItemData.itemImage ? "h-[90px] rounded-b-none" : ""
-            }`}
-          >
-            {initialItemData.itemImage ? (
-              <img
-                src={initialItemData.itemImage}
-                alt="Item"
-                className="py-0 h-[51px]"
-              />
-            ) : (
-              <div className="flex gap-4">
-                <div className="bg-darkRed rounded-full flex h-6 w-6 items-center justify-center">
-                  <Plus color={"white"} classname="h-5 " />
+            <div>
+              <label htmlFor="image">
+                <div
+                  className={`bg-lightPink flex items-center justify-center h-24 w-44 rounded-lg ${
+                    initialItemData.itemImage ? "h-[90px] rounded-b-none" : ""
+                  }`}
+                >
+                  {initialItemData.itemImage ? (
+                    <img
+                      src={initialItemData.itemImage}
+                      alt="Item"
+                      className="py-0 h-[51px]"
+                    />
+                  ) : (
+                    <div className="flex gap-4">
+                      <div className="bg-darkRed rounded-full flex h-6 w-6 items-center justify-center">
+                        <Plus color={"white"} classname="h-5 " />
+                      </div>
+                      <p>Add Image</p>
+                    </div>
+                  )}
                 </div>
-                <p>Add Image</p>
-              </div>
-            )}
+                <div>
+                  <p className="text-base font-extrabold text-textColor mt-2">
+                    Upload Item Image
+                  </p>
+                  <p className="text-xs text-[#818894] mt-1">Support: JPG, PNG</p>
+                </div>
+                <input
+                  type="file"
+                  id="image"
+                  className="hidden"
+                  name="itemImage"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                />
+              </label>
+            </div>
           </div>
-          <div>
-            <p className="text-base font-extrabold text-textColor mt-2">
-              Upload Item Image
-            </p>
-            <p className="text-xs text-[#818894] mt-1">Support: JPG, PNG</p>
-          </div>
-          <input
-            type="file"
-            id="image"
-            className="hidden"
-            name="itemImage"
-            onChange={handleFileChange}
-            accept="image/*"
-          />
-        </label>
-      </div>
-    </div>
-
 
           <div className="col-span-10">
             <div>
@@ -464,39 +506,46 @@ const AddItem = ({}: Props) => {
             )}
 
             <div className="grid grid-cols-2 gap-4  mt-3">
-              {isService ? (
-                <div>
-                  <label
-                    className="text-slate-600 flex text-sm items-center gap-2"
-                    htmlFor="sac"
-                  >
-                    SAC
-                  </label>
-                  <input
-                    className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                    placeholder="SAC"
-                    name="sac"
-                    value={initialItemData.sac}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label
-                    className="text-slate-600 flex text-sm items-center gap-2"
-                    htmlFor="hsnCode"
-                  >
-                    HSN Code
-                  </label>
-                  <input
-                    className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                    placeholder="Enter HSN code"
-                    name="hsnCode"
-                    value={initialItemData.hsnCode}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              )}
+            {itemsData?.itemSettings?.hsnSac && (
+  isService ? (
+    <div>
+      <label
+        className="text-slate-600 flex text-sm items-center gap-2"
+        htmlFor="sac"
+      >
+        SAC
+      </label>
+      <input
+        className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+        placeholder="SAC"
+        name="sac"
+        value={initialItemData.sac}
+        onChange={handleInputChange}
+        maxLength={Number(itemsData?.itemSettings?.hsnDigits) || 6} 
+      />
+    </div>
+  ) : (
+    <div>
+      <label
+        className="text-slate-600 flex text-sm items-center gap-2"
+        htmlFor="hsnCode"
+      >
+        HSN Code
+      </label>
+      <input
+        className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+        placeholder="Enter HSN code"
+        name="hsnCode"
+        value={initialItemData.hsnCode}
+        onChange={handleInputChange}
+        maxLength={Number(itemsData?.itemSettings?.hsnDigits) || 6}  
+      />
+    </div>
+  )
+)}
+
+
+
               <div className="relative">
                 <label
                   htmlFor="taxPreference"
@@ -675,32 +724,28 @@ const AddItem = ({}: Props) => {
                     ref={dropdownRef}
                     className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
                   >
+                    <div className="mb-2.5">
                     <SearchBar
-                      searchValue={searchValue}
-                      onSearchChange={setSearchValue}
+                      searchValue={searchValueManufacturer}
+                      onSearchChange={setSearchValueManufacturer}
                       placeholder="Select Manufacturer"
-                    />
-                    {itemsData.manufacturerName &&
-                      itemsData.manufacturerName.map((manufacturer: string, index: number) => (
+                      />
+                      </div>
+                    {itemsData.manufacturerName
+                      .filter((manufacturer: string) =>
+                        manufacturer.toLowerCase().includes(searchValueManufacturer.toLowerCase())
+                      )
+                      .map((manufacturer: string, index: number) => (
                         <div
                           key={index}
                           onClick={() => handleDropdownSelect("manufacturer", manufacturer)}
                           className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
                         >
-                          <div className="col-span-2 flex items-center justify-center">
-                            <img
-                              src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
-                              alt=""
-                            />
-                          </div>
                           <div className="col-span-10 flex">
                             <div>
                               <p className="font-bold text-sm">
                                 {manufacturer}
                               </p>
-                            </div>
-                            <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
-                              &times;
                             </div>
                           </div>
                         </div>
@@ -742,30 +787,26 @@ const AddItem = ({}: Props) => {
                     ref={dropdownRef}
                     className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
                   >
+                    <div className="mb-2.5">
                     <SearchBar
-                      searchValue={searchValue}
-                      onSearchChange={setSearchValue}
+                      searchValue={searchValueBrand}
+                      onSearchChange={setSearchValueBrand}
                       placeholder="Select Brand"
-                    />
-                    {itemsData.brandName &&
-                      itemsData.brandName.map((brand: string, index: number) => (
+                      />
+                      </div>
+                    {itemsData.brandName
+                      .filter((brand: string) =>
+                        brand.toLowerCase().includes(searchValueBrand.toLowerCase())
+                      )
+                      .map((brand: string, index: number) => (
                         <div
                           key={index}
                           onClick={() => handleDropdownSelect("brand", brand)}
                           className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
                         >
-                          <div className="col-span-2 flex items-center justify-center">
-                            <img
-                              src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
-                              alt=""
-                            />
-                          </div>
                           <div className="col-span-10 flex">
                             <div>
                               <p className="font-bold text-sm">{brand}</p>
-                            </div>
-                            <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
-                              &times;
                             </div>
                           </div>
                         </div>
@@ -809,30 +850,26 @@ const AddItem = ({}: Props) => {
                 ref={dropdownRef}
                 className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
               >
+                <div className="mb-2.5">
                 <SearchBar
-                  searchValue={searchValue}
-                  onSearchChange={setSearchValue}
+                  searchValue={searchValueCategory}
+                  onSearchChange={setSearchValueCategory}
                   placeholder="Select Category"
-                />
-                {itemsData.categoriesName &&
-                  itemsData.categoriesName.map((category: string, index: number) => (
+                  />
+                  </div>
+                {itemsData.categoriesName
+                  .filter((category: string) =>
+                    category.toLowerCase().includes(searchValueCategory.toLowerCase())
+                  )
+                  .map((category: string, index: number) => (
                     <div
                       key={index}
                       onClick={() => handleDropdownSelect("categories", category)}
                       className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
                     >
-                      <div className="col-span-2 flex items-center justify-center">
-                        <img
-                          src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
-                          alt=""
-                        />
-                      </div>
                       <div className="col-span-10 flex">
                         <div>
                           <p className="font-bold text-sm">{category}</p>
-                        </div>
-                        <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
-                          &times;
                         </div>
                       </div>
                     </div>
@@ -866,7 +903,7 @@ const AddItem = ({}: Props) => {
                   placeholder="Select or add Rack"
                   onClick={() => toggleDropdown("rack")}
                 />
-                <div className="cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 mt-6">
+                <div className="cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   <CehvronDown color="gray" />
                 </div>
               </div>
@@ -875,30 +912,27 @@ const AddItem = ({}: Props) => {
                   ref={dropdownRef}
                   className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
                 >
+                  <div className="mb-2.5">
                   <SearchBar
-                    searchValue={searchValue}
-                    onSearchChange={setSearchValue}
+                    searchValue={searchValueRack}
+                    onSearchChange={setSearchValueRack}
                     placeholder="Select Rack"
-                  />
-                  {itemsData.rackName &&
-                    itemsData.rackName.map((rack: string, index: number) => (
+                    />
+                    </div>
+                  {itemsData.rackName
+                    .filter((rack: string) =>
+                      rack.toLowerCase().includes(searchValueRack.toLowerCase())
+                    )
+                    .map((rack: string, index: number) => (
                       <div
                         key={index}
                         onClick={() => handleDropdownSelect("rack", rack)}
                         className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
                       >
-                        <div className="col-span-2 flex items-center justify-center">
-                          <img
-                            src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
-                            alt=""
-                          />
-                        </div>
+                        
                         <div className="col-span-10 flex">
                           <div>
                             <p className="font-bold text-sm">{rack}</p>
-                          </div>
-                          <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
-                            &times;
                           </div>
                         </div>
                       </div>
@@ -1225,30 +1259,26 @@ const AddItem = ({}: Props) => {
                 ref={dropdownRef}
                 className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
               >
+                <div className="mb-2.5">
                 <SearchBar
-                  searchValue={searchValue}
-                  onSearchChange={setSearchValue}
+                  searchValue={searchValueTaxRate}
+                  onSearchChange={setSearchValueTaxRate}
                   placeholder="Select Tax Rate"
-                />
-                {itemsData.taxRate &&
-                  itemsData.taxRate.map((tax, index) => (
+                  />
+                  </div>
+                {itemsData.taxRate
+                  .filter((tax: TaxRate) =>
+                    tax.taxName.toLowerCase().includes(searchValueTaxRate.toLowerCase())
+                  )
+                  .map((tax, index) => (
                     <div
                       key={index}
                       onClick={() => handleDropdownSelect("taxRate", tax.taxName)}
                       className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
                     >
-                      <div className="col-span-2 flex items-center justify-center">
-                        <img
-                          src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
-                          alt=""
-                        />
-                      </div>
                       <div className="col-span-10 flex">
                         <div>
                           <p className="font-bold text-sm">{tax.taxName}</p>
-                        </div>
-                        <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
-                          &times;
                         </div>
                       </div>
                     </div>
