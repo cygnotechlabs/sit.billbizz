@@ -13,6 +13,8 @@ import SettingsRoutes from "./routes/SettingsRoutes";
 import StaffRoutes from "./routes/StaffRoutes";
 import SupplierRoutes from "./routes/SupplierRoutes";
 import LandingHome from "./pages/LandingPage/LandingHome";
+import Login from "./features/login/Login";
+import Otp from "./features/login/Otp";
 
 
 function App() {
@@ -40,6 +42,14 @@ function App() {
     {
       path: "/landing",
       element: <LandingHome/>,
+    },
+    {
+      path: "/login",
+      element: <Login/>,
+    },
+    {
+      path: "/otp",
+      element: <Otp/>,
     },
   ];
 
