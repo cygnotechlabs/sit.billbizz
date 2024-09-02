@@ -14,8 +14,8 @@ const ArrowrightUp = ({}: Props) => {
           d="M7 7H17M17 7V17M17 7L7 17"
           stroke="currentColor"
           strokeWidth="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
     </div>

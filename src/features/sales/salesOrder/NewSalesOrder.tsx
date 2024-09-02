@@ -147,7 +147,7 @@ const NewSalesOrder= ({}: Props) => {
                     <input
                       type="date"
                       className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500 px-2"
-                      defaultValue="2024-12-31"
+                      value="2024-12-31"
                     />
                   </div>
                 </div>
@@ -162,7 +162,7 @@ const NewSalesOrder= ({}: Props) => {
                     <input
                       type="date"
                       className="block appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500 px-2"
-                      defaultValue="2024-12-31"
+                      value="2024-12-31"
                     />
                   </div>
                 </div>

@@ -15,8 +15,8 @@ const IndianRupee = ({color ,weight}: Props) => {
           d="M6 3H18M6 8H18M14.5 21L6 13H9C15.667 13 15.667 3 9 3"
           stroke={color?color:"currentColor"}
           strokeWidth={weight?weight:"3"}
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
     </div>

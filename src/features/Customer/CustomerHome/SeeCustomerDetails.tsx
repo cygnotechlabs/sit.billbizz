@@ -14,6 +14,7 @@ import Vector from "../../../assets/icons/Vector";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
 import { useEffect, useState } from "react";
+import EditCustomerModal from "./EditCustomerModal";
 type Props = {};
 
 function SeeCustomerDetails({}: Props) {
@@ -33,7 +34,7 @@ function SeeCustomerDetails({}: Props) {
       const { response, error } = apiResponse;
       if (!error && response) {
         setCustomerData(response.data);
-        console.log(response.data);
+        // console.log(response.data);
         
       }
     } catch (error) {}
@@ -172,7 +173,7 @@ function SeeCustomerDetails({}: Props) {
                 {customerData.customerDisplayName}
               </p>
               <p className="font-bold text-textColor  px-5 ">
-                ElectroTech Solution
+                {customerData.companyName}
               </p>
             </div>
 
@@ -186,14 +187,7 @@ function SeeCustomerDetails({}: Props) {
                 <p> {customerData.mobile}</p>
               </div>
               <div className="ml-auto w-[50%  ]">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="text-[10px] h-6 px-5"
-                >
-                  <Pen color={"#303F58"} />
-                  Edit
-                </Button>
+               <EditCustomerModal customerDataPorps={customerData}/>
               </div>
             </div>
           </div>
@@ -208,12 +202,12 @@ function SeeCustomerDetails({}: Props) {
                   </div>
                 </div>
                 <div className=" text-xs p-2">
-                  <p>Abd</p>
-                  <p>kayanadath house, puthiyapparamba</p>
-                  <p>po alavil</p>
-                  <p>pin 670008</p>
-                  <p>India</p>
-                  <p>Phone: 96337968756</p>
+                  <p>{customerData.billingAttention}</p>
+                  <p>{customerData.billingAddressLine1}, {customerData.billingAddressLine2}</p>
+                  <p>{customerData.billingCity}</p>
+                  <p>pin {customerData.billingPinCode} </p>
+                  <p>{customerData.billingCountry}</p>
+                  <p>Phone: {customerData.billingPhone}</p>
                 </div>
               </div>
               <div className="bg-[#F3F3F3] p-2 rounded-lg">
@@ -224,9 +218,9 @@ function SeeCustomerDetails({}: Props) {
                   </div>
                 </div>
                 <div className=" text-xs  p-2">
-                  <p>Abd</p>
-                  <p>kayanadath house, puthiyapparamba</p>
-                  <p>po alavil</p>
+                  <p>{customerData.shippingAttention}</p>
+                  <p>{customerData.shippingAddress1}, {customerData.shippingAddress2}</p>
+                  <p>{customerData.shippingCity}</p>
                   <p>pin {customerData.shippingPinCode}</p>
                   <p>{customerData.shippingCountry}</p>
                   <p>Phone: {customerData.shippingPhone}</p>
