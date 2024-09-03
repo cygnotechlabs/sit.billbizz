@@ -23,7 +23,7 @@ router.put('/update-customer-status/:customerId', customerController.updateCusto
 
 router.put('/customer-additional-data', customerController.getCustomerAdditionalData);
 
-// router.post('/import-customer', importController.importCustomer);
+router.post('/import-customer', importController.importCustomer);
 
 
 module.exports = router
