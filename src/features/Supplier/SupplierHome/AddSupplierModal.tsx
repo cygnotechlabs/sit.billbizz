@@ -275,7 +275,7 @@ const AddSupplierModal = ({ page }: Props) => {
         // console.log(paymentTermResponse.data);
       }
 
-      const taxUrl = `${endponits.GET_TAX}`;
+      const taxUrl = `${endponits.GET_TAX_SUPPLIER}`;
       const { response: taxResponse, error: taxError } = await getTax(taxUrl, {
         organizationId: "INDORG0001",
       });

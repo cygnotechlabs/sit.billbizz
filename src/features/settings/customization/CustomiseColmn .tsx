@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import ListFilter from "../../../assets/icons/ListFilter";
-import Modal from "../../../Components/model/Modal";
+import ListIcon from '../../../assets/icons/ListIcon';
 import MoveIcon from "../../../assets/icons/MoveIcon";
-import Button from "../../../Components/Button";
 import PlusCircle from "../../../assets/icons/PlusCircle";
+import Button from "../../../Components/Button";
+import Modal from "../../../Components/model/Modal";
 import SearchBar from "../../../Components/SearchBar";
 
 type Column = {
@@ -66,9 +66,10 @@ const CustomiseColmn = ({ columns, setColumns }: Props) => {
 
   return (
     <>
-      <div className="cursor-pointer flex justify-center" onClick={openModal}>
-        <ListFilter color="#4B5C79" classname="w-[18px] h-[18px]" />
-      </div>
+      <Button variant="secondary" size="sm" onClick={openModal}>
+              <ListIcon color="#565148" />{" "}
+              <p className="text-sm font-medium text-outlineButton">Sort By</p>
+            </Button>
 
       <Modal
         open={isModalOpen}
@@ -93,7 +94,7 @@ const CustomiseColmn = ({ columns, setColumns }: Props) => {
             searchValue={searchValue}
             placeholder="Search"
           />
-          <div>
+          <div className='h-[400px] overflow-y-auto'>
             {localColumns
               .filter(col =>
                 col.label.toLowerCase().includes(searchValue.toLowerCase())

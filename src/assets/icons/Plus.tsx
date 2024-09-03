@@ -14,7 +14,7 @@ const Plus = ({ color ,classname}: Props) => {
         <path
           d="M5 12H19M12 5V19"
           stroke={color}
-          stroke-width="3"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
         />

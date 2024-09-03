@@ -8,9 +8,13 @@ export const endponits = {
   GET_CURRENCY_LIST: `get-currency`,
 
   //Sales
-  ADD_SALES_SETTINGS: `add-sales-settings`,
-  ADD_SALES_INVOICE_SETTINGS: "add-salesInvoice-settings",
+  ADD_SALES_SETTINGS:`add-sales-settings`,
+  ADD_SALES_INVOICE_SETTINGS:"add-salesInvoice-settings",
   ADD_SALES_DELIVARY_CHALLANS: "add-deliveryChellans",
+  GET_PREFIX:"get-prefix",
+  ADD_PREFIX:"add-prefix",
+  EDIT_PREFIX:'edit-prefix',
+  STATUS_PREFIX:'status-prefix',
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_SETTINGS: "get-settings",
@@ -39,13 +43,15 @@ GET_ALL_ITEM:"get-all-item",
   // Customer
   GET_ALL_CUSTOMER: "get-all-customer",
   ADD_CUSTOMER: "add-customer",
+  GET_TAX:`customer-additional-data`,
+  GET_ONE_CUSTOMER:`/get-one-customer`,
 
   // Supplier
   ADD_SUPPLIER:"add-suppliers", 
   GET_ALL_SUPPLIER:"get-all-supplier",
   GET_ONE_SUPPLIER:"get-supplier",
   EDIT_SUPPLIER:"update-supplier",
-  GET_TAX:`supplier-additional-data`,
+  GET_TAX_SUPPLIER:`supplier-additional-data`,
 
   //Currency
   GET_CURRENCIES: "get-currency",

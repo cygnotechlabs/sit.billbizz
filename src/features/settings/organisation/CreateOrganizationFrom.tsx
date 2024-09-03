@@ -35,6 +35,7 @@ interface InputData {
   phoneNumberCode: string;
 }
 
+
 const CreateOrganizationForm = () => {
   const [additionalData, setAdditionalData] = useState<any | null>([]);
 
@@ -75,7 +76,7 @@ const CreateOrganizationForm = () => {
     phoneNumberCode: "",
   });
 
-  // console.log(inputData);
+  console.log(inputData.organizationPhNum);
 
   const getDropdownList = async () => {
     try {

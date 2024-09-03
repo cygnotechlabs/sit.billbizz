@@ -156,6 +156,9 @@ function CreditNotes({}: Props) {
     }
   };
 
+  useEffect(() => {
+    getSettingsData();
+  }, []); 
 
   useEffect(() => {
     if (!inputData.creditNoteQr) {
@@ -165,7 +168,6 @@ function CreditNotes({}: Props) {
         creditNoteQrType: "",
       }));
     }
-    getSettingsData()
 
 
   }, [inputData.creditNoteQr]);
@@ -180,7 +182,7 @@ function CreditNotes({}: Props) {
         ...settingsResponse?.data?.creditNoteSettings,
       }));
     }
-  }, []);
+  }, [settingsResponse]);
   
 
   return (

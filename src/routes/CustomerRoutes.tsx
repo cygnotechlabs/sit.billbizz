@@ -7,7 +7,7 @@ import SeeCustomerDetails from "../features/Customer/CustomerHome/SeeCustomerDet
 const CustomerRoutes: RouteObject[] = [
   { path: "/customer", element: <Customer /> },
   { path: "/customer/home", element: <CustomerHome /> },
-  { path: "/customer/view", element: <SeeCustomerDetails /> },
+  { path: "/customer/view/:id", element: <SeeCustomerDetails /> },
 ];
 
 export default CustomerRoutes;
