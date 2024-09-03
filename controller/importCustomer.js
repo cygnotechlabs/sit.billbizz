@@ -98,8 +98,8 @@ exports.importCustomer = async (req, res) => {
             'VAT Number',
             'Billing Attention',
             'Billing Country',
-            'Billing AddressLine1',
-            'Billing AddressLine2',
+            'Billing AddressLine 1',
+            'Billing AddressLine 2',
             'Billing City',
             'Billing State',
             'Billing PinCode',
@@ -132,7 +132,15 @@ exports.importCustomer = async (req, res) => {
           message: "Organization not found",
         });
       }
-  
+
+      const taxExists = await Tax.findOne({
+        organizationId: organizationId,
+      });
+      if (!taxExists) {
+        return res.status(404).json({
+          message: "Tax not found",
+        });
+      }  
       const timeZoneExp = organizationExists.timeZoneExp;
       const dateFormatExp = organizationExists.dateFormatExp;
       const dateSplit = organizationExists.dateSplit;
@@ -141,10 +149,18 @@ exports.importCustomer = async (req, res) => {
 
       const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
       const validCustomerTypes = ['Individual', 'Business'];
-      const validGSTTreatments = ["Registered Business -Regular","Registered Business -Composition","Unregistered Business","Consumer","Overseas","Special Economic Zone","Deemed Export","Tax Deductor","SEZ Developer"];
+      //const validGSTTreatments = ["Registered Business -Regular","Registered Business -Composition","Unregistered Business","Consumer","Overseas","Special Economic Zone","Deemed Export","Tax Deductor","SEZ Developer"];
       
-      const validCurrencies = ["USD", "EUR", "INR"]; 
-      const validTaxTypes = ["GST", "VAT"]; 
+      const validCurrencies = organizationExists.baseCurrency; 
+      const validTaxTypes = taxExists.taxType;
+      const validCountries = {
+        "United Arab Emirates": ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al-Quwain", "Fujairah", "Ras Al Khaimah"],
+        "India":["Andaman and Nicobar Island", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"],
+        "Saudi Arabia": ["Asir","Al Bahah", "Al Jawf", "Al Madinah", "Al-Qassim", "Eastern Province", "Hail", "Jazan", "Makkah","Medina", "Najran", "Northern Borders", "Riyadh", "Tabuk"],
+            
+
+      };
+       
       
 
       function isAlphabets(value) {
@@ -198,9 +214,12 @@ exports.importCustomer = async (req, res) => {
         const designation = response[x]['Designation'];
         const websiteUrl = response[x]['Website URL'];
         const taxType = response[x]['Tax Type'];
+
         const gstTreatment = response[x]['GST Treatment'];
         const gstinUin = response[x]['GSTIN/UIN'];
+
         const vatNumber = response[x]['VAT Number'];
+        
         const placeOfSupply = response[x]['Place Of Supply'];
         const businessLegalName = response[x]['Business Legal Name'];
         const businessTradeName = response[x]['Business Trade Name'];
@@ -241,10 +260,10 @@ exports.importCustomer = async (req, res) => {
             continue;
         }
     
-        if (!currencyCollection.includes(currency)) {
-            console.error(`Invalid currency at row ${x + 1}`);
-            continue;
-        }
+        // if (!currencyCollection.includes(currency)) {
+        //     console.error(`Invalid currency at row ${x + 1}`);
+        //     continue;
+        // }
     
         if (!isAlphabets(department) || !isAlphabets(designation)) {
             console.error(`Invalid department or designation at row ${x + 1}`);
@@ -254,6 +273,11 @@ exports.importCustomer = async (req, res) => {
         if (!isValidUrl(websiteUrl)) {
             console.error(`Invalid website URL at row ${x + 1}`);
             continue;
+        }
+
+        if (!validCountries[country] || !validCountries[country].includes(state)) {
+          console.error(`Invalid country or state at row ${x + 1}: ${country}, ${state}`);
+          continue;
         }
     
         if (!taxCollection.includes(taxType)) {
@@ -298,7 +322,7 @@ exports.importCustomer = async (req, res) => {
             cardNumber,
             pan,
             currency,
-            openingBalance: parseFloat(openingBalance),
+            openingBalance: openingBalance,
             department,
             designation,
             websiteUrl,
@@ -311,8 +335,8 @@ exports.importCustomer = async (req, res) => {
             vatNumber,
             billingAttention: response[x]['Billing Attention'],
             billingCountry: response[x]['Billing Country'],
-            billingAddressLine1: response[x]['Billing AddressLine1'],
-            billingAddressLine2: response[x]['Billing AddressLine2'],
+            billingAddressLine1: response[x]['Billing AddressLine 1'],
+            billingAddressLine2: response[x]['Billing AddressLine 2'],
             billingCity: response[x]['Billing City'],
             billingState: response[x]['Billing State'],
             billingPinCode: response[x]['Billing PinCode'],

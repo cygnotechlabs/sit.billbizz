@@ -95,6 +95,84 @@ exports.addCustomer = async (req, res) => {
     const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
     const openingDate = generatedDateTime.dateTime;   
 
+    // Validations
+    const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
+    const validCustomerTypes = ['Individual', 'Business'];
+
+    function isAlphabets(value) {
+      return /^[A-Za-z\s]+$/.test(value);
+    }
+
+    function isInteger(value) {
+      return /^[0-9]+$/.test(value);
+    }
+
+    function isValidDate(value) {
+      return !isNaN(Date.parse(value));
+    }
+
+    function isAlphanumeric(value) {
+      return /^[A-Za-z0-9]+$/.test(value);
+    }
+
+    function isValidUrl(value) {
+      try {
+          new URL(value);
+          return true;
+      } catch {
+          return false;
+      }
+    }
+
+    function isValidEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    // Perform validations
+    if (!validSalutations.includes(salutation)) {
+      return res.status(400).json({ message: `Invalid salutation: ${salutation}` });
+    }
+
+    if (!validCustomerTypes.includes(customerType)) {
+      return res.status(400).json({ message: `Invalid customer type: ${customerType}` });
+    }
+
+    if (!isAlphabets(firstName) || !isAlphabets(lastName) || !isAlphabets(customerDisplayName)) {
+      return res.status(400).json({ message: "Name fields should contain only alphabets." });
+    }
+
+    if (!isValidEmail(customerEmail)) {
+      return res.status(400).json({ message: `Invalid email: ${customerEmail}` });
+    }
+
+    if (!isInteger(workPhone) || !isInteger(mobile)) {
+      return res.status(400).json({ message: "Phone numbers should contain only digits." });
+    }
+
+    // if (dob && !isValidDate(dob)) {
+    //   return res.status(400).json({ message: `Invalid date of birth: ${dob}` });
+    // }
+
+    if (!isInteger(cardNumber)) {
+      return res.status(400).json({ message: `Invalid card number: ${cardNumber}` });
+    }
+
+    if (pan && !isAlphanumeric(pan)) {
+      return res.status(400).json({ message: `Invalid PAN: ${pan}` });
+    }
+
+    if (department && !isAlphabets(department)) {
+      return res.status(400).json({ message: "Department should contain only alphabets." });
+    }
+
+    if (designation && !isAlphabets(designation)) {
+      return res.status(400).json({ message: "Designation should contain only alphabets." });
+    }
+
+    if (websiteURL && !isValidUrl(websiteURL)) {
+      return res.status(400).json({ message: `Invalid website URL: ${websiteURL}` });
+    }
+
    //Check if customer with the same email already exists in the organization
     const existingCustomer = await Customer.findOne({
       customerEmail: customerEmail,
@@ -333,7 +411,6 @@ exports.editCustomer = async (req, res) => {
       remark,
 
       //status
-      status
     } = req.body;
 
     // Validate organizationId
@@ -344,6 +421,90 @@ exports.editCustomer = async (req, res) => {
       return res.status(404).json({
         message: "Organization not found",
       });
+    }
+
+    const timeZoneExp = organizationExists.timeZoneExp;
+    const dateFormatExp = organizationExists.dateFormatExp;
+    const dateSplit = organizationExists.dateSplit;
+    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+    const openingDate = generatedDateTime.dateTime;   
+
+    // Validations
+    const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
+    const validCustomerTypes = ['Individual', 'Business'];
+
+    function isAlphabets(value) {
+      return /^[A-Za-z\s]+$/.test(value);
+    }
+
+    function isInteger(value) {
+      return /^[0-9]+$/.test(value);
+    }
+
+    function isValidDate(value) {
+      return !isNaN(Date.parse(value));
+    }
+
+    function isAlphanumeric(value) {
+      return /^[A-Za-z0-9]+$/.test(value);
+    }
+
+    function isValidUrl(value) {
+      try {
+          new URL(value);
+          return true;
+      } catch {
+          return false;
+      }
+    }
+
+    function isValidEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    // Perform validations
+    if (!validSalutations.includes(salutation)) {
+      return res.status(400).json({ message: `Invalid salutation: ${salutation}` });
+    }
+
+    if (!validCustomerTypes.includes(customerType)) {
+      return res.status(400).json({ message: `Invalid customer type: ${customerType}` });
+    }
+
+    if (!isAlphabets(firstName) || !isAlphabets(lastName) || !isAlphabets(customerDisplayName)) {
+      return res.status(400).json({ message: "Name fields should contain only alphabets." });
+    }
+
+    if (!isValidEmail(customerEmail)) {
+      return res.status(400).json({ message: `Invalid email: ${customerEmail}` });
+    }
+
+    if (!isInteger(workPhone) || !isInteger(mobile)) {
+      return res.status(400).json({ message: "Phone numbers should contain only digits." });
+    }
+
+    // if (dob && !isValidDate(dob)) {
+    //   return res.status(400).json({ message: `Invalid date of birth: ${dob}` });
+    // }
+
+    if (!isInteger(cardNumber)) {
+      return res.status(400).json({ message: `Invalid card number: ${cardNumber}` });
+    }
+
+    if (pan && !isAlphanumeric(pan)) {
+      return res.status(400).json({ message: `Invalid PAN: ${pan}` });
+    }
+
+    if (department && !isAlphabets(department)) {
+      return res.status(400).json({ message: "Department should contain only alphabets." });
+    }
+
+    if (designation && !isAlphabets(designation)) {
+      return res.status(400).json({ message: "Designation should contain only alphabets." });
+    }
+
+    if (websiteURL && !isValidUrl(websiteURL)) {
+      return res.status(400).json({ message: `Invalid website URL: ${websiteURL}` });
     }
 
     // Check if the customer exists
@@ -447,6 +608,7 @@ exports.editCustomer = async (req, res) => {
     customer.remark = remark || customer.remark;
     // Optional: Update Status if needed
     // customer.status = status || customer.status;
+    customer.lastModifiedDate = openingDate;
 
     await customer.save();
 

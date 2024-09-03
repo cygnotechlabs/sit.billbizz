@@ -84,6 +84,9 @@ const customerSchema = new Schema({
     //Create info
     createdDate: {type:String},
 
+    //lastModifiedDate
+    lastModifiedDate:{type:String},
+
 });
 
 const Customer = mongoose.model("Customer", customerSchema);
