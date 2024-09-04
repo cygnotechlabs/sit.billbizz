@@ -28,6 +28,11 @@ interface CustomerResponseContextType {
   customerResponse: any;
   setcustomerResponse: React.Dispatch<React.SetStateAction<any>>;
 }
+
+interface CustomerEditResponseContextType {
+  customerEditResponse: any;
+  setcustomereditResponse: React.Dispatch<React.SetStateAction<any>>;
+}
 interface SettingsResponseType {
   settingsResponse: any;
   getSettingsData: () => void;
@@ -59,6 +64,10 @@ export const CustomerResponseContext = createContext<
   CustomerResponseContextType | undefined
 >(undefined);
 
+export const CustomerEditResponseContext = createContext<
+  CustomerEditResponseContextType | undefined
+>(undefined);
+
 interface ContextShareProps {
   children: ReactNode;
 }
@@ -71,6 +80,7 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
   const [vatResponse, setVatResponse] = useState<any>({});
   const [settingsResponse, setSettingsesponse] = useState<any>({});
   const [customerResponse, setcustomerResponse] = useState<any>({});
+  const [customerEditResponse, setcustomereditResponse] = useState<any>({});
   const { request: getAllSettingsData } = useApi("put", 5004);
 
   const getSettingsData = async () => {
@@ -108,11 +118,15 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
               <settingsdataResponseContext.Provider
                 value={{ settingsResponse, getSettingsData }}
               >
-                <CustomerResponseContext.Provider
-                  value={{ customerResponse, setcustomerResponse }}
+                <CustomerEditResponseContext.Provider
+                  value={{ customerEditResponse, setcustomereditResponse }}
                 >
-                  {children}
-                </CustomerResponseContext.Provider>
+                  <CustomerResponseContext.Provider
+                    value={{ customerResponse, setcustomerResponse }}
+                  >
+                    {children}
+                  </CustomerResponseContext.Provider>
+                </CustomerEditResponseContext.Provider>
               </settingsdataResponseContext.Provider>
             </VatResponseContext.Provider>
           </GstResponseContext.Provider>
