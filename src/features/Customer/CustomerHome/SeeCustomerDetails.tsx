@@ -13,8 +13,9 @@ import Pen from "../../../assets/icons/Pen";
 import Vector from "../../../assets/icons/Vector";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import EditCustomerModal from "./EditCustomerModal";
+import { CustomerEditResponseContext } from "../../../context/ContextShare";
 type Props = {};
 
 function SeeCustomerDetails({}: Props) {
@@ -22,6 +23,8 @@ function SeeCustomerDetails({}: Props) {
   const [selectedTab, setSelectedTab] = useState("Overview");
   const [customerData, setCustomerData] = useState<any | []>([]);
   const { request: getOneCustomer } = useApi("put", 5002);
+  const {customerEditResponse}=useContext(CustomerEditResponseContext)!;
+
 
   const { id } = param;
 
@@ -41,7 +44,7 @@ function SeeCustomerDetails({}: Props) {
   };
   useEffect(() => {
     getCustomer();
-  }, []);
+  }, [customerEditResponse]);
   const sideBarHead = [
     { title: "Overview", onclick: () => setSelectedTab("Overview") },
     { title: "Sales History", onclick: () => setSelectedTab("Sales History") },
@@ -186,7 +189,7 @@ function SeeCustomerDetails({}: Props) {
                 <PhoneIcon color={"#303F58"} size={18} />
                 <p> {customerData.mobile}</p>
               </div>
-              <div className="ml-auto w-[50%  ]">
+              <div className="ml-auto w-[60%]">
                <EditCustomerModal customerDataPorps={customerData}/>
               </div>
             </div>

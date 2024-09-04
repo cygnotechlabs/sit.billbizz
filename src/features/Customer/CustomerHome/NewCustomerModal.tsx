@@ -65,9 +65,7 @@ type CustomerData = {
     salutation: string;
     firstName: string;
     lastName: string;
-    companyName: string;
     customerEmail: string;
-    workPhone: string;
     mobile: string;
   }[];
   remark: string;
@@ -76,7 +74,7 @@ type CustomerData = {
 
 
 
-const NewCustomerModal = ({ page ,customerDataProps}: Props) => {
+const NewCustomerModal = ({ page }: Props) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
   const [selected, setSelected] = useState<string | null>(null);
@@ -154,16 +152,13 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
         salutation: "",
         firstName: "",
         lastName: "",
-        companyName: "",
         customerEmail: "",
-        workPhone: "",
         mobile: "",
       },
     ],
     remark: ""
   });
 
-  console.log(customerDataProps,"props");
   console.log(customerdata,"data");
 
   
@@ -198,9 +193,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
       salutation: row.salutation,
       firstName: row.firstName,
       lastName: row.lastName,
-      companyName: "",
       customerEmail: row.email,
-      workPhone: "",
       mobile: row.mobile,
     }));
 
@@ -304,7 +297,6 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
       const { response, error } = await CreateCustomer(url, customerdata);
       if (response && !error) {
         toast.success(response.data.message);
-        // console.log(response);  
         setModalOpen(false);
         setcustomerResponse((prevCustomerResponse:any)=>({
           ...prevCustomerResponse,
@@ -361,15 +353,15 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
               salutation: "",
               firstName: "",
               lastName: "",
-              companyName: "",
               customerEmail: "",
-              workPhone: "",
               mobile: "",
             },
           ],
           remark: "",
         });
       } else {
+        console.log(error);
+        
         toast.error(error.response?.data?.message);
         console.error(
           "Error creating customer:",
@@ -421,9 +413,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
   useEffect(() => {
     getAdditionalData();
 
-    if (customerDataProps) {
-      setCustomerData(customerDataProps);
-    }
+
   }, []);
 
 
@@ -475,11 +465,9 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
           <div className="p-5 mt-3">
             <div className="mb-5 flex p-2 rounded-xl bg-CreamBg relative overflow-hidden items-center">
               <div className="relative ">
-              { page=="CustomerEdit"? <h3 className="text-lg font-bold text-textColor">
-                  Edit Customer
-                </h3>:  <h3 className="text-lg font-bold text-textColor">
+              <h3 className="text-lg font-bold text-textColor">
                   Add New Customer
-                </h3>}
+                </h3>
               </div>
               <div
                 className="ms-auto text-3xl cursor-pointer relative z-10"
