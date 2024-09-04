@@ -24,6 +24,7 @@ function App() {
       element: <Layout children />,
       children: [
         { path: "dashboard", element: <Dashboard /> },
+        
         ...AccountantRoutes,
         ...CustomerRoutes,
         ...InventoryRoutes,

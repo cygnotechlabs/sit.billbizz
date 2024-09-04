@@ -10,12 +10,12 @@ import UserRound from '../../assets/icons/UserRound';
 import UserRoundCog from '../../assets/icons/UserRoundCog';
 import MenuDropdown from '../../Components/menu/MenuDropdown';
 import Moon from "../../assets/icons/Moon";
-
+ 
 type Props = {
   setMode?: React.Dispatch<React.SetStateAction<boolean>>;
   mode?:boolean
 };
-
+ 
 function LandingHeader({mode,setMode}: Props) {
   return (
     <header className={`${mode?'bg-[#EAEBEB]':'bg-[#2C353B]'}  text-[#DFD1B4] flex items-center justify-between p-4 rounded-full mb-8 px-6`}>
@@ -27,12 +27,12 @@ function LandingHeader({mode,setMode}: Props) {
         />
         <h1 className={`text-lg font-medium ${mode?'text-[#303F58]':'text-[#F7E7CE]'} `}>BILL BIZZ</h1>
       </div>
-      
+     
       <div className="flex items-center space-x-4">
         <div className={`${mode?'bg-white':'bg-[#404B52]'} rounded-full relative items-center w-[372px] h-[38px] flex gap-1`}>
-        
+       
         <SearchIcon color={mode?'#303F58':'white'}  />
-        
+       
         <input placeholder='Search' type="text" className={`ms-9 ${mode?'text-[#303F58]':'text-white'} bg-[#404B52] outline-none ${mode?'bg-white':'bg-[#404B52]'}`} />
         </div>
         <button className={`${mode?'bg-white':'bg-[#404B52]'} text-[#DFD1B4] w-[38px] h-[38px] flex justify-center items-center rounded-full`}>
@@ -62,7 +62,7 @@ function LandingHeader({mode,setMode}: Props) {
         console.log('Delete clicked with id:', 1);
         // handleDelete(item._id); // Directly use item properties
       },
-      
+     
     },
     {
       label: 'Log Out',
@@ -71,7 +71,7 @@ function LandingHeader({mode,setMode}: Props) {
         console.log('Delete clicked with id:', 1);
         // handleDelete(item._id); // Directly use item properties
       },
-      
+     
     },
   ]}
   backgroundColor={mode?"bg-white":"bg-[#3C474D]"}
@@ -85,9 +85,9 @@ function LandingHeader({mode,setMode}: Props) {
   underline
   underlineColor='text-[#DFE1E2]'
         />
-        
+       
         <button className="bg-[#FCFFED] text-[#585953] text-[12px] w-[138px] h-[38px] rounded-full font-semibold flex items-center justify-center gap-1 ">
-          Let's Connect 
+          Let's Connect
             <div>
             <ArrowrightUp/>
             </div>
@@ -98,10 +98,10 @@ function LandingHeader({mode,setMode}: Props) {
       </div>
     </button>
       </div>
-      
-      
+     
+     
     </header>
   );
 }
-
+ 
 export default LandingHeader;
