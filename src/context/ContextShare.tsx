@@ -32,9 +32,12 @@ interface CustomerResponseContextType {
   customerResponse: any;
   setcustomerResponse: React.Dispatch<React.SetStateAction<any>>;
 }
-interface SettingsResponseType{
-settingsResponse:any;
-getSettingsData: () => void; }
+
+
+interface SettingsResponseType {
+  settingsResponse: any;
+  getSettingsData: () => void;
+}
 
 export const cashResponseContext = createContext<
 CashResponseContextType | undefined
@@ -54,8 +57,8 @@ export const VatResponseContext = createContext<
 VatResponseContextType | undefined
 >(undefined);
 
-export const settingsdataResponseContext=createContext<
-SettingsResponseType | undefined
+export const settingsdataResponseContext = createContext<
+  SettingsResponseType | undefined
 >(undefined);
 
 export const SupplierResponseContext = createContext<
@@ -79,6 +82,7 @@ const [vatResponse, setVatResponse] = useState<any>({});
 const [settingsResponse, setSettingsesponse] = useState<any>({});
 const { request: getAllSettingsData } = useApi("put", 5004);
 const [supplierResponse, setsupplierResponse] = useState<any>({});
+const [customerResponse, setcustomerResponse] = useState<any>({});
 
 const getSettingsData = async () => {
 try {
@@ -94,6 +98,55 @@ console.error('API Error:', error?.response?.data?.message || 'Unknown error');
 } catch (error) {
 console.error('Failed to fetch settings:', error);
 }
+ 
+
+  const getSettingsData = async () => {
+    try {
+      const url = `${endponits.GET_SETTINGS_DATA}`;
+      const apiResponse = await getAllSettingsData(url, {
+        organizationId: "INDORG0001",
+      });
+      const { response, error } = apiResponse;
+
+      if (!error && response) {
+        setSettingsesponse(response);
+        // console.log(response.data,"response");
+      } else {
+        console.error(
+          "API Error:",
+          error?.response?.data?.message || "Unknown error"
+        );
+      }
+    } catch (error) {
+      console.error("Failed to fetch settings:", error);
+    }
+  };
+
+  return (
+    <cashResponseContext.Provider value={{ cashResponse, setCashResponse }}>
+      <BankResponseContext.Provider value={{ bankResponse, setBankResponse }}>
+        <CurrencyResponseContext.Provider
+          value={{ currencyResponse, setCurrencyResponse }}
+        >
+          <GstResponseContext.Provider value={{ gstResponse, setGstResponse }}>
+            <VatResponseContext.Provider
+              value={{ vatResponse, setVatResponse }}
+            >
+              <settingsdataResponseContext.Provider
+                value={{ settingsResponse, getSettingsData }}
+              >
+                <CustomerResponseContext.Provider
+                  value={{ customerResponse, setcustomerResponse }}
+                >
+                  {children}
+                </CustomerResponseContext.Provider>
+              </settingsdataResponseContext.Provider>
+            </VatResponseContext.Provider>
+          </GstResponseContext.Provider>
+        </CurrencyResponseContext.Provider>
+      </BankResponseContext.Provider>
+    </cashResponseContext.Provider>
+  );
 };
 
 return (
