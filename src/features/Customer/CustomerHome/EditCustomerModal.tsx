@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import Button from "../../../Components/Button";
 import CehvronDown from "../../../assets/icons/CehvronDown";
 import Upload from "../../../assets/icons/Upload";
@@ -11,6 +11,7 @@ import toast, { Toaster } from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
 import Pen from "../../../assets/icons/Pen";
 import { useParams } from "react-router-dom";
+import { CustomerEditResponseContext } from "../../../context/ContextShare";
 
 type Props = { customerDataPorps?: CustomerData };
 type CustomerData = {
@@ -64,9 +65,7 @@ type CustomerData = {
     salutation: string;
     firstName: string;
     lastName: string;
-    companyName: string;
-    customerEmail: string;
-    workPhone: string;
+    email: string;
     mobile: string;
   }[];
   remark: string;
@@ -82,6 +81,7 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
   const [countryData, setcountryData] = useState<any | []>([]);
   const [stateList, setStateList] = useState<any | []>([]);
   const [shippingstateList, setshippingStateList] = useState<any | []>([]);
+  const {setcustomereditResponse}=useContext(CustomerEditResponseContext)!;
 
   const [activeTab, setActiveTab] = useState<string>("otherDetails");
   const [paymentTerms, setPaymentTerms] = useState<any | []>([]);
@@ -92,15 +92,8 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
   const { request: getPaymentTerms } = useApi("get", 5004);
   const { request: getTax } = useApi("put", 5002);
   const param=useParams()
-  const [rows, setRows] = useState([
-    { salutation: "", firstName: "", lastName: "", email: "", mobile: "" },
-  ]);
-  const addRow = () => {
-    setRows([
-      ...rows,
-      { salutation: "", firstName: "", lastName: "", email: "", mobile: "" },
-    ]);
-  };
+
+  
   const [customerdata, setCustomerData] = useState<CustomerData>({
     organizationId: "INDORG0001",
     customerType: "",
@@ -152,14 +145,17 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
         salutation: "",
         firstName: "",
         lastName: "",
-        companyName: "",
-        customerEmail: "",
-        workPhone: "",
+        email: "",
         mobile: "",
       },
     ],
     remark: ""
   });
+  const [rows, setRows] = useState(customerdata.contactPerson || []);
+
+  const addRow = () => {
+    setRows([...rows, { salutation: "", firstName: "", lastName: "", email: "", mobile: "" }]);
+  };
 
   console.log(customerdata,"data");
   console.log(customerDataPorps,"props");
@@ -191,30 +187,45 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
   };
 
   //data from table
-  const handleRowChange = (
-    index: number,
-    field: keyof (typeof rows)[number],
-    value: string
-  ) => {
-    const updatedRows = [...rows];
-    updatedRows[index][field] = value;
-    setRows(updatedRows);
+  // const handleRowChange = (
+  //   index: number,
+  //   field: keyof (typeof rows)[number],
+  //   value: string
+  // ) => {
+  //   const updatedRows = [...rows];
+  //   updatedRows[index][field] = value;
+   
+  //     setRows(updatedRows);
+    
 
-    const updatedContactPerson = updatedRows.map((row) => ({
-      salutation: row.salutation,
-      firstName: row.firstName,
-      lastName: row.lastName,
-      companyName: "",
-      customerEmail: row.email,
-      workPhone: "",
-      mobile: row.mobile,
-    }));
+  //   const updatedContactPerson = updatedRows.map((row) => ({
+  //     salutation: row.salutation,
+  //     firstName: row.firstName,
+  //     lastName: row.lastName,
+  //     companyName: "",
+  //     customerEmail: row.customerEmail,
+  //     workPhone: "",
+  //     mobile: row.mobile,
+  //   }));
+
+  //   setCustomerData((prevFormData) => ({
+  //     ...prevFormData,
+  //     contactPerson: updatedContactPerson,
+  //   }));
+  // };
+  const handleRowChange = ( index: number,
+     field: keyof (typeof rows)[number],
+    value: string) => {
+    const newRows = [...rows];
+    newRows[index] = { ...newRows[index], [field]: value };
+    setRows(newRows);
 
     setCustomerData((prevFormData) => ({
       ...prevFormData,
-      contactPerson: updatedContactPerson,
+      contactPerson: newRows,
     }));
   };
+  
 
   const handleBillingPhoneChange = (value: string) => {
     setCustomerData((prevData) => ({
@@ -350,6 +361,14 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
       if(!error && response){
         setModalOpen(false)
         toast.success(response.data.message)
+        setcustomereditResponse((prevCustomerResponse:any)=>({
+          ...prevCustomerResponse,
+          customerdata,
+        }))
+      }
+      else{
+        toast.error(error.response.data.message)
+ 
       }
       
     } catch (error) {
@@ -362,7 +381,8 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
     getAdditionalData();
     if (customerDataPorps) {
       setCustomerData(customerDataPorps);
-      setSelected(customerDataPorps.customerType)
+      setRows(customerDataPorps.contactPerson || []);
+      setSelected(customerDataPorps.customerType);
     }
   }, [customerDataPorps]);
 
