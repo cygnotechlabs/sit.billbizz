@@ -1,97 +1,61 @@
 import { useState } from "react";
-import OrderCards from "./OrderCards";
-// import ArrowUpIcon from "../../../assets/icons/ArrowUpIcon";
-import Boxes from "../../../assets/icons/box";
-
-type Props = {};
+import OrderCards from "./OrderCards"
+type Props = {}
 
 const Cards = ({}: Props) => {
-  const [activeCard, setActiveCard] = useState<number | null>(0);
-  const handleCardClick = (index: number) => {
-    setActiveCard(index);
-  };
-
+    const [activeCard, setActiveCard] = useState<number | null>(0);
+    const handleCardClick = (index: number) => {
+        setActiveCard(index);
+      };
   const cards = [
     {
-      icon: (
-        <div>
-          <Boxes color={""} />
-          <i className="fa-solid fa-cart-shopping text-xl text-black"></i>
-        </div>
-      ),
+      icon: <i className="fa-solid fa-cart-shopping text-xl text-black"></i>,
       title: "Total Inventory Value",
-      percentageComp: "86%",
-      comparedDes: "Compared to last month",
-      rating: "$50,000",
+      count: "1500",
+      rating: "12,95",
     },
     {
-      icon: (
-        <div>
-          <Boxes color={""} />
-          <i className="fa-solid fa-cogs text-xl text-black"></i>
-        </div>
-      ),
+      icon: <i className="fa-solid fa-cogs text-xl text-black"></i>,
       title: "Total Sales Value",
-      percentageComp: "86%",
-      comparedDes: "Compared to last month",
-      rating: "$120,000",
+      count: "120",
+      rating: "18,95",
     },
     {
-      icon: (
-        <div>
-          <Boxes color={""} />
-          <i className="fa-solid fa-industry text-xl text-black"></i>
-        </div>
-      ),
-      title: "Turnover Rate",
-      percentageComp: "86%",
-      comparedDes: "Compared to last month",
-      rating: "4 times",
+        icon: <i className="fa-solid fa-cogs text-xl text-black"></i>,
+        title: "Turnover Rate",
+        count: "800",
+        rating: "12,95",
     },
     {
-      icon: (
-        <div>
-          <Boxes color={""} />
-          <i className="fa-solid fa-truck text-xl text-black"></i>
-        </div>
-      ),
-      title: "Pending Purchase",
-      percentageComp: "86%",
-      comparedDes: "Compared to last month",
-      rating: "10 Orders",
+        icon: <i className="fa-solid fa-cogs text-xl text-black"></i>,
+        title: "Pending Purchase",
+        count: "85%",
+        rating: "18",
     },
     {
-      icon: (
-        <div>
-          <Boxes color={""} />
-          <i className="fa-solid fa-box text-xl text-black"></i>
-        </div>
-      ),
-      title: "Pending Sales",
-      percentageComp: "86%",
-      comparedDes: "Compared to last month",
-      rating: "20 Orders",
+        icon: <i className="fa-solid fa-cogs text-xl text-black"></i>,
+        title: "Pending Sales",
+        count: "15%",
+        rating: "10",
     },
   ];
-
   return (
     <div>
-      <div className="flex space-x-4 justify-center">
-        {cards.map((card, index) => (
-          <OrderCards
-            key={index}
-            icon={card.icon}
-            title={card.title}
-            comparedDes={card.comparedDes}
-            percentageComp={card.percentageComp}
-            rating={card.rating}
-            active={activeCard === index}
-            onClick={() => handleCardClick(index)}
-          />
-        ))}
-      </div>
+        <div className="flex justify-between  w-full space-x-4">
+      {cards.map((card, index) => (
+        <OrderCards
+          key={index}
+          icon={card.icon}
+          title={card.title}
+          count={card.count}
+          rating={card.rating}
+          active={activeCard === index}
+          onClick={() => handleCardClick(index)}
+        />
+      ))}
     </div>
-  );
-};
+    </div>
+  )
+}
 
-export default Cards;
+export default Cards
