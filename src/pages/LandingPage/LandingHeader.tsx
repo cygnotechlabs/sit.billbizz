@@ -10,6 +10,7 @@ import UserRound from '../../assets/icons/UserRound';
 import UserRoundCog from '../../assets/icons/UserRoundCog';
 import MenuDropdown from '../../Components/menu/MenuDropdown';
 import Moon from "../../assets/icons/Moon";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   setMode?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,9 +18,10 @@ type Props = {
 };
 
 function LandingHeader({mode,setMode}: Props) {
+  const navigate=useNavigate()
   return (
-    <header className={`${mode?'bg-[#EAEBEB]':'bg-[#2C353B]'}  text-[#DFD1B4] flex items-center justify-between p-4 rounded-full mb-8 px-6`}>
-      <div className="flex items-center space-x-2">
+    <header className={`${mode?'bg-[#EAEBEB]':'bg-[#2C353B]'} text-[#DFD1B4] flex items-center justify-between p-4 rounded-full mb-8 px-6`}>
+      <div onClick={()=>navigate('/landing')} className="flex items-center space-x-2 cursor-pointer">
         <img
           src={mode?logo:logoLight}
           alt="Bill Bizz Logo"
