@@ -15,6 +15,7 @@ import SupplierRoutes from "./routes/SupplierRoutes";
 import LandingHome from "./pages/LandingPage/LandingHome";
 import Login from "./features/login/Login";
 import Otp from "./features/login/Otp";
+import Chatboat from "./pages/Chatboat/Chatboat";
 
 
 function App() {
@@ -43,6 +44,10 @@ function App() {
     {
       path: "/landing",
       element: <LandingHome/>,
+    },
+    {
+      path: "/chatboat",
+      element: <Chatboat/>,
     },
     {
       path: "/login",
