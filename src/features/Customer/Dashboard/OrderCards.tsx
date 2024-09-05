@@ -23,7 +23,7 @@ const cardVariants = cva(" rounded-xl px-4  cursor-pointer", {
   },
 });
 
-const Card: React.FC<CardProps> = ({ icon, title, count, rating, active = false, onClick }) => {
+const OrderCards: React.FC<CardProps> = ({ icon, title, count, rating, active = false, onClick }) => {
   return (
     <div className={`${cardVariants({ active })} py-2  w-[100%]`} onClick={onClick}>
       <div className="rounded-full w-[40px] h-[40px]  ">
@@ -46,4 +46,4 @@ const Card: React.FC<CardProps> = ({ icon, title, count, rating, active = false,
   );
 };
 
-export default Card;
+export default OrderCards;

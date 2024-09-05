@@ -17,8 +17,8 @@ import manageSalesImg from '../../assets/Images/manageSalesImg.png';
 import purchaseVector from "../../assets/Images/purchaseVector.png";
 import salesVector from "../../assets/Images/salesVector.png";
 import supplierVector from "../../assets/Images/supplierVector.png";
-import LandingHeader from "./LandingHeader";
 import droidBilly from '../../assets/Images/droidBilly.png'
+import LandingHeader from "./LandingHeader";
 const LandingHome: React.FC = () => {
   const [mode,setMode]=useState(false)
   const navigate=useNavigate()

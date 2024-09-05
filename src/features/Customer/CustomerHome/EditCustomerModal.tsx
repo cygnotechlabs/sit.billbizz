@@ -4,16 +4,16 @@ import CehvronDown from "../../../assets/icons/CehvronDown";
 import Upload from "../../../assets/icons/Upload";
 import Modal from "../../../Components/model/Modal";
 import PlusCircle from "../../../assets/icons/PlusCircle";
-import CirclePlus from "../../../assets/icons/circleplus";
 import Globe from "../../../assets/icons/Globe";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
-import { CustomerResponseContext } from "../../../context/ContextShare";
 import Pen from "../../../assets/icons/Pen";
+import { useParams } from "react-router-dom";
+import { CustomerEditResponseContext } from "../../../context/ContextShare";
 
-type Props = { page: string,customerDataProps?:CustomerData };
+type Props = { customerDataPorps?: CustomerData };
 type CustomerData = {
   organizationId: string;
   customerType: string;
@@ -65,7 +65,7 @@ type CustomerData = {
     salutation: string;
     firstName: string;
     lastName: string;
-    customerEmail: string;
+    email: string;
     mobile: string;
   }[];
   remark: string;
@@ -74,33 +74,26 @@ type CustomerData = {
 
 
 
-const NewCustomerModal = ({ page }: Props) => {
+const EditCustomerModal = ({customerDataPorps}: Props) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-
   const [selected, setSelected] = useState<string | null>(null);
   const [currencyData, setcurrencyData] = useState<any | []>([]);
   const [countryData, setcountryData] = useState<any | []>([]);
   const [stateList, setStateList] = useState<any | []>([]);
   const [shippingstateList, setshippingStateList] = useState<any | []>([]);
-  
+  const {setcustomereditResponse}=useContext(CustomerEditResponseContext)!;
+
   const [activeTab, setActiveTab] = useState<string>("otherDetails");
   const [paymentTerms, setPaymentTerms] = useState<any | []>([]);
   const [gstOrVat, setgstOrVat] = useState<any | []>([]);
+  const {request:editCustomerDetails}=useApi("put",5002)
   const { request: getCountryData } = useApi("get", 5004);
   const { request: getCurrencyData } = useApi("put", 5004);
-  const { request: CreateCustomer } = useApi("post", 5002);
   const { request: getPaymentTerms } = useApi("get", 5004);
   const { request: getTax } = useApi("put", 5002);
-const {setcustomerResponse}=useContext(CustomerResponseContext)!;
-  const [rows, setRows] = useState([
-    { salutation: "", firstName: "", lastName: "", email: "", mobile: "" },
-  ]);
-  const addRow = () => {
-    setRows([
-      ...rows,
-      { salutation: "", firstName: "", lastName: "", email: "", mobile: "" },
-    ]);
-  };
+  const param=useParams()
+
+  
   const [customerdata, setCustomerData] = useState<CustomerData>({
     organizationId: "INDORG0001",
     customerType: "",
@@ -152,25 +145,39 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
         salutation: "",
         firstName: "",
         lastName: "",
-        customerEmail: "",
+        email: "",
         mobile: "",
       },
     ],
     remark: ""
   });
+  const [rows, setRows] = useState(customerdata.contactPerson || []);
+
+  const addRow = () => {
+    setRows([...rows, { salutation: "", firstName: "", lastName: "", email: "", mobile: "" }]);
+  };
 
   console.log(customerdata,"data");
-
+  console.log(customerDataPorps,"props");
   
+  
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
 
   const getTabClassName = (tabName: string) => {
     return activeTab === tabName
-      ? "cursor-pointer font-bold text-darkRed border-darkRed"
-      : "cursor-pointer font-bold border-neutral-300";
+      ? "cursor-pointer font-bold text-darkRed"
+      : "cursor-pointer font-bold";
+  };
+
+  const getBorderClassName = (tabName: string) => {
+    return activeTab === tabName ? "border-darkRed" : "border-neutral-300";
   };
 
 
-  // data from radio
+  // data from checkboxes
   const handleRadioChange = (type: string) => {
     setSelected(type);
     setCustomerData((prevFormData) => ({
@@ -180,28 +187,45 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
   };
 
   //data from table
-  const handleRowChange = (
-    index: number,
-    field: keyof (typeof rows)[number],
-    value: string
-  ) => {
-    const updatedRows = [...rows];
-    updatedRows[index][field] = value;
-    setRows(updatedRows);
+  // const handleRowChange = (
+  //   index: number,
+  //   field: keyof (typeof rows)[number],
+  //   value: string
+  // ) => {
+  //   const updatedRows = [...rows];
+  //   updatedRows[index][field] = value;
+   
+  //     setRows(updatedRows);
+    
 
-    const updatedContactPerson = updatedRows.map((row) => ({
-      salutation: row.salutation,
-      firstName: row.firstName,
-      lastName: row.lastName,
-      customerEmail: row.email,
-      mobile: row.mobile,
-    }));
+  //   const updatedContactPerson = updatedRows.map((row) => ({
+  //     salutation: row.salutation,
+  //     firstName: row.firstName,
+  //     lastName: row.lastName,
+  //     companyName: "",
+  //     customerEmail: row.customerEmail,
+  //     workPhone: "",
+  //     mobile: row.mobile,
+  //   }));
+
+  //   setCustomerData((prevFormData) => ({
+  //     ...prevFormData,
+  //     contactPerson: updatedContactPerson,
+  //   }));
+  // };
+  const handleRowChange = ( index: number,
+     field: keyof (typeof rows)[number],
+    value: string) => {
+    const newRows = [...rows];
+    newRows[index] = { ...newRows[index], [field]: value };
+    setRows(newRows);
 
     setCustomerData((prevFormData) => ({
       ...prevFormData,
-      contactPerson: updatedContactPerson,
+      contactPerson: newRows,
     }));
   };
+  
 
   const handleBillingPhoneChange = (value: string) => {
     setCustomerData((prevData) => ({
@@ -246,132 +270,48 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
 
       if (!error && response) {
         setcurrencyData(response?.data);
-      }
-      else {
-        console.log(error.response.data, "currency");
+        // console.log(response.data, "currencyData");
       }
 
-      // fetching payment terms
       const paymentTermsUrl = `${endponits.GET_PAYMENT_TERMS}`;
       const { response: paymentTermResponse, error: paymentTermError } =
         await getPaymentTerms(paymentTermsUrl);
 
       if (!paymentTermError && paymentTermResponse) {
         setPaymentTerms(paymentTermResponse.data);
-      }
-      else {
-        console.log(paymentTermError.response.data, "payment Terms");
+        // console.log(paymentTermResponse.data);
       }
 
-      // get tax data
       const taxUrl = `${endponits.GET_TAX}`;
       const { response: taxResponse, error: taxError } = await getTax(taxUrl, {
         organizationId: "INDORG0001",
       });
 
       if (!taxError && taxResponse) {
-        if (taxResponse) {         
+        if (taxResponse) {
+          // console.log(taxResponse.data.taxType,"tax");
+         
           setgstOrVat(taxResponse.data);
         }
       } else {
         console.log(taxError.response.data, "tax");
       }
 
-      // fetching country data
       const CountryUrl = `${endponits.GET_COUNTRY_DATA}`;
-      const { response: countryResponse, error: countryError } =await getCountryData(CountryUrl, { organizationId: "INDORG0001" });
+      const { response: countryResponse, error: countryError } =
+        await getCountryData(CountryUrl, { organizationId: "INDORG0001" });
       if (!countryError && countryResponse) {
+        // console.log(countryResponse.data[0].countries, "country");
         setcountryData(countryResponse?.data[0].countries);
       } else {
         console.log(countryError, "country");
       }
     } catch (error) {
-      console.log("Error in fetching additional Data", error);
+      console.log("Error in fetching currency data or payment terms", error);
     }
   };
 
-  //api call
-  const handleSubmit = async () => {
-    try {
-      const url = `${endponits.ADD_CUSTOMER}`;
-      const { response, error } = await CreateCustomer(url, customerdata);
-      if (response && !error) {
-        toast.success(response.data.message);
-        setModalOpen(false);
-        setcustomerResponse((prevCustomerResponse:any)=>({
-          ...prevCustomerResponse,
-          customerdata,
-        }))
-        setCustomerData({
-          organizationId: "INDORG0001",
-          customerType: "",
-          salutation: "",
-          firstName: "",
-          lastName: "",
-          companyName: "",
-          customerDisplayName: "",
-          customerEmail: "",
-          workPhone: "",
-          mobile: "",
-          dob: "",
-          cardNumber: "",
-          pan: "",
-          currency: "",
-          openingBalance: "",
-          paymentTerms: "",
-          enablePortal: false,
-          documents: "",
-          department: "",
-          designation: "",
-          websiteURL: "",
-          gstTreatment: "",
-          gstin_uin: "",
-          placeOfSupply: "",
-          businessLegalName: "",
-          businessTradeName: "",
-          vatNumber: "",
-          billingAttention: "",
-          billingCountry: "",
-          billingAddressLine1: "",
-          billingAddressLine2: "",
-          billingCity: "",
-          billingState: "",
-          billingPinCode: "",
-          billingPhone: "",
-          billingFaxNumber: "",
-          shippingAttention: "",
-          shippingCountry: "",
-          shippingAddress1: "",
-          shippingAddress2: "",
-          shippingCity: "",
-          shippingState: "",
-          shippingPinCode: "",
-          shippingPhone: "",
-          shippingFaxNumber: "",
-          contactPerson: [
-            {
-              salutation: "",
-              firstName: "",
-              lastName: "",
-              customerEmail: "",
-              mobile: "",
-            },
-          ],
-          remark: "",
-        });
-      } else {
-        console.log(error);
-        
-        toast.error(error.response?.data?.message);
-        console.error(
-          "Error creating customer:",
-          error.response?.data?.message || error.message
-        );
-      }
-    } catch (error) {
-      console.error("Unexpected error:");
-    }
-  };
+
 
   const handleCopyAddress = (e: any) => {
     e.preventDefault();
@@ -410,50 +350,54 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
     }
   }, [customerdata.shippingCountry, customerdata.billingCountry, countryData]);
 
+  const {id}=param
+
+  const handleEdit=async()=>{
+    const url =`${endponits.EDIT_CUSTOMER}/${id}`
+    try {
+      const apiResponse=await editCustomerDetails(url,customerdata)
+      console.log(apiResponse);
+      const {response,error}=apiResponse
+      if(!error && response){
+        setModalOpen(false)
+        toast.success(response.data.message)
+        setcustomereditResponse((prevCustomerResponse:any)=>({
+          ...prevCustomerResponse,
+          customerdata,
+        }))
+      }
+      else{
+        toast.error(error.response.data.message)
+ 
+      }
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+   
   useEffect(() => {
     getAdditionalData();
-
-
-  }, []);
-
-
-
-  
+    if (customerDataPorps) {
+      setCustomerData(customerDataPorps);
+      setRows(customerDataPorps.contactPerson || []);
+      setSelected(customerDataPorps.customerType);
+    }
+  }, [customerDataPorps]);
 
   return (
     <div>
-{page && (page === "purchase" || page === "sales") ? (
-  <div
-    className="w-full flex col-span-10 px-4 justify-between"
-    onClick={() => setModalOpen(true)}
-  >
-    <div className="flex items-center space-x-1">
-      <CirclePlus color="darkRed" size="18" />
-      <p className="text-[#820000] text-sm">
-        <b>Add new Customer</b>
-      </p>
-    </div>
-    <div className="col-span-2 text-end text-2xl cursor-pointer relative">
-      &times;
-    </div>
-  </div>
-) : page && page === "CustomerEdit" ? (
-  <Button
-    onClick={() => setModalOpen(true)}
-    variant="secondary"
-    size="sm"
-    className="text-[10px] h-6 px-5"
-  >
-    <Pen color={"#303F58"} />
-    Edit
-  </Button>
-) : (
-  <Button onClick={() => setModalOpen(true)} variant="primary" size="sm">
-    <PlusCircle color="white" />
-    <p className="text-sm font-medium">Add Customer</p>
-  </Button>
-)}
-
+  
+        <Button
+         onClick={() => setModalOpen(true)}
+                  variant="secondary"
+                  size="sm"
+                  className="text-[10px] h-6 px-5"
+                >
+                  <Pen color={"#303F58"} />
+                  Edit
+                </Button>
 
       <Modal
         open={isModalOpen}
@@ -465,8 +409,8 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
           <div className="p-5 mt-3">
             <div className="mb-5 flex p-2 rounded-xl bg-CreamBg relative overflow-hidden items-center">
               <div className="relative ">
-              <h3 className="text-lg font-bold text-textColor">
-                  Add New Customer
+                <h3 className="text-lg font-bold text-textColor">
+                  Edit Customer
                 </h3>
               </div>
               <div
@@ -546,7 +490,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                       />
                     </div>
                     <label
-                      htmlFor="Individual"
+                      htmlFor="individual"
                       className="text-start font-medium"
                     >
                       Individual
@@ -566,10 +510,10 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                       onChange={handleChange}
                     >
                       <option value="">Value</option>
-                      <option value="Mr.">Mr.</option>
-                      <option value="Mrs.">Mrs.</option>
-                      <option value="Ms.">Ms.</option>
-                      <option value="Dr.">Dr.</option>
+                      <option value="Mr">Mr.</option>
+                      <option value="Mrs">Mrs.</option>
+                      <option value="Ms">Ms.</option>
+                      <option value="Dr">Dr.</option>
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                       <CehvronDown color="gray" />
@@ -699,7 +643,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                     <li
                       className={`${getTabClassName(
                         "otherDetails"
-                      )} border-r-4  p-2 `}
+                      )} border-r-4 ${getBorderClassName("otherDetails")} p-2 `}
                       onClick={() => setActiveTab("otherDetails")}
                     >
                       Other Details
@@ -707,7 +651,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                     <li
                       className={`${getTabClassName(
                         "taxes"
-                      )} border-r-4  p-2`}
+                      )} border-r-4 ${getBorderClassName("taxes")} p-2`}
                       onClick={() => setActiveTab("taxes")}
                     >
                       Taxes
@@ -715,7 +659,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                     <li
                       className={`${getTabClassName(
                         "address"
-                      )} border-r-4  p-2`}
+                      )} border-r-4 ${getBorderClassName("address")} p-2`}
                       onClick={() => setActiveTab("address")}
                     >
                       Address
@@ -723,7 +667,9 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                     <li
                       className={`${getTabClassName(
                         "contactPersons"
-                      )} border-r-4  p-2`}
+                      )} border-r-4 ${getBorderClassName(
+                        "contactPersons"
+                      )} p-2`}
                       onClick={() => setActiveTab("contactPersons")}
                     >
                       Contact Persons
@@ -731,7 +677,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                     <li
                       className={`${getTabClassName(
                         "remarks"
-                      )} border-r-4 p-2`}
+                      )} border-r-4 ${getBorderClassName("remarks")} p-2`}
                       onClick={() => setActiveTab("remarks")}
                     >
                       Remarks
@@ -836,8 +782,8 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                         <div className="flex items-center mt-4 gap-1 text-textColor">
                           <input
                             name="enablePortal"
-                            checked={customerdata.enablePortal}
-                            onClick={(e:any)=>handleChange(e)}
+                            defaultChecked={customerdata.enablePortal}
+                            onChange={handleChange}
                             type="checkbox"
                             className=" h-6 w-5 mx-1 customCheckbox"
                             id=""
@@ -859,7 +805,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                             onChange={handleChange}
                           >
                             <option
-                              value="Payment On Due"
+                              value="English"
                               className="text-gray"
                             >
                               English
@@ -884,7 +830,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                           <input
                             type="file"
                             className="hidden"
-                            value={customerdata.documents}
+                            // value={customerdata.documents}
                             name="documents"
                             // onChange={(e)=>handleFileChange(e)}
                           />
@@ -1028,7 +974,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
         </div>
       </div>
     )}
-    {gstOrVat.taxType === "VAT" && (
+   {gstOrVat.taxType === "VAT" && (
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label htmlFor="vatNumber" className="block mb-1">
@@ -1423,7 +1369,7 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
   </>
 )}
 
-                  {activeTab === "contactPersons" && (
+               {activeTab === "contactPersons" && (
                     <>
                       <div className="rounded-lg border-2 border-tableBorder mt-5">
                         <table className="min-w-full bg-white rounded-lg relative mb-4 border-dropdownText">
@@ -1574,17 +1520,17 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
                         />
                       </div>
                     </div>
-                  )}
+                  )} 
                 </div>
               </div>
             </form>
           </div>
 
           <div className="flex justify-end gap-2 mb-3 m-5">
-            <Button onClick={handleSubmit} variant="primary" size="sm">
+            <Button variant="primary" size="sm" onClick={handleEdit}>
               Save
             </Button>
-            <Button onClick={()=>setModalOpen(false)} variant="secondary" size="sm">
+            <Button onClick={closeModal} variant="secondary" size="sm">
               Cancel
             </Button>
           </div>
@@ -1596,4 +1542,4 @@ const {setcustomerResponse}=useContext(CustomerResponseContext)!;
   );
 };
 
-export default NewCustomerModal;
+export default EditCustomerModal;

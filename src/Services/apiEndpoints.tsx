@@ -45,9 +45,14 @@ GET_ALL_ITEM:"get-all-item",
   ADD_CUSTOMER: "add-customer",
   GET_TAX:`customer-additional-data`,
   GET_ONE_CUSTOMER:`/get-one-customer`,
+  EDIT_CUSTOMER:`edit-customer`,
 
   // Supplier
-  GET_ALL_SUPPLIER: "",
+  ADD_SUPPLIER:"add-suppliers", 
+  GET_ALL_SUPPLIER:"get-all-supplier",
+  GET_ONE_SUPPLIER:"get-supplier",
+  EDIT_SUPPLIER:"update-supplier",
+  GET_TAX_SUPPLIER:`supplier-additional-data`,
 
   //Currency
   GET_CURRENCIES: "get-currency",
@@ -100,4 +105,7 @@ GET_ALL_ITEM:"get-all-item",
   UPDATE_RACK: "update-rack",
   GET_RACK: (id: string) => `get-one-rack/${id}`,
   DELETE_RACK: (id: string) => `delete-rack/${id}`,
+
+
+  
 };
