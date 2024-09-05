@@ -538,6 +538,15 @@ exports.importCustomer = async (req, res) => {
                 message: "Organization not found",
               });
             }
+
+            const taxExists = await Tax.findOne({
+                organizationId: organizationId,
+              });
+            if (!taxExists) {
+              return res.status(404).json({
+                message: "Tax not found",
+              });
+            }
         
             const timeZoneExp = organizationExists.timeZoneExp;
             const dateFormatExp = organizationExists.dateFormatExp;
@@ -547,11 +556,16 @@ exports.importCustomer = async (req, res) => {
 
             const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
             const validCustomerTypes = ['Individual', 'Business'];
-            const validGSTTreatments = ["Registered Business -Regular","Registered Business -Composition","Unregistered Business","Consumer","Overseas","Special Economic Zone","Deemed Export","Tax Deductor","SEZ Developer"];
-            
-            const validCurrencies = ["USD", "EUR", "INR"]; 
-            const validTaxTypes = ["GST", "VAT"]; 
-            
+            const validGSTTreatments = ["Registered Business - Regular","Registered Business - Composition","Unregistered Business","Consumer","Overseas","Special Economic Zone","Deemed Export","Tax Deductor","SEZ Developer"];
+             
+            const validCurrencies = ["AED","INR"]; //
+            // const validTaxTypes = ["GST", "VAT"]; 
+            const validTaxTypes = taxExists.taxType;
+
+            const validCountries = {
+                  "United Arab Emirates": ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al-Quwain", "Fujairah", "Ras Al Khaimah"],
+                  "India": ["Andaman and Nicobar Island", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"]
+                };            
 
             function isAlphabets(value) {
               return /^[A-Za-z\s]+$/.test(value);
@@ -560,7 +574,9 @@ exports.importCustomer = async (req, res) => {
             function isInteger(value) {
               return /^[0-9]+$/.test(value);
               }
-        
+            function isFloat(value) {
+              return /^-?\d+(\.\d+)?$/.test(value);
+              }        
             function isValidDate(value) {
               return !isNaN(Date.parse(value));
               }
@@ -569,19 +585,20 @@ exports.importCustomer = async (req, res) => {
               return /^[A-Za-z0-9]+$/.test(value);
               }
         
-            function isValidUrl(value) {
-              try {
-                  new URL(value);
-                  return true;
-              } catch {
-                  return false;
-              }
-              }
+            // function isValidUrl(value) {
+            //   try {
+            //       new URL(value);
+            //       return true;
+            //   } catch {
+            //       return false;
+            //   }
+            //   }
             function isValidEmail(value) {
               return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
               }
             
             let userData = [];
+            
 
             for (let x = 0; x < response.length; x++) {
                 const salutation = response[x]['Salutation'];
@@ -597,7 +614,7 @@ exports.importCustomer = async (req, res) => {
                 const cardNumber = response[x]['Card Number'];
                 const pan = response[x]['PAN'];
                 const currency = response[x]['Currency'];
-                const openingBalance = response[x]['Opening Balance'];
+                const openingBalance = response[x]['Opening Balance'];         
                 const department = response[x]['Department'];
                 const designation = response[x]['Designation'];
                 const websiteUrl = response[x]['Website URL'];
@@ -608,6 +625,123 @@ exports.importCustomer = async (req, res) => {
                 const placeOfSupply = response[x]['Place Of Supply'];
                 const businessLegalName = response[x]['Business Legal Name'];
                 const businessTradeName = response[x]['Business Trade Name'];
+
+
+                              
+
+
+                // Validation checks
+                  if (!validSalutations.includes(salutation)) {
+                      console.error(`Invalid Salutation at row ${x + 1}: ${salutation}`);
+                      continue;
+                  }              
+                  if (!validCustomerTypes.includes(customerType)) {
+                      console.error(`Invalid Customer type at row ${x + 1}: ${customerType}`);
+                      continue;
+                  }              
+                  if (!isAlphabets(firstName)) {
+                      console.error(`Invalid First Name fields at row ${x + 1},${firstName}`);
+                      continue;
+                  }
+                  if (!isAlphabets(lastName)) {
+                    console.error(`Invalid Last Name fields at row ${x + 1},${lastName}`);
+                    continue;
+                  }
+                  // if (!isAlphanumeric(companyName)) {
+                  //   console.error(`Invalid Company Name fields at row ${x + 1},${companyName}`);
+                  //   continue;
+                  // }
+                  // if (!isAlphanumeric(customerDisplayName)) {
+                  //   console.error(`Invalid Customer Display Name fields at row ${x + 1},${customerDisplayName}`);
+                  //   continue;
+                  // }              
+                  if (!isValidEmail(customerEmail)) {
+                      console.error(`Invalid email at row ${x + 1}: ${customerEmail}`);
+                      continue;
+                  }              
+                  if (!isInteger(workPhone)) {
+                      console.error(`Invalid Work Phone numbers at row ${x + 1},${workPhone}`);
+                      continue;
+                  }
+                  if (!isInteger(mobile)) {
+                    console.error(`Invalid Mobile numbers at row ${x + 1},${mobile}`);
+                    continue;
+                  }              
+                  if (!isValidDate(dob)) {
+                      console.error(`Invalid Date of birth at row ${x + 1},${dob}`);
+                      continue;
+                  }              
+                  if (!isInteger(cardNumber)) {
+                      console.error(`Invalid Card Number fields at row ${x + 1},${cardNumber}`);
+                      continue;
+                  }
+                  if (!isAlphanumeric(pan)) {
+                    console.error(`Invalid Pan Card fields at row ${x + 1},${pan}`);
+                    continue;
+                  }
+                  if (!isFloat(openingBalance)) {
+                    console.error(`Invalid Opening Balance fields at row ${x + 1},${openingBalance}`);
+                    continue;
+                  }              
+                  // if (!currencyCollection.includes(currency)) {
+                  //     console.error(`Invalid currency at row ${x + 1},${currency}`);
+                  //     continue;
+                  // }              
+                  if (!isAlphabets(department)) {
+                      console.error(`Invalid Department at row ${x + 1},${department}`);
+                      continue;
+                  }
+                  if (!isAlphabets(designation)) {
+                    console.error(`Invalid Designation at row ${x + 1},${designation}`);
+                    continue;
+                  }              
+                  // if (!isValidUrl(websiteUrl)) {
+                  //     console.error(`Invalid Website URL at row ${x + 1},${websiteUrl}`);
+                  //     continue;
+                  // }              
+                  if (!taxCollection.includes(taxType)) {
+                      console.error(`Invalid tax type at row ${x + 1},${taxType}`);
+                      continue;
+                  }
+                  if (!validCountries[country] || !validCountries[country].includes(state)) {
+                      console.error(`Invalid Country or State at row ${x + 1}: ${country}, ${state}`);
+                      continue;
+                  }
+                  
+                                
+                  // if (taxType === validTaxTypes) {                  
+                  //     if (!validGSTTreatments.includes(gstTreatment)) {
+                  //         console.error(`Invalid GST treatment at row ${x + 1},${gstTreatment}`);
+                  //         continue;
+                  //     }
+              
+                  //     if (!isAlphanumeric(gstinUin)) {
+                  //         console.error(`Invalid GSTIN/UIN at row ${x + 1},${gstinUin}`);
+                  //         continue;
+                  //     }
+                  // } else if (taxType === 'VAT') {
+                  //     if (!isAlphanumeric(vatNumber)) {
+                  //         console.error(`Invalid VAT number at row ${x + 1},${vatNumber}`);
+                  //         continue;
+                  //     }
+                  // }
+                  
+                  
+                  if (!isAlphabets(placeOfSupply) ) {
+                      console.error(`Invalid Place of Supply at row ${x + 1},${placeOfSupply}`);
+                      continue;
+                  }
+                  if (!isAlphabets(businessLegalName)) {
+                    console.error(`Invalid Business Legal Name at row ${x + 1},${businessLegalName}`);
+                    continue;
+                  }
+                  if (!isAlphabets(businessTradeName)) {
+                    console.error(`Invalid  Business Trade Name at row ${x + 1},${businessTradeName}`);
+                    continue;
+                  }
+
+
+
 
                 // Push valid data to userData array
                 userData.push({
