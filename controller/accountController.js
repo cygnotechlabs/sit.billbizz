@@ -78,7 +78,7 @@ exports.addAccount = async (req, res) => {
       return res.status(400).json({
         message: "Invalid account group, head, or subhead."
       });
-      
+
     }
 
 
