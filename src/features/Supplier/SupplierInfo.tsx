@@ -1,15 +1,14 @@
 import React from 'react'
 import Button from '../../Components/Button'
-import PlusCircle from '../../assets/icons/PlusCircle'
 import supplierInfo from '../../assets/Images/supplierInfo.png'
-import UserRoundPlus from '../../assets/icons/UserRoundPlus'
-import UserCheck from '../../assets/icons/UserCheck'
-import NotebookText from '../../assets/icons/NotebookText'
-import SentToBack from '../../assets/icons/SentToBack'
-import RecieptText from '../../assets/icons/RecieptText'
 import NewspaperIcon from '../../assets/icons/NewspaperIcon'
-import IndianRupee from '../../assets/icons/IndianRupee'
+import NotebookText from '../../assets/icons/NotebookText'
+import PlusCircle from '../../assets/icons/PlusCircle'
 import RecieptIndianRupee from '../../assets/icons/RecieptIndianRupee'
+import RecieptText from '../../assets/icons/RecieptText'
+import SentToBack from '../../assets/icons/SentToBack'
+import UserCheck from '../../assets/icons/UserCheck'
+import UserRoundPlus from '../../assets/icons/UserRoundPlus'
 type Props = {}
 interface StepProps {
   icon: React.ReactNode;
