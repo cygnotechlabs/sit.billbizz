@@ -187,32 +187,6 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
   };
 
   //data from table
-  // const handleRowChange = (
-  //   index: number,
-  //   field: keyof (typeof rows)[number],
-  //   value: string
-  // ) => {
-  //   const updatedRows = [...rows];
-  //   updatedRows[index][field] = value;
-   
-  //     setRows(updatedRows);
-    
-
-  //   const updatedContactPerson = updatedRows.map((row) => ({
-  //     salutation: row.salutation,
-  //     firstName: row.firstName,
-  //     lastName: row.lastName,
-  //     companyName: "",
-  //     customerEmail: row.customerEmail,
-  //     workPhone: "",
-  //     mobile: row.mobile,
-  //   }));
-
-  //   setCustomerData((prevFormData) => ({
-  //     ...prevFormData,
-  //     contactPerson: updatedContactPerson,
-  //   }));
-  // };
   const handleRowChange = ( index: number,
      field: keyof (typeof rows)[number],
     value: string) => {
