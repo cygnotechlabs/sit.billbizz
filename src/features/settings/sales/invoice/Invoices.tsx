@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CehvronDown from "../../../../assets/icons/CehvronDown";
 import Link2 from "../../../../assets/icons/Link2";
 import WalletMinimal from "../../../../assets/icons/WalletMinimal";
@@ -7,13 +7,14 @@ import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
 import Button from "../../../../Components/Button";
+import { settingsdataResponseContext } from "../../../../context/ContextShare";
 
 type Props = {}
 
 function Invoices({}: Props) {
     const {request:AddSalesInvoiceSettings}=useApi("put",5007)
-    const {request:GetSalesInvoiceSettings}=useApi("put",5004)
     const [invoiceURLDropdown,setInvoiceURLDropdown] = useState(false);
+    const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
     const [invoiceState, setInvoiceState] = useState({
         organizationId: "INDORG0001", 
         invoiceEdit: false, // corresponds to `invoiceEdit`
@@ -51,26 +52,21 @@ function Invoices({}: Props) {
       }
     };
 
-    const getSalesInvoiceSettings= async () => {
-      try {
-        const url = `${endponits.GET_SETTINGS}`;
-        const body = { organizationId: "INDORG0001" };
-        const { response, error } = await GetSalesInvoiceSettings(url, body);
-        if (!error && response) {
-          const data = response.data[0];
-          setInvoiceState({ ...invoiceState, ...data });
-        } else {
-          toast.error(`API Error: ${error}`);
-        }
-      } catch (error) {
-        toast.error(`Error fetching invoice settings:${error}`);
-      }
-    };
-  
-    useEffect(() => {
-      getSalesInvoiceSettings();
-    }, []);
     
+    
+    useEffect(() => {
+        getSettingsData();
+      }, []); 
+      
+      useEffect(() => {
+        if (settingsResponse) {
+          setInvoiceState((prevData) => ({
+            ...prevData,
+            ...settingsResponse?.data?.salesInvoiceSettings,
+          }));
+        }
+      }, [settingsResponse]);
+      console.log(settingsResponse?.data);
 
     return (
         <div className="m-4 pb-5 text-[#303F58]">
