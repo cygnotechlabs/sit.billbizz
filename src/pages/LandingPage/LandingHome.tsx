@@ -188,11 +188,11 @@ const LandingHome: React.FC = () => {
      style={{ 
        background: mode?  'linear-gradient(to right, #F7E7CE, #FEFFF9, #CACCBE)'  : 'linear-gradient(to right, #2C2F34, #4C4F55, #8A8C91, #B4B6BA)'
      }}>
-  <img src={droidBilly} className="w-[195px] -bottom-20 absolute " alt="" />    
+  <img src={droidBilly} className="w-[125px] -bottom-[60px] absolute " alt="" />    
   <img src={chatVector1} className="-z-10 absolute right-20 top-0" alt="" />
   <img src={chatVector2} className="-z-10 absolute right-0 bottom-0" alt="" />
   <p className={`w-[140px] text-[16px]  absolute right-14 bottom-5 ${mode?'text-[#303F58]':'text-white'}`}>Chat With <br /><span className="font-bold text-[24px]">droid billie</span></p>
-  <button className="bg-[#F6F6F6] absolute right-3 top-4 text-white h-[49px] w-[49px] flex items-center justify-center rounded-full">
+  <button onClick={()=>navigate('/chatboat')} className="bg-[#F6F6F6] absolute right-3 top-4 text-white h-[49px] w-[49px] flex items-center justify-center rounded-full">
     <ArrowIconNoUnderline
       className="transform rotate-90" 
       color="#585953"
