@@ -176,8 +176,7 @@ exports.importCustomer = async (req, res) => {
             const validGSTTreatments = ["Registered Business - Regular","Registered Business - Composition","Unregistered Business","Consumer","Overseas","Special Economic Zone","Deemed Export","Tax Deductor","SEZ Developer"];
              
             const validCurrencies = currencyExists.map(currency => currency.currencyCode);
-            const validTaxTypes = taxExists.taxType;
-                       
+            const validTaxTypes = ['None',taxExists.taxType];                      
 
             const validCountries = {
                   "United Arab Emirates": ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al-Quwain", "Fujairah", "Ras Al Khaimah"],
@@ -237,9 +236,9 @@ exports.importCustomer = async (req, res) => {
                 const designation = response[x]['Designation'];
                 const websiteUrl = response[x]['Website URL'];
                 const taxType = response[x]['Tax Type'];
-                const gstTreatment = response[x]['GST Treatment'];
-                const gstinUin = response[x]['GSTIN/UIN'];
-                const vatNumber = response[x]['VAT Number'];
+                let gstTreatment = response[x]['GST Treatment'];
+                let gstinUin = response[x]['GSTIN/UIN'];
+                let vatNumber = response[x]['VAT Number'];
                 const billingCountry = response[x]['Billing Country'];
                 const billingState= response[x]['Billing State'];
                 const shippingCountry = response[x]['Shipping Country'];
@@ -247,6 +246,12 @@ exports.importCustomer = async (req, res) => {
                 const placeOfSupply = response[x]['Place Of Supply'];
                 const businessLegalName = response[x]['Business Legal Name'];
                 const businessTradeName = response[x]['Business Trade Name'];
+                const billingPinCode = response[x]['Billing PinCode'];
+                const billingPhone= response[x]['Billing Phone'];
+                const billingFaxNumber= response[x]['Billing FaxNumber'];
+                const shippingPinCode= response[x]['Shipping PinCode'];
+                const shippingPhone= response[x]['Shipping Phone'];
+                const shippingFaxNumber= response[x]['Shipping FaxNumber'];
 
 
                               
@@ -320,12 +325,7 @@ exports.importCustomer = async (req, res) => {
                   // if (!isValidUrl(websiteUrl)) {
                   //     console.error(`Invalid Website URL at row ${x + 1},${websiteUrl}`);
                   //     continue;
-                  // }
-
-                  // if (!taxCollection.includes(taxType)) {
-                  //     console.error(`Invalid tax type at row ${x + 1},${taxType}`);
-                  //     continue;
-                  // }
+                  // }      
                   if (!validCountries[billingCountry] || !validCountries[billingCountry].includes(billingState)) {
                     console.error(`Invalid Billing Country or State at row ${x + 1}: ${billingCountry}, ${billingState}`);
                     continue;
@@ -334,40 +334,71 @@ exports.importCustomer = async (req, res) => {
                     console.error(`Invalid Shipping Country or State at row ${x + 1}: ${shippingCountry}, ${shippingState}`);
                     continue;
                   }
+                  if (!isInteger(billingPinCode)) {
+                    console.error(`Invalid Billing Pin Code Number fields at row ${x + 1},${billingPinCode}`);
+                    continue;
+                  }
+                  if (!isInteger(billingPhone)) {
+                    console.error(`Invalid Billing Phone Number fields at row ${x + 1},${billingPhone}`);
+                    continue;
+                  }
+                  if (!isInteger(billingFaxNumber)) {
+                    console.error(`Invalid Billing Fax Number fields at row ${x + 1},${billingFaxNumber}`);
+                    continue;
+                  }
+                  if (!isInteger(shippingPinCode)) {
+                    console.error(`Invalid Shipping Pin Code Number fields at row ${x + 1},${shippingPinCode}`);
+                    continue;
+                  }
+                  if (!isInteger(shippingPhone)) {
+                    console.error(`Invalid Shipping Phone Number fields at row ${x + 1},${shippingPhone}`);
+                    continue;
+                  }
+                  if (!isInteger(shippingFaxNumber)) {
+                    console.error(`Invalid Shipping Fax Number fields at row ${x + 1},${shippingFaxNumber}`);
+                    continue;
+                  }
                   
+
+                  if (!validTaxTypes.includes(taxType)) {
+                    console.error(`Invalid Tax Type at row ${x + 1}: ${taxType}`);
+                    continue;
+                }                 
                                 
-                  // if (taxType === validTaxTypes) {                  
-                  //     if (!validGSTTreatments.includes(gstTreatment)) {
-                  //         console.error(`Invalid GST treatment at row ${x + 1},${gstTreatment}`);
-                  //         continue;
-                  //     }
+                  if (taxType === "GST") {                  
+                      if (!validGSTTreatments.includes(gstTreatment)) {
+                          console.error(`Invalid GST treatment at row ${x + 1},${gstTreatment}`);
+                          continue;
+                      }
               
-                  //     if (!isAlphanumeric(gstinUin)) {
-                  //         console.error(`Invalid GSTIN/UIN at row ${x + 1},${gstinUin}`);
-                  //         continue;
-                  //     }
-                  // } else if (taxType === 'VAT') {
-                  //     if (!isAlphanumeric(vatNumber)) {
-                  //         console.error(`Invalid VAT number at row ${x + 1},${vatNumber}`);
-                  //         continue;
-                  //     }
-                  // }
+                      if (!isAlphanumeric(gstinUin)) {
+                          console.error(`Invalid GSTIN/UIN at row ${x + 1},${gstinUin}`);
+                          continue;
+                      }
+                  } else if (taxType === "VAT") {
+                      if (!isAlphanumeric(vatNumber)) {
+                          console.error(`Invalid VAT number at row ${x + 1},${vatNumber}`);
+                          continue;
+                      }
+                  } else if (taxType === "None") {
+                    gstTreatment = undefined;
+                    gstinUin = undefined;
+                    vatNumber = undefined;                    
+                }
                   
                   
-                  if (!isAlphabets(placeOfSupply) ) {
+                  if (!validCountries[billingCountry].includes(placeOfSupply)) {
                       console.error(`Invalid Place of Supply at row ${x + 1},${placeOfSupply}`);
                       continue;
                   }
-                  if (!isAlphabets(businessLegalName)) {
-                    console.error(`Invalid Business Legal Name at row ${x + 1},${businessLegalName}`);
-                    continue;
-                  }
-                  if (!isAlphabets(businessTradeName)) {
-                    console.error(`Invalid  Business Trade Name at row ${x + 1},${businessTradeName}`);
-                    continue;
-                  }
-
-
+                  // if (!isAlphabets(businessLegalName)) {
+                  //   console.error(`Invalid Business Legal Name at row ${x + 1},${businessLegalName}`);
+                  //   continue;
+                  // }
+                  // if (!isAlphabets(businessTradeName)) {
+                  //   console.error(`Invalid  Business Trade Name at row ${x + 1},${businessTradeName}`);
+                  //   continue;
+                  // }
 
 
                 // Push valid data to userData array
@@ -402,18 +433,18 @@ exports.importCustomer = async (req, res) => {
                     billingAddressLine2: response[x]['Billing AddressLine2'],
                     billingCity: response[x]['Billing City'],
                     // billingState: response[x]['Billing State'],
-                    billingPinCode: response[x]['Billing PinCode'],
-                    billingPhone: response[x]['Billing Phone'],
-                    billingFaxNumber: response[x]['Billing FaxNumber'],
+                    // billingPinCode: response[x]['Billing PinCode'],
+                    // billingPhone: response[x]['Billing Phone'],
+                    // billingFaxNumber: response[x]['Billing FaxNumber'],
                     shippingAttention: response[x]['Shipping Attention'],
                     // shippingCountry: response[x]['Shipping Country'],
                     shippingAddressLine1: response[x]['Shipping AddressLine1'],
                     shippingAddressLine2: response[x]['Shipping AddressLine2'],
                     shippingCity: response[x]['Shipping City'],
                     // shippingState: response[x]['Shipping State'],
-                    shippingPinCode: response[x]['Shipping PinCode'],
-                    shippingPhone: response[x]['Shipping Phone'],
-                    shippingFaxNumber: response[x]['Shipping FaxNumber'],
+                    // shippingPinCode: response[x]['Shipping PinCode'],
+                    // shippingPhone: response[x]['Shipping Phone'],
+                    // shippingFaxNumber: response[x]['Shipping FaxNumber'],
                     remark: response[x]['Remark'],
                     createdDate: openingDate,
                 });
