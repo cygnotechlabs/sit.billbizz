@@ -20,8 +20,6 @@ const Sort = ({ isOpen, onClose }: SortProps) => {
     { id: 3, name: "Email", visible: true },
     { id: 4, name: "Contact", visible: true },
     { id: 5, name: "Payables (BCY)", visible: false },
-    { id: 6, name: "Unused Credits (BCY)", visible: false },
-    { id: 7, name: "Payable Unused Credits", visible: false },
   ]);
 
   const handleCheckboxChange = (id: number) => {

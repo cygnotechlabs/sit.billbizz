@@ -1,89 +1,26 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import Button from "../../../Components/Button";
-import Upload from "../../../assets/icons/Upload";
-import Modal from "../../../Components/model/Modal";
-import PlusCircle from "../../../assets/icons/PlusCircle";
-import CirclePlus from "../../../assets/icons/circleplus";
-import CehvronDown from "../../../assets/icons/CehvronDown";
-import { endponits } from "../../../Services/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
-import useApi from "../../../Hooks/useApi";
-import { SupplierResponseContext } from "../../../context/ContextShare";
 import PhoneInput from "react-phone-input-2";
-import Trash2 from "../../../assets/icons/Trash2";
-import Globe from "../../../assets/icons/Globe";
+import Button from "../../../Components/Button";
+import Modal from "../../../Components/model/Modal";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
+import CehvronDown from "../../../assets/icons/CehvronDown";
 import Eye from "../../../assets/icons/Eye";
 import EyeOff from "../../../assets/icons/EyeOff";
+import Globe from "../../../assets/icons/Globe";
+import Pen from "../../../assets/icons/Pen";
+import PlusCircle from "../../../assets/icons/PlusCircle";
+import Trash2 from "../../../assets/icons/Trash2";
+import Upload from "../../../assets/icons/Upload";
+import { SupplierResponseContext } from "../../../context/ContextShare";
+import { SupplierData } from "./SupplierData";
 
-type Props = { page?: string };
-type SupplierData = {
-  organizationId: string;
-  salutation: string;
-  firstName: string;
-  lastName: string;
-  companyName: string;
-  supplierDisplayName: string;
-  supplierEmail: string;
-  workPhone: string;
-  mobile: string;
-  creditDays: string;
-  creditLimit: string;
-  interestPercentage: string;
-  pan: string;
-  currency: string;
-  openingBalance: string;
-  paymentTerms: string;
-  tds: string;
-  documents: string;
-  websiteURL: string;
-  department: string;
-  designation: string;
-  // taxType:""
-  gstTreatment: string;
-  gstinUin: string;
-  vatNumber: string;
-  sourceOfSupply: string;
-  msmeType: string;
-  msmeNumber: string;
-  msmeRegistered: boolean;
-  billingAttention: string;
-  billingCountry: string;
-  billingAddressStreet1: string;
-  billingAddressStreet2: string;
-  billingCity: string;
-  billingState: string;
-  billingPinCode: string;
-  billingPhone: string;
-  billingFaxNum: string;
-  shippingAttention: string;
-  shippingCountry: string;
-  shippingAddressStreet1: string;
-  shippingAddressStreet2: string;
-  shippingCity: string;
-  shippingState: string;
-  shippingPinCode: string;
-  shippingPhone: string;
-  shippingFaxNum: string;
+type Props = { supplier?:SupplierData |null};
 
-  contactPerson: {
-    salutation: string;
-    firstName: string;
-    lastName: string;
-    emailAddress: string;
-    workPhone: string;
-    mobile: string;
-  }[];
 
-  bankDetails: {
-    accountHolderName: string;
-    bankName: string;
-    accountNum: string;
-    ifscCode: string;
-  }[];
-  remarks: string;
-};
-
-const AddSupplierModal = ({ page }: Props) => {
+const EditSupplier = ({ supplier}: Props) => {
+  const {request:editSupplier}=useApi('put',5009)
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [countryData, setcountryData] = useState<any | []>([]);
   const [stateList, setStateList] = useState<any | []>([]);
@@ -93,23 +30,11 @@ const AddSupplierModal = ({ page }: Props) => {
   const [shippingstateList, setshippingStateList] = useState<any | []>([]);
   const [paymentTerms, setPaymentTerms] = useState<any | []>([]);
   const [activeTab, setActiveTab] = useState<string>("otherDetails");
-  const [placeOfSupplyList, setPlaceOfSupplyList] = useState<any | []>([]);
-  const [errors, setErrors] = useState({
-    firstName: false,
-    lastName: false,
-    companyName: false,
-    supplierDisplayName: false,
-    supplierEmail: false,
-    workPhone: false,
-    mobile: false,
-    billingCity: false,
-    billingPhone: false,
-  });
+  const [placeOfSupplyList,setPlaceOfSupplyList]=useState<any |[]>([])
   const { request: getCountryData } = useApi("get", 5004);
   const { request: getCurrencyData } = useApi("put", 5004);
-  const { request: CreateSupplier } = useApi("post", 5009);
   const { request: getPaymentTerms } = useApi("get", 5004);
-  const { request: getOrganization } = useApi("put", 5004);
+  const {request:getOrganization}=useApi("put",5004)
   const { request: getTax } = useApi("put", 5009);
   const { setsupplierResponse } = useContext(SupplierResponseContext)!;
   const [rows, setRows] = useState([
@@ -138,6 +63,7 @@ const AddSupplierModal = ({ page }: Props) => {
   };
 
   const [supplierdata, setSupplierData] = useState<SupplierData>({
+    _id:"",
     organizationId: "INDORG0001",
     salutation: "",
     firstName: "",
@@ -204,6 +130,12 @@ const AddSupplierModal = ({ page }: Props) => {
     ],
     remarks: "",
   });
+
+  useEffect(() => {
+    setSupplierData(prev => ({ ...prev, ...supplier }));
+  }, [supplier]);
+  console.log(supplierdata);
+  
   const [showAccountNumbers, setShowAccountNumbers] = useState(
     supplierdata.bankDetails.map(() => false)
   );
@@ -211,29 +143,25 @@ const AddSupplierModal = ({ page }: Props) => {
     supplierdata.bankDetails.map(() => false)
   );
 
-  // check account number
+// check account number
   const [reEnterAccountNumbers, setReEnterAccountNumbers] = useState(
     supplierdata.bankDetails.map(() => "")
   );
   const [isAccountNumberSame, setIsaccountNumbersame] = useState(
     supplierdata.bankDetails.map(() => true)
   );
-
-  const handleReEnterAccountNumberChange = (
-    index: number,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  
+  const handleReEnterAccountNumberChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const newReEnterAccountNumbers = [...reEnterAccountNumbers];
     newReEnterAccountNumbers[index] = e.target.value;
     setReEnterAccountNumbers(newReEnterAccountNumbers);
-
-    const isMatch =
-      supplierdata.bankDetails[index].accountNum === e.target.value;
+  
+    const isMatch = supplierdata.bankDetails[index].accountNum === e.target.value;
     const newIsAccountNumberSame = [...isAccountNumberSame];
     newIsAccountNumberSame[index] = isMatch;
     setIsaccountNumbersame(newIsAccountNumberSame);
   };
-
+  
   // add bank account
   const handleBankDetailsChange = (
     index: number,
@@ -255,6 +183,21 @@ const AddSupplierModal = ({ page }: Props) => {
       bankDetails: updatedBankDetails,
     }));
   };
+ 
+  const handleEditSupplier=async()=>{
+    try {
+      const url = `${endponits.EDIT_SUPPLIER}/${supplier?._id}`;
+      const { response, error } = await editSupplier(url,supplierdata);
+      if (!error && response) {
+        setsupplierResponse(response.data);
+        toast.success(response.data.message)
+        closeModal()
+        // setSupplier(response.data)
+      }
+    } catch (error) {
+      console.error("Error fetching suppliers:", error);
+    }
+  }
 
   //  bank details change
   useEffect(() => {
@@ -262,19 +205,19 @@ const AddSupplierModal = ({ page }: Props) => {
     setShowReEnterAccountNumbers(supplierdata.bankDetails.map(() => false));
   }, [supplierdata.bankDetails]);
 
-  const toggleShowAccountNumber = (index: number) => {
+  const toggleShowAccountNumber = (index:number) => {
     setShowAccountNumbers((prev) =>
       prev.map((item, i) => (i === index ? !item : item))
     );
   };
 
-  const toggleShowReEnterAccountNumber = (index: number) => {
+  const toggleShowReEnterAccountNumber = (index:number) => {
     setShowReEnterAccountNumbers((prev) =>
       prev.map((item, i) => (i === index ? !item : item))
     );
   };
 
-  // add new bank account
+// add new bank account
   const addNewBankAccount = () => {
     if (supplierdata.bankDetails.length < 6) {
       setSupplierData((prevState) => ({
@@ -339,7 +282,7 @@ const AddSupplierModal = ({ page }: Props) => {
     }));
   };
 
-  // handle sidebar
+  // handle sidebar 
   const getTabClassName = (tabName: string) => {
     return activeTab === tabName
       ? " cursor-pointer font-bold text-darkRed"
@@ -409,6 +352,7 @@ const AddSupplierModal = ({ page }: Props) => {
         // console.log(paymentTermResponse.data, "paymet terms");
       }
 
+      
       const CountryUrl = `${endponits.GET_COUNTRY_DATA}`;
       const { response: countryResponse, error: countryError } =
         await getCountryData(CountryUrl, { organizationId: "INDORG0001" });
@@ -424,7 +368,7 @@ const AddSupplierModal = ({ page }: Props) => {
     }
   };
 
-  const getAdditionalInfo = async () => {
+  const getAdditionalInfo=async()=>{
     try {
       const taxUrl = `${endponits.GET_TAX_SUPPLIER}`;
       const { response: taxResponse, error: taxError } = await getTax(taxUrl, {
@@ -440,133 +384,28 @@ const AddSupplierModal = ({ page }: Props) => {
       } else {
         console.log(taxError, "tax");
       }
-    } catch (error) {}
-  };
+
+    } catch (error) {
+      
+    }
+  }
   const getOneOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
       const { response, error } = await getOrganization(url, {
         organizationId: "INDORG0001",
       });
-
+ 
       if (!error && response?.data) {
         setOneOrganization(response.data);
         // console.log(response.data,"org");
+        
       }
     } catch (error) {
       console.error("Error fetching organization:", error);
     }
   };
 
-  //api call for add supplier
-  const handleSubmit = async () => {
-    // Validation logic before API call
-    const newErrors = { ...errors };
-    if (supplierdata.firstName === "") newErrors.firstName = true;
-    if (supplierdata.lastName === "") newErrors.lastName = true;
-    if (supplierdata.supplierEmail === "") newErrors.supplierEmail = true;
-    if (supplierdata.mobile === "") newErrors.mobile = true;
-    if (supplierdata.supplierDisplayName === "")
-      newErrors.supplierDisplayName = true;
-    if (supplierdata.companyName === "") newErrors.companyName = true;
-    if (supplierdata.workPhone === "") newErrors.workPhone = true;
-    if (supplierdata.billingCity === "") newErrors.billingCity = true;
-    if (supplierdata.billingPhone === "") newErrors.billingPhone = true;
-
-    if (Object.values(newErrors).some((error) => error)) {
-      setErrors(newErrors);
-      return;
-    }
-
-    try {
-      const url = `${endponits.ADD_SUPPLIER}`;
-      const { response, error } = await CreateSupplier(url, supplierdata);
-
-      if (response && !error) {
-        toast.success(response.data.message);
-
-        setModalOpen(false);
-        setsupplierResponse((prevSupplierResponse: any) => ({
-          ...prevSupplierResponse,
-          supplierdata,
-        }));
-
-        setSupplierData({
-          organizationId: "INDORG0001",
-          salutation: "",
-          firstName: "",
-          lastName: "",
-          companyName: "",
-          supplierDisplayName: "",
-          supplierEmail: "",
-          workPhone: "",
-          mobile: "",
-          creditDays: "",
-          creditLimit: "",
-          interestPercentage: "",
-          pan: "",
-          currency: "",
-          openingBalance: "",
-          paymentTerms: "",
-          tds: "",
-          documents: "",
-          websiteURL: "",
-          department: "",
-          designation: "",
-          gstTreatment: "",
-          gstinUin: "",
-          sourceOfSupply: "",
-          vatNumber: "",
-          msmeType: "",
-          msmeNumber: "",
-          msmeRegistered: false,
-          billingAttention: "",
-          billingCountry: "",
-          billingAddressStreet1: "",
-          billingAddressStreet2: "",
-          billingCity: "",
-          billingState: "",
-          billingPinCode: "",
-          billingPhone: "",
-          billingFaxNum: "",
-          shippingAttention: "",
-          shippingCountry: "",
-          shippingAddressStreet1: "",
-          shippingAddressStreet2: "",
-          shippingCity: "",
-          shippingState: "",
-          shippingPinCode: "",
-          shippingPhone: "",
-          shippingFaxNum: "",
-          contactPerson: [
-            {
-              salutation: "",
-              firstName: "",
-              lastName: "",
-              emailAddress: "",
-              workPhone: "",
-              mobile: "",
-            },
-          ],
-          bankDetails: [
-            {
-              accountHolderName: "",
-              bankName: "",
-              accountNum: "",
-              ifscCode: "",
-            },
-          ],
-          remarks: "",
-        });
-      } else {
-        toast.error(error.response?.data?.message || error.message);
-        console.error("Error creating supplier:", error);
-      }
-    } catch (error) {
-      console.error("Unexpected error:", error);
-      toast.error("An unexpected error occurred. Please try again.");
-    }
-  };
 
   // compy billing address
   const handleCopyAddress = (e: any) => {
@@ -588,17 +427,15 @@ const AddSupplierModal = ({ page }: Props) => {
   // handle place od supply
   const handleplaceofSupply = () => {
     if (oneOrganization.organizationCountry) {
-      const country = countryData.find(
-        (c: any) =>
-          c.name.toLowerCase() ===
-          oneOrganization.organizationCountry.toLowerCase()
+      const country = countryData.find((c: any) =>
+        c.name.toLowerCase() === oneOrganization.organizationCountry.toLowerCase()
       );
-
+  
       if (country) {
         const states = country.states;
         // console.log("States:", states);
-
-        setPlaceOfSupplyList(states);
+  
+        setPlaceOfSupplyList(states); 
       } else {
         console.log("Country not found");
       }
@@ -606,12 +443,13 @@ const AddSupplierModal = ({ page }: Props) => {
       console.log("No country selected");
     }
   };
+  
 
   // console.log(placeOfSupplyList,"place");
-
-  // handle country and state
+  
+  // handle country and state 
   useEffect(() => {
-    handleplaceofSupply();
+    handleplaceofSupply()
     if (supplierdata.billingCountry) {
       const country = countryData.find(
         (c: any) => c.name === supplierdata.billingCountry
@@ -633,39 +471,16 @@ const AddSupplierModal = ({ page }: Props) => {
 
   useEffect(() => {
     getAdditionalData();
-    getAdditionalInfo();
-    getOneOrganization();
+    getAdditionalInfo()
+    getOneOrganization()
   }, []);
+
 
   return (
     <div>
-      {page && page == "purchase" ? (
-        <div
-          className="w-[100%] flex col-span-10  px-4  justify-between"
-          onClick={openModal}
-        >
-          <div className="flex items-center  space-x-1">
-            <CirclePlus color="darkRed" size="18" />
-
-            <p className="text-[#820000] text-sm">
-              <b>Add new Supplier</b>
-            </p>
-          </div>
-          <div className=" col-span-2 text-end text-2xl cursor-pointer relative ">
-            &times;
-          </div>
-        </div>
-      ) : (
-        <Button
-          onClick={openModal}
-          variant="primary"
-          className="flex items-center"
-          size="xl"
-        >
-          <PlusCircle color="white" />{" "}
-          <p className="text-sm font-medium">Add Supplier</p>
-        </Button>
-      )}
+      
+        <Button onClick={openModal} variant="secondary" className="pl-6 pr-6"  size="sm"><Pen size={18} color="#565148" /> <p className="text-sm font-medium">Edit</p></Button>
+    
 
       <Modal
         open={isModalOpen}
@@ -678,7 +493,7 @@ const AddSupplierModal = ({ page }: Props) => {
             <div className="mb-5 flex p-2 rounded-xl bg-CreamBg relative overflow-hidden items-center">
               <div className="relative ">
                 <h3 className="text-lg font-bold text-textColor">
-                  Add Supplier
+                  Edit Supplier
                 </h3>
               </div>
               <div
@@ -723,55 +538,31 @@ const AddSupplierModal = ({ page }: Props) => {
 
                 <div className="grid grid-cols-2 col-span-10 gap-4 ">
                   <div>
-                    <label htmlFor="firstName" className="text-slate-600">
+                    <label htmlFor="" className="text-slate-600">
                       First Name
                     </label>
                     <input
-                      required
                       type="text"
                       name="firstName"
-                      className="pl-3 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                      className="pl-3 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                       placeholder="Enter First Name"
                       value={supplierdata.firstName}
                       onChange={handleChange}
-                      onFocus={() => setErrors({ ...errors, firstName: false })}
-                      onBlur={() => {
-                        if (supplierdata.firstName === "") {
-                          setErrors({ ...errors, firstName: true });
-                        }
-                      }}
                     />
-                    {errors.firstName && (
-                      <div className="text-red-800 text-xs ms-2 mt-1">
-                        Enter First Name
-                      </div>
-                    )}
                   </div>
 
                   <div>
-                    <label htmlFor="lastName" className="text-slate-600">
+                    <label htmlFor="" className="text-slate-600">
                       Last Name
                     </label>
                     <input
-                      required
                       type="text"
                       name="lastName"
-                      className="pl-3 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                      className="pl-3 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]  "
                       placeholder="Enter Last Name"
                       value={supplierdata.lastName}
                       onChange={handleChange}
-                      onFocus={() => setErrors({ ...errors, lastName: false })}
-                      onBlur={() => {
-                        if (supplierdata.lastName === "") {
-                          setErrors({ ...errors, lastName: true });
-                        }
-                      }}
                     />
-                    {errors.lastName && (
-                      <div className="text-red-800 text-xs ms-2 mt-1">
-                        Enter Last Name
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -780,79 +571,36 @@ const AddSupplierModal = ({ page }: Props) => {
                 <div>
                   <label htmlFor="">Company Name </label>
                   <input
-                    required
                     type="text"
                     name="companyName"
                     className="pl-3 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Company Name"
                     value={supplierdata.companyName}
                     onChange={handleChange}
-                    onFocus={() => setErrors({ ...errors, companyName: false })}
-                    onBlur={() => {
-                      if (supplierdata.companyName === "") {
-                        setErrors({ ...errors, companyName: true });
-                      }
-                    }}
                   />
-                  {errors.companyName && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter Company Name
-                    </div>
-                  )}
                 </div>
                 <div>
                   <label htmlFor="companyName">Supplier Display Name </label>
                   <input
-                    required
+                    // required
                     type="text"
                     name="supplierDisplayName"
                     className="pl-3 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Display Name"
                     value={supplierdata.supplierDisplayName}
                     onChange={handleChange}
-                    onFocus={() =>
-                      setErrors({ ...errors, supplierDisplayName: false })
-                    }
-                    onBlur={() => {
-                      if (supplierdata.supplierDisplayName === "") {
-                        setErrors({ ...errors, supplierDisplayName: true });
-                      }
-                    }}
                   />
-                  {errors.supplierDisplayName && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter Supplier Display Name
-                    </div>
-                  )}
                 </div>
                 <div>
                   <label htmlFor="">Supplier Email</label>
                   <input
-                    required
-                    type="email"
+                    type="text"
                     name="supplierEmail"
                     className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Email"
                     value={supplierdata.supplierEmail}
                     onChange={handleChange}
-                    onFocus={() =>
-                      setErrors({ ...errors, supplierEmail: false })
-                    }
-                    onBlur={() => {
-                      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                      if (
-                        supplierdata.supplierEmail === "" ||
-                        !emailPattern.test(supplierdata.supplierEmail)
-                      ) {
-                        setErrors({ ...errors, supplierEmail: true });
-                      }
-                    }}
                   />
-                  {errors.supplierEmail && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter a valid Email
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -860,58 +608,24 @@ const AddSupplierModal = ({ page }: Props) => {
                 <div>
                   <label htmlFor="">Work Phone</label>
                   <input
-                    required
-                    type="tel"
+                    type="text"
                     name="workPhone"
                     className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Work Phone "
                     value={supplierdata.workPhone}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^\d*$/.test(value)) {
-                        handleChange(e);
-                      }
-                    }}
-                    onFocus={() => setErrors({ ...errors, workPhone: false })}
-                    onBlur={() => {
-                      if (supplierdata.workPhone === "") {
-                        setErrors({ ...errors, workPhone: true });
-                      }
-                    }}
+                    onChange={handleChange}
                   />
-                  {errors.workPhone && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter Work Phone
-                    </div>
-                  )}
                 </div>
                 <div>
                   <label htmlFor="">Mobile</label>
                   <input
-                    required
-                    type="tel"
+                    type="text"
                     name="mobile"
                     className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Mobile Number"
                     value={supplierdata.mobile}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^\d*$/.test(value)) {
-                        handleChange(e);
-                      }
-                    }}
-                    onFocus={() => setErrors({ ...errors, mobile: false })}
-                    onBlur={() => {
-                      if (supplierdata.mobile === "") {
-                        setErrors({ ...errors, mobile: true });
-                      }
-                    }}
+                    onChange={handleChange}
                   />
-                  {errors.mobile && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter Mobile
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -1054,16 +768,12 @@ const AddSupplierModal = ({ page }: Props) => {
                                 {" "}
                                 Select a Tax
                               </option>
-                              {gstOrVat.tds &&
-                                gstOrVat.tds.map((item: any, index: number) => (
-                                  <option
-                                    key={index}
-                                    value={`${item.name}-${item.value}%`}
-                                    className="text-gray"
-                                  >
-                                    {item.name} - ({item.value}%)
-                                  </option>
-                                ))}
+                              {gstOrVat.tds && gstOrVat.tds.map((item: any, index: number) => (
+  <option key={index} value={`${item.name}-${item.value}%`} className="text-gray">
+    {item.name} - ({item.value}%)
+  </option>
+))}
+
                             </select>
                             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                               <CehvronDown color="gray" />
@@ -1215,18 +925,9 @@ const AddSupplierModal = ({ page }: Props) => {
                                     {" "}
                                     slecet
                                   </option>
-                                  {placeOfSupplyList.length > 0 &&
-                                    placeOfSupplyList.map(
-                                      (item: any, index: number) => (
-                                        <option
-                                          key={index}
-                                          value={item}
-                                          className="text-gray"
-                                        >
-                                          {item}
-                                        </option>
-                                      )
-                                    )}
+                                 {placeOfSupplyList.length>0&& placeOfSupplyList.map((item:any,index:number)=><option key={index} value={item} className="text-gray">
+                                   {item}
+                                  </option>) }
                                 </select>
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                   <CehvronDown color="gray" />
@@ -1298,12 +999,11 @@ const AddSupplierModal = ({ page }: Props) => {
                             <label htmlFor="" className="mb-1 block">
                               MSME/Udyam Registration Type
                             </label>
-                            <select
-                              value={supplierdata.msmeType}
-                              name="msmeType"
-                              onChange={handleChange}
-                              className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder text-sm  pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            >
+                            <select 
+                            value={supplierdata.msmeType}
+                            name="msmeType"
+                           onChange={handleChange} 
+                            className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder text-sm  pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                               <option value="" className="text-gray">
                                 {" "}
                                 Select the Registration Type
@@ -1430,20 +1130,7 @@ const AddSupplierModal = ({ page }: Props) => {
                               name="billingCity"
                               value={supplierdata.billingCity}
                               onChange={handleChange}
-                              onFocus={() =>
-                                setErrors({ ...errors, billingCity: false })
-                              }
-                              onBlur={() => {
-                                if (supplierdata.billingCity === "") {
-                                  setErrors({ ...errors, billingCity: true });
-                                }
-                              }}
                             />
-                            {errors.billingCity && (
-                              <div className="text-red-800 text-xs ms-2 mt-1">
-                                Enter Billing City
-                              </div>
-                            )}
                           </div>
 
                           <div className="relative ">
@@ -1521,28 +1208,7 @@ const AddSupplierModal = ({ page }: Props) => {
                                 onChange={(value) =>
                                   handleBillingPhoneChange(value)
                                 }
-                                onBlur={() => {
-                                  if (
-                                    !supplierdata.billingPhone ||
-                                    supplierdata.billingPhone.length < 10
-                                  ) {
-                                    setErrors({
-                                      ...errors,
-                                      billingPhone: true,
-                                    });
-                                  } else {
-                                    setErrors({
-                                      ...errors,
-                                      billingPhone: false,
-                                    });
-                                  }
-                                }}
                               />
-                              {errors.billingPhone && (
-                                <div className="text-red-800 text-xs ms-2 mt-1">
-                                  Enter a valid phone number
-                                </div>
-                              )}
                             </div>
                           </div>
                           <div className="relative w-full">
@@ -1984,34 +1650,26 @@ const AddSupplierModal = ({ page }: Props) => {
                                   Account Number
                                 </label>
                                 <div className="relative">
-                                  <input
-                                    type={
-                                      showAccountNumbers[index]
-                                        ? "text"
-                                        : "password"
-                                    }
-                                    name="accountNum"
-                                    className="text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-                                    placeholder="Enter Account Number"
-                                    value={bankDetail.accountNum}
-                                    onChange={(e) =>
-                                      handleBankDetailsChange(index, e)
-                                    }
-                                  />
-                                  <button
-                                    type="button"
-                                    className="absolute right-2 top-2 text-sm text-gray-600"
-                                    onClick={() =>
-                                      toggleShowAccountNumber(index)
-                                    }
-                                  >
-                                    {showAccountNumbers[index] ? (
-                                      <Eye color={"currentColor"} />
-                                    ) : (
-                                      <EyeOff />
-                                    )}
-                                  </button>
-                                </div>
+                <input
+                  type={showAccountNumbers[index] ? "text" : "password"}
+                  name="accountNum"
+                  className="text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                  placeholder="Enter Account Number"
+                  value={bankDetail.accountNum}
+                  onChange={(e) => handleBankDetailsChange(index, e)}
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-2 text-sm text-gray-600"
+                  onClick={() => toggleShowAccountNumber(index)}
+                >
+                  {showAccountNumbers[index] ? (
+                    <Eye color={"currentColor"} />
+                  ) : (
+                    <EyeOff />
+                  )}
+                </button>
+              </div>
                               </div>
                               <div>
                                 <label className="block mb-1">IFSC Code</label>
@@ -2030,43 +1688,31 @@ const AddSupplierModal = ({ page }: Props) => {
                                 <label className="block mb-1">
                                   Re-Enter Account Number
                                 </label>
-
+                                
                                 <div className="relative">
-                                  <input
-                                    type={
-                                      showReEnterAccountNumbers[index]
-                                        ? "text"
-                                        : "password"
-                                    }
-                                    name="reAccountNum"
-                                    className="text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-                                    placeholder="Re-Enter Account Number"
-                                    value={reEnterAccountNumbers[index]}
-                                    onChange={(e) =>
-                                      handleReEnterAccountNumberChange(index, e)
-                                    }
-                                  />
-                                  <button
-                                    type="button"
-                                    className="absolute right-2 top-2 text-sm text-gray-600"
-                                    onClick={() =>
-                                      toggleShowReEnterAccountNumber(index)
-                                    }
-                                  >
-                                    {showReEnterAccountNumbers[index] ? (
-                                      <Eye color={"currentColor"} />
-                                    ) : (
-                                      <EyeOff />
-                                    )}
-                                  </button>
-                                </div>
-                                {supplierdata.bankDetails[index].accountNum &&
-                                  reEnterAccountNumbers[index] &&
-                                  !isAccountNumberSame[index] && (
-                                    <p className="text-sm text-red-600">
-                                      Account number does not match
-                                    </p>
-                                  )}
+                <input
+                  type={showReEnterAccountNumbers[index] ? "text" : "password"}
+                  name="reAccountNum"
+                  className="text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                  placeholder="Re-Enter Account Number"
+                  value={reEnterAccountNumbers[index]}
+                  onChange={(e) => handleReEnterAccountNumberChange(index, e)}
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-2 text-sm text-gray-600"
+                  onClick={() => toggleShowReEnterAccountNumber(index)}
+                >
+                  {showReEnterAccountNumbers[index] ? (
+                    <Eye color={"currentColor"} />
+                  ) : (
+                    <EyeOff />
+                  )}
+                </button>
+              </div>
+              {supplierdata.bankDetails[index].accountNum && reEnterAccountNumbers[index] && !isAccountNumberSame[index] && (
+            <p className="text-sm text-red-600">Account number does not match</p>
+          )}
                               </div>
                             </div>
                           </>
@@ -2106,7 +1752,7 @@ const AddSupplierModal = ({ page }: Props) => {
             <Button onClick={closeModal} variant="secondary" size="lg">
               Cancel
             </Button>
-            <Button onClick={handleSubmit} variant="primary" size="lg">
+            <Button onClick={handleEditSupplier} variant="primary" size="lg">
               Save
             </Button>
           </div>
@@ -2117,4 +1763,4 @@ const AddSupplierModal = ({ page }: Props) => {
   );
 };
 
-export default AddSupplierModal;
+export default EditSupplier;
