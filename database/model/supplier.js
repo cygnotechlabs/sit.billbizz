@@ -35,9 +35,7 @@ const supplierSchema = new Schema({
     mobile: {type:String},
     createdDate: {type:String},
     lastModifiedDate:{type:String},
-    creditDays:{type:String},
-    creditLimit:{type:String},
-    interestPercentage:{type:String},
+    
 
 
     //Other Details
@@ -46,6 +44,9 @@ const supplierSchema = new Schema({
     openingBalance: {type:String},
     paymentTerms: {type:String},
     tds: {type:String},
+    creditDays :{type:Number},
+    creditLimit :{type:Number},
+    InterestPercentage :{type:Number},
     documents: {type:String},
     websiteURL: {type:String},
     department: {type:String},
@@ -53,18 +54,22 @@ const supplierSchema = new Schema({
     
 
     //Tax
+    taxType:{type:String},
     gstTreatment: {type:String},
     gstin_uin: {type:String},
     sourceOfSupply: {type:String},
+    businessLegalName: {type:String},
+    businessTradeName: {type:String},
     msmeType: {type:String},
     msmeNumber: {type:String},
-    msmeRegistered:{type:String},
-
+    msmeRegistered:{type:Boolean},
+    vatNumber: {type:String},
 
     // Billing Address
     billingAttention: {type:String},
     billingCountry: {type:String},
-    billingAddress: {type:String},
+    billingAddressStreet1: {type:String},
+    billingAddressStreet2:{type:String},
     billingCity: {type:String},
     billingState: {type:String},
     billingPinCode: {type:String},
@@ -74,7 +79,8 @@ const supplierSchema = new Schema({
     // Shipping Address
     shippingAttention: {type:String},
     shippingCountry: {type:String},
-    shippingAddress: {type:String},
+    shippingAddressStreet1: {type:String},
+    shippingAddressStreet2:{type:String},
     shippingCity: {type:String},
     shippingState: {type:String},
     shippingPinCode: {type:String},

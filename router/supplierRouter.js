@@ -5,6 +5,7 @@ const router = new express.Router()
 //supplier
 const supplierController = require('../controller/supplierController');
 
+const importController = require('../controller/importSupplier')
 
 // supplier
 router.post('/add-suppliers', supplierController.addSupplier);
@@ -12,8 +13,9 @@ router.put('/get-all-supplier', supplierController.getAllSuppliers);
 router.get('/get-supplier/:id', supplierController.getASupplier);
 router.put('/update-supplier/:id', supplierController.updateSupplier);
 router.put('/update-supplier-status/:supplierId' ,supplierController.updateSupplierStatus)
-router.put('/customer-additional-data', supplierController.getSupplierAdditionalData);
+router.put('/supplier-additional-data', supplierController.getSupplierAdditionalData);
 
+router.post('/import-supplier',importController.importSupplier);
 
 
 // router.delete('/delete-supplier/:id', supplierController.deleteSupplier);
