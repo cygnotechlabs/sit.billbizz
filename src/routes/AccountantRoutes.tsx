@@ -8,6 +8,7 @@ import ManualHome from "../features/accountant/manualJournel/ManualHome";
 import ManualView from "../features/accountant/manualJournel/ManualView";
 import NewJournal from "../features/accountant/manualJournel/newJournal/NewJournal";
 import Accountant from "../pages/Accountant";
+import AccountantInfo from "../features/accountant/accountantInfo/AccountantInfo";
 
 const AccountantRoutes: RouteObject[] = [
   { path: "/accountant", element: <Accountant /> },
@@ -19,6 +20,8 @@ const AccountantRoutes: RouteObject[] = [
   { path: "/accountant/bank", element: <BankHome /> },
   { path: "/accountant/bank/account-view", element: <BankAccountView /> },
   { path: "/accountant/chart-OF-accountant", element: <ChartOfAccountant /> },
+  { path: "/accountant/info", element: <AccountantInfo /> },
+
 ];
 
 export default AccountantRoutes;
