@@ -80,7 +80,7 @@ const SupplierTable = () => {
     if (colId === "supplierDetails") {
       return (
         <div className="flex justify-center">
-          <Link to={`/supplier/view/${item._id}`}>
+          <Link to={`/supplier/view`}>
             <Button
               variant="secondary"
               className="font-medium rounded-lg h-[1rem] text-[9.5px]"
@@ -93,8 +93,7 @@ const SupplierTable = () => {
     }
     return item[colId as keyof Supplier];
   };
-  console.log("filter",filteredAccounts);
-  
+ 
   return (
     <div>
       <div className="flex items-center justify-between">

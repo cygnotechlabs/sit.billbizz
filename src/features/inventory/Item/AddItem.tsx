@@ -8,13 +8,12 @@ import Button from "../../../Components/Button";
 import SearchBar from "../../../Components/SearchBar";
 import BrandModal from "../Brand/BrandModal";
 import SettingsIcons from "../../../assets/icons/SettingsIcon";
-import Category from "../Category/Category";
 import RackModal from "../Rack/RackModal";
 import NewManufacture from "../Manufature/NewManufacture";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
-
+import CategoryModal from "../Category/CategoryModal"
 type Props = {};
 interface Account {
   id: string;
@@ -28,14 +27,31 @@ interface ItemSettings {
 }
 
 interface ItemsData {
-  manufacturerName: string[];
-  brandName: string[];
-  categoriesName: string[];
-  rackName: string[];
+  bmcrData: {
+    brands: Brand[];
+    manufacturers: Manufacturer[];
+    categories: Category[];
+    racks: Rack[];
+  };
   taxRate: TaxRate[];
   unitName: string[];
   organization: baseCurrency;
   itemSettings?: ItemSettings;
+}
+interface Brand {
+  brandName: string;
+}
+
+interface Manufacturer {
+  manufacturerName: string;
+}
+
+interface Category {
+  categoryName: string;
+}
+
+interface Rack {
+  rackName: string;
 }
 interface TaxRate {
   taxName: string;
@@ -124,10 +140,12 @@ const AddItem = ({}: Props) => {
   };
 
   const [itemsData, setItemsData] = useState<ItemsData>({
-    manufacturerName: [],
-    brandName: [],
-    categoriesName: [],
-    rackName: [],
+    bmcrData: {
+      brands: [{ brandName: "" }],
+      manufacturers: [{ manufacturerName: "" }],
+      categories: [{ categoryName: "" }],
+      racks: [{ rackName: "" }]
+    },
     taxRate: [],
     unitName: [],
     organization: { baseCurrency: "" },
@@ -141,8 +159,7 @@ const AddItem = ({}: Props) => {
       const { response, error } = await AllItems(url, body);
       if (!error && response) {
         setItemsData(response.data);
-        console.log(response.data);
-        
+        console.log(response.data,"As");
       }
     } catch (error) {
       console.error("Error fetching items:", error);
@@ -731,7 +748,7 @@ const AddItem = ({}: Props) => {
                       placeholder="Select Manufacturer"
                       />
                       </div>
-                    {itemsData.manufacturerName
+                    {itemsData.bmcrData.manufacturers.map(item=>item.manufacturerName)
                       .filter((manufacturer: string) =>
                         manufacturer.toLowerCase().includes(searchValueManufacturer.toLowerCase())
                       )
@@ -794,7 +811,7 @@ const AddItem = ({}: Props) => {
                       placeholder="Select Brand"
                       />
                       </div>
-                    {itemsData.brandName
+                    {itemsData.bmcrData.brands.map(item=>item.brandName)
                       .filter((brand: string) =>
                         brand.toLowerCase().includes(searchValueBrand.toLowerCase())
                       )
@@ -857,7 +874,7 @@ const AddItem = ({}: Props) => {
                   placeholder="Select Category"
                   />
                   </div>
-                {itemsData.categoriesName
+                {itemsData.bmcrData.categories.map(item=>item.categoryName)
                   .filter((category: string) =>
                     category.toLowerCase().includes(searchValueCategory.toLowerCase())
                   )
@@ -919,7 +936,7 @@ const AddItem = ({}: Props) => {
                     placeholder="Select Rack"
                     />
                     </div>
-                  {itemsData.rackName
+                  {itemsData.bmcrData.racks.map(item=>item.rackName)
                     .filter((rack: string) =>
                       rack.toLowerCase().includes(searchValueRack.toLowerCase())
                     )
@@ -1413,8 +1430,8 @@ const AddItem = ({}: Props) => {
       {isBrandModalOpen && (
         <BrandModal ref={modalRef} onClose={() => setIsBrandModalOpen(false)} />
       )}
-      {isCategoryModalOpen && (
-        <Category
+     {isCategoryModalOpen && (
+        <CategoryModal
           isOpen={isCategoryModalOpen}
           onClose={() => setIsCategoryModalOpen(false)}
         />
