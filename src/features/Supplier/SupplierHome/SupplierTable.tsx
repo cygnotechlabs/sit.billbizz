@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SupplierColumn from "./SupplierColumn";
 import Button from "../../../Components/Button";
 import { Link } from "react-router-dom";
@@ -7,6 +7,7 @@ import SearchBar from "../../../Components/SearchBar";
 import SortBy from "./SortBy";
 import Print from "../../sales/salesOrder/Print";
 import { endponits } from "../../../Services/apiEndpoints";
+import { SupplierResponseContext } from "../../../context/ContextShare";
  
 interface Column {
   id: string;
@@ -15,7 +16,7 @@ interface Column {
 }
  
 interface Supplier {
-  id: string;
+  _id: string;
   billingAttention: string;
   companyName: string;
   mobile: string;
@@ -28,7 +29,7 @@ interface Supplier {
  
 const SupplierTable = () => {
   const initialColumns: Column[] = [
-    { id: "billingAttention", label: "Name", visible: true },
+    { id: "supplierDisplayName", label: "Name", visible: true },
     { id: "companyName", label: "Company Name", visible: true },
     { id: "mobile", label: "Mobile", visible: true },
     { id: "supplierEmail", label: "Email", visible: true },
@@ -43,7 +44,8 @@ const SupplierTable = () => {
   const [supplierData, setSupplierData] = useState<Supplier[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
   const { request: AllSuppliers } = useApi("put", 5009);
- 
+  const {supplierResponse}=useContext(SupplierResponseContext)!;
+
   const fetchAllSuppliers = async () => {
     try {
       const url = `${endponits.GET_ALL_SUPPLIER}`;
@@ -60,7 +62,7 @@ const SupplierTable = () => {
  
   useEffect(() => {
     fetchAllSuppliers();
-  }, []);
+  }, [supplierResponse]);
  
   const filteredAccounts = supplierData.filter((account) => {
     const searchValueLower = searchValue.toLowerCase();
@@ -147,6 +149,7 @@ const SupplierTable = () => {
                       </td>
                     )
                 )}
+                <td className="py-2.5 px-4 border-y border-tableBorder"></td>
               </tr>
             ))}
           </tbody>
