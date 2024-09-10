@@ -215,6 +215,7 @@ exports.importCustomer = async (req, res) => {
               }
             
             let userData = [];
+            let insertedCustomers = [];
             
 
             for (let x = 0; x < response.length; x++) {
@@ -447,12 +448,37 @@ exports.importCustomer = async (req, res) => {
                     // shippingFaxNumber: response[x]['Shipping FaxNumber'],
                     remark: response[x]['Remark'],
                     createdDate: openingDate,
+                    status: "Active"
                 });
             }
             
-            if (userData.length > 0) {
-                await Customer.insertMany(userData);
+            if (userData.length > 0) {                
+                insertedCustomers = await Customer.insertMany(userData);
             }
+  
+            for (let x = 0; x < insertedCustomers.length; x++) {  
+              //console.log(insertedCustomers[x]);
+                                    
+                        // Create a new Customer Account
+                        const newAccount = new Account({
+                          organizationId,
+                          accountName: insertedCustomers[x].customerDisplayName,
+                          accountCode: insertedCustomers[x]._id,
+
+                          accountSubhead: "Sundry Debtors",
+                          accountHead: "Asset",
+                          accountGroup: "Asset",
+
+                          openingBalance: insertedCustomers[x].openingBalance,
+                          openingBalanceDate: openingDate,
+                          description: "Customer",
+                        });
+
+                        await newAccount.save();                
+                        
+
+            }
+            console.log("Customer & Account created successfully");
             
             res.status(200).send({ success: true, msg: 'Customer XLSX Extracted Successfully' });
           }

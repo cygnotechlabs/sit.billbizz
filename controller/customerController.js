@@ -317,19 +317,77 @@ exports.addCustomer = async (req, res) => {
     if (!isInteger(billingPinCode)) {
       return res
         .status(400)
-        .json({ message: `Invalid Billing Phone Number fields :${billingPhone}` });
+        .json({ message: `Invalid Billing Pin Code Number fields :${billingPhone}` });
     }
     if (!isInteger(billingPhone)) {
+      return res
+        .status(400)
+        .json({ message: `Invalid Billing Phone Number fields :${billingPhone}` });
+    }    
+    if (!isInteger(billingFaxNumber)) {
       return res
         .status(400)
         .json({ message: `Invalid Billing Fax Number fields:${billingFaxNumber}` });
     }
 
-    // if (websiteURL && !isValidUrl(websiteURL)) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: `Invalid website URL: ${websiteURL}` });
-    // }
+    if (!isInteger(shippingPinCode)) {
+      return res
+        .status(400)
+        .json({ message: `Invalid Shipping Pin Code Number fields :${shippingPinCode}` });
+    }
+    if (!isInteger(shippingPhone)) {
+      return res
+        .status(400)
+        .json({ message: `Invalid Shipping Phone Number fields :${shippingPhone}` });
+    }    
+    if (!isInteger(shippingFaxNumber)) {
+      return res
+        .status(400)
+        .json({ message: `Invalid Shipping Fax Number fields:${shippingFaxNumber}` });
+    }
+    
+    if (!validTaxTypes.includes(taxType)) {
+      return res
+        .status(400)
+        .json({ message: `Invalid Tax Type: ${taxType}` });
+    }
+
+
+
+    if (taxType === "GST") {                  
+      if (!validGSTTreatments.includes(gstTreatment)) {
+        return res
+        .status(400)
+        .json({ message: `Invalid GST treatment: ${x + 1},${gstTreatment}` });        
+      }
+
+      if (!isAlphanumeric(gstinUin)) {
+        return res
+        .status(400)
+        .json({ message: `Invalid GSTIN/UIN: ${gstinUin}` });          
+      }
+  } else if (taxType === "VAT") {
+      if (!isAlphanumeric(vatNumber)) {
+        return res
+        .status(400)
+        .json({ message: `Invalid VAT number: ${vatNumber}` });          
+      }
+  } else if (taxType === "None") {
+    gstTreatment = undefined;
+    gstinUin = undefined;
+    vatNumber = undefined;                    
+}
+
+
+if (!validCountries[billingCountry].includes(placeOfSupply)) {
+  return res
+        .status(400)
+        .json({ message: `Invalid Place of Supply: ${placeOfSupply}` });  
+}
+
+
+
+    
 
     //Check if customer with the same email already exists in the organization
     const existingCustomer = await Customer.findOne({
