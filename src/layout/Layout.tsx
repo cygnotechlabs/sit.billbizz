@@ -3,11 +3,10 @@ import Header from "./Header/Header";
 import SideBar from "./SideBar/SideBar";
 import SubHeader from "./SubHeader/SubHeader";
 import { Outlet, useLocation } from "react-router-dom";
-
 type Props = {
   children: React.ReactNode;
 };
-
+ 
 const Layout = ({}: Props) => {
   const location=useLocation()
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -27,5 +26,5 @@ const Layout = ({}: Props) => {
     </div>
   );
 };
-
+ 
 export default Layout;
