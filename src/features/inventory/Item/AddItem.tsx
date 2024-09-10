@@ -159,9 +159,7 @@ const AddItem = ({}: Props) => {
       const { response, error } = await AllItems(url, body);
       if (!error && response) {
         setItemsData(response.data);
-        console.log(response.data);
-        
-        
+        console.log(response.data,"As");
       }
     } catch (error) {
       console.error("Error fetching items:", error);
