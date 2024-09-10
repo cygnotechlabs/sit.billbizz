@@ -3,7 +3,6 @@ import Header from "./Header/Header";
 import SideBar from "./SideBar/SideBar";
 import SubHeader from "./SubHeader/SubHeader";
 import { Outlet, useLocation } from "react-router-dom";
- 
 type Props = {
   children: React.ReactNode;
 };

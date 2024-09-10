@@ -5,7 +5,7 @@ import EyeIcon from "../../assets/icons/EyeIcon";
 import HandShakeIcon from "../../assets/icons/HandShakeIcon";
 import PackageIcon from "../../assets/icons/PackageIcon";
 import BrandModal from "../../features/inventory/Brand/BrandModal";
-import Category from "../../features/inventory/Category/Category";
+import Category from "../../features/inventory/Category/CategoryModal";
 import NewManufature from "../../features/inventory/Manufature/NewManufacture";
 import RackModal from "../../features/inventory/Rack/RackModal";
 
