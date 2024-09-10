@@ -4,10 +4,7 @@ const router = new express.Router()
 
 const itemController = require("../controller/itemController");
 const unitController = require("../controller/unitController")
-const manufacturerController = require("../controller/manufacturerController");
-const categoriesController = require("../controller/categoriesController")
-const brandController = require('../controller/brandController')
-const rackController = require('../controller/rackController')
+const bmcrController = require('../controller/bmcrController');
 const itemDropdownController = require("../controller/itemDropdownController")
 const itemSettingsController = require("../controller/itemSettingsController")
 
@@ -36,42 +33,18 @@ router.delete('/delete-unit/:id', unitController.deleteUnit);
 // router.delete('/delete-unitConversion/:id', unitController.deleteUnitConversion);
 
 
-//manufacturer
-router.post('/add-manufacturer', manufacturerController.addManufacturer);
-router.put('/get-all-manufacturer', manufacturerController.getAllManufacturer)
-router.get('/get-one-manufacturer/:id',manufacturerController.getAManufacturer)
-router.put('/update-manufacturer', manufacturerController.updateManufacturer)
-router.delete('/delete-manufacturer/:id',manufacturerController.deletedManufacturer)
 
-
-//category
-router.post('/add-category', categoriesController.addCategory)
-router.put('/get-all-category' , categoriesController.getAllCategories)
-router.get('/get-one-category/:id' , categoriesController.getACategory)
-router.put("/update-category" , categoriesController.updateCategory)
-router.delete("/delete-category/:id", categoriesController.deleteCategory)
-
-
-//brand
-router.post('/add-brand', brandController.addBrand);
-router.put('/get-all-brands', brandController.getAllBrands);
-router.get('/get-one-brand/:id', brandController.getABrand);
-router.put('/update-brand', brandController.updateBrand);
-router.delete('/delete-brand/:id', brandController.deleteBrand);
-
-
-//Rack
-router.post('/add-rack', rackController.addRack);
-router.put('/get-all-rack', rackController.getAllRack);
-router.get('/get-one-rack/:id', rackController.getOneRack);
-router.put('/update-rack', rackController.updateRacks);
-router.delete('/delete-rack/:id', rackController.deleteRack);
-
+//BMCR - Brand Manufacturer Category Rack
+router.post('/add-bmcr', bmcrController.addBmcr);
+router.put('/get-all-bmcr', bmcrController.getAllBmcr);
+router.put('/get-a-bmcr/:id', bmcrController.getABmcr);
+router.put('/update-bmcr', bmcrController.updateBmcr);
+router.delete('/delete-bmcr/:id',bmcrController.deleteBmcr)
 
 //item dropdowm
 router.put('/get-itemDropdown', itemDropdownController.getItemDropdowm);
 
-
+ 
 //items settings
 router.put('/add-item-settings',itemSettingsController.addItemSettings);
 // router.post('/get-item-settings',itemSettings.getItemSettings);

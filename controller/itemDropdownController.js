@@ -1,11 +1,8 @@
 const Organization = require('../database/model/organization');
 const Tax = require('../database/model/tax');
-const Manufacturer = require('../database/model/manufacturer');
-const Brand = require('../database/model/brand');
-const Rack = require('../database/model/rack');
 const Unit = require('../database/model/unit');
-const Categories = require('../database/model/categories');
 const Settings = require('../database/model/settings');
+const Bmcr = require('../database/model/bmcr');
 
 
 //Get ItemDropdowm and get item settings field
@@ -29,35 +26,11 @@ exports.getItemDropdowm = async (req, res) => {
         });
         }
 
-        // Fetch manufacturer data
-        const manufacturer = await Manufacturer.find({ organizationId });
-        if (!manufacturer) {
+        // Fetch bmcr data
+        const bmcr = await Bmcr.findOne({ organizationId });
+        if (!bmcr) {
             return res.status(404).json({
-                message: "No manufacturer found for the organization.",
-            });
-        }
-
-        // Fetch brand data
-        const brand = await Brand.find({ organizationId });
-        if (!brand) {
-            return res.status(404).json({
-                message: "No brand found for the organization.",
-            });
-        }
-
-        // Fetch rack data
-        const rack = await Rack.find({ organizationId });
-        if (!rack) {
-            return res.status(404).json({
-                message: "No rack found for the organization.",
-            });
-        }
-
-        // Fetch categories data
-        const categories = await Categories.find({ organizationId });
-        if (!categories) {
-            return res.status(404).json({
-                message: "No categories found for the organization.",
+                message: "No bmcr found for the organization.",
             });
         }
 
@@ -79,10 +52,20 @@ exports.getItemDropdowm = async (req, res) => {
 
         // Prepare the response object
         const response = {
-            manufacturerName: manufacturer.map(m => m.name),
-            brandName: brand.map(b => b.name),
-            rackName: rack.map(r => r.rackName),
-            categoriesName: categories.map(c => c.name),
+            bmcrData: {
+                brands: bmcr.brands.map(b => ({
+                    brandName: b.brandName
+                })),
+                manufacturers: bmcr.manufacturers.map(m => ({
+                    manufacturerName: m.manufacturerName
+                })),
+                categories: bmcr.categories.map(c => ({
+                    categoryName: c.categoriesName
+                })),
+                racks: bmcr.racks.map(r => ({
+                    rackName: r.rackName
+                }))
+            },
             unitName: unit.map(u => u.unitName),
             itemSettings: {
                 itemDecimal: settings.itemDecimal,
