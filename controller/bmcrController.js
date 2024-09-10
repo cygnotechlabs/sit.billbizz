@@ -27,29 +27,26 @@ exports.addBmcr = async (req, res) => {
             });
         }
 
-        let existingEntity, newEntity, fieldName;
+        let existingEntity;
+        let updateFields = {};
 
         // Determine the type and set the appropriate field and query
         switch (type) {
             case 'brand':
-                fieldName = 'brands';
-                existingEntity = await BMCR.findOne({ organizationId, 'brands.brandName': name });
-                newEntity = { brandName: name, description };
+                existingEntity = await BMCR.findOne({ organizationId, brandName: name });
+                updateFields = { brandName: name, description };
                 break;
             case 'manufacturer':
-                fieldName = 'manufacturers';
-                existingEntity = await BMCR.findOne({ organizationId, 'manufacturers.manufacturerName': name });
-                newEntity = { manufacturerName: name, description };
+                existingEntity = await BMCR.findOne({ organizationId, manufacturerName: name });
+                updateFields = { manufacturerName: name, description };
                 break;
             case 'category':
-                fieldName = 'categories';
-                existingEntity = await BMCR.findOne({ organizationId, 'categories.categoriesName': name });
-                newEntity = { categoriesName: name, description };
+                existingEntity = await BMCR.findOne({ organizationId, categoriesName: name });
+                updateFields = { categoriesName: name, description };
                 break;
             case 'rack':
-                fieldName = 'racks';
-                existingEntity = await BMCR.findOne({ organizationId, 'racks.rackName': name });
-                newEntity = { rackName: name, description };
+                existingEntity = await BMCR.findOne({ organizationId, rackName: name });
+                updateFields = { rackName: name, description };
                 break;
             default:
                 return res.status(400).json({ message: "Invalid type provided." });
@@ -62,13 +59,15 @@ exports.addBmcr = async (req, res) => {
             });
         }
 
-        // Add the new entity to the corresponding field
-        const update = {
-            $push: { [fieldName]: newEntity }
-        };
+        // Create a new document with the appropriate fields
+        const newBmcr = new BMCR({
+            organizationId,
+            type,
+            ...updateFields
+        });
 
-        // Use upsert to create a new document if it does not exist
-        await BMCR.updateOne({ organizationId }, update, { upsert: true });
+        // Save the new document
+        await newBmcr.save();
 
         res.status(201).json(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully.`);
     } catch (error) {
