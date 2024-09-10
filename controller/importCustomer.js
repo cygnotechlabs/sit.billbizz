@@ -311,7 +311,7 @@ exports.importCustomer = async (req, res) => {
                     continue;
                   }              
                   if (!validCurrencies.includes(currency)) {
-                      console.error(`Invalid currency at row ${x + 1},${currency}`);
+                      console.error(`Invalid Currency at row ${x + 1},${currency}`);
                       continue;
                   }              
                   if (!isAlphabets(department)) {

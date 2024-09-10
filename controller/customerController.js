@@ -1,9 +1,8 @@
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account");
 const Customer = require("../database/model/customer");
-const Tax = require('../database/model/tax');
-const moment = require('moment-timezone');
-
+const Tax = require("../database/model/tax");
+const moment = require("moment-timezone");
 
 // Add Customer
 exports.addCustomer = async (req, res) => {
@@ -38,7 +37,6 @@ exports.addCustomer = async (req, res) => {
       websiteURL,
 
       //Taxes
-      taxPreference,
       taxReason,
       taxType,
       gstTreatment,
@@ -49,7 +47,7 @@ exports.addCustomer = async (req, res) => {
       businessLegalName,
       businessTradeName,
       vatNumber,
-      
+
       // Billing Address
       billingAttention,
       billingCountry,
@@ -88,18 +86,118 @@ exports.addCustomer = async (req, res) => {
         message: "Organization not found",
       });
     }
+    const taxExists = await Tax.findOne({
+      organizationId: organizationId,
+    });
+    if (!taxExists) {
+      return res.status(404).json({
+        message: "Tax not found",
+      });
+    }
 
-   
+    const currencyExists = await Currency.find(
+      { organizationId: organizationId },
+      { currencyCode: 1, _id: 0 }
+    );
+    if (!currencyExists) {
+      return res.status(404).json({
+        message: "Currency not found",
+      });
+    }
 
     const timeZoneExp = organizationExists.timeZoneExp;
     const dateFormatExp = organizationExists.dateFormatExp;
     const dateSplit = organizationExists.dateSplit;
-    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
-    const openingDate = generatedDateTime.dateTime;   
+    const generatedDateTime = generateTimeAndDateForDB(
+      timeZoneExp,
+      dateFormatExp,
+      dateSplit
+    );
+    const openingDate = generatedDateTime.dateTime;
 
     // Validations
-    const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
-    const validCustomerTypes = ['Individual', 'Business'];
+    const validSalutations = ["Mr.", "Mrs.", "Ms.", "Miss.", "Dr."];
+    const validCustomerTypes = ["Individual", "Business"];
+    const validCurrencies = currencyExists.map(
+      (currency) => currency.currencyCode
+    );
+    const validTaxTypes = ["None", taxExists.taxType];
+    const validGSTTreatments = [
+      "Registered Business - Regular",
+      "Registered Business - Composition",
+      "Unregistered Business",
+      "Consumer",
+      "Overseas",
+      "Special Economic Zone",
+      "Deemed Export",
+      "Tax Deductor",
+      "SEZ Developer",
+    ];
+    const validCountries = {
+      "United Arab Emirates": [
+        "Abu Dhabi",
+        "Dubai",
+        "Sharjah",
+        "Ajman",
+        "Umm Al-Quwain",
+        "Fujairah",
+        "Ras Al Khaimah",
+      ],
+      India: [
+        "Andaman and Nicobar Island",
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chandigarh",
+        "Chhattisgarh",
+        "Dadra and Nagar Haveli and Daman and Diu",
+        "Delhi",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jammu and Kashmir",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Ladakh",
+        "Lakshadweep",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Puducherry",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal",
+      ],
+      "Saudi Arabia": [
+        "Asir",
+        "Al Bahah",
+        "Al Jawf",
+        "Al Madinah",
+        "Al-Qassim",
+        "Eastern Province",
+        "Hail",
+        "Jazan",
+        "Makkah",
+        "Medina",
+        "Najran",
+        "Northern Borders",
+        "Riyadh",
+        "Tabuk",
+      ],
+    };
 
     function isAlphabets(value) {
       return /^[A-Za-z\s]+$/.test(value);
@@ -119,10 +217,10 @@ exports.addCustomer = async (req, res) => {
 
     function isValidUrl(value) {
       try {
-          new URL(value);
-          return true;
+        new URL(value);
+        return true;
       } catch {
-          return false;
+        return false;
       }
     }
 
@@ -132,23 +230,47 @@ exports.addCustomer = async (req, res) => {
 
     // Perform validations
     if (!validSalutations.includes(salutation)) {
-      return res.status(400).json({ message: `Invalid salutation: ${salutation}` });
+      return res
+        .status(400)
+        .json({ message: `Invalid salutation: ${salutation}` });
     }
 
     if (!validCustomerTypes.includes(customerType)) {
-      return res.status(400).json({ message: `Invalid customer type: ${customerType}` });
+      return res
+        .status(400)
+        .json({ message: `Invalid customer type: ${customerType}` });
     }
 
-    if (!isAlphabets(firstName) || !isAlphabets(lastName) || !isAlphabets(customerDisplayName)) {
-      return res.status(400).json({ message: "Name fields should contain only alphabets." });
+    if (
+      !isAlphabets(firstName)
+    ) {
+      return res
+        .status(400)
+        .json({ message: "First Name fields should contain only alphabets." });
+    }
+    if (
+      !isAlphabets(lastName)
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Last Name fields should contain only alphabets." });
     }
 
     if (!isValidEmail(customerEmail)) {
-      return res.status(400).json({ message: `Invalid email: ${customerEmail}` });
+      return res
+        .status(400)
+        .json({ message: `Invalid email: ${customerEmail}` });
     }
 
-    if (!isInteger(workPhone) || !isInteger(mobile)) {
-      return res.status(400).json({ message: "Phone numbers should contain only digits." });
+    if (!isInteger(workPhone)) {
+      return res
+        .status(400)
+        .json({ message: `Work Phone numbers should contain only digits: ${workPhone}` });
+    }
+    if (!isInteger(mobile)) {
+      return res
+        .status(400)
+        .json({ message: `Mobile numbers should contain only digits: ${mobile}` });
     }
 
     // if (dob && !isValidDate(dob)) {
@@ -156,26 +278,60 @@ exports.addCustomer = async (req, res) => {
     // }
 
     if (!isInteger(cardNumber)) {
-      return res.status(400).json({ message: `Invalid card number: ${cardNumber}` });
+      return res
+        .status(400)
+        .json({ message: `Invalid card number: ${cardNumber}` });
     }
 
-    if (pan && !isAlphanumeric(pan)) {
+    if (!isAlphanumeric(pan)) {
       return res.status(400).json({ message: `Invalid PAN: ${pan}` });
     }
-
-    if (department && !isAlphabets(department)) {
-      return res.status(400).json({ message: "Department should contain only alphabets." });
+    if (!isFloat(openingBalance)) {
+      return res.status(400).json({ message: `Invalid Opening Balance: ${openingBalance}` });
+    }
+    if (!validCurrencies.includes(currency)) {
+      return res.status(400).json({ message: `Invalid Currency: ${currency}` });
     }
 
-    if (designation && !isAlphabets(designation)) {
-      return res.status(400).json({ message: "Designation should contain only alphabets." });
+    if (!isAlphabets(department)) {
+      return res
+        .status(400)
+        .json({ message: "Department should contain only alphabets." });
     }
 
-    if (websiteURL && !isValidUrl(websiteURL)) {
-      return res.status(400).json({ message: `Invalid website URL: ${websiteURL}` });
+    if (!isAlphabets(designation)) {
+      return res
+        .status(400)
+        .json({ message: "Designation should contain only alphabets." });
+    }
+    if (!validCountries[billingCountry] || !validCountries[billingCountry].includes(billingState)) {
+      return res
+        .status(400)
+        .json({ message: `Invalid Billing Country or State: ${billingCountry}, ${billingState}` });
+    }
+    if (!validCountries[shippingCountry] || !validCountries[shippingCountry].includes(shippingState)) {
+      return res
+        .status(400)
+        .json({ message: `Invalid Billing Country or State: ${shippingCountry}, ${shippingState}` });
+    }
+    if (!isInteger(billingPinCode)) {
+      return res
+        .status(400)
+        .json({ message: `Invalid Billing Phone Number fields :${billingPhone}` });
+    }
+    if (!isInteger(billingPhone)) {
+      return res
+        .status(400)
+        .json({ message: `Invalid Billing Fax Number fields:${billingFaxNumber}` });
     }
 
-   //Check if customer with the same email already exists in the organization
+    // if (websiteURL && !isValidUrl(websiteURL)) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: `Invalid website URL: ${websiteURL}` });
+    // }
+
+    //Check if customer with the same email already exists in the organization
     const existingCustomer = await Customer.findOne({
       customerEmail: customerEmail,
       organizationId: organizationId,
@@ -228,7 +384,7 @@ exports.addCustomer = async (req, res) => {
       businessLegalName,
       businessTradeName,
       vatNumber,
-      
+
       // Billing Address
       billingAttention,
       billingCountry,
@@ -259,11 +415,10 @@ exports.addCustomer = async (req, res) => {
 
       //Status
       status: "Active",
-      
-      createdDate:openingDate,
+
+      createdDate: openingDate,
     });
 
-    
     const savedCustomer = await newCustomer.save();
 
     // Create a new Customer Account
@@ -278,7 +433,7 @@ exports.addCustomer = async (req, res) => {
 
       openingBalance: openingBalance,
       openingBalanceDate: openingDate,
-      description:"Customer"
+      description: "Customer",
     });
 
     await newAccount.save();
@@ -292,7 +447,6 @@ exports.addCustomer = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
-
 
 // Get All Customer for a given organizationId
 exports.getAllCustomer = async (req, res) => {
@@ -314,7 +468,6 @@ exports.getAllCustomer = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
-
 
 //Get one Customer for a given organizationId
 exports.getOneCustomer = async (req, res) => {
@@ -387,7 +540,7 @@ exports.editCustomer = async (req, res) => {
       businessLegalName,
       businessTradeName,
       vatNumber,
-      
+
       // Billing Address
       billingAttention,
       billingCountry,
@@ -432,12 +585,16 @@ exports.editCustomer = async (req, res) => {
     const timeZoneExp = organizationExists.timeZoneExp;
     const dateFormatExp = organizationExists.dateFormatExp;
     const dateSplit = organizationExists.dateSplit;
-    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
-    const openingDate = generatedDateTime.dateTime;   
+    const generatedDateTime = generateTimeAndDateForDB(
+      timeZoneExp,
+      dateFormatExp,
+      dateSplit
+    );
+    const openingDate = generatedDateTime.dateTime;
 
     // Validations
-    const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
-    const validCustomerTypes = ['Individual', 'Business'];
+    const validSalutations = ["Mr.", "Mrs.", "Ms.", "Miss.", "Dr."];
+    const validCustomerTypes = ["Individual", "Business"];
 
     function isAlphabets(value) {
       return /^[A-Za-z\s]+$/.test(value);
@@ -457,10 +614,10 @@ exports.editCustomer = async (req, res) => {
 
     function isValidUrl(value) {
       try {
-          new URL(value);
-          return true;
+        new URL(value);
+        return true;
       } catch {
-          return false;
+        return false;
       }
     }
 
@@ -470,23 +627,37 @@ exports.editCustomer = async (req, res) => {
 
     // Perform validations
     if (!validSalutations.includes(salutation)) {
-      return res.status(400).json({ message: `Invalid salutation: ${salutation}` });
+      return res
+        .status(400)
+        .json({ message: `Invalid salutation: ${salutation}` });
     }
 
     if (!validCustomerTypes.includes(customerType)) {
-      return res.status(400).json({ message: `Invalid customer type: ${customerType}` });
+      return res
+        .status(400)
+        .json({ message: `Invalid customer type: ${customerType}` });
     }
 
-    if (!isAlphabets(firstName) || !isAlphabets(lastName) || !isAlphabets(customerDisplayName)) {
-      return res.status(400).json({ message: "Name fields should contain only alphabets." });
+    if (
+      !isAlphabets(firstName) ||
+      !isAlphabets(lastName) ||
+      !isAlphabets(customerDisplayName)
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Name fields should contain only alphabets." });
     }
 
     if (!isValidEmail(customerEmail)) {
-      return res.status(400).json({ message: `Invalid email: ${customerEmail}` });
+      return res
+        .status(400)
+        .json({ message: `Invalid email: ${customerEmail}` });
     }
 
     if (!isInteger(workPhone) || !isInteger(mobile)) {
-      return res.status(400).json({ message: "Phone numbers should contain only digits." });
+      return res
+        .status(400)
+        .json({ message: "Phone numbers should contain only digits." });
     }
 
     // if (dob && !isValidDate(dob)) {
@@ -494,7 +665,9 @@ exports.editCustomer = async (req, res) => {
     // }
 
     if (!isInteger(cardNumber)) {
-      return res.status(400).json({ message: `Invalid card number: ${cardNumber}` });
+      return res
+        .status(400)
+        .json({ message: `Invalid card number: ${cardNumber}` });
     }
 
     if (pan && !isAlphanumeric(pan)) {
@@ -502,15 +675,21 @@ exports.editCustomer = async (req, res) => {
     }
 
     if (department && !isAlphabets(department)) {
-      return res.status(400).json({ message: "Department should contain only alphabets." });
+      return res
+        .status(400)
+        .json({ message: "Department should contain only alphabets." });
     }
 
     if (designation && !isAlphabets(designation)) {
-      return res.status(400).json({ message: "Designation should contain only alphabets." });
+      return res
+        .status(400)
+        .json({ message: "Designation should contain only alphabets." });
     }
 
     if (websiteURL && !isValidUrl(websiteURL)) {
-      return res.status(400).json({ message: `Invalid website URL: ${websiteURL}` });
+      return res
+        .status(400)
+        .json({ message: `Invalid website URL: ${websiteURL}` });
     }
 
     // Check if the customer exists
@@ -550,11 +729,9 @@ exports.editCustomer = async (req, res) => {
     if (mobile && mobile !== existingCustomer.mobile) {
       const phoneExists = await Customer.findOne({ mobile, organizationId });
       if (phoneExists && phoneExists._id.toString() !== customerId) {
-        return res
-          .status(400)
-          .json({
-            message: "Phone number already exists for another customer",
-          });
+        return res.status(400).json({
+          message: "Phone number already exists for another customer",
+        });
       }
     }
 
@@ -564,7 +741,8 @@ exports.editCustomer = async (req, res) => {
     customer.firstName = firstName || customer.firstName;
     customer.lastName = lastName || customer.lastName;
     customer.companyName = companyName || customer.companyName;
-    customer.customerDisplayName = customerDisplayName || customer.customerDisplayName;
+    customer.customerDisplayName =
+      customerDisplayName || customer.customerDisplayName;
     customer.customerEmail = customerEmail || customer.customerEmail;
     customer.workPhone = workPhone || customer.workPhone;
     customer.mobile = mobile || customer.mobile;
@@ -587,21 +765,26 @@ exports.editCustomer = async (req, res) => {
     customer.msmeType = msmeType || customer.msmeType;
     customer.msmeNumber = msmeNumber || customer.msmeNumber;
     customer.placeOfSupply = placeOfSupply || customer.placeOfSupply;
-    customer.businessLegalName = businessLegalName || customer.businessLegalName;
-    customer.businessTradeName = businessTradeName || customer.businessTradeName;
+    customer.businessLegalName =
+      businessLegalName || customer.businessLegalName;
+    customer.businessTradeName =
+      businessTradeName || customer.businessTradeName;
     customer.vatNumber = vatNumber || customer.vatNumber;
     // Update Billing Address
     customer.billingAttention = billingAttention || customer.billingAttention;
     customer.billingCountry = billingCountry || customer.billingCountry;
-    customer.billingAddressLine1 = billingAddressLine1 || customer.billingAddressLine1;
-    customer.billingAddressLine2 = billingAddressLine2 || customer.billingAddressLine2;
+    customer.billingAddressLine1 =
+      billingAddressLine1 || customer.billingAddressLine1;
+    customer.billingAddressLine2 =
+      billingAddressLine2 || customer.billingAddressLine2;
     customer.billingCity = billingCity || customer.billingCity;
     customer.billingState = billingState || customer.billingState;
     customer.billingPinCode = billingPinCode || customer.billingPinCode;
     customer.billingPhone = billingPhone || customer.billingPhone;
     customer.billingFaxNumber = billingFaxNumber || customer.billingFaxNumber;
     // Update Shipping Address
-    customer.shippingAttention = shippingAttention || customer.shippingAttention;
+    customer.shippingAttention =
+      shippingAttention || customer.shippingAttention;
     customer.shippingCountry = shippingCountry || customer.shippingCountry;
     customer.shippingAddress1 = shippingAddress1 || customer.shippingAddress1;
     customer.shippingAddress2 = shippingAddress2 || customer.shippingAddress2;
@@ -609,7 +792,8 @@ exports.editCustomer = async (req, res) => {
     customer.shippingState = shippingState || customer.shippingState;
     customer.shippingPinCode = shippingPinCode || customer.shippingPinCode;
     customer.shippingPhone = shippingPhone || customer.shippingPhone;
-    customer.shippingFaxNumber = shippingFaxNumber || customer.shippingFaxNumber;
+    customer.shippingFaxNumber =
+      shippingFaxNumber || customer.shippingFaxNumber;
     // Update Contact Person
     customer.contactPerson = contactPerson || customer.contactPerson;
     // Update Remark
@@ -623,13 +807,15 @@ exports.editCustomer = async (req, res) => {
     // Update the customerDisplayName in associated Account documents
     if (customerDisplayName && customerDisplayName !== oldCustomerDisplayName) {
       const updatedAccount = await Account.updateMany(
-        { 
-          accountName: oldCustomerDisplayName,  // Match the old customerDisplayName
-          organizationId: organizationId  // Match the organizationId from the request
+        {
+          accountName: oldCustomerDisplayName, // Match the old customerDisplayName
+          organizationId: organizationId, // Match the organizationId from the request
         },
-        { $set: { accountName: customerDisplayName } }  // Update with the new customerDisplayName
+        { $set: { accountName: customerDisplayName } } // Update with the new customerDisplayName
       );
-      console.log(`${updatedAccount.modifiedCount} account associated with the accountName have been updated with the new customerDisplayName.`);
+      console.log(
+        `${updatedAccount.modifiedCount} account associated with the accountName have been updated with the new customerDisplayName.`
+      );
     }
 
     res.status(200).json({
@@ -641,7 +827,6 @@ exports.editCustomer = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
-
 
 // Update the status of a Customer based on the provided status value
 exports.updateCustomerStatus = async (req, res) => {
@@ -678,54 +863,52 @@ exports.updateCustomerStatus = async (req, res) => {
     await customer.save();
 
     res.status(200).json({
-      message: "Customer status updated successfully.",
+      message: "Customer status updated successfully.", status: customer.status
     });
-    console.log("Customer status updated successfully.", customer);
+    console.log("Customer status updated successfully.");
   } catch (error) {
     console.error("Error updating customer status:", error);
     res.status(500).json({ message: "Internal server error." });
   }
 };
 
-
-
 // Customer Additional data
 exports.getCustomerAdditionalData = async (req, res) => {
   const { organizationId } = req.body;
-  
+
   try {
     // Check if an Organization already exists
     const organization = await Organization.findOne({ organizationId });
     if (!organization) {
-    return res.status(404).json({
+      return res.status(404).json({
         message: "No Organization Found.",
-    });
+      });
     }
 
     // Fetch tax data to check tax type
     const taxData = await Tax.findOne({ organizationId });
     if (!taxData) {
-        return res.status(404).json({
-            message: "No tax data found for the organization.",
-        });
+      return res.status(404).json({
+        message: "No tax data found for the organization.",
+      });
     }
 
     // Prepare the response object
     const response = {
       taxType: taxData.taxType,
       gstTreatment: [
-        "Registered Business -Regular",
-        "Registered Business -Composition",
+        "Registered Business - Regular",
+        "Registered Business - Composition",
         "Unregistered Business",
         "Consumer",
         "Overseas",
         "Special Economic Zone",
         "Deemed Export",
         "Tax Deductor",
-        "SEZ Developer",          
-      ],    
+        "SEZ Developer",
+      ],
     };
-  
+
     // Return the combined response data
     return res.status(200).json(response);
   } catch (error) {
@@ -734,24 +917,21 @@ exports.getCustomerAdditionalData = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
 // Function to generate time and date for storing in the database
-function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = new Date(), timeFormat = 'HH:mm:ss', timeSplit = ':') {
+function generateTimeAndDateForDB(
+  timeZone,
+  dateFormat,
+  dateSplit,
+  baseTime = new Date(),
+  timeFormat = "HH:mm:ss",
+  timeSplit = ":"
+) {
   // Convert the base time to the desired time zone
   const localDate = moment.tz(baseTime, timeZone);
 
   // Format date and time according to the specified formats
   let formattedDate = localDate.format(dateFormat);
-  
+
   // Handle date split if specified
   if (dateSplit) {
     // Replace default split characters with specified split characters
@@ -759,14 +939,16 @@ function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = ne
   }
 
   const formattedTime = localDate.format(timeFormat);
-  const timeZoneName = localDate.format('z'); // Get time zone abbreviation
+  const timeZoneName = localDate.format("z"); // Get time zone abbreviation
 
   // Combine the formatted date and time with the split characters and time zone
-  const dateTime = `${formattedDate} ${formattedTime.split(':').join(timeSplit)} (${timeZoneName})`;
+  const dateTime = `${formattedDate} ${formattedTime
+    .split(":")
+    .join(timeSplit)} (${timeZoneName})`;
 
   return {
     date: formattedDate,
     time: `${formattedTime} (${timeZoneName})`,
-    dateTime: dateTime
+    dateTime: dateTime,
   };
 }
