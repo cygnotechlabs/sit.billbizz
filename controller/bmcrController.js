@@ -1,6 +1,7 @@
 const BMCR = require('../database/model/bmcr');
 const Organization = require('../database/model/organization');
 const Item = require("../database/model/item"); 
+const { log } = require('console');
 
 
 exports.addBmcr = async (req, res) => {
@@ -28,25 +29,25 @@ exports.addBmcr = async (req, res) => {
         }
 
         let existingEntity;
-        let updateFields = {};
+        let addFields = {};
 
         // Determine the type and set the appropriate field and query
         switch (type) {
             case 'brand':
                 existingEntity = await BMCR.findOne({ organizationId, brandName: name });
-                updateFields = { brandName: name, description };
+                addFields = { brandName: name, description };
                 break;
             case 'manufacturer':
                 existingEntity = await BMCR.findOne({ organizationId, manufacturerName: name });
-                updateFields = { manufacturerName: name, description };
+                addFields = { manufacturerName: name, description };
                 break;
             case 'category':
                 existingEntity = await BMCR.findOne({ organizationId, categoriesName: name });
-                updateFields = { categoriesName: name, description };
+                addFields = { categoriesName: name, description };
                 break;
             case 'rack':
                 existingEntity = await BMCR.findOne({ organizationId, rackName: name });
-                updateFields = { rackName: name, description };
+                addFields = { rackName: name, description };
                 break;
             default:
                 return res.status(400).json({ message: "Invalid type provided." });
@@ -63,7 +64,7 @@ exports.addBmcr = async (req, res) => {
         const newBmcr = new BMCR({
             organizationId,
             type,
-            ...updateFields
+            ...addFields
         });
 
         // Save the new document
@@ -77,12 +78,12 @@ exports.addBmcr = async (req, res) => {
 };
 
 
-// Get all data by organizationId and type
+// Get all BMCR
 exports.getAllBmcr = async (req, res) => {
     const { organizationId, type } = req.body;
 
     try {
-        // Check if an Organization exists
+        // Check if the Organization exists
         const existingOrganization = await Organization.findOne({ organizationId });
 
         if (!existingOrganization) {
@@ -91,36 +92,36 @@ exports.getAllBmcr = async (req, res) => {
             });
         }
 
-        // Fetch the BMCR document for the given organizationId
-        const bmcrData = await BMCR.findOne({ organizationId });
+        // Fetch all BMCR documents for the given organizationId and type
+        const bmcrData = await BMCR.find({ organizationId, type });
 
-        if (!bmcrData) {
+        if (!bmcrData || bmcrData.length === 0) {
             return res.status(404).json({
-                message: "No data found for the provided organizationId.",
+                message: `No data found for the provided organizationId and type: ${type}.`,
             });
         }
+        
 
-        // Prepare the response object based on the type
-        let response;
-        switch (type) {
-            case 'brand':
-                response = { brands: bmcrData.brands || [] };
-                break;
-            case 'manufacturer':
-                response = { manufacturers: bmcrData.manufacturers || [] };
-                break;
-            case 'category':
-                response = { categories: bmcrData.categories || [] };
-                break;
-            case 'rack':
-                response = { racks: bmcrData.racks || [] };
-                break;
-            default:
-                return res.status(400).json({
-                    message: "Invalid type provided.",
-                });
-        }
+        // Prepare the response object
+        let response = bmcrData.map((item) => {
+            switch (type) {
+                case 'brand':
+                    return { brandName: item.brandName, description: item.description, id: item._id };
+                case 'manufacturer':
+                    return { manufacturerName: item.manufacturerName, description: item.description, id: item._id };
+                case 'category':
+                    return { categoriesName: item.categoriesName, description: item.description, id: item._id };
+                case 'rack':
+                    return { rackName: item.rackName, description: item.description, id: item._id };
+                default:
+                    return null;
+            }
+        });
 
+        // Filter out null values from the response array
+        response = response.filter(item => item !== null);
+
+        // Send the response back to the client
         res.status(200).json(response);
     } catch (error) {
         console.error("Error fetching BMCR data:", error);
@@ -132,7 +133,7 @@ exports.getAllBmcr = async (req, res) => {
 
 // Get a single BMCR entity (brand, manufacturer, category, rack) by ID and type
 exports.getABmcr = async (req, res) => {
-    const { id } = req.params; // Entity ID (e.g., brandId, manufacturerId, etc.)
+    const { id } = req.params; // Entity ID (e.g., brandName, manufacturerName, etc.)
     const { organizationId, type } = req.body;
 
     try {
@@ -154,20 +155,28 @@ exports.getABmcr = async (req, res) => {
             });
         }
 
-        // Find the specific entity by type and ID
+        // Determine the specific entity to return based on type
         let entity;
         switch (type) {
             case 'brand':
-                entity = bmcrData.brands.find(i => i._id.toString() === id);
+                if (bmcrData._id === id) {
+                    entity = { brandName: bmcrData.brandName, description: bmcrData.description };
+                }
                 break;
             case 'manufacturer':
-                entity = bmcrData.manufacturers.find(i => i._id.toString() === id);
+                if (bmcrData.manufacturerName === id) {
+                    entity = { manufacturerName: bmcrData.manufacturerName, description: bmcrData.description };
+                }
                 break;
             case 'category':
-                entity = bmcrData.categories.find(i => i._id.toString() === id);
+                if (bmcrData.categoriesName === id) {
+                    entity = { categoriesName: bmcrData.categoriesName, description: bmcrData.description };
+                }
                 break;
             case 'rack':
-                entity = bmcrData.racks.find(i => i._id.toString() === id);
+                if (bmcrData.rackName === id) {
+                    entity = { rackName: bmcrData.rackName, description: bmcrData.description };
+                }
                 break;
             default:
                 return res.status(400).json({
