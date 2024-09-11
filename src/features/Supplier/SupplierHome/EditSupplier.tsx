@@ -134,8 +134,7 @@ const EditSupplier = ({ supplier}: Props) => {
   useEffect(() => {
     setSupplierData(prev => ({ ...prev, ...supplier }));
   }, [supplier]);
-  console.log(supplierdata);
-  
+
   const [showAccountNumbers, setShowAccountNumbers] = useState(
     supplierdata.bankDetails.map(() => false)
   );
@@ -188,11 +187,14 @@ const EditSupplier = ({ supplier}: Props) => {
     try {
       const url = `${endponits.EDIT_SUPPLIER}/${supplier?._id}`;
       const { response, error } = await editSupplier(url,supplierdata);
+      console.log("res",response);
+      console.log("err",error);
       if (!error && response) {
         setsupplierResponse(response.data);
         toast.success(response.data.message)
+        console.log(response.data);
+        
         closeModal()
-        // setSupplier(response.data)
       }
     } catch (error) {
       console.error("Error fetching suppliers:", error);
@@ -604,7 +606,7 @@ const EditSupplier = ({ supplier}: Props) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-3 gap-4 mt-4">
                 <div>
                   <label htmlFor="">Work Phone</label>
                   <input
@@ -627,6 +629,18 @@ const EditSupplier = ({ supplier}: Props) => {
                     onChange={handleChange}
                   />
                 </div>
+                <div>
+                  <label htmlFor="">Opening Balance</label>
+                  <input
+                    required
+                    className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
+                    placeholder="Enter opening balance"
+                              type="number"
+                              name="openingBalance"
+                              value={supplierdata.openingBalance}
+                              onChange={handleChange}
+                    />
+                    </div>
               </div>
 
               <div className="flex mt-5 px-5">

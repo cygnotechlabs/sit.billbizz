@@ -856,7 +856,7 @@ const AddSupplierModal = ({ page }: Props) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-3 gap-4 mt-4">
                 <div>
                   <label htmlFor="">Work Phone</label>
                   <input
@@ -913,6 +913,19 @@ const AddSupplierModal = ({ page }: Props) => {
                     </div>
                   )}
                 </div>
+                <div>
+                  <label htmlFor="">Opening Balance</label>
+                  <input
+                    required
+                    className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
+                    placeholder="Enter opening balance"
+                              type="number"
+                              name="openingBalance"
+                              value={supplierdata.openingBalance}
+                              onChange={handleChange}
+                    />
+                    </div>
+
               </div>
 
               <div className="flex mt-5 px-5">
@@ -1018,7 +1031,6 @@ const AddSupplierModal = ({ page }: Props) => {
                             </div>
                           </div>
                         </div>
-
                         <div>
                           <label className="block mb-1">Payment Terms</label>
                           <select
@@ -1110,7 +1122,7 @@ const AddSupplierModal = ({ page }: Props) => {
                           />
                         </div>
                       </div>
-
+                      
                       <div className="mt-4">
                         <label className="block mb-1">Documents</label>
                         <div className="border-dashed border border-neutral-300 p-2 rounded flex gap-2">
@@ -1494,7 +1506,7 @@ const AddSupplierModal = ({ page }: Props) => {
                             <input
                               className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2 mt-2 leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                               placeholder="Enter Pin / Zip / Post code"
-                              type="text"
+                              type="number"
                               name="billingPinCode"
                               value={supplierdata.billingPinCode}
                               onChange={handleChange}
@@ -1546,25 +1558,22 @@ const AddSupplierModal = ({ page }: Props) => {
                             </div>
                           </div>
                           <div className="relative w-full">
-                            <label htmlFor="" className="mb-2 block">
+                          <div>
+                            <label
+                              className="text-slate-600 "
+                              htmlFor="organizationAddress"
+                            >
                               Fax Number
                             </label>
-                            <select
-                              className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder text-sm pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            <input
+                              className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2 mt-2 leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                              placeholder="Enter Pin / Zip / Post code"
+                              type="number"
                               name="billingFaxNum"
                               value={supplierdata.billingFaxNum}
                               onChange={handleChange}
-                            >
-                              <option value="" className="text-gray">
-                                Select Fax Number
-                              </option>
-                              <option value="(987) 6543" className="text-gray">
-                                (987) 6543
-                              </option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
-                              <CehvronDown color="gray" />
-                            </div>
+                            />
+                          </div>  
                           </div>
                         </div>
                       </div>
@@ -1716,7 +1725,7 @@ const AddSupplierModal = ({ page }: Props) => {
                             <input
                               className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2 mt-2 leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                               placeholder="Enetr Pin / Zip / Post code"
-                              type="text"
+                              type="number"
                               name="shippingPinCode"
                               value={supplierdata.shippingPinCode}
                               onChange={handleChange}
@@ -1745,25 +1754,22 @@ const AddSupplierModal = ({ page }: Props) => {
                             </div>
                           </div>
                           <div className="relative w-full">
-                            <label htmlFor="" className="mb-2 block">
+                          <div>
+                            <label
+                              className="text-slate-600 "
+                              htmlFor="organizationAddress"
+                            >
                               Fax Number
                             </label>
-                            <select
-                              className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder text-sm pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            <input
+                              className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2 mt-2 leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                              placeholder="Enter Pin / Zip / Post code"
+                              type="number"
                               name="shippingFaxNum"
                               value={supplierdata.shippingFaxNum}
                               onChange={handleChange}
-                            >
-                              <option value="" className="text-gray">
-                                Select Fax Number
-                              </option>
-                              <option value="(987) 6543" className="text-gray">
-                                (987) 6543
-                              </option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
-                              <CehvronDown color="gray" />
-                            </div>
+                            />
+                          </div>
                           </div>
                         </div>
                       </div>
