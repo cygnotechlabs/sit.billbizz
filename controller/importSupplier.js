@@ -278,10 +278,10 @@ exports.importSupplier = async (req, res) => {
                       console.error(`Invalid Opening Balance fields at row ${x + 1},${openingBalance}`);
                       continue;
                     }              
-                    if (!currencyCollection.includes(currency)) {
-                        console.error(`Invalid currency at row ${x + 1},${currency}`);
-                        continue;
-                    }              
+                    if (!validCurrencies.includes(currency)) {
+                      console.error(`Invalid Currency at row ${x + 1},${currency}`);
+                      continue;
+                  }              
                     if (!isAlphabets(department)) {
                         console.error(`Invalid Department at row ${x + 1},${department}`);
                         continue;
@@ -426,8 +426,31 @@ exports.importSupplier = async (req, res) => {
               }
               
               if (userData.length > 0) {
-                  await Supplier.insertMany(userData);
+                  insetredSupplier =  await Supplier.insertMany(userData);
               }
+              for (let x = 0; x < insertedCustomers.length; x++) {  
+                //console.log(insertedCustomers[x]);
+                                      
+                          // Create a new Customer Account
+                          const newAccount = new Account({
+                            organizationId,
+                            accountName: insertedCustomers[x].customerDisplayName,
+                            accountCode: insertedCustomers[x]._id,
+  
+                            accountSubhead: "Sundry Debtors",
+                            accountHead: "Asset",
+                            accountGroup: "Asset",
+  
+                            openingBalance: insertedCustomers[x].openingBalance,
+                            openingBalanceDate: openingDate,
+                            description: "Customer",
+                          });
+  
+                          await newAccount.save();                
+                          
+  
+              }
+              console.log("Customer & Account created successfully");
               
               res.status(200).send({ success: true, msg: 'Supplier XLSX Extracted Successfully' });
             }

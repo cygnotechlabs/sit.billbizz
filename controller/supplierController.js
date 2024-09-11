@@ -3,7 +3,7 @@ const Supplier = require("../database/model/supplier");
 const Account = require("../database/model/account");
 const Tax = require("../database/model/tax");
 const moment = require('moment-timezone');
-
+const Currency = require("../database/model/currency");
 
 
 exports.addSupplier = async (req, res) => {
@@ -90,17 +90,118 @@ exports.addSupplier = async (req, res) => {
         message: "Organization not found",
       });
     }
+    const taxExists = await Tax.findOne({
+      organizationId: organizationId,
+    });
+    if (!taxExists) {
+      return res.status(404).json({
+        message: "Tax not found",
+      });
+    }
+
+    const currencyExists = await Currency.find(
+      { organizationId: organizationId },
+      { currencyCode: 1, _id: 0 }
+    );
+    if (!currencyExists) {
+      return res.status(404).json({
+        message: "Currency not found",
+      });
+    }
 
     const timeZoneExp = organizationExists.timeZoneExp;
     const dateFormatExp = organizationExists.dateFormatExp;
     const dateSplit = organizationExists.dateSplit;
     const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
     const openingDate = generatedDateTime.dateTime;  
-
-//     // Utility validation functions
+    const validCurrencies = currencyExists.map(
+      (currency) => currency.currencyCode
+    );
+    const validTaxTypes = ["None", taxExists.taxType];
+    const validGSTTreatments = [
+      "Registered Business - Regular",
+      "Registered Business - Composition",
+      "Unregistered Business",
+      "Consumer",
+      "Overseas",
+      "Special Economic Zone",
+      "Deemed Export",
+      "Tax Deductor",
+      "SEZ Developer",
+    ];
+    const validCountries = {
+      "United Arab Emirates": [
+        "Abu Dhabi",
+        "Dubai",
+        "Sharjah",
+        "Ajman",
+        "Umm Al-Quwain",
+        "Fujairah",
+        "Ras Al Khaimah",
+      ],
+      India: [
+        "Andaman and Nicobar Island",
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chandigarh",
+        "Chhattisgarh",
+        "Dadra and Nagar Haveli and Daman and Diu",
+        "Delhi",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jammu and Kashmir",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Ladakh",
+        "Lakshadweep",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Puducherry",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal",
+      ],
+      "Saudi Arabia": [
+        "Asir",
+        "Al Bahah",
+        "Al Jawf",
+        "Al Madinah",
+        "Al-Qassim",
+        "Eastern Province",
+        "Hail",
+        "Jazan",
+        "Makkah",
+        "Medina",
+        "Najran",
+        "Northern Borders",
+        "Riyadh",
+        "Tabuk",
+      ],
+    };
+// // Utility validation functions
 // function isAlphabets(value) {
 //   return /^[A-Za-z\s]+$/.test(value);
 // }
+
+// function isFloat(value) {
+//   return /^-?\d+(\.\d+)?$/.test(value);
+//   }
 
 // function isInteger(value) {
 //   return /^[0-9]+$/.test(value);
@@ -160,6 +261,14 @@ exports.addSupplier = async (req, res) => {
 //   return { isValid: false, message: `Invalid PAN: ${pan}` };
 // }
 
+// if (!isFloat(openingBalance)) {
+//   return res.status(400).json({ message: `Invalid Opening Balance: ${openingBalance}` });
+// }
+
+// if (!validCurrencies.includes(currency)) {
+//   return res.status(400).json({ message: `Invalid Currency: ${currency}` });
+// }
+
 // if (department && !isAlphabets(department)) {
 //   return { isValid: false, message: "Department should contain only alphabets." };
 // }
@@ -175,6 +284,79 @@ exports.addSupplier = async (req, res) => {
 // if (gstin_uin && !isAlphanumeric(gstin_uin)) {
 //   return { isValid: false, message: `Invalid GSTIN/UIN: ${gstin_uin}` };
 // }
+
+// if (!validCountries[billingCountry] || !validCountries[billingCountry].includes(billingState)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Billing Country or State: ${billingCountry}, ${billingState}` });
+// }
+// if (!validCountries[shippingCountry] || !validCountries[shippingCountry].includes(shippingState)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Billing Country or State: ${shippingCountry}, ${shippingState}` });
+// }
+// if (!isInteger(billingPinCode)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Billing Pin Code Number fields :${billingPhone}` });
+// }
+// if (!isInteger(billingPhone)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Billing Phone Number fields :${billingPhone}` });
+// }    
+// if (!isInteger(billingFaxNum)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Billing Fax Number fields:${billingFaxNum}` });
+// }
+
+// if (!isInteger(shippingPinCode)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Shipping Pin Code Number fields :${shippingPinCode}` });
+// }
+// if (!isInteger(shippingPhone)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Shipping Phone Number fields :${shippingPhone}` });
+// }    
+// if (!isInteger(shippingFaxNum)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Shipping Fax Number fields:${shippingFaxNum}` });
+// }
+
+// if (!validTaxTypes.includes(taxType)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Tax Type: ${taxType}` });
+// }
+
+// if (taxType === "GST") {                  
+//   if (!validGSTTreatments.includes(gstTreatment)) {
+//     return res
+//     .status(400)
+//     .json({ message: `Invalid GST treatment: ${gstTreatment}` });        
+//   }
+
+//   if (!isAlphanumeric(gstin_uin)) {
+//     return res
+//     .status(400)
+//     .json({ message: `Invalid GSTIN/UIN: ${gstin_uin}` });          
+//   }
+// } else if (taxType === "VAT") {
+//   if (!isAlphanumeric(vatNumber)) {
+//     return res
+//     .status(400)
+//     .json({ message: `Invalid VAT number: ${vatNumber}` });          
+//   }
+// } else if (taxType === "None") {
+// gstTreatment = undefined;
+// gstin_uin = undefined;
+// vatNumber = undefined;                    
+// }
+
 
 
 
