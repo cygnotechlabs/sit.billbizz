@@ -31,6 +31,17 @@ const EditSupplier = ({ supplier}: Props) => {
   const [paymentTerms, setPaymentTerms] = useState<any | []>([]);
   const [activeTab, setActiveTab] = useState<string>("otherDetails");
   const [placeOfSupplyList,setPlaceOfSupplyList]=useState<any |[]>([])
+  const [errors, setErrors] = useState({
+    firstName: false,
+    lastName: false,
+    companyName: false,
+    supplierDisplayName: false,
+    supplierEmail: false,
+    workPhone: false,
+    mobile: false,
+    billingCity: false,
+    billingPhone: false,
+  });
   const { request: getCountryData } = useApi("get", 5004);
   const { request: getCurrencyData } = useApi("put", 5004);
   const { request: getPaymentTerms } = useApi("get", 5004);
@@ -184,6 +195,22 @@ const EditSupplier = ({ supplier}: Props) => {
   };
  
   const handleEditSupplier=async()=>{
+    const newErrors = { ...errors };
+    if (supplierdata.firstName === "") newErrors.firstName = true;
+    if (supplierdata.lastName === "") newErrors.lastName = true;
+    if (supplierdata.supplierEmail === "") newErrors.supplierEmail = true;
+    if (supplierdata.mobile === "") newErrors.mobile = true;
+    if (supplierdata.supplierDisplayName === "")
+      newErrors.supplierDisplayName = true;
+    if (supplierdata.companyName === "") newErrors.companyName = true;
+    if (supplierdata.workPhone === "") newErrors.workPhone = true;
+    if (supplierdata.billingCity === "") newErrors.billingCity = true;
+    if (supplierdata.billingPhone === "") newErrors.billingPhone = true;
+
+    if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
+      return;
+    }
     try {
       const url = `${endponits.EDIT_SUPPLIER}/${supplier?._id}`;
       const { response, error } = await editSupplier(url,supplierdata);
@@ -550,7 +577,18 @@ const EditSupplier = ({ supplier}: Props) => {
                       placeholder="Enter First Name"
                       value={supplierdata.firstName}
                       onChange={handleChange}
+                      onFocus={() => setErrors({ ...errors, firstName: false })}
+                      onBlur={() => {
+                        if (supplierdata.firstName === "") {
+                          setErrors({ ...errors, firstName: true });
+                        }
+                      }}
                     />
+                    {errors.firstName && (
+                      <div className="text-red-800 text-xs ms-2 mt-1">
+                        Enter First Name
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -564,7 +602,18 @@ const EditSupplier = ({ supplier}: Props) => {
                       placeholder="Enter Last Name"
                       value={supplierdata.lastName}
                       onChange={handleChange}
+                      onFocus={() => setErrors({ ...errors, lastName: false })}
+                      onBlur={() => {
+                        if (supplierdata.lastName === "") {
+                          setErrors({ ...errors, lastName: true });
+                        }
+                      }}
                     />
+                    {errors.lastName && (
+                      <div className="text-red-800 text-xs ms-2 mt-1">
+                        Enter Last Name
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -579,7 +628,18 @@ const EditSupplier = ({ supplier}: Props) => {
                     placeholder="Enter Company Name"
                     value={supplierdata.companyName}
                     onChange={handleChange}
+                    onFocus={() => setErrors({ ...errors, companyName: false })}
+                    onBlur={() => {
+                      if (supplierdata.companyName === "") {
+                        setErrors({ ...errors, companyName: true });
+                      }
+                    }}
                   />
+                  {errors.companyName && (
+                    <div className="text-red-800 text-xs ms-2 mt-1">
+                      Enter Company Name
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="companyName">Supplier Display Name </label>
@@ -591,7 +651,20 @@ const EditSupplier = ({ supplier}: Props) => {
                     placeholder="Enter Display Name"
                     value={supplierdata.supplierDisplayName}
                     onChange={handleChange}
+                    onFocus={() =>
+                      setErrors({ ...errors, supplierDisplayName: false })
+                    }
+                    onBlur={() => {
+                      if (supplierdata.supplierDisplayName === "") {
+                        setErrors({ ...errors, supplierDisplayName: true });
+                      }
+                    }}
                   />
+                  {errors.supplierDisplayName && (
+                    <div className="text-red-800 text-xs ms-2 mt-1">
+                      Enter Supplier Display Name
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="">Supplier Email</label>
@@ -602,7 +675,24 @@ const EditSupplier = ({ supplier}: Props) => {
                     placeholder="Enter Email"
                     value={supplierdata.supplierEmail}
                     onChange={handleChange}
+                    onFocus={() =>
+                      setErrors({ ...errors, supplierEmail: false })
+                    }
+                    onBlur={() => {
+                      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                      if (
+                        supplierdata.supplierEmail === "" ||
+                        !emailPattern.test(supplierdata.supplierEmail)
+                      ) {
+                        setErrors({ ...errors, supplierEmail: true });
+                      }
+                    }}
                   />
+                  {errors.supplierEmail && (
+                    <div className="text-red-800 text-xs ms-2 mt-1">
+                      Enter a valid Email
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -615,8 +705,25 @@ const EditSupplier = ({ supplier}: Props) => {
                     className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Work Phone "
                     value={supplierdata.workPhone}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleChange(e);
+                      }
+                    }}
+                    onFocus={() => setErrors({ ...errors, workPhone: false })}
+                    onBlur={() => {
+                      if (supplierdata.workPhone === "") {
+                        setErrors({ ...errors, workPhone: true });
+                      }
+                    }}
                   />
+                  {errors.workPhone && (
+                    <div className="text-red-800 text-xs ms-2 mt-1">
+                      Enter A Valid Work Phone
+                    </div>
+                  )}
+                
                 </div>
                 <div>
                   <label htmlFor="">Mobile</label>
@@ -626,8 +733,24 @@ const EditSupplier = ({ supplier}: Props) => {
                     className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Mobile Number"
                     value={supplierdata.mobile}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleChange(e);
+                      }
+                    }}
+                    onFocus={() => setErrors({ ...errors, mobile: false })}
+                    onBlur={() => {
+                      if (supplierdata.mobile === "") {
+                        setErrors({ ...errors, mobile: true });
+                      }
+                    }}
                   />
+                  {errors.mobile && (
+                    <div className="text-red-800 text-xs ms-2 mt-1">
+                      Enter a Valid Mobile
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="">Opening Balance</label>
@@ -1022,7 +1145,7 @@ const EditSupplier = ({ supplier}: Props) => {
                                 {" "}
                                 Select the Registration Type
                               </option>
-                              {gstOrVat.msmeType &&
+                              {/* {gstOrVat.msmeType &&
                                 gstOrVat.msmeType.map(
                                   (item: any, index: number) => (
                                     <option
@@ -1033,7 +1156,7 @@ const EditSupplier = ({ supplier}: Props) => {
                                       {item}
                                     </option>
                                   )
-                                )}
+                                )} */}
                             </select>
                             <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
                               <CehvronDown color="gray" />
@@ -1144,7 +1267,20 @@ const EditSupplier = ({ supplier}: Props) => {
                               name="billingCity"
                               value={supplierdata.billingCity}
                               onChange={handleChange}
+                              onFocus={() =>
+                                setErrors({ ...errors, billingCity: false })
+                              }
+                              onBlur={() => {
+                                if (supplierdata.billingCity === "") {
+                                  setErrors({ ...errors, billingCity: true });
+                                }
+                              }}
                             />
+                            {errors.billingCity && (
+                              <div className="text-red-800 text-xs ms-2 mt-1">
+                                Enter Billing City
+                              </div>
+                            )}
                           </div>
 
                           <div className="relative ">
@@ -1222,7 +1358,28 @@ const EditSupplier = ({ supplier}: Props) => {
                                 onChange={(value) =>
                                   handleBillingPhoneChange(value)
                                 }
+                                onBlur={() => {
+                                  if (
+                                    !supplierdata.billingPhone ||
+                                    supplierdata.billingPhone.length < 10
+                                  ) {
+                                    setErrors({
+                                      ...errors,
+                                      billingPhone: true,
+                                    });
+                                  } else {
+                                    setErrors({
+                                      ...errors,
+                                      billingPhone: false,
+                                    });
+                                  }
+                                }}
                               />
+                              {errors.billingPhone && (
+                                <div className="text-red-800 text-xs ms-2 mt-1">
+                                  Enter a valid phone number
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div className="relative w-full">
