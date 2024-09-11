@@ -45,17 +45,26 @@ function SeeCustomerDetails({}: Props) {
       const apiResponse = await getOneCustomer(url, {
         organizationId: "INDORG0001",
       });
+      
       const { response, error } = apiResponse;
       if (!error && response) {
-        setCustomerData(response.data);
+        setCustomerData(response.data.status);
+        console.log(response.data,"get status");
+        
         console.log(response.data, "get");
+        setStatusData((prevData) => ({
+          ...prevData,
+          status: response.data.status
+        }));
+      
       }
     } catch (error) {}
   };
   useEffect(() => {
     getCustomer();
-    getStatus()
-  }, [customerEditResponse,]);
+  }, [customerEditResponse]);
+
+
   const sideBarHead = [
     { title: "Overview", onclick: () => setSelectedTab("Overview") },
     { title: "Sales History", onclick: () => setSelectedTab("Sales History") },
@@ -70,7 +79,10 @@ function SeeCustomerDetails({}: Props) {
     { title: "View Payment", onclick: () => setSelectedTab("View Payment") },
   ];
 
-  const handleStatusChange = async (e: ChangeEvent<HTMLSelectElement>) => {
+  
+
+
+  const handleStatusSubmit = async (e: ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
   
     setStatusData((prevData) => ({
@@ -78,25 +90,16 @@ function SeeCustomerDetails({}: Props) {
       [name]: value,
     }));
   
-  
-  };
-  console.log(statusData, "input");
-  useEffect(() => {
-    if (statusData.status) {
-      handleStatusSubmit();
-    }
-  }, [statusData.status]);
-
-  const handleStatusSubmit = async () => {
    
     const url = `${endponits.UPDATE_CUSTOMER_STATUS}/${id}`;
     try {
-      const { response, error } = await updateCustomerStatus(url, statusData);
+      const { response, error } = await updateCustomerStatus(url, {
+        ...statusData,
+        status: value, // Pass the updated status value here
+      });
       if (!error && response) {
         toast.success(response.data.message);
         console.log(response,"status submit");
-        getStatus()
-        getCustomer()
       } else {
         console.log(error,"error in status");
         
@@ -105,27 +108,7 @@ function SeeCustomerDetails({}: Props) {
     } catch (error) {}
   };
 
-  const getStatus = async () => {
-    const url = `${endponits.UPDATE_CUSTOMER_STATUS}/${id}`;
-    try {
-      const { response, error } = await updateCustomerStatus(url,{
-        organizationId: "INDORG0001",
-      });
-      if (!error && response) {
-        console.log(response.data, "status");
-        setStatusData((prevData: any) => ({
-          ...prevData,
-          status: response.data.status,
-        }));
-      } else {
-        console.log(error, "error in status");
-        toast.error(error?.response?.data?.message || "An error occurred");
-      }
-    } catch (error) {
-      console.error("Error in getStatus:", error);
-      toast.error("Failed to fetch status");
-    }
-  };
+
   
 
 
@@ -244,7 +227,7 @@ function SeeCustomerDetails({}: Props) {
                 alt=""
               />
               <p className="font-bold text-textColor border-e px-5 border-e-textColor">
-                {customerData.customerDisplayName}
+                {customerData?.customerDisplayName}
               </p>
               <p className="font-bold text-textColor  px-5 ">
                 {customerData.companyName}
@@ -282,7 +265,7 @@ function SeeCustomerDetails({}: Props) {
                   className="text-[10px] h-6 ps-2 bg-white border-blk rounded-md border text-textColor border-textColor"
                   value={statusData.status}
                   name="status"
-                  onChange={handleStatusChange}
+                  onChange={handleStatusSubmit}
                 >
                   <option value="">Status</option>
                   <option value="Active">Active</option>

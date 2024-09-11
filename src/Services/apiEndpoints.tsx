@@ -4,7 +4,6 @@ export const endponits = {
   CREATE_ORGANIZATION: `setup-organization`,
   GET_ONE_ORGANIZATION: `get-one-organization`,
   GET_COUNTRY_DATA: `get-countries-data`,
-
   GET_CURRENCY_LIST: `get-currency`,
 
   //Sales
@@ -15,6 +14,7 @@ export const endponits = {
   ADD_PREFIX:"add-prefix",
   EDIT_PREFIX:'edit-prefix',
   STATUS_PREFIX:'status-prefix',
+
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_SETTINGS: "get-settings",
