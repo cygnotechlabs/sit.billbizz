@@ -238,7 +238,7 @@ exports.importCustomer = async (req, res) => {
                 const websiteUrl = response[x]['Website URL'];
                 const taxType = response[x]['Tax Type'];
                 let gstTreatment = response[x]['GST Treatment'];
-                let gstinUin = response[x]['GSTIN/UIN'];
+                let gstin_uin = response[x]['GSTIN/UIN'];
                 let vatNumber = response[x]['VAT Number'];
                 const billingCountry = response[x]['Billing Country'];
                 const billingState= response[x]['Billing State'];
@@ -372,8 +372,8 @@ exports.importCustomer = async (req, res) => {
                           continue;
                       }
               
-                      if (!isAlphanumeric(gstinUin)) {
-                          console.error(`Invalid GSTIN/UIN at row ${x + 1},${gstinUin}`);
+                      if (!isAlphanumeric(gstin_uin)) {
+                          console.error(`Invalid GSTIN/UIN at row ${x + 1},${gstin_uin}`);
                           continue;
                       }
                   } else if (taxType === "VAT") {
@@ -383,7 +383,7 @@ exports.importCustomer = async (req, res) => {
                       }
                   } else if (taxType === "None") {
                     gstTreatment = undefined;
-                    gstinUin = undefined;
+                    gstin_uin = undefined;
                     vatNumber = undefined;                    
                 }
                   
@@ -423,7 +423,7 @@ exports.importCustomer = async (req, res) => {
                     websiteUrl,
                     taxType,
                     gstTreatment,
-                    gstinUin,
+                    gstin_uin,
                     placeOfSupply,
                     businessLegalName,
                     businessTradeName,

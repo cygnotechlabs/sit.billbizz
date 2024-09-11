@@ -2,6 +2,7 @@ const Organization = require("../database/model/organization");
 const Account = require("../database/model/account");
 const Customer = require("../database/model/customer");
 const Tax = require("../database/model/tax");
+const Currency = require("../database/model/currency");
 const moment = require("moment-timezone");
 
 // Add Customer
@@ -202,6 +203,9 @@ exports.addCustomer = async (req, res) => {
     function isAlphabets(value) {
       return /^[A-Za-z\s]+$/.test(value);
     }
+    function isFloat(value) {
+      return /^-?\d+(\.\d+)?$/.test(value);
+      }
 
     function isInteger(value) {
       return /^[0-9]+$/.test(value);
@@ -358,13 +362,13 @@ exports.addCustomer = async (req, res) => {
       if (!validGSTTreatments.includes(gstTreatment)) {
         return res
         .status(400)
-        .json({ message: `Invalid GST treatment: ${x + 1},${gstTreatment}` });        
+        .json({ message: `Invalid GST treatment: ${gstTreatment}` });        
       }
 
-      if (!isAlphanumeric(gstinUin)) {
+      if (!isAlphanumeric(gstin_uin)) {
         return res
         .status(400)
-        .json({ message: `Invalid GSTIN/UIN: ${gstinUin}` });          
+        .json({ message: `Invalid GSTIN/UIN: ${gstin_uin}` });          
       }
   } else if (taxType === "VAT") {
       if (!isAlphanumeric(vatNumber)) {
@@ -374,7 +378,7 @@ exports.addCustomer = async (req, res) => {
       }
   } else if (taxType === "None") {
     gstTreatment = undefined;
-    gstinUin = undefined;
+    gstInUin = undefined;
     vatNumber = undefined;                    
 }
 
@@ -430,8 +434,7 @@ if (!validCountries[billingCountry].includes(placeOfSupply)) {
       designation,
       websiteURL,
 
-      //Taxes
-      taxPreference,
+      //Taxes      
       taxReason,
       taxType,
       gstTreatment,
@@ -511,6 +514,15 @@ exports.getAllCustomer = async (req, res) => {
   try {
     const { organizationId } = req.body;
 
+    // Check if the Organization exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+
+    if (!existingOrganization) {
+        return res.status(404).json({
+            message: "No Organization Found.",
+        });
+    }
+
     // Find all Customer where organizationId matches
     const customers = await Customer.find({ organizationId: organizationId });
 
@@ -532,6 +544,15 @@ exports.getOneCustomer = async (req, res) => {
   try {
     const { customerId } = req.params;
     const { organizationId } = req.body;
+
+    // Check if the Organization exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+
+    if (!existingOrganization) {
+        return res.status(404).json({
+            message: "No Organization Found.",
+        });
+    }
 
     // Find the Customer by CustomerId and organizationId
     const customers = await Customer.findOne({

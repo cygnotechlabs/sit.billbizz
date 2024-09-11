@@ -11,7 +11,7 @@ const accountSchema = new Schema({
     accountHead: {type:String},
     accountGroup: {type:String},
 
-    balance: {type:Number},
+    //balance: {type:Number},
 
     openingDate: {type:String},
     description: {type:String},
