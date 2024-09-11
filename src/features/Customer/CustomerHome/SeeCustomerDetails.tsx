@@ -13,18 +13,29 @@ import Pen from "../../../assets/icons/Pen";
 import Vector from "../../../assets/icons/Vector";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import EditCustomerModal from "./EditCustomerModal";
 import { CustomerEditResponseContext } from "../../../context/ContextShare";
+import toast, { Toaster } from "react-hot-toast";
 type Props = {};
+
+interface Status {
+  organizationId: string;
+  status: string;
+}
 
 function SeeCustomerDetails({}: Props) {
   const param = useParams();
   const [selectedTab, setSelectedTab] = useState("Overview");
   const [customerData, setCustomerData] = useState<any | []>([]);
   const { request: getOneCustomer } = useApi("put", 5002);
-  const {customerEditResponse}=useContext(CustomerEditResponseContext)!;
+  const { request: updateCustomerStatus } = useApi("put", 5002);
 
+  const { customerEditResponse } = useContext(CustomerEditResponseContext)!;
+  const [statusData, setStatusData] = useState<Status>({
+    organizationId: "INDORG0001",
+    status: "",
+  });
 
   const { id } = param;
 
@@ -37,14 +48,14 @@ function SeeCustomerDetails({}: Props) {
       const { response, error } = apiResponse;
       if (!error && response) {
         setCustomerData(response.data);
-        // console.log(response.data);
-        
+        console.log(response.data, "get");
       }
     } catch (error) {}
   };
   useEffect(() => {
     getCustomer();
-  }, [customerEditResponse]);
+    getStatus()
+  }, [customerEditResponse,]);
   const sideBarHead = [
     { title: "Overview", onclick: () => setSelectedTab("Overview") },
     { title: "Sales History", onclick: () => setSelectedTab("Sales History") },
@@ -58,6 +69,66 @@ function SeeCustomerDetails({}: Props) {
     },
     { title: "View Payment", onclick: () => setSelectedTab("View Payment") },
   ];
+
+  const handleStatusChange = async (e: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+  
+    setStatusData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  
+  
+  };
+  console.log(statusData, "input");
+  useEffect(() => {
+    if (statusData.status) {
+      handleStatusSubmit();
+    }
+  }, [statusData.status]);
+
+  const handleStatusSubmit = async () => {
+   
+    const url = `${endponits.UPDATE_CUSTOMER_STATUS}/${id}`;
+    try {
+      const { response, error } = await updateCustomerStatus(url, statusData);
+      if (!error && response) {
+        toast.success(response.data.message);
+        console.log(response,"status submit");
+        getStatus()
+        getCustomer()
+      } else {
+        console.log(error,"error in status");
+        
+        toast.error(error.response.data.message);
+      }
+    } catch (error) {}
+  };
+
+  const getStatus = async () => {
+    const url = `${endponits.UPDATE_CUSTOMER_STATUS}/${id}`;
+    try {
+      const { response, error } = await updateCustomerStatus(url,{
+        organizationId: "INDORG0001",
+      });
+      if (!error && response) {
+        console.log(response.data, "status");
+        setStatusData((prevData: any) => ({
+          ...prevData,
+          status: response.data.status,
+        }));
+      } else {
+        console.log(error, "error in status");
+        toast.error(error?.response?.data?.message || "An error occurred");
+      }
+    } catch (error) {
+      console.error("Error in getStatus:", error);
+      toast.error("Failed to fetch status");
+    }
+  };
+  
+
+
 
   return (
     <div className="px-6">
@@ -178,6 +249,20 @@ function SeeCustomerDetails({}: Props) {
               <p className="font-bold text-textColor  px-5 ">
                 {customerData.companyName}
               </p>
+
+              {
+               <div className=" ">
+                  <div
+                    className={` px-2 flex justify-center  rounded-md  text-xs text-white p-0.5 ${
+                      statusData.status == "Active"
+                        ? "bg-[#78AA86]"
+                        : "bg-red-400"
+                    }`}
+                  >
+                    {statusData.status}
+                  </div>
+               </div>
+              }
             </div>
 
             <div className="flex items-center ">
@@ -189,8 +274,20 @@ function SeeCustomerDetails({}: Props) {
                 <PhoneIcon color={"#303F58"} size={18} />
                 <p> {customerData.mobile}</p>
               </div>
-              <div className="ml-auto w-[60%]">
-               <EditCustomerModal customerDataPorps={customerData}/>
+              <div className="ml-auto w-[40%] gap-2 flex">
+                <EditCustomerModal customerDataPorps={customerData} />
+
+                <select
+                  id=""
+                  className="text-[10px] h-6 ps-2 bg-white border-blk rounded-md border text-textColor border-textColor"
+                  value={statusData.status}
+                  name="status"
+                  onChange={handleStatusChange}
+                >
+                  <option value="">Status</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
               </div>
             </div>
           </div>
@@ -206,7 +303,10 @@ function SeeCustomerDetails({}: Props) {
                 </div>
                 <div className=" text-xs p-2">
                   <p>{customerData.billingAttention}</p>
-                  <p>{customerData.billingAddressLine1}, {customerData.billingAddressLine2}</p>
+                  <p>
+                    {customerData.billingAddressLine1},{" "}
+                    {customerData.billingAddressLine2}
+                  </p>
                   <p>{customerData.billingCity}</p>
                   <p>pin {customerData.billingPinCode} </p>
                   <p>{customerData.billingCountry}</p>
@@ -222,7 +322,10 @@ function SeeCustomerDetails({}: Props) {
                 </div>
                 <div className=" text-xs  p-2">
                   <p>{customerData.shippingAttention}</p>
-                  <p>{customerData.shippingAddress1}, {customerData.shippingAddress2}</p>
+                  <p>
+                    {customerData.shippingAddress1},{" "}
+                    {customerData.shippingAddress2}
+                  </p>
                   <p>{customerData.shippingCity}</p>
                   <p>pin {customerData.shippingPinCode}</p>
                   <p>{customerData.shippingCountry}</p>
@@ -236,15 +339,21 @@ function SeeCustomerDetails({}: Props) {
                 <div className="space-y-2 text-xs p-2">
                   <div className="flex text-textColor">
                     <p>Customet Type</p>{" "}
-                    <p className="ml-auto font-semibold">{customerData.customerType}</p>
+                    <p className="ml-auto font-semibold">
+                      {customerData.customerType}
+                    </p>
                   </div>
                   <div className="flex text-textColor ">
                     <p>Default Currency</p>{" "}
-                    <p className="ml-auto  font-semibold">{customerData.currency}</p>
+                    <p className="ml-auto  font-semibold">
+                      {customerData.currency}
+                    </p>
                   </div>
                   <div className="flex text-textColor ">
                     <p>Payment Terms</p>{" "}
-                    <p className="ml-auto font-semibold">{customerData.paymentTerms}</p>
+                    <p className="ml-auto font-semibold">
+                      {customerData.paymentTerms}
+                    </p>
                   </div>
                   <div className="flex text-textColor ">
                     <p>Portal Language</p>{" "}
@@ -263,6 +372,7 @@ function SeeCustomerDetails({}: Props) {
           </div>
         </div>
       </div>
+      <Toaster position="top-center" reverseOrder={true} />
     </div>
   );
 }

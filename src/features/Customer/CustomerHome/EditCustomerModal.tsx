@@ -157,8 +157,8 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
     setRows([...rows, { salutation: "", firstName: "", lastName: "", email: "", mobile: "" }]);
   };
 
-  console.log(customerdata,"data");
-  console.log(customerDataPorps,"props");
+  // console.log(customerdata,"data");
+  // console.log(customerDataPorps,"props");
   
   
 
