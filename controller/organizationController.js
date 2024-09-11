@@ -74,7 +74,7 @@ async function insertAccounts(accounts,organizationId,createdDateAndTime) {
                 accountHead: account.accountHead,
                 accountGroup: account.accountGroup,
 
-                balance: 0, 
+                // balance: 0, 
                 openingDate: createdDateAndTime, 
                 description: account.description
             };});
