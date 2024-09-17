@@ -40,12 +40,12 @@ const LandingHome: React.FC = () => {
         <div className="col-span-9 ">
           <div className="grid grid-cols-12 gap-3">
           <div className="col-span-5">
-         <div className={`w-[100%] h-[260px] rounded-2xl ${mode?'bg-[#DED0B9]':'bg-[#565148]'}   relative overflow-hidden p-6 flex flex-col`}>
+         <div onClick={()=>navigate('/sales/salesorder')} className={`w-[100%]  h-[260px] rounded-2xl ${mode?'bg-[#DED0B9]':'bg-[#565148]'} cursor-pointer  relative overflow-hidden p-6 flex flex-col`}>
         <img className="absolute right-0 bottom-0" src={salesVector} alt="" />
         {/* Header Buttons */}
         <div className="flex  justify-between items-center">
           <div className="flex space-x-3 items-center">
-          <button className={` ${mode?'bg-[#948B7C]':'bg-[#C4B8A3]'} text-white text-sm w-[62px] h-[35px] rounded-lg`}>
+          <button  className={` ${mode?'bg-[#948B7C]':'bg-[#C4B8A3]'} text-white text-sm w-[62px] h-[35px] rounded-lg`}>
             Sales
           </button>
           <button className={`${mode?'bg-[#948B7C]':'bg-[#726e66]'} text-white space-x-2  text-sm w-[160px] h-[28px] rounded-md flex items-center justify-center`}>
@@ -56,7 +56,7 @@ const LandingHome: React.FC = () => {
           {/* Arrow Button */}
         
         <div  className="flex justify-end cursor-pointer">
-          <div onClick={()=>navigate('/sales/salesorder')} className={`${mode?'bg-[#948B7C]':'bg-[#90887A]'} text-white h-[52px] w-[52px] flex items-center justify-center rounded-full `}>
+          <div  className={`${mode?'bg-[#948B7C]':'bg-[#90887A]'} text-white h-[52px] w-[52px] flex items-center justify-center rounded-full `}>
             <ArrowrightUp size={30} stroke={1}/>
           </div>
         </div>
@@ -73,7 +73,8 @@ const LandingHome: React.FC = () => {
     </div>
     <div className="relative col-span-7">
     <div
-        className="w-[97%] h-[260px] relative overflow-hidden  rounded-2xl"
+        onClick={()=>navigate('/inventory')}
+        className="w-[97%] h-[260px]  cursor-pointer relative overflow-hidden  rounded-2xl"
       >
         <img src={inventoryVector} className="absolute overflow-hidden right-20 top-[2px] z-9999" alt="" />
         {/* Image section */}
@@ -84,7 +85,7 @@ const LandingHome: React.FC = () => {
           style={{ clipPath: 'inset(0 0 0 0)' }}
         />
         {/* Arrow icon in the top right corner inside a circle   */}
-        <div onClick={()=>navigate('/inventory')}  className={`${mode?'bg-white':'bg-[#1A2023]'} cursor-pointer z-100 w-[98px] h-[63px] absolute top-[2px] right-[7px] flex items-center justify-center rounded-bl-2xl`}>
+        <div   className={`${mode?'bg-white':'bg-[#1A2023]'} cursor-pointer z-100 w-[98px] h-[63px] absolute top-[2px] right-[7px] flex items-center justify-center rounded-bl-2xl`}>
         <div onClick={()=>navigate('/inventory')} className={`flex items-center justify-center  w-[52px] h-[52px]  ${mode?'bg-[#97998E]':'bg-[#2C353B]'} rounded-full`}>
           <ArrowrightUp size={30} stroke={1}/>
         </div>
