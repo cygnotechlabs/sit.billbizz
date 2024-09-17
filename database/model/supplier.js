@@ -61,8 +61,8 @@ const supplierSchema = new Schema({
     businessLegalName: {type:String},
     businessTradeName: {type:String},
     msmeType: {type:String},
+    msmeNumber:{type:String},
     msmeRegistered: {type:String},
-    msmeRegistered:{type:Boolean},
     vatNumber: {type:String},
 
     // Billing Address

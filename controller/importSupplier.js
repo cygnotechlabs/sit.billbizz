@@ -210,7 +210,7 @@ exports.importSupplier = async (req, res) => {
                 const billingState= response[x]['Billing State'];
                 const shippingCountry = response[x]['Shipping Country'];
                 const shippingState= response[x]['Shipping State'];
-                const sourceOfSupply = response[x]['Place Of Supply'];
+                const sourceOfSupply = response[x]['Sourse Of Supply'];
                 const businessLegalName = response[x]['Business Legal Name'];
                 const businessTradeName = response[x]['Business Trade Name'];
                 const billingPinCode = response[x]['Billing PinCode'];
@@ -351,7 +351,7 @@ exports.importSupplier = async (req, res) => {
                     gstinUin = undefined;
                     vatNumber = undefined;                    
                 }
-                if (!validCountries[billingCountry].includes(placeOfSupply)) {
+                if (!validCountries[billingCountry].includes(sourceOfSupply)) {
                   console.error(`Invalid Place of Supply at row ${x + 1},${placeOfSupply}`);
                   continue;
               }
