@@ -44,23 +44,41 @@ function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = ne
 
 
 
+
+
+// Function to sanitize the file name and prevent malicious paths
+function sanitizeFileName(fileName) {
+  return path.basename(fileName).replace(/[^a-z0-9\-_\.]/gi, '_');  // Allow only letters, numbers, hyphens, and underscores
+}
+
+
+
+
+
+
 exports.importCustomer = async (req, res) => {
   try {
     // Multer storage configuration
     const storage = multer.diskStorage({
       destination: (req, file, cb) => {
-        cb(null, './public/upload');
+        // Use a fixed upload directory, avoiding user-controlled input
+        cb(null, path.resolve(__dirname, '..', 'public', 'upload')); // Ensuring an absolute path
       },
       filename: (req, file, cb) => {
-        cb(null, 'customer.xlsx');
+        // Sanitize the filename to prevent any harmful characters or sequences
+        const safeFileName = sanitizeFileName('customer.xlsx');  // Static name, could also be generated dynamically
+        cb(null, safeFileName);
       }
     });
 
+    // Multer file filter to accept only XLSX files
     const fileFilter = (req, file, cb) => {
-      if (file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || path.extname(file.originalname).toLowerCase() === '.xlsx') {
+      const isValid = file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' &&
+                      path.extname(file.originalname).toLowerCase() === '.xlsx';
+      if (isValid) {
         cb(null, true);
       } else {
-        cb(new Error('Only XLSX files are allowed!'), false);
+        cb(new Error('Only .xlsx files are allowed!'), false);
       }
     };
 
