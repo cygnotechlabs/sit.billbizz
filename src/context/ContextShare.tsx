@@ -87,7 +87,7 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
       console.error('Failed to fetch settings:', error);
     }
   };
-
+  
   return (
     <cashResponseContext.Provider value={{ cashResponse, setCashResponse }}>
       <BankResponseContext.Provider value={{ bankResponse, setBankResponse }}>

@@ -47,7 +47,7 @@ export  type SupplierData = {
     shippingPinCode: string;
     shippingPhone: string;
     shippingFaxNum: string;
-  
+    status:string,
     contactPerson: {
       salutation: string;
       firstName: string;

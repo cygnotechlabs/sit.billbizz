@@ -54,6 +54,7 @@ GET_ALL_ITEM:"get-all-item",
   GET_ONE_SUPPLIER:"get-supplier",
   EDIT_SUPPLIER:"update-supplier",
   GET_TAX_SUPPLIER:`supplier-additional-data`,
+  UPDATE_SUPPLIER_STATUS:`update-supplier-status`,
 
   //Currency
   GET_CURRENCIES: "get-currency",

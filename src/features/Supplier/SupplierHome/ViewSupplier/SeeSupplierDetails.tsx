@@ -1,30 +1,38 @@
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ArrowRightLeft from "../../../../assets/icons/ArrowRightLeft";
 import CheveronLeftIcon from "../../../../assets/icons/CheveronLeftIcon";
 import Info from "../../../../assets/icons/Info";
 import MessageCircle from "../../../../assets/icons/MessageCircle";
 import NewspaperIcon from "../../../../assets/icons/NewspaperIcon";
-import TrashCan from "../../../../assets/icons/TrashCan";
-import Button from "../../../../Components/Button";
-import Comment from "./Comment";
-import Overview from "./Overview";
-import Transaction from "./Transaction";
-import Statement from "./Statement";
+import { SupplierResponseContext } from "../../../../context/ContextShare";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import EditSupplier from "../EditSupplier";
 import { SupplierData } from "../SupplierData";
-import { SupplierResponseContext } from "../../../../context/ContextShare";
+import Comment from "./Comment";
+import Overview from "./Overview";
+import Statement from "./Statement";
+import Transaction from "./Transaction";
+import toast from "react-hot-toast";
 
 type Props = {};
+interface Status {
+  organizationId: string;
+  status: any;
+}
 
 function SeeSupplierDetails({}: Props) {
   const { request: getOneSupplier } = useApi('get', 5009);
   const { id } = useParams<{ id: string }>(); // Define the type for id
   const [supplier, setSupplier] = useState<SupplierData | null>(null); // Use the Supplier type and allow null
   const [tabSwitch, setTabSwitch] = useState<string>("overview");
+  const {request:updateSupplierStatus}=useApi("put",5009)
   const {supplierResponse}=useContext(SupplierResponseContext)!;
+  const [statusData, setStatusData] = useState<Status>({
+    organizationId: "INDORG0001",
+    status: "",
+  });
   const handleTabSwitch = (tabName: string) => {
     setTabSwitch(tabName);
   };
@@ -48,7 +56,32 @@ function SeeSupplierDetails({}: Props) {
       getOneSupplierData();
     }
   }, [id,supplierResponse]);
-
+  const handleStatusSubmit = async (e: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+  
+    setStatusData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  
+   
+    const url = `${endponits.UPDATE_SUPPLIER_STATUS}/${id}`;
+    try {
+      const { response, error } = await updateSupplierStatus(url, {
+        ...statusData,
+        status: value, // Pass the updated status value here
+      });
+      if (!error && response) {
+        toast.success(response.data.message);
+      } else { 
+        toast.error(error.response.data.message);
+      }
+    } catch (error) {}
+  };
+  useEffect(()=>{
+    setStatusData({...statusData,status:supplier?.status})
+  },[supplier])
+  
   return (
     <div className="px-6">
       <div className="flex flex-col bg-white h-auto rounded-md text-textColor p-5 space-y-4">
@@ -67,9 +100,16 @@ function SeeSupplierDetails({}: Props) {
           </div>
           <div className="flex gap-3 items-center">
             <EditSupplier supplier={supplier} />
-            <Button variant="secondary" className="pl-5 pr-5" size="sm">
-              <TrashCan size={18} color="#565148" /> <p className="text-sm font-medium">Delete</p>
-            </Button>
+            <select
+                  id=""
+                  className=" pl-6 pr-6 w-24 text-sm h-[40px]  flex items-center justify-center text-[#565148] ps-2 bg-[#FEFDFA] rounded-md border font-medium border-[#565148]"
+                  value={statusData.status}
+                  name="status"
+                  onChange={handleStatusSubmit}
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive"><div>Inactive</div></option>
+                </select>
           </div>
         </div>
         {/* Tabs */}
@@ -100,7 +140,7 @@ function SeeSupplierDetails({}: Props) {
           </div>
         </div>
         {tabSwitch === "overview" ? (
-          <Overview supplier={supplier} />
+          <Overview supplier={supplier} statusData={statusData} setStatusData={setStatusData}/>
         ) : tabSwitch === "comment" ? (
           <Comment />
         ) : tabSwitch === "transaction" ? (
