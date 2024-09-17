@@ -7,8 +7,8 @@ function UserIcon({}: Props) {
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
+        strokeWidth={1.8}
+        stroke="#4B5C79"
         className="size-6 text-gray-700 font-extrabold cursor-pointer"
       >
         <path
