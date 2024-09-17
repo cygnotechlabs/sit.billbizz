@@ -219,6 +219,8 @@ const EditSupplier = ({ supplier}: Props) => {
       console.log("err",error);
       if (!error && response) {
         setsupplierResponse(response.data);
+        console.log(response.data.message);
+        
         toast.success(response.data.message)
         console.log(response.data);
         

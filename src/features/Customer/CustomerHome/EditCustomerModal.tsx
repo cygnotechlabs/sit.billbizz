@@ -38,6 +38,7 @@ type CustomerData = {
   websiteURL: string;
   // taxType:""
   gstTreatment: string;
+  taxPreference: string;
   gstin_uin: string;
   placeOfSupply: string;
   businessLegalName: string;
@@ -81,6 +82,7 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
   const [countryData, setcountryData] = useState<any | []>([]);
   const [stateList, setStateList] = useState<any | []>([]);
   const [shippingstateList, setshippingStateList] = useState<any | []>([]);
+  const [taxselected, setTaxSelected] = useState<string | null>("Taxable");
   const {setcustomereditResponse}=useContext(CustomerEditResponseContext)!;
   const [errors, setErrors] = useState({
     salutation: false,
@@ -114,10 +116,13 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
   const [activeTab, setActiveTab] = useState<string>("otherDetails");
   const [paymentTerms, setPaymentTerms] = useState<any | []>([]);
   const [gstOrVat, setgstOrVat] = useState<any | []>([]);
+  const [oneOrganization, setOneOrganization] = useState<any | []>([]);
+  const [placeOfSupplyList, setPlaceOfSupplyList] = useState<any | []>([]);
   const {request:editCustomerDetails}=useApi("put",5002)
   const { request: getCountryData } = useApi("get", 5004);
   const { request: getCurrencyData } = useApi("put", 5004);
   const { request: getPaymentTerms } = useApi("get", 5004);
+  const { request: getOrganization } = useApi("put", 5004);
   const { request: getTax } = useApi("put", 5002);
   const param=useParams()
 
@@ -146,6 +151,7 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
     websiteURL: "",
     gstTreatment: "",
     gstin_uin: "",
+    taxPreference: "Taxable",
     placeOfSupply: "",
     businessLegalName: "",
     businessTradeName: "",
@@ -206,14 +212,21 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
 
 
   // data from checkboxes
-  const handleRadioChange = (type: string) => {
-    setSelected(type);
+  const handleRadioChange = (type: string, field: "customerType" | "taxPreference") => {
     setCustomerData((prevFormData) => ({
-      ...prevFormData,
-      customerType: type,
+        ...prevFormData,
+        [field]: type,
     }));
-    setErrors({ ...errors, customerType: false }); 
-  };
+    
+    if (field === "customerType") {
+        setSelected(type);
+        setErrors({ ...errors, customerType: false });
+    } else if (field === "taxPreference") {
+        setTaxSelected(type);  
+    }
+};
+
+
 
   //data from table
   const handleRowChange = ( index: number,
@@ -292,7 +305,7 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
 
       if (!taxError && taxResponse) {
         if (taxResponse) {
-          // console.log(taxResponse.data.taxType,"tax");
+          console.log(taxResponse.data.taxType,"tax");
          
           setgstOrVat(taxResponse.data);
         }
@@ -407,9 +420,47 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
       
     }
   }
+  const handleplaceofSupply = () => {
+    if (oneOrganization.organizationCountry) {
+      const country = countryData.find(
+        (c: any) =>
+          c.name.toLowerCase() ===
+          oneOrganization.organizationCountry.toLowerCase()
+      );
+
+      if (country) {
+        const states = country.states;
+        // console.log("States:", states);
+
+        setPlaceOfSupplyList(states);
+      } else {
+        console.log("Country not found");
+      }
+    } else {
+      console.log("No country selected");
+    }
+  };
+
+  const getOneOrganization = async () => {
+    try {
+      const url = `${endponits.GET_ONE_ORGANIZATION}`;
+      const { response, error } = await getOrganization(url, {
+        organizationId: "INDORG0001",
+      });
+
+      if (!error && response?.data) {
+        setOneOrganization(response.data);
+        // console.log(response.data,"org");
+      }
+    } catch (error) {
+      console.error("Error fetching organization:", error);
+    }
+  }
    
   useEffect(() => {
+    handleplaceofSupply()
     getAdditionalData();
+    getOneOrganization()
     if (customerDataPorps) {
       setCustomerData(customerDataPorps);
       setRows(customerDataPorps.contactPerson || []);
@@ -463,8 +514,9 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
         <div className="flex gap-2 justify-center items-center">
           <div
             className="grid place-items-center mt-1"
-            onChange={() => handleRadioChange("Business")}
-          >
+            onChange={() =>
+              handleRadioChange("Business", "customerType")
+            }               >
             <input
               id="Business"
               type="radio"
@@ -475,8 +527,9 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                   : "border-1 border-neutral-400"
               }`}
               checked={selected === "Business"}
-              onChange={() => handleRadioChange("Business")}
-            />
+              onChange={() =>
+                handleRadioChange("Business", "customerType")
+              }            />
             <div
               className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
                 selected === "Business"
@@ -492,8 +545,9 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
         <div className="flex gap-2 justify-center items-center">
           <div
             className="grid place-items-center mt-1"
-            onChange={() => handleRadioChange("Individual")}
-          >
+            onChange={() =>
+              handleRadioChange("Individual", "customerType")
+            }          >
             <input
               id="Individual"
               type="radio"
@@ -504,8 +558,9 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                   : "border-1 border-neutral-400"
               }`}
               checked={selected === "Individual"}
-              onChange={() => handleRadioChange("Individual")}
-            />
+              onChange={() =>
+                handleRadioChange("Individual", "customerType")
+              }            />
             <div
               className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
                 selected === "Individual"
@@ -545,10 +600,10 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                       }}
                     >
                       <option value="">Value</option>
-                      <option value="Mr">Mr.</option>
-                      <option value="Mrs">Mrs.</option>
-                      <option value="Ms">Ms.</option>
-                      <option value="Dr">Dr.</option>
+                      <option value="Mr.">Mr.</option>
+                      <option value="Mrs.">Mrs.</option>
+                      <option value="Ms.">Ms.</option>
+                      <option value="Dr.">Dr.</option>
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                       <CehvronDown color="gray" />
@@ -1072,158 +1127,302 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                   )}
 
 {activeTab === "taxes" && (
-  <>
-    {gstOrVat.taxType === "GST" && (
-      <div>
-        <div className="grid grid-cols-2 gap-4">
-        <div className="relative w-full">
-  <label htmlFor="gstTreatment" className="block mb-1">
-    GST Treatment
-  </label>
-  <select
-    className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-    name="gstTreatment"
-    value={customerdata.gstTreatment}
-    onChange={handleChange}
-    onFocus={() => setErrors({ ...errors, gstTreatment: false })}
-    onBlur={() => {
-      if (customerdata.gstTreatment.trim() === "") {
-        setErrors({ ...errors, gstTreatment: true });
-      }
-    }}
-  >
-    <option value="" className="text-gray">
-      Select GST Treatment
-    </option>
-    {gstOrVat?.gstTreatment?.map((item: any, index: number) => (
-      <option value={item} key={index}>
-        {item}
-      </option>
-    ))}
-  </select>
+                    <>
+                      <div className="mb-3">
+                        <label
+                          className="block text-sm mb-1 text-labelColor"
+                          htmlFor=""
+                        >
+                          Tax Preference
+                        </label>
+                        <div className="flex items-center space-x-4 text-textColor text-sm">
+                          <div className="flex gap-2 justify-center items-center">
+                            <div className="grid place-items-center mt-1">
+                              <input
+                                id="Taxable"
+                                type="radio"
+                                name="taxPreference"
+                                className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${
+                                  taxselected === "Taxable"
+                                    ? "border-8 border-neutral-400"
+                                    : "border-1 border-neutral-400"
+                                }`}
+                                checked={taxselected === "Taxable"}
+                                onChange={() =>
+                                  handleRadioChange("Taxable", "taxPreference")
+                                }
+                              />
+                              <div
+                                className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
+                                  taxselected === "Taxable"
+                                    ? "bg-neutral-100"
+                                    : "bg-transparent"
+                                }`}
+                              />
+                            </div>
+                            <label
+                              htmlFor="Taxable"
+                              className="text-start font-medium"
+                            >
+                              Taxable
+                            </label>
+                          </div>
+                          <div className="flex gap-2 justify-center items-center">
+                            <div className="grid place-items-center mt-1">
+                              <input
+                                id="Tax Exempt"
+                                type="radio"
+                                name="taxPreference"
+                                className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${
+                                  taxselected === "Tax Exempt"
+                                    ? "border-8 border-neutral-400"
+                                    : "border-1 border-neutral-400"
+                                }`}
+                                checked={taxselected === "Tax Exempt"}
+                                onChange={() =>
+                                  handleRadioChange(
+                                    "Tax Exempt",
+                                    "taxPreference"
+                                  )
+                                }
+                              />
+                              <div
+                                className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
+                                  taxselected === "Tax Exempt"
+                                    ? "bg-neutral-100"
+                                    : "bg-transparent"
+                                }`}
+                              />
+                            </div>
+                            <label
+                              htmlFor="Tax Exempt"
+                              className="text-start font-medium"
+                            >
+                              Tax Exempt
+                            </label>
+                          </div>
+                        </div>
+                      </div>
 
-  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
-    <CehvronDown color="gray" />
-  </div>
+                      {/* {customerdata.taxPreference == "Taxable" && ( */}
+                        <>
+                          {gstOrVat.taxType === "GST" && (
+                            <div>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="relative w-full">
+                                  <label
+                                    htmlFor="gstTreatment"
+                                    className="block mb-1"
+                                  >
+                                    GST Treatment
+                                  </label>
+                                  <select
+                                    className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="gstTreatment"
+                                    value={customerdata.gstTreatment}
+                                    onChange={handleChange}
+                                    onFocus={() =>
+                                      setErrors({
+                                        ...errors,
+                                        gstTreatment: false,
+                                      })
+                                    }
+                                    onBlur={() => {
+                                      if (
+                                        customerdata.gstTreatment.trim() === ""
+                                      ) {
+                                        setErrors({
+                                          ...errors,
+                                          gstTreatment: true,
+                                        });
+                                      }
+                                    }}
+                                  >
+                                    <option value="" className="text-gray">
+                                      Select GST Treatment
+                                    </option>
+                                    {gstOrVat?.gstTreatment?.map(
+                                      (item: any, index: number) => (
+                                        <option value={item} key={index}>
+                                          {item}
+                                        </option>
+                                      )
+                                    )}
+                                  </select>
 
-  {errors.gstTreatment && (
-    <div className="text-red-800 text-xs ms-2 mt-1">
-      Please select a GST Treatment.
-    </div>
-  )}
-</div>
+                                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
+                                    <CehvronDown color="gray" />
+                                  </div>
 
-          <div>
-            <label htmlFor="gstin_uin" className="block mb-1">
-              GSTIN/UIN
-            </label>
-            <input
-              type="text"
-              name="gstin_uin"
-              className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-              placeholder="GSTIN/UIN"
-              value={customerdata.gstin_uin}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (/^[A-Za-z0-9]*$/.test(value)) {
-                  handleChange(e);
-                }
-              }}
-              onFocus={() => setErrors({ ...errors, gstin_uin: false })}
-              onBlur={() => {
-                if (customerdata.gstin_uin.trim() === "") {
-                  setErrors({ ...errors, gstin_uin: true });
-                }
-              }}
-            />
-            {errors.gstin_uin && (
-              <div className="text-red-800 text-xs ms-2 mt-1">
-                Please enter a valid GSTIN/UIN (alphanumeric characters only).
-              </div>
-            )}
-          </div>
-          <div>
-            <label htmlFor="businessLegalName" className="block mb-1">
-              Business Legal Name
-            </label>
-            <input
-              type="text"
-              name="businessLegalName"
-              className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-              placeholder="Enter Business Legal Name"
-              value={customerdata.businessLegalName}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label htmlFor="businessTradeName" className="block mb-1">
-              Business Trade Name
-            </label>
-            <input
-              type="text"
-              name="businessTradeName"
-              className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-              placeholder="Enter Business Trade Name"
-              value={customerdata.businessTradeName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="relative w-full">
-            <label htmlFor="placeOfSupply" className="block mb-1">
-              Place of Supply
-            </label>
-            <select
-              className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              name="placeOfSupply"
-              value={customerdata.placeOfSupply}
-              onChange={handleChange}
-            >
-              <option value="" className="text-gray">
-                Value
-              </option>
-              <option value="Kochi" className="text-gray">
-                Kochi
-              </option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
-              <CehvronDown color="gray" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-   {gstOrVat.taxType === "VAT" && (
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="vatNumber" className="block mb-1">
-            VAT Number
-          </label>
-          <input
-            type="text"
-            name="vatNumber"
-            className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-            placeholder="Enter VAT Number"
-            value={customerdata.vatNumber}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="businessTradeName" className="block mb-1">
-            Business Trade Name
-          </label>
-          <input
-            type="text"
-            name="businessTradeName"
-            className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-            placeholder="Enter Business Trade Name"
-            value={customerdata.businessTradeName}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
-    )}
-  </>
-)}
+                                  {errors.gstTreatment && (
+                                    <div className="text-red-800 text-xs ms-2 mt-1">
+                                      Please select a GST Treatment.
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div>
+                                  <label
+                                    htmlFor="gstin_uin"
+                                    className="block mb-1"
+                                  >
+                                    GSTIN/UIN
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="gstin_uin"
+                                    className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                                    placeholder="GSTIN/UIN"
+                                    value={customerdata.gstin_uin}
+                                    onChange={(e) => {
+                                      const value = e.target.value;
+                                      if (/^[A-Za-z0-9]*$/.test(value)) {
+                                        handleChange(e);
+                                      }
+                                    }}
+                                    onFocus={() =>
+                                      setErrors({ ...errors, gstin_uin: false })
+                                    }
+                                    onBlur={() => {
+                                      if (
+                                        customerdata.gstin_uin.trim() === ""
+                                      ) {
+                                        setErrors({
+                                          ...errors,
+                                          gstin_uin: true,
+                                        });
+                                      }
+                                    }}
+                                  />
+                                  {errors.gstin_uin && (
+                                    <div className="text-red-800 text-xs ms-2 mt-1">
+                                      Please enter a valid GSTIN/UIN
+                                      (alphanumeric characters only).
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div>
+                                  <label
+                                    htmlFor="businessLegalName"
+                                    className="block mb-1"
+                                  >
+                                    Business Legal Name
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="businessLegalName"
+                                    className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                                    placeholder="Enter Business Legal Name"
+                                    value={customerdata.businessLegalName}
+                                    onChange={handleChange}
+                                  />
+                                </div>
+                                <div>
+                                  <label
+                                    htmlFor="businessTradeName"
+                                    className="block mb-1"
+                                  >
+                                    Business Trade Name
+                                  </label>
+                                  <input
+                                    type="text"
+                                    name="businessTradeName"
+                                    className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                                    placeholder="Enter Business Trade Name"
+                                    value={customerdata.businessTradeName}
+                                    onChange={handleChange}
+                                  />
+                                </div>
+                                <div className="relative w-full">
+                                  <label
+                                    htmlFor="placeOfSupply"
+                                    className="block mb-1"
+                                  >
+                                    Place of Supply
+                                  </label>
+                                  <select
+                                    className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="placeOfSupply"
+                                    value={customerdata.placeOfSupply}
+                                    onChange={handleChange}
+                                  >
+                                    <option value="" className="text-gray">
+                                      Value
+                                    </option>
+                                    {placeOfSupplyList.length > 0 &&
+                                      placeOfSupplyList.map(
+                                        (item: any, index: number) => (
+                                          <option
+                                            key={index}
+                                            value={item}
+                                            className="text-gray"
+                                          >
+                                            {item}
+                                          </option>
+                                        )
+                                      )}
+                                  </select>
+                                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
+                                    <CehvronDown color="gray" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          {gstOrVat.taxType === "VAT" && (
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label
+                                  htmlFor="vatNumber"
+                                  className="block mb-1"
+                                >
+                                  VAT Number
+                                </label>
+                                <input
+                                  type="text"
+                                  name="vatNumber"
+                                  className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                                  placeholder="Enter VAT Number"
+                                  value={customerdata.vatNumber}
+                                  onChange={handleChange}
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="businessTradeName"
+                                  className="block mb-1"
+                                >
+                                  Business Trade Name
+                                </label>
+                                <input
+                                  type="text"
+                                  name="businessTradeName"
+                                  className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                                  placeholder="Enter Business Trade Name"
+                                  value={customerdata.businessTradeName}
+                                  onChange={handleChange}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      {/* )}  */}
+                      {customerdata.taxPreference == "Tax Exempt" && (
+                        <div>
+                          <label className="block mb-1">Exemption Reason</label>
+                          <input
+                            type="text"
+                            className="pl-2 text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                            placeholder="Value"
+                            //  name="billingAttention"
+                            //  value={customerdata.billingAttention}
+                            //  onChange={handleChange}
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
 
 
            
