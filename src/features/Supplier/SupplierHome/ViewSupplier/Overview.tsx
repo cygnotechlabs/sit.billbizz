@@ -98,12 +98,12 @@ function Overview({supplier}: Props) {
             <p><Pen color="#303F58"/></p>
             </div>
             <div className="flex flex-col space-y-2 text-[12px]">
-              <p>abc</p>
-              <p>Kalyanath house,puthanathaaani</p>
-              <p>Po alavil</p>
-              <p>pin 670008</p>
-              <p>India</p>
-              <p>Phone:96337968756</p>
+              <p>{supplier?.billingCity}</p>
+              <p>{supplier?.billingAddressStreet1}</p>
+              <p>{supplier?.billingAddressStreet2}</p>
+              <p>pin {supplier?.billingPinCode}</p>
+              <p>{supplier?.billingState},{supplier?.billingCountry}</p>
+              <p>Phone:{supplier?.billingPhone}</p>
             </div>
          </div>
          <div className="w-[98%] h-[200px]  space-y-3 p-[10px] rounded-lg bg-[#FCFFED]">

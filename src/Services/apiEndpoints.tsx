@@ -46,6 +46,7 @@ GET_ALL_ITEM:"get-all-item",
   GET_TAX:`customer-additional-data`,
   GET_ONE_CUSTOMER:`/get-one-customer`,
   EDIT_CUSTOMER:`edit-customer`,
+  UPDATE_CUSTOMER_STATUS:`update-customer-status`,
 
   // Supplier
   ADD_SUPPLIER:"add-suppliers", 
