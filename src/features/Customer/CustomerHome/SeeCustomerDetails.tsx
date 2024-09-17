@@ -48,7 +48,7 @@ function SeeCustomerDetails({}: Props) {
       
       const { response, error } = apiResponse;
       if (!error && response) {
-        setCustomerData(response.data.status);
+        setCustomerData(response.data);
         console.log(response.data,"get status");
         
         console.log(response.data, "get");
@@ -219,27 +219,27 @@ function SeeCustomerDetails({}: Props) {
         </div>
 
         <div className="col-span-9">
-          <div className="space-y-2 w-[100%] text-sm border-[1px]  border-[#DADBDD] rounded-md p-2">
+          <div className="space-y-3  w-[100%] text-sm border-[1px]  border-[#DADBDD] rounded-md p-4 ">
             <div className="flex items-center ">
-              <img
+              {/* <img
                 className="rounded-full"
                 src="https://i.postimg.cc/c4hsrPvM/Ellipse-44.png"
                 alt=""
-              />
-              <p className="font-bold text-textColor border-e px-5 border-e-textColor">
-                {customerData?.customerDisplayName}
+              /> */}
+              <p className="font-bold text-textColor border-e pe-5 border-e-textColor">
+              <span className="font-medium"> Customer Name : </span>{customerData?.customerDisplayName}
               </p>
               <p className="font-bold text-textColor  px-5 ">
-                {customerData.companyName}
+              <span className="font-medium"> Company Name : </span> {customerData.companyName}
               </p>
 
               {
-               <div className=" ">
+               <div className=" w-[33.6%] ml-auto">
                   <div
-                    className={` px-2 flex justify-center  rounded-md  text-xs text-white p-0.5 ${
+                    className={`w-fit  px-2 flex justify-center  rounded-md  text-xs text-white p-0.5 -ms-2 ${
                       statusData.status == "Active"
                         ? "bg-[#78AA86]"
-                        : "bg-red-400"
+                        : "bg-zinc-400"
                     }`}
                   >
                     {statusData.status}
@@ -267,9 +267,9 @@ function SeeCustomerDetails({}: Props) {
                   name="status"
                   onChange={handleStatusSubmit}
                 >
-                  <option value="">Status</option>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+                  <option value="" className="disabled hidden"></option>
+                  <option value="Active">Active </option>
+                  <option value="Inactive"><div>Inactive <div className="h-12 w-14 bg-black"></div></div></option>
                 </select>
               </div>
             </div>
