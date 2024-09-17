@@ -71,16 +71,16 @@ const InvoiceHome = ({}: Props) => {
     { title: "Approved", icon: newspaper },
     { title: "Customer Viewed", icon: newspaper },
     { title: "Partially Paid", icon: newspaper },
-    { title: "Unpaid", icon: newspaper },
-    { title: "Overdue", icon: newspaper },
-    { title: "Payment Initiated", icon: newspaper },
-    { title: "Paid", icon: newspaper },
-    { title: "Void", icon: newspaper },
-    { title: "Yet to be shipped", icon: newspaper },
-    { title: "Shipped", icon: newspaper },
-    { title: "Debit Note", icon: newspaper },
-    { title: "Write Off", icon: newspaper },
-    { title: "Customer Portal Disabled", icon: newspaper },
+    // { title: "Unpaid", icon: newspaper },
+    // { title: "Overdue", icon: newspaper },
+    // { title: "Payment Initiated", icon: newspaper },
+    // { title: "Paid", icon: newspaper },
+    // { title: "Void", icon: newspaper },
+    // { title: "Yet to be shipped", icon: newspaper },
+    // { title: "Shipped", icon: newspaper },
+    // { title: "Debit Note", icon: newspaper },
+    // { title: "Write Off", icon: newspaper },
+    // { title: "Customer Portal Disabled", icon: newspaper },
   ];
 
   const data = [
@@ -127,7 +127,7 @@ const InvoiceHome = ({}: Props) => {
   ];
 
   return (
-    <div className="mx-5 my-4">
+    <div className="mx-5 my-4 h-[100vh]">
       <div className="flex mb-8">
         <div>
           <h1>Invoice</h1>
