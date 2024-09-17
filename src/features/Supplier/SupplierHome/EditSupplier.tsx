@@ -190,6 +190,8 @@ const EditSupplier = ({ supplier}: Props) => {
       const { response, error } = await editSupplier(url,supplierdata);
       if (!error && response) {
         setsupplierResponse(response.data);
+        console.log(response.data.message);
+        
         toast.success(response.data.message)
         closeModal()
         // setSupplier(response.data)
