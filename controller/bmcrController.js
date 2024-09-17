@@ -133,8 +133,12 @@ exports.getAllBmcr = async (req, res) => {
 
 // Get a single BMCR entity (brand, manufacturer, category, rack) by ID and type
 exports.getABmcr = async (req, res) => {
-    const { id } = req.params; // Entity ID (e.g., brandName, manufacturerName, etc.)
-    const { organizationId, type } = req.body;
+    const { id } = req.params; // Get the BMCR document ID from the route parameters
+    const { type, organizationId } = req.body; // Get type and organizationId from the request body
+
+    if (!['brand', 'manufacturer', 'category', 'rack'].includes(type)) {
+        return res.status(400).json({ message: "Invalid type provided." });
+    }
 
     try {
         // Check if the Organization exists
@@ -146,55 +150,41 @@ exports.getABmcr = async (req, res) => {
             });
         }
 
-        // Fetch the BMCR document for the given organizationId
-        const bmcrData = await BMCR.findOne({ organizationId });
+        // Find the BMCR document by ID and validate the type and organizationId
+        const bmcrData = await BMCR.findOne({ 
+            _id: id, 
+            organizationId, 
+            type
+        });
 
         if (!bmcrData) {
             return res.status(404).json({
-                message: "No data found for the provided organizationId.",
+                message: `No ${type} found with the provided ID in the given organization.`,
             });
         }
 
-        // Determine the specific entity to return based on type
-        let entity;
+        // Prepare the response object
+        let response = {};
         switch (type) {
             case 'brand':
-                if (bmcrData._id === id) {
-                    entity = { brandName: bmcrData.brandName, description: bmcrData.description };
-                }
+                response = { brandName: bmcrData.brandName, description: bmcrData.description};
                 break;
             case 'manufacturer':
-                if (bmcrData.manufacturerName === id) {
-                    entity = { manufacturerName: bmcrData.manufacturerName, description: bmcrData.description };
-                }
+                response = { manufacturerName: bmcrData.manufacturerName, description: bmcrData.description};
                 break;
             case 'category':
-                if (bmcrData.categoriesName === id) {
-                    entity = { categoriesName: bmcrData.categoriesName, description: bmcrData.description };
-                }
+                response = { categoriesName: bmcrData.categoriesName, description: bmcrData.description};
                 break;
             case 'rack':
-                if (bmcrData.rackName === id) {
-                    entity = { rackName: bmcrData.rackName, description: bmcrData.description };
-                }
+                response = { rackName: bmcrData.rackName, description: bmcrData.description};
                 break;
-            default:
-                return res.status(400).json({
-                    message: "Invalid type provided.",
-                });
         }
 
-        // Check if the entity was found
-        if (!entity) {
-            return res.status(404).json({
-                message: `${type.charAt(0).toUpperCase() + type.slice(1)} not found.`,
-            });
-        }
+        // Send the response back to the client
+        res.status(200).json(response);
 
-        // Return the entity
-        res.status(200).json(entity);
     } catch (error) {
-        console.error(`Error fetching ${type}:`, error);
+        console.error("Error fetching BMCR data:", error);
         res.status(500).json({ message: "Internal server error." });
     }
 };
