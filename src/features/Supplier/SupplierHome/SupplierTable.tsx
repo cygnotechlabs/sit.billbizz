@@ -36,6 +36,7 @@ const SupplierTable = () => {
     { id: "supplierDetails", label: "Supplier details", visible: true },
     { id: "billingPhone", label: "Billing Phone", visible: true },
     { id: "billingCity", label: "Billing City", visible: true },
+    { id: "status", label: "Status", visible: true },
     { id: "payables", label: "Payables(BCY)", visible: false },
     { id: "unused", label: "Unused Credit(BCY)", visible: false },
   ];
@@ -89,6 +90,10 @@ const SupplierTable = () => {
             </Button>
           </Link>
         </div>
+      );
+    }else if(colId=="status"){
+      return (
+        <p className={`${item.status=='Active'?"bg-[#78AA86]": "bg-zinc-400"} text-[13px] rounded items-center ms-auto text-white  h-[18px] flex justify-center`}>{item.status}</p>
       );
     }
     return item[colId as keyof Supplier];

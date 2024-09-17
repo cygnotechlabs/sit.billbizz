@@ -140,6 +140,7 @@ const EditSupplier = ({ supplier}: Props) => {
       },
     ],
     remarks: "",
+    status:""
   });
 
   useEffect(() => {

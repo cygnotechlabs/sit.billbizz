@@ -78,7 +78,7 @@ const SupplierColumn = ({ columns, setColumns }: Props) => {
         onClose={closeModal}
         className=""
       >
-        <div className="p-5">
+        <div className="p-5 ">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-lg font-semibold text-textColor">
               Customise Column
@@ -91,7 +91,7 @@ const SupplierColumn = ({ columns, setColumns }: Props) => {
             </div>
           </div>
           <SearchBar onSearchChange={setSearchValue} searchValue={searchValue} placeholder="Search" />
-          <div>
+          <div className="h-[400px] hide-scrollbar overflow-auto">
             {localColumns.map((col, index) => (
               <div
                 key={col.id}
