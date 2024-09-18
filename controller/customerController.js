@@ -29,6 +29,9 @@ exports.addCustomer = async (req, res) => {
       //Other details
       pan,
       currency,
+      creditDays,
+      creditLimits,
+      interestPercentage,
       openingBalance,
       paymentTerms,
       enablePortal,
@@ -77,6 +80,16 @@ exports.addCustomer = async (req, res) => {
       //Remark
       remark,
     } = req.body;
+
+    const customerData = {
+      organizationId: organizationId !== "" ? organizationId : undefined,
+      customerType: customerType !== "" ? customerType : undefined,
+      salutation: salutation !== "" ? salutation : undefined,
+      firstName: firstName !== "" ? firstName : undefined,
+      lastName: lastName !== "" ? lastName : undefined,
+      companyName: companyName !== "" ? companyName : undefined,
+      customerDisplayName: customerDisplayName !== "" ? customerDisplayName : undefined
+    };
 
     // Validate organizationId
     const organizationExists = await Organization.findOne({
@@ -360,34 +373,26 @@ exports.addCustomer = async (req, res) => {
 
     if (taxType === "GST") {                  
       if (!validGSTTreatments.includes(gstTreatment)) {
-        return res
-        .status(400)
-        .json({ message: `Invalid GST treatment: ${gstTreatment}` });        
+        return res.status(400).json({ message: `Invalid GST treatment: ${gstTreatment}` });        
       }
 
       if (!isAlphanumeric(gstin_uin)) {
-        return res
-        .status(400)
-        .json({ message: `Invalid GSTIN/UIN: ${gstin_uin}` });          
+        return res.status(400).json({ message: `Invalid GSTIN/UIN: ${gstin_uin}` });          
       }
   } else if (taxType === "VAT") {
       if (!isAlphanumeric(vatNumber)) {
-        return res
-        .status(400)
-        .json({ message: `Invalid VAT number: ${vatNumber}` });          
+        return res.status(400).json({ message: `Invalid VAT number: ${vatNumber}` });          
       }
   } else if (taxType === "None") {
     gstTreatment = undefined;
-    gstInUin = undefined;
+    gstin_uin = undefined;
     vatNumber = undefined;                    
 }
 
 
-if (!validCountries[billingCountry].includes(placeOfSupply)) {
-  return res
-        .status(400)
-        .json({ message: `Invalid Place of Supply: ${placeOfSupply}` });  
-}
+// if (!validCountries[billingCountry].includes(placeOfSupply)) {
+//   return res.status(400).json({ message: `Invalid Place of Supply: ${placeOfSupply}` });  
+// }
 
 
 
@@ -426,6 +431,9 @@ if (!validCountries[billingCountry].includes(placeOfSupply)) {
       //Other details
       pan,
       currency,
+      creditDays,
+      creditLimits,
+      interestPercentage,
       openingBalance,
       paymentTerms,
       enablePortal,
@@ -599,6 +607,9 @@ exports.editCustomer = async (req, res) => {
       //Other details
       pan,
       currency,
+      creditDays,
+      creditLimits,
+      interestPercentage,
       openingBalance,
       paymentTerms,
       enablePortal,
@@ -782,6 +793,10 @@ exports.editCustomer = async (req, res) => {
       });
     }
 
+    // if (!validCountries[billingCountry].includes(placeOfSupply)) {
+//   return res.status(400).json({ message: `Invalid Place of Supply: ${placeOfSupply}` });  
+// }
+
     // Find the existing customer to get the old customerDisplayName
     const existingCustomer = await Customer.findById(customerId);
     if (!existingCustomer) {
@@ -820,8 +835,7 @@ exports.editCustomer = async (req, res) => {
     customer.firstName = firstName || customer.firstName;
     customer.lastName = lastName || customer.lastName;
     customer.companyName = companyName || customer.companyName;
-    customer.customerDisplayName =
-      customerDisplayName || customer.customerDisplayName;
+    customer.customerDisplayName = customerDisplayName || customer.customerDisplayName;
     customer.customerEmail = customerEmail || customer.customerEmail;
     customer.workPhone = workPhone || customer.workPhone;
     customer.mobile = mobile || customer.mobile;
@@ -829,6 +843,9 @@ exports.editCustomer = async (req, res) => {
     customer.cardNumber = cardNumber || customer.cardNumber;
     customer.pan = pan || customer.pan;
     customer.currency = currency || customer.currency;
+    customer.creditDays = creditDays || customer.creditDays;
+    customer.creditLimits = creditLimits || customer.creditLimits;
+    customer.interestPercentage = interestPercentage || customer.interestPercentage;
     customer.openingBalance = openingBalance || customer.openingBalance;
     customer.paymentTerms = paymentTerms || customer.paymentTerms;
     customer.enablePortal = enablePortal || customer.enablePortal;
@@ -844,26 +861,21 @@ exports.editCustomer = async (req, res) => {
     customer.msmeType = msmeType || customer.msmeType;
     customer.msmeNumber = msmeNumber || customer.msmeNumber;
     customer.placeOfSupply = placeOfSupply || customer.placeOfSupply;
-    customer.businessLegalName =
-      businessLegalName || customer.businessLegalName;
-    customer.businessTradeName =
-      businessTradeName || customer.businessTradeName;
+    customer.businessLegalName = businessLegalName || customer.businessLegalName;
+    customer.businessTradeName = businessTradeName || customer.businessTradeName;
     customer.vatNumber = vatNumber || customer.vatNumber;
     // Update Billing Address
     customer.billingAttention = billingAttention || customer.billingAttention;
     customer.billingCountry = billingCountry || customer.billingCountry;
-    customer.billingAddressLine1 =
-      billingAddressLine1 || customer.billingAddressLine1;
-    customer.billingAddressLine2 =
-      billingAddressLine2 || customer.billingAddressLine2;
+    customer.billingAddressLine1 = billingAddressLine1 || customer.billingAddressLine1;
+    customer.billingAddressLine2 = billingAddressLine2 || customer.billingAddressLine2;
     customer.billingCity = billingCity || customer.billingCity;
     customer.billingState = billingState || customer.billingState;
     customer.billingPinCode = billingPinCode || customer.billingPinCode;
     customer.billingPhone = billingPhone || customer.billingPhone;
     customer.billingFaxNumber = billingFaxNumber || customer.billingFaxNumber;
     // Update Shipping Address
-    customer.shippingAttention =
-      shippingAttention || customer.shippingAttention;
+    customer.shippingAttention = shippingAttention || customer.shippingAttention;
     customer.shippingCountry = shippingCountry || customer.shippingCountry;
     customer.shippingAddress1 = shippingAddress1 || customer.shippingAddress1;
     customer.shippingAddress2 = shippingAddress2 || customer.shippingAddress2;
@@ -871,8 +883,7 @@ exports.editCustomer = async (req, res) => {
     customer.shippingState = shippingState || customer.shippingState;
     customer.shippingPinCode = shippingPinCode || customer.shippingPinCode;
     customer.shippingPhone = shippingPhone || customer.shippingPhone;
-    customer.shippingFaxNumber =
-      shippingFaxNumber || customer.shippingFaxNumber;
+    customer.shippingFaxNumber = shippingFaxNumber || customer.shippingFaxNumber;
     // Update Contact Person
     customer.contactPerson = contactPerson || customer.contactPerson;
     // Update Remark
