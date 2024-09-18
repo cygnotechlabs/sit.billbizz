@@ -6,689 +6,573 @@ const moment = require('moment-timezone');
 const Currency = require("../database/model/currency");
 
 
-// exports.addSupplier = async (req, res) => {
-//   console.log("Add supplier:", req.body);
-//   const {
-//     // Basic
-//     organizationId,
-//     salutation,
-//     firstName,
-//     lastName,
+function cleanData(value) {
+  return value !== "" ? value : undefined;
+}
 
-//     companyName,
-//     supplierDisplayName,
-//     supplierEmail,
-//     workPhone,
-//     mobile,
-
-//     //Unverified
-//     creditDays,
-//     creditLimit,
-//     interestPercentage,
-
-//     //Other Details
-//     pan,
-//     currency,
-//     openingBalance,
-//     paymentTerms,
-//     tds,
-//     documents,
-//     websiteURL,
-//     department,
-//     designation,
-
-//     //Tax
-//     taxType,
-//     gstTreatment,
-//     gstin_uin,
-//     sourceOfSupply,
-//     msmeType,
-//     msmeNumber,
-//     msmeRegistered,
-//     vatNumber,
-
-
-//     // Billing Address
-//     billingAttention,
-//     billingCountry,
-//     billingAddressStreet1,
-//     billingAddressStreet2,
-//     billingCity,
-//     billingState,
-//     billingPinCode,
-//     billingPhone,
-//     billingFaxNum,
-
-//     // Shipping Address
-//     shippingAttention,
-//     shippingCountry,
-//     shippingAddressStreet1,
-//     shippingAddressStreet2,
-//     shippingCity,
-//     shippingState,
-//     shippingPinCode,
-//     shippingPhone,
-//     shippingFaxNum,
-
-//     // Contact Person
-//     contactPersons,
-
-//     //Bank Details
-//     bankDetails,
-
-//     //Remark
-//     remarks,
-//   } = req.body;
-
-//   try {
-//     // Validate organizationId
-//     const organizationExists = await Organization.findOne({
-//       organizationId: organizationId,
-//     });
-//     if (!organizationExists) {
-//       return res.status(404).json({
-//         message: "Organization not found",
-//       });
-//     }
-//     const taxExists = await Tax.findOne({
-//       organizationId: organizationId,
-//     });
-//     if (!taxExists) {
-//       return res.status(404).json({
-//         message: "Tax not found",
-//       });
-//     }
-
-//     const currencyExists = await Currency.find(
-//       { organizationId: organizationId },
-//       { currencyCode: 1, _id: 0 }
-//     );
-//     if (!currencyExists) {
-//       return res.status(404).json({
-//         message: "Currency not found",
-//       });
-//     }
-
-//     const timeZoneExp = organizationExists.timeZoneExp;
-//     const dateFormatExp = organizationExists.dateFormatExp;
-//     const dateSplit = organizationExists.dateSplit;
-//     const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
-//     const openingDate = generatedDateTime.dateTime;  
-//     const validCurrencies = currencyExists.map(
-//       (currency) => currency.currencyCode
-//     );
-//     const validTaxTypes = ["None", taxExists.taxType];
-//     const validGSTTreatments = [
-//       "Registered Business - Regular",
-//       "Registered Business - Composition",
-//       "Unregistered Business",
-//       "Consumer",
-//       "Overseas",
-//       "Special Economic Zone",
-//       "Deemed Export",
-//       "Tax Deductor",
-//       "SEZ Developer",
-//     ];
-//     const validCountries = {
-//       "United Arab Emirates": [
-//         "Abu Dhabi",
-//         "Dubai",
-//         "Sharjah",
-//         "Ajman",
-//         "Umm Al-Quwain",
-//         "Fujairah",
-//         "Ras Al Khaimah",
-//       ],
-//       India: [
-//         "Andaman and Nicobar Island",
-//         "Andhra Pradesh",
-//         "Arunachal Pradesh",
-//         "Assam",
-//         "Bihar",
-//         "Chandigarh",
-//         "Chhattisgarh",
-//         "Dadra and Nagar Haveli and Daman and Diu",
-//         "Delhi",
-//         "Goa",
-//         "Gujarat",
-//         "Haryana",
-//         "Himachal Pradesh",
-//         "Jammu and Kashmir",
-//         "Jharkhand",
-//         "Karnataka",
-//         "Kerala",
-//         "Ladakh",
-//         "Lakshadweep",
-//         "Madhya Pradesh",
-//         "Maharashtra",
-//         "Manipur",
-//         "Meghalaya",
-//         "Mizoram",
-//         "Nagaland",
-//         "Odisha",
-//         "Puducherry",
-//         "Punjab",
-//         "Rajasthan",
-//         "Sikkim",
-//         "Tamil Nadu",
-//         "Telangana",
-//         "Tripura",
-//         "Uttar Pradesh",
-//         "Uttarakhand",
-//         "West Bengal",
-//       ],
-//       "Saudi Arabia": [
-//         "Asir",
-//         "Al Bahah",
-//         "Al Jawf",
-//         "Al Madinah",
-//         "Al-Qassim",
-//         "Eastern Province",
-//         "Hail",
-//         "Jazan",
-//         "Makkah",
-//         "Medina",
-//         "Najran",
-//         "Northern Borders",
-//         "Riyadh",
-//         "Tabuk",
-//       ],
-//     };
-// // Utility validation functions
-// function isAlphabets(value) {
-//   return /^[A-Za-z\s]+$/.test(value);
-// }
-
-// function isFloat(value) {
-//   return /^-?\d+(\.\d+)?$/.test(value);
-//   }
-
-// function isInteger(value) {
-//   return /^[0-9]+$/.test(value);
-// }
-
-
-// function isAlphanumeric(value) {
-//   return /^[A-Za-z0-9]+$/.test(value);
-// }
-
-// function isValidUrl(value) {
-//   try {
-//     new URL(value);
-//     return true;
-//   } catch {
-//     return false;
-//   }
-// }
-
-// function isValidEmail(value) {
-//   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-// }
-
-// // Constants for validation
-// const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
-
-//  // Perform validations
-//  if (salutation && !validSalutations.includes(salutation)) {
-//   return { isValid: false, message: `Invalid salutation: ${salutation}` };
-// }
-
-// if (firstName && !isAlphabets(firstName)) {
-//   return { isValid: false, message: "First name should contain only alphabets." };
-// }
-
-// if (lastName && !isAlphabets(lastName)) {
-//   return { isValid: false, message: "Last name should contain only alphabets." };
-// }
-
-// if (supplierDisplayName && !isAlphabets(supplierDisplayName)) {
-//   return { isValid: false, message: "Supplier display name should contain only alphabets." };
-// }
-
-// if (supplierEmail && !isValidEmail(supplierEmail)) {
-//   return { isValid: false, message: `Invalid email: ${supplierEmail}` };
-// }
-
-// if (workPhone && !isInteger(workPhone)) {
-//   return { isValid: false, message: "Work phone should contain only digits." };
-// }
-
-// if (mobile && !isInteger(mobile)) {
-//   return { isValid: false, message: "Mobile number should contain only digits." };
-// }
-
-// if (pan && !isAlphanumeric(pan)) {
-//   return { isValid: false, message: `Invalid PAN: ${pan}` };
-// }
-
-// if (!isFloat(openingBalance)) {
-//   return res.status(400).json({ message: `Invalid Opening Balance: ${openingBalance}` });
-// }
-
-// if (!validCurrencies.includes(currency)) {
-//   return res.status(400).json({ message: `Invalid Currency: ${currency}` });
-// }
-
-// if (department && !isAlphabets(department)) {
-//   return { isValid: false, message: "Department should contain only alphabets." };
-// }
-
-// if (designation && !isAlphabets(designation)) {
-//   return { isValid: false, message: "Designation should contain only alphabets." };
-// }
-
-// if (websiteURL && !isValidUrl(websiteURL)) {
-//   return { isValid: false, message: `Invalid website URL: ${websiteURL}` };
-// }
-
-// if (gstin_uin && !isAlphanumeric(gstin_uin)) {
-//   return { isValid: false, message: `Invalid GSTIN/UIN: ${gstin_uin}` };
-// }
-
-// if (!validCountries[billingCountry] || !validCountries[billingCountry].includes(billingState)) {
-//   return res
-//     .status(400)
-//     .json({ message: `Invalid Billing Country or State: ${billingCountry}, ${billingState}` });
-// }
-// if (!validCountries[shippingCountry] || !validCountries[shippingCountry].includes(shippingState)) {
-//   return res
-//     .status(400)
-//     .json({ message: `Invalid Billing Country or State: ${shippingCountry}, ${shippingState}` });
-// }
-// if (!isInteger(billingPinCode)) {
-//   return res
-//     .status(400)
-//     .json({ message: `Invalid Billing Pin Code Number fields :${billingPhone}` });
-// }
-// if (!isInteger(billingPhone)) {
-//   return res
-//     .status(400)
-//     .json({ message: `Invalid Billing Phone Number fields :${billingPhone}` });
-// }    
-// if (!isInteger(billingFaxNum)) {
-//   return res
-//     .status(400)
-//     .json({ message: `Invalid Billing Fax Number fields:${billingFaxNum}` });
-// }
-
-// if (!isInteger(shippingPinCode)) {
-//   return res
-//     .status(400)
-//     .json({ message: `Invalid Shipping Pin Code Number fields :${shippingPinCode}` });
-// }
-// if (!isInteger(shippingPhone)) {
-//   return res
-//     .status(400)
-//     .json({ message: `Invalid Shipping Phone Number fields :${shippingPhone}` });
-// }    
-// if (!isInteger(shippingFaxNum)) {
-//   return res
-//     .status(400)
-//     .json({ message: `Invalid Shipping Fax Number fields:${shippingFaxNum}` });
-// }
-
-// if (!validTaxTypes.includes(taxType)) {
-//   return res
-//     .status(400)
-//     .json({ message: `Invalid Tax Type: ${taxType}` });
-// }
-
-// if (taxType === "GST") {                  
-//   if (!validGSTTreatments.includes(gstTreatment)) {
-//     return res
-//     .status(400)
-//     .json({ message: `Invalid GST treatment: ${gstTreatment}` });        
-//   }
-
-//   if (!isAlphanumeric(gstin_uin)) {
-//     return res
-//     .status(400)
-//     .json({ message: `Invalid GSTIN/UIN: ${gstin_uin}` });          
-//   }
-// } else if (taxType === "VAT") {
-//   if (!isAlphanumeric(vatNumber)) {
-//     return res
-//     .status(400)
-//     .json({ message: `Invalid VAT number: ${vatNumber}` });          
-//   }
-// } else if (taxType === "None") {
-// gstTreatment = undefined;
-// gstin_uin = undefined;
-// vatNumber = undefined;                    
-// }
-// console.log("Organization exists: ", organizationExists);
-// console.log("Tax exists: ", taxExists);
-// console.log("Currency found: ", currencyExists);
-
-
-
-
-//     // Check if a supplier with the same organizationId already exists
-//     const existingSupplier = await Supplier.findOne({
-//       supplierEmail: supplierEmail,
-//       organizationId: organizationId,
-//     });
-//     if (existingSupplier) {
-//       return res.status(409).json({
-//         message: "Supplier with the provided email already exists.",
-//       });
-//     }
-
-
-//     // Create a new supplier
-//     const newSupplier = new Supplier({
-//       // Basic
-//       organizationId,
-//       salutation,
-//       firstName,
-//       lastName,
-
-//       companyName,
-//       supplierDisplayName,
-//       supplierEmail,
-//       workPhone,
-//       mobile,
-//       createdDate: openingDate,
-//       creditDays,
-//       creditLimit,
-//       interestPercentage,
-
-//       //Other Details
-//       pan,
-//       currency,
-//       openingBalance,
-//       paymentTerms,
-//       tds,
-//       documents,
-//       websiteURL,
-//       department,
-//       designation,
-
-//       //Tax
-//       taxType,
-//       gstTreatment,
-//       gstin_uin,
-//       sourceOfSupply,
-//       msmeType,
-//       msmeNumber,
-//       msmeRegistered,
-//       vatNumber,
-
-//       // Billing Address
-//       billingAttention,
-//       billingCountry,
-//       billingAddressStreet1,
-//       billingAddressStreet2,
-//       billingCity,
-//       billingState,
-//       billingPinCode,
-//       billingPhone,
-//       billingFaxNum,
-
-//       // Shipping Address
-//       shippingAttention,
-//       shippingCountry,
-//       shippingAddressStreet1,
-//       shippingAddressStreet2,
-//       shippingCity,
-//       shippingState,
-//       shippingPinCode,
-//       shippingPhone,
-//       shippingFaxNum,
-
-//       // Contact Person
-//       contactPersons,
-
-//       //Bank Details
-//       bankDetails,
-
-//       //Remark
-//       remarks,
-
-//       //Status
-//       status: "Active",
-//     });
-
-//     // Save the supplier to the database
-//     const savedSupplier = await newSupplier.save();
-
-//     const existingAccount = await Account.findOne({
-//       accountName: companyName,
-//       organizationId: organizationId,
-//     });
-
-//     if (existingAccount) {
-//       return res.status(409).json({
-//         message: "Account with the provided Account Name already exists.",
-//       });
-//     }
-
-//     // Create a new Customer Account
-//     const newAccount = new Account({
-//       organizationId,
-//       accountName: supplierDisplayName,
-//       accountCode: savedSupplier._id,
-
-//       accountSubhead: "Sundry Creditors",
-//       accountHead: "Liabilities",
-//       accountGroup: "Liability",
-
-//       openingBalance: openingBalance,
-//       openingBalanceDate: openingDate,
-//       description: "Suppliers",
-//     });
-
-//     await newAccount.save();
-//     res.status(201).json({
-//       message: "Supplier Added successfully.",
-//     });
-//     console.log("Supplier Added successfully");
-//   } catch (error) {
-//     console.error("Error adding supplier:", error);
-//     res.status(400).json({ error: error.message });
-//   }
-// };
 
 exports.addSupplier = async (req, res) => {
-  console.log("Add supplier request body:", req.body);
-
+  console.log("Add supplier:", req.body);
   const {
-    // Basic Details
-    organizationId, salutation, firstName, lastName, companyName,
-    supplierDisplayName, supplierEmail, workPhone, mobile,
+    // Basic
+    organizationId,
+    salutation,
+    firstName,
+    lastName,
 
-    // Unverified Details
-    creditDays, creditLimit, interestPercentage,
+    companyName,
+    supplierDisplayName,
+    supplierEmail,
+    workPhone,
+    mobile,
 
-    // Other Details
-    pan, currency, openingBalance, paymentTerms, tds, documents,
-    websiteURL, department, designation,
+    //Unverified
+    creditDays,
+    creditLimit,
+    interestPercentage,
 
-    // Tax Details
-    taxType, gstTreatment, gstin_uin, sourceOfSupply, msmeType, 
-    msmeNumber, msmeRegistered, vatNumber,
+    //Other Details
+    pan,
+    currency,
+    openingBalance,
+    paymentTerms,
+    tds,
+    documents,
+    websiteURL,
+    department,
+    designation,
+
+    //Tax
+    taxType,
+    gstTreatment,
+    gstin_uin,
+    sourceOfSupply,
+    msmeType,
+    msmeNumber,
+    msmeRegistered,
+    vatNumber,
+
 
     // Billing Address
-    billingAttention, billingCountry, billingAddressStreet1, 
-    billingAddressStreet2, billingCity, billingState, 
-    billingPinCode, billingPhone, billingFaxNum,
+    billingAttention,
+    billingCountry,
+    billingAddressStreet1,
+    billingAddressStreet2,
+    billingCity,
+    billingState,
+    billingPinCode,
+    billingPhone,
+    billingFaxNum,
 
     // Shipping Address
-    shippingAttention, shippingCountry, shippingAddressStreet1,
-    shippingAddressStreet2, shippingCity, shippingState,
-    shippingPinCode, shippingPhone, shippingFaxNum,
+    shippingAttention,
+    shippingCountry,
+    shippingAddressStreet1,
+    shippingAddressStreet2,
+    shippingCity,
+    shippingState,
+    shippingPinCode,
+    shippingPhone,
+    shippingFaxNum,
 
-    // Contact Persons & Bank Details
-    contactPersons, bankDetails, remarks,
+    // Contact Person
+    contactPersons,
+
+    //Bank Details
+    bankDetails,
+
+    //Remark
+    remarks,
   } = req.body;
 
+  const customerData = {
+    organizationId: cleanData(organizationId),
+    salutation: cleanData(salutation),
+    firstName: cleanData(firstName),
+    lastName: cleanData(lastName),
+
+    companyName: cleanData(companyName),
+    supplierDisplayName: cleanData(supplierDisplayName),
+    supplierEmail: cleanData(supplierEmail),
+    workPhone: cleanData(workPhone),
+    mobile: cleanData(mobile),
+
+    //Unverified
+    creditDays: cleanData(creditDays),
+    creditLimit: cleanData(creditLimit),
+    interestPercentage: cleanData(interestPercentage),
+
+    //Other Details
+    pan: cleanData(pan),
+    currency: cleanData(currency),
+    openingBalance: cleanData(openingBalance),
+    paymentTerms: cleanData(paymentTerms),
+    tds: cleanData(tds),
+    documents: cleanData(documents),
+    websiteURL: cleanData(websiteURL),
+    department: cleanData(department),
+    designation: cleanData(designation),
+
+    //Tax
+    taxType: cleanData(taxType),
+    gstTreatment: cleanData(gstTreatment),
+    gstin_uin: cleanData(gstin_uin),
+    sourceOfSupply: cleanData(sourceOfSupply),
+    msmeType: cleanData(msmeType),
+    msmeNumber: cleanData(msmeNumber),
+    msmeRegistered: cleanData(msmeRegistered),
+    vatNumber: cleanData(vatNumber),
+
+
+    // Billing Address
+    billingAttention: cleanData(billingAttention),
+    billingCountry: cleanData(billingCountry),
+    billingAddressStreet1: cleanData(billingAddressStreet1),
+    billingAddressStreet2: cleanData(billingAddressStreet2),
+    billingCity: cleanData(billingCity),
+    billingState: cleanData(billingState),
+    billingPinCode: cleanData(billingPinCode),
+    billingPhone: cleanData(billingPhone),
+    billingFaxNum: cleanData(billingFaxNum),
+
+    // Shipping Address
+    shippingAttention: cleanData(shippingAttention),
+    shippingCountry: cleanData(shippingCountry),
+    shippingAddressStreet1: cleanData(shippingAddressStreet1),
+    shippingAddressStreet2: cleanData(shippingAddressStreet2),
+    shippingCity: cleanData(shippingCity),
+    shippingState: cleanData(shippingState),
+    shippingPinCode: cleanData(shippingPinCode),
+    shippingPhone: cleanData(shippingPhone),
+    shippingFaxNum: cleanData(shippingFaxNum),
+
+    // Contact Person
+    contactPersons: cleanData(contactPersons),
+
+    //Bank Details
+    bankDetails: cleanData(bankDetails),
+
+    //Remark
+    remarks: cleanData(remarks),
+    
+  };
+
+  console.log(firstName);
+  
+
+ 
+
   try {
-    // Step 1: Validate organizationId
-    const organization = await Organization.findOne({ organizationId });
-    if (!organization) {
-      return res.status(404).json({ message: "Organization not found" });
-    }
-    console.log("Organization exists:", organizationId);
-
-    // Step 2: Validate tax details
-    const tax = await Tax.findOne({ organizationId });
-    if (!tax) {
-      return res.status(404).json({ message: "Tax details not found" });
-    }
-
-    // Step 3: Validate currency details
-    const currencyList = await Currency.find({ organizationId }, { currencyCode: 1 });
-    if (!currencyList || currencyList.length === 0) {
-      return res.status(404).json({ message: "Currency not found" });
-    }
-    const validCurrencies = currencyList.map((curr) => curr.currencyCode);
-    if (!validCurrencies.includes(currency)) {
-      return res.status(400).json({ message: `Invalid currency: ${currency}` });
-    }
-    console.log("Currency valid:", currency);
-
-    // Generate date and time from organization's settings
-    const generatedDateTime = generateTimeAndDateForDB(
-      organization.timeZoneExp,
-      organization.dateFormatExp,
-      organization.dateSplit
-    );
-    const openingDate = generatedDateTime.dateTime;
-
-    // Step 4: Validate other fields
-    const validationErrors = validateSupplierFields({
-      salutation, firstName, lastName, supplierEmail,
-      workPhone, mobile, pan, websiteURL,
-      billingCountry, billingState, billingPinCode,
-      billingPhone, billingFaxNum, shippingCountry,
-      shippingState, shippingPinCode, shippingPhone,
-      shippingFaxNum, gstin_uin, vatNumber, taxType,
-      gstTreatment, currency, department, designation,
-      openingBalance,
+    // Validate organizationId
+    const organizationExists = await Organization.findOne({
+      organizationId: organizationId,
     });
-
-    if (validationErrors.length > 0) {
-      return res.status(400).json({ message: validationErrors.join(", ") });
+    if (!organizationExists) {
+      return res.status(404).json({
+        message: "Organization not found",
+      });
     }
-
-    // Step 5: Check if supplier exists
-    const existingSupplier = await Supplier.findOne({
-      supplierEmail,
-      organizationId,
+    const taxExists = await Tax.findOne({
+      organizationId: organizationId,
     });
-    if (existingSupplier) {
-      return res.status(409).json({ message: "Supplier already exists" });
-    }
-
-    // Step 6: Create and save new supplier
-    const newSupplier = new Supplier({
-      organizationId, salutation, firstName, lastName,
-      companyName, supplierDisplayName, supplierEmail,
-      workPhone, mobile, createdDate: openingDate,
-      creditDays, creditLimit, interestPercentage,
-      pan, currency, openingBalance, paymentTerms, tds,
-      documents, websiteURL, department, designation,
-      taxType, gstTreatment, gstin_uin, sourceOfSupply,
-      msmeType, msmeNumber, msmeRegistered, vatNumber,
-      billingAttention, billingCountry, billingAddressStreet1,
-      billingAddressStreet2, billingCity, billingState,
-      billingPinCode, billingPhone, billingFaxNum,
-      shippingAttention, shippingCountry, shippingAddressStreet1,
-      shippingAddressStreet2, shippingCity, shippingState,
-      shippingPinCode, shippingPhone, shippingFaxNum,
-      contactPersons, bankDetails, remarks, status: "Active",
-    });
-
-    const savedSupplier = await newSupplier.save();
-    console.log("Supplier saved:", savedSupplier);
-
-    // Step 7: Create a customer account if supplier is added successfully
-    const existingAccount = await Account.findOne({
-      accountName: companyName,
-      organizationId,
-    });
-    if (existingAccount) {
-      return res.status(409).json({
-        message: "Account with this account name already exists.",
+    if (!taxExists) {
+      return res.status(404).json({
+        message: "Tax not found",
       });
     }
 
-    const newAccount = new Account({
-      organizationId,
-      accountName: supplierDisplayName,
-      accountCode: savedSupplier._id,
-      accountSubhead: "Sundry Creditors",
-      accountHead: "Liabilities",
-      accountGroup: "Liability",
-      openingBalance,
-      openingBalanceDate: openingDate,
-      description: "Suppliers",
-    });
+    const currencyExists = await Currency.find(
+      { organizationId: organizationId },
+      { currencyCode: 1, _id: 0 }
+    );
+    if (!currencyExists) {
+      return res.status(404).json({
+        message: "Currency not found",
+      });
+    }
 
-    await newAccount.save();
-    console.log("Account created for supplier");
-
-    return res.status(201).json({
-      message: "Supplier added successfully",
-      supplierId: savedSupplier._id,
-    });
-  } catch (error) {
-    console.error("Error adding supplier:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-// Validation function for fields
-function validateSupplierFields(fields) {
-  const errors = [];
-
-  const {
-    salutation, firstName, lastName, supplierEmail,
-    workPhone, mobile, pan, websiteURL,
-    billingCountry, billingState, billingPinCode,
-    billingPhone, billingFaxNum, shippingCountry,
-    shippingState, shippingPinCode, shippingPhone,
-    shippingFaxNum, gstin_uin, vatNumber, taxType,
-    gstTreatment, currency, department, designation,
-    openingBalance,
-  } = fields;
-
-  const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
-  const validGSTTreatments = [
-    "Registered Business - Regular", "Registered Business - Composition",
-    "Unregistered Business", "Consumer", "Overseas", "SEZ Developer", "Deemed Export",
-  ];
-
-  if (salutation && !validSalutations.includes(salutation)) errors.push(`Invalid salutation: ${salutation}`);
-  if (firstName && !/^[A-Za-z\s]+$/.test(firstName)) errors.push("First name should contain only alphabets.");
-  if (lastName && !/^[A-Za-z\s]+$/.test(lastName)) errors.push("Last name should contain only alphabets.");
-  if (supplierEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(supplierEmail)) errors.push("Invalid email format.");
-  if (workPhone && !/^\d+$/.test(workPhone)) errors.push("Work phone should contain only digits.");
-  if (mobile && !/^\d+$/.test(mobile)) errors.push("Mobile phone should contain only digits.");
-  if (pan && !/^[A-Za-z0-9]+$/.test(pan)) errors.push(`Invalid PAN: ${pan}`);
-  if (websiteURL && !isValidUrl(websiteURL)) errors.push(`Invalid website URL: ${websiteURL}`);
-  if (!/^\d+$/.test(billingPinCode)) errors.push("Invalid billing pin code.");
-  if (!/^\d+$/.test(billingPhone)) errors.push("Invalid billing phone number.");
-  if (!/^\d+$/.test(billingFaxNum)) errors.push("Invalid billing fax number.");
-  if (!/^\d+$/.test(shippingPinCode)) errors.push("Invalid shipping pin code.");
-  if (!/^\d+$/.test(shippingPhone)) errors.push("Invalid shipping phone number.");
-  if (!/^\d+$/.test(shippingFaxNum)) errors.push("Invalid shipping fax number.");
-  if (gstin_uin && !/^[A-Za-z0-9]+$/.test(gstin_uin)) errors.push(`Invalid GSTIN/UIN: ${gstin_uin}`);
-  if (vatNumber && !/^[A-Za-z0-9]+$/.test(vatNumber)) errors.push(`Invalid VAT number: ${vatNumber}`);
-  if (taxType === "GST" && !validGSTTreatments.includes(gstTreatment)) errors.push(`Invalid GST treatment: ${gstTreatment}`);
-  if (!/^-?\d+(\.\d+)?$/.test(openingBalance)) errors.push("Invalid opening balance.");
-  
-  return errors;
+    const timeZoneExp = organizationExists.timeZoneExp;
+    const dateFormatExp = organizationExists.dateFormatExp;
+    const dateSplit = organizationExists.dateSplit;
+    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+    const openingDate = generatedDateTime.dateTime;  
+    
+    const validCurrencies = currencyExists.map(
+      (currency) => currency.currencyCode
+    );
+    
+    const validTaxTypes = [taxExists.taxType];
+    const validGSTTreatments = [
+      "Registered Business - Regular",
+      "Registered Business - Composition",
+      "Unregistered Business",
+      "Consumer",
+      "Overseas",
+      "Special Economic Zone",
+      "Deemed Export",
+      "Tax Deductor",
+      "SEZ Developer",
+    ];
+    const validCountries = {
+      "United Arab Emirates": [
+        "Abu Dhabi",
+        "Dubai",
+        "Sharjah",
+        "Ajman",
+        "Umm Al-Quwain",
+        "Fujairah",
+        "Ras Al Khaimah",
+      ],
+      India: [
+        "Andaman and Nicobar Island",
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chandigarh",
+        "Chhattisgarh",
+        "Dadra and Nagar Haveli and Daman and Diu",
+        "Delhi",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jammu and Kashmir",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Ladakh",
+        "Lakshadweep",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Puducherry",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal",
+      ],
+      "Saudi Arabia": [
+        "Asir",
+        "Al Bahah",
+        "Al Jawf",
+        "Al Madinah",
+        "Al-Qassim",
+        "Eastern Province",
+        "Hail",
+        "Jazan",
+        "Makkah",
+        "Medina",
+        "Najran",
+        "Northern Borders",
+        "Riyadh",
+        "Tabuk",
+      ],
+    };
+// Utility validation functions
+function isAlphabets(value) {
+  return /^[A-Za-z\s]+$/.test(value);
 }
 
-function isValidUrl(url) {
+function isFloat(value) {
+  return /^-?\d+(\.\d+)?$/.test(value);
+  }
+
+function isInteger(value) {
+  return /^[0-9]+$/.test(value);
+}
+
+
+function isAlphanumeric(value) {
+  return /^[A-Za-z0-9]+$/.test(value);
+}
+
+function isValidUrl(value) {
   try {
-    new URL(url);
+    new URL(value);
     return true;
   } catch {
     return false;
   }
 }
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+// Constants for validation
+const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
+
+ // Perform validations
+if (salutation && !validSalutations.includes(salutation)) {
+  return { isValid: false, message: `Invalid salutation: ${salutation}` };
+}
+
+if (!isAlphabets(firstName)) {
+  return { isValid: false, message: "First name should contain only alphabets." };
+}
+
+if (!isAlphabets(lastName)) {
+  return { isValid: false, message: "Last name should contain only alphabets." };
+}
+
+if (!isAlphabets(supplierDisplayName)) {
+  return { isValid: false, message: "Supplier display name should contain only alphabets." };
+}
+
+if (!isValidEmail(supplierEmail)) {
+  return { isValid: false, message: `Invalid email: ${supplierEmail}` };
+}
+
+if (!isInteger(workPhone)) {
+  return { isValid: false, message: "Work phone should contain only digits." };
+}
+
+if (!isInteger(mobile)) {
+  return { isValid: false, message: "Mobile number should contain only digits." };
+}
+
+if (!isAlphanumeric(pan)) {
+  return { isValid: false, message: `Invalid PAN: ${pan}` };
+}
+
+if (!isFloat(openingBalance)) {
+  return res.status(400).json({ message: `Invalid Opening Balance: ${openingBalance}` });
+}
+
+if (!validCurrencies.includes(currency)) {
+  return res.status(400).json({ message: `Invalid Currency: ${currency}` });
+}
+
+if (!isAlphabets(department)) {
+  return { isValid: false, message: "Department should contain only alphabets." };
+}
+
+if ( !isAlphabets(designation)) {
+  return { isValid: false, message: "Designation should contain only alphabets." };
+}
+
+if (  !isValidUrl(websiteURL)) {
+  return { isValid: false, message: `Invalid website URL: ${websiteURL}` };
+}
+
+if (  !isAlphanumeric(gstin_uin)) {
+  return { isValid: false, message: `Invalid GSTIN/UIN: ${gstin_uin}` };
+}
+
+if (!validCountries[billingCountry] || !validCountries[billingCountry].includes(billingState)) {
+  return res
+    .status(400)
+    .json({ message: `Invalid Billing Country or State: ${billingCountry}, ${billingState}` });
+}
+if (!validCountries[shippingCountry] || !validCountries[shippingCountry].includes(shippingState)) {
+  return res
+    .status(400)
+    .json({ message: `Invalid Billing Country or State: ${shippingCountry}, ${shippingState}` });
+}
+if (!isInteger(billingPinCode)) {
+  return res
+    .status(400)
+    .json({ message: `Invalid Billing Pin Code Number fields :${billingPhone}` });
+}
+if (!isInteger(billingPhone)) {
+  return res
+    .status(400)
+    .json({ message: `Invalid Billing Phone Number fields :${billingPhone}` });
+}    
+if (!isInteger(billingFaxNum)) {
+  return res
+    .status(400)
+    .json({ message: `Invalid Billing Fax Number fields:${billingFaxNum}` });
+}
+
+if (!isInteger(shippingPinCode)) {
+  return res
+    .status(400)
+    .json({ message: `Invalid Shipping Pin Code Number fields :${shippingPinCode}` });
+}
+if (!isInteger(shippingPhone)) {
+  return res
+    .status(400)
+    .json({ message: `Invalid Shipping Phone Number fields :${shippingPhone}` });
+}    
+if (!isInteger(shippingFaxNum)) {
+  return res
+    .status(400)
+    .json({ message: `Invalid Shipping Fax Number fields:${shippingFaxNum}` });
+}
+
+if (!validTaxTypes.includes(taxType)) {
+  return res
+    .status(400)
+    .json({ message: `Invalid Tax Type: ${taxType}` });
+}
+
+if (taxType === "GST") {                  
+  if (!validGSTTreatments.includes(gstTreatment)) {
+    return res
+    .status(400)
+    .json({ message: `Invalid GST treatment: ${gstTreatment}` });        
+  }
+
+  if (!isAlphanumeric(gstin_uin)) {
+    return res
+    .status(400)
+    .json({ message: `Invalid GSTIN/UIN: ${gstin_uin}` });          
+  }
+} else if (taxType === "VAT") {
+  if (!isAlphanumeric(vatNumber)) {
+    return res
+    .status(400)
+    .json({ message: `Invalid VAT number: ${vatNumber}` });          
+  }
+} else if (taxType === "None") {
+gstTreatment = undefined;
+gstin_uin = undefined;
+vatNumber = undefined;                    
+}
+console.log("Organization exists: ", organizationExists);
+console.log("Tax exists: ", taxExists);
+console.log("Currency found: ", currencyExists);
+
+
+
+
+    // Check if a supplier with the same organizationId already exists
+    const existingSupplier = await Supplier.findOne({
+      supplierEmail: supplierEmail,
+      organizationId: organizationId,
+    });
+    if (existingSupplier) {
+      return res.status(409).json({
+        message: "Supplier with the provided email already exists.",
+      });
+    }
+
+
+    // Create a new supplier
+    const newSupplier = new Supplier({
+      // Basic
+      organizationId,
+      salutation,
+      firstName,
+      lastName,
+
+      companyName,
+      supplierDisplayName,
+      supplierEmail,
+      workPhone,
+      mobile,
+      createdDate: openingDate,
+      creditDays,
+      creditLimit,
+      interestPercentage,
+
+      //Other Details
+      pan,
+      currency,
+      openingBalance,
+      paymentTerms,
+      tds,
+      documents,
+      websiteURL,
+      department,
+      designation,
+
+      //Tax
+      taxType,
+      gstTreatment,
+      gstin_uin,
+      sourceOfSupply,
+      msmeType,
+      msmeNumber,
+      msmeRegistered,
+      vatNumber,
+
+      // Billing Address
+      billingAttention,
+      billingCountry,
+      billingAddressStreet1,
+      billingAddressStreet2,
+      billingCity,
+      billingState,
+      billingPinCode,
+      billingPhone,
+      billingFaxNum,
+
+      // Shipping Address
+      shippingAttention,
+      shippingCountry,
+      shippingAddressStreet1,
+      shippingAddressStreet2,
+      shippingCity,
+      shippingState,
+      shippingPinCode,
+      shippingPhone,
+      shippingFaxNum,
+
+      // Contact Person
+      contactPersons,
+
+      //Bank Details
+      bankDetails,
+
+      //Remark
+      remarks,
+
+      //Status
+      status: "Active",
+    });
+
+    // Save the supplier to the database
+    const savedSupplier = await newSupplier.save();
+
+    const existingAccount = await Account.findOne({
+      accountName: companyName,
+      organizationId: organizationId,
+    });
+
+    if (existingAccount) {
+      return res.status(409).json({
+        message: "Account with the provided Account Name already exists.",
+      });
+    }
+
+    // Create a new Customer Account
+    const newAccount = new Account({
+      organizationId,
+      accountName: supplierDisplayName,
+      accountCode: savedSupplier._id,
+
+      accountSubhead: "Sundry Creditors",
+      accountHead: "Liabilities",
+      accountGroup: "Liability",
+
+      openingBalance: openingBalance,
+      openingBalanceDate: openingDate,
+      description: "Suppliers",
+    });
+
+    await newAccount.save();
+    res.status(201).json({
+      message: "Supplier Added successfully.",
+    });
+    console.log("Supplier Added successfully");
+  } catch (error) {
+    console.error("Error adding supplier:", error);
+    res.status(400).json({ error: error.message });
+  }
+};
+
 
 
 exports.getAllSuppliers = async (req, res) => {
