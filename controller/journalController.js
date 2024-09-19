@@ -31,10 +31,8 @@ exports.addJournalEntry = async (req, res) => {
             });
         }
         
-        const timeZoneExp = existingOrganization.timeZoneExp;
-        const dateFormatExp = existingOrganization.dateFormatExp;
-        const dateSplit = existingOrganization.dateSplit;
-        const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+
+        const generatedDateTime = generateTimeAndDateForDB(existingOrganization.timeZoneExp, existingOrganization.dateFormatExp, existingOrganization.dateSplit);
         const entryDate = generatedDateTime.dateTime;
 
         // Check if all accounts exist for the given organization
