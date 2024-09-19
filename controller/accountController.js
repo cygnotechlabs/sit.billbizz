@@ -1,5 +1,6 @@
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account")
+const TrialBalance = require("../database/model/trialBalance")
 const crypto = require('crypto');
 const moment = require('moment-timezone');
 
@@ -337,6 +338,30 @@ exports.deleteAccount = async (req, res) => {
 
 
 
+//Get one Account for a given organizationId
+exports.getOneTrailBalance = async (req, res) => {
+  try {
+      const { accountId } = req.params;
+      const { organizationId } = req.body;
+
+      // Find the TrialBalance by accountId and organizationId
+      const trialBalance = await TrialBalance.find({
+          accountId: accountId,
+          organizationId: organizationId,
+      });
+
+      if (!trialBalance) {
+          return res.status(404).json({
+              message: "Trial Balance not found.",
+          });
+      }
+
+      res.status(200).json(trialBalance);
+  } catch (error) {
+      console.error("Error fetching account:", error);
+      res.status(500).json({ message: "Internal server error." });
+  }
+};
 
 
 // Function to generate time and date for storing in the database

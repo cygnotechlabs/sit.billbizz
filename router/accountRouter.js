@@ -33,5 +33,9 @@ router.put('/get-all-journal',journalController.getAllJournal)
 
 router.put('/get-last-journal-prefix',journalController.getLastJournalPrefix)
 
+//Trial Balance
+
+router.put('/get-one-trial-balance/:accountId',accountController.getOneTrailBalance)
+
 
 module.exports = router

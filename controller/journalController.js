@@ -84,6 +84,7 @@ exports.addJournalEntry = async (req, res) => {
         if (existingPrefix.series.length === 0) {
             return res.status(404).json({ message: "No series data found for the organization." });
         }
+        
 
         // Find the series with status true
         const activeSeries = existingPrefix.series.find(series => series.status === true);
