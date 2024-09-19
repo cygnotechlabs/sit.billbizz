@@ -22,7 +22,7 @@ function NewAccountModal({}: Props) {
     accountHead: "",
     accountGroup: "",
     description: "",
-    bankAccNum: "", // Added bank fields to the form state
+    bankAccNum: "",
     bankIfsc: "",
     bankCurrency: "",
   });
@@ -184,8 +184,21 @@ function NewAccountModal({}: Props) {
                 </select>
               </div>
 
-              {/* Conditionally render the Bank fields when "Bank" is selected */}
-              {formValues.accountSubhead === "Bank" && (
+              <div className="mb-4">
+                <label className="block text-sm mb-1 text-labelColor">
+                  Account Name
+                </label>
+                <input
+                  type="text"
+                  name="accountName"
+                  value={formValues.accountName}
+                  onChange={handleChange}
+                  placeholder="Enter Account Name"
+                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
+                />
+              </div>
+                   {/* Conditionally render the Bank fields when "Bank" is selected */}
+                   {formValues.accountSubhead === "Bank" && (
                 <div className="grid grid-cols-3 gap-4 mb-4">
                   <div>
                     <label className="block text-sm mb-1 text-labelColor">
@@ -243,20 +256,6 @@ function NewAccountModal({}: Props) {
                 </div>
                 </div>
               )}
-
-              <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">
-                  Account Name
-                </label>
-                <input
-                  type="text"
-                  name="accountName"
-                  value={formValues.accountName}
-                  onChange={handleChange}
-                  placeholder="Enter Account Name"
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
-                />
-              </div>
               <div className="mb-4">
                 <label className="block text-sm mb-1 text-labelColor">
                   Description
