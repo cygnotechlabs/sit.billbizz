@@ -191,7 +191,8 @@ exports.getABmcr = async (req, res) => {
 
 
 
-//update bmcr
+
+// Update BMCR using findOneAndUpdate
 exports.updateBmcr = async (req, res) => {
     console.log("Received request to update BMCR entity:", req.body);
 
@@ -204,78 +205,122 @@ exports.updateBmcr = async (req, res) => {
             return res.status(400).json({ message: "Invalid type provided." });
         }
 
-        // Check if an Organization already exists
+        // Check if an Organization exists
         const existingOrganization = await Organization.findOne({ organizationId });
         if (!existingOrganization) {
             return res.status(404).json({ message: "No Organization Found." });
         }
 
-        // Find the BMCR document
-        const bmcrDoc = await BMCR.findOne({ organizationId });
-        if (!bmcrDoc) {
-            return res.status(404).json({ message: "No BMCR data found for the provided organizationId." });
+        // Set the fields to update based on type
+        let updateFields = {};
+        let existingEntity;
+
+        switch (type) {
+            case 'brand':
+                // Check if another brand with the same name exists in the organization
+                existingEntity = await BMCR.findOne({ organizationId, brandName: name, _id: { $ne: _id } });
+                if (existingEntity) {
+                    return res.status(409).json({ message: `A brand with the name "${name}" already exists in this organization.` });
+                }
+
+                // Handle special case for updating associated items when brandName changes
+                const bmcrDocB = await BMCR.findOne({ _id, organizationId });
+                if (bmcrDocB && bmcrDocB.brandName !== name) {
+                    const oldBrandName = bmcrDocB.brandName;
+
+                    // Update items with the new rack name
+                    await Item.updateMany(
+                        { brand: oldBrandName, organizationId },
+                        { $set: { brand: name } }
+                    );
+                }
+
+                updateFields = { brandName: name, description };
+                break;
+
+            case 'manufacturer':
+                // Check if another manufacturer with the same name exists in the organization
+                existingEntity = await BMCR.findOne({ organizationId, manufacturerName: name, _id: { $ne: _id } });
+                if (existingEntity) {
+                    return res.status(409).json({ message: `A manufacturer with the name "${name}" already exists in this organization.` });
+                }
+
+                // Handle special case for updating associated items when manufacturerName changes
+                const bmcrDocM = await BMCR.findOne({ _id, organizationId });
+                if (bmcrDocM && bmcrDocM.manufacturerName !== name) {
+                    const oldManufacturerName = bmcrDocM.manufacturerName;
+
+                    // Update items with the new rack name
+                    await Item.updateMany(
+                        { manufacturer: oldManufacturerName, organizationId },
+                        { $set: { manufacturer: name } }
+                    );
+                }
+
+                updateFields = { manufacturerName: name, description };
+                break;
+
+            case 'category':
+                // Check if another category with the same name exists in the organization
+                existingEntity = await BMCR.findOne({ organizationId, categoriesName: name, _id: { $ne: _id } });
+                if (existingEntity) {
+                    return res.status(409).json({ message: `A category with the name "${name}" already exists in this organization.` });
+                }
+
+                // Handle special case for updating associated items when categoriesName changes
+                const bmcrDocC = await BMCR.findOne({ _id, organizationId });
+                if (bmcrDocC && bmcrDocC.categoriesName !== name) {
+                    const oldCategoryName = bmcrDocC.categoriesName;
+
+                    // Update items with the new rack name
+                    await Item.updateMany(
+                        { categories: oldCategoryName, organizationId },
+                        { $set: { categories: name } }
+                    );
+                }
+
+                updateFields = { categoriesName: name, description };
+                break;
+
+            case 'rack':
+                // Check if another rack with the same name exists in the organization
+                existingEntity = await BMCR.findOne({ organizationId, rackName: name, _id: { $ne: _id } });
+                if (existingEntity) {
+                    return res.status(409).json({ message: `A rack with the name "${name}" already exists in this organization.` });
+                }
+
+                // Handle special case for updating associated items when rackName changes
+                const bmcrDocR = await BMCR.findOne({ _id, organizationId });
+                if (bmcrDocR && bmcrDocR.rackName !== name) {
+                    const oldRackName = bmcrDocR.rackName;
+
+                    // Update items with the new rack name
+                    await Item.updateMany(
+                        { rack: oldRackName, organizationId },
+                        { $set: { rack: name } }
+                    );
+                }
+
+                updateFields = { rackName: name, description };
+                break;
+
+            default:
+                return res.status(400).json({ message: "Invalid type provided." });
         }
 
-        // Define variables for each collection
-        let collection;
-        let entity;
-        let nameField;
-        
-        // Assign the appropriate collection to the variable based on the type
-        if (type === 'brand') {
-            collection = bmcrDoc.brands;
-            nameField = 'brandName';
-        } else if (type === 'manufacturer') {
-            collection = bmcrDoc.manufacturers;
-            nameField = 'manufacturerName';
-        } else if (type === 'category') {
-            collection = bmcrDoc.categories;
-            nameField = 'categoriesName';
-        } else if (type === 'rack') {
-            collection = bmcrDoc.racks;
-            nameField = 'rackName';
+        // Use findOneAndUpdate to update the document directly
+        const updatedBmcr = await BMCR.findOneAndUpdate(
+            { _id, organizationId },
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedBmcr) {
+            return res.status(404).json({ message: `No ${type} found for the provided organizationId and _id.` });
         }
-
-        // Check if the new name already exists within the organization
-        const existingEntityWithName = collection.find(i => i[nameField] === name && i._id.toString() !== _id);
-        if (existingEntityWithName) {
-            return res.status(409).json({ message: `A ${type} with the name "${name}" already exists in this organization.` });
-        }
-
-        // Find the specific entity in the collection
-        entity = collection.id(_id);
-        if (!entity) {
-            return res.status(404).json({ message: `${type.charAt(0).toUpperCase() + type.slice(1)} not found.` });
-        }
-
-         // Special handling for racks: update associated items if the rack name changes
-         if (type === 'rack' && entity.rackName !== name) {
-            const oldRackName = entity.rackName;
-
-            // Update the rack name in the BMCR document
-            entity.rackName = name;
-
-            // Update associated items in the Item collection
-            const result = await Item.updateMany(
-                { 
-                    rack: oldRackName, // Match the old rackName
-                    organizationId: organizationId // Match the organizationId from the request
-                },
-                { $set: { rack: name } } // Update with the new rackName
-            );
-
-            console.log(`Updated ${result.modifiedCount} items associated with the rack from "${oldRackName}" to "${name}".`);
-        } else {
-            // Update the entity for other types (brand, manufacturer, category)
-            entity[nameField] = name;
-            entity.description = description;
-        }
-
-        // Save the updated BMCR document
-        await bmcrDoc.save();
 
         res.status(200).json({ message: `${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully.` });
-        console.log(`${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully:`, entity);
+        console.log(`${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully:`, updatedBmcr);
 
     } catch (error) {
         console.error(`Error updating ${type}:`, error);
@@ -285,84 +330,63 @@ exports.updateBmcr = async (req, res) => {
 
 
 
-//delete bmcr
+
+// delete bmcr
 exports.deleteBmcr = async (req, res) => {
-    const { type, organizationId } = req.body;
+    const { organizationId } = req.body;
     const { id } = req.params;
 
-    // Validate the type
-    const validTypes = ['brand', 'manufacturer', 'category', 'rack'];
-    if (!validTypes.includes(type)) {
-        return res.status(400).json({ message: "Invalid type provided." });
-    }
-
+    
     // Check if the Organization exists
     const existingOrganization = await Organization.findOne({ organizationId });
-
     if (!existingOrganization) {
-        return res.status(404).json({
-            message: "No Organization Found.",
-        });
+        return res.status(404).json({ message: "No Organization Found." });
     }
 
     try {
-        // Check if an Organization exists
-        const bmcrDoc = await BMCR.findOne({ organizationId });
+        // Find the BMCR document by _id
+        const bmcrDoc = await BMCR.findOne({ _id: id });
         if (!bmcrDoc) {
-            return res.status(404).json({ message: "No BMCR data found for the provided organizationId." });
+            return res.status(404).json({ message: "No data found." });
         }
 
-        let collection;
-        let nameField;
-        let associatedField;
+        const type = bmcrDoc.type;
+        console.log(bmcrDoc);
+        
+        let relatedItems = [];
 
-        // Define the fields and collection based on type using switch
-        switch (type) {
-            case 'brand':
-                collection = bmcrDoc.brands;
-                nameField = 'brandName';
-                associatedField = 'brand';
-                break;
-            case 'manufacturer':
-                collection = bmcrDoc.manufacturers;
-                nameField = 'manufacturerName';
-                associatedField = 'manufacturer';
-                break;
-            case 'category':
-                collection = bmcrDoc.categories;
-                nameField = 'categoriesName';
-                associatedField = 'categories';
-                break;
-            case 'rack':
-                collection = bmcrDoc.racks;
-                nameField = 'rackName';
-                associatedField = 'rack';
-                break;
-            default:
-                return res.status(400).json({ message: "Invalid type provided." });
+        // Fetch related items based on the type
+        if (type === "rack") {
+            const rackName = bmcrDoc.rackName;
+            if (rackName) {
+                relatedItems = await Item.find({ rack: rackName, organizationId });
+            }
+        } else if (type === "brand") {
+            const brandName = bmcrDoc.brandName;
+            if (brandName) {
+                relatedItems = await Item.find({ brand: brandName, organizationId });
+            }
+        } else if (type === "category") {
+            const categoryName = bmcrDoc.categoriesName;
+            if (categoryName) {
+                relatedItems = await Item.find({ categories: categoryName, organizationId });
+            }
+        } else if (type === "manufacturer") {
+            const manufacturerName = bmcrDoc.manufacturerName;
+            if (manufacturerName) {
+                relatedItems = await Item.find({ manufacturer: manufacturerName, organizationId });
+            }
         }
 
-        // Find the entity by ID
-        const entity = collection.find(i => i._id.toString() === id);
-        if (!entity) {
-            return res.status(404).json({ message: `${type.charAt(0).toUpperCase() + type.slice(1)} not found.` });
-        }
-
-        // Check if there are items associated with this entity
-        const relatedItems = await Item.find({
-            [associatedField]: entity[nameField],
-            organizationId: organizationId
-        });
-
+        // If there are related items, don't allow deletion
         if (relatedItems.length > 0) {
             return res.status(400).json({
-                message: `${type.charAt(0).toUpperCase() + type.slice(1)} cannot be deleted as it contains items.`,
+                message: `Cannot delete ${type}, as related items exist.`,
             });
         }
 
-        // Remove the entity from the collection
-        collection.splice(collection.indexOf(entity), 1);
-        await bmcrDoc.save();
+        // Delete the BMCR document
+        await BMCR.deleteOne({ _id: id });
 
         res.status(200).json({ message: `${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully.` });
         console.log(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully:`, id);
@@ -371,6 +395,10 @@ exports.deleteBmcr = async (req, res) => {
         res.status(500).json({ message: "Internal server error." });
     }
 };
+
+
+
+
 
 
 

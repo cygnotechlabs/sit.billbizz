@@ -416,6 +416,17 @@ exports.updateItem = async (req, res) => {
 exports.deleteItem = async (req, res) => {
   try {
       const itemId = req.params.id;
+      const { organizationId } = req.body;
+
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+    
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+
       const deletedItem = await Item.findByIdAndDelete(itemId);
 
       if (!deletedItem) {
