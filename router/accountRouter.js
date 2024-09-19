@@ -16,6 +16,8 @@ router.put('/get-all-account',accountController.getAllAccount)
 
 router.put('/get-one-account/:accountId',accountController.getOneAccount)
 
+router.put('/get-bank-account-number/:accountId',accountController.getBankAccNum)
+
 router.put('/edit-account/:accountId',accountController.editAccount)
 
 router.put('/delete-account/:accountId',accountController.deleteAccount)
@@ -30,6 +32,10 @@ router.post('/add-journal-entry',journalController.addJournalEntry)
 router.put('/get-all-journal',journalController.getAllJournal)
 
 router.put('/get-last-journal-prefix',journalController.getLastJournalPrefix)
+
+//Trial Balance
+
+router.put('/get-one-trial-balance/:accountId',accountController.getOneTrailBalance)
 
 
 module.exports = router

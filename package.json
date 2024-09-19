@@ -12,8 +12,13 @@
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
+<<<<<<< HEAD
     "express": "^5.0.0",
+=======
+    "express": "^4.19.2",
+>>>>>>> 04a64609630758932b6969d9f086423c8ff4039b
     "moment-timezone": "^0.5.45",
     "mongoose": "^8.4.4",
     "nodemon": "^3.1.4"

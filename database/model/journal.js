@@ -16,6 +16,7 @@ const journalSchema = new Schema({
     organizationId: {type:String},
     journalId: {type:String},
     date: {type:String},
+    entryDate: {type:String},
     reference: {type:String},
     note: {type:String},
     cashBasedJournal: {type:String},

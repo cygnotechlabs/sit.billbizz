@@ -3,6 +3,9 @@ const Account = require("../database/model/account");
 const Prefix = require("../database/model/prefix");
 const Journal = require("../database/model/journal");
 const TrialBalance = require("../database/model/trialBalance");
+const moment = require('moment-timezone');
+
+
 
 // Add Journal Entry
 exports.addJournalEntry = async (req, res) => {
@@ -27,6 +30,12 @@ exports.addJournalEntry = async (req, res) => {
                 message: "No Organization Found.",
             });
         }
+        
+        const timeZoneExp = existingOrganization.timeZoneExp;
+        const dateFormatExp = existingOrganization.dateFormatExp;
+        const dateSplit = existingOrganization.dateSplit;
+        const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+        const entryDate = generatedDateTime.dateTime;
 
         // Check if all accounts exist for the given organization
         const allAccountIds = transaction.map(trans => trans.accountId);
@@ -64,16 +73,31 @@ exports.addJournalEntry = async (req, res) => {
         // Check if the organizationId exists in the Prefix collection
         const existingPrefix = await Prefix.findOne({ organizationId });
         if (!existingPrefix) {
-            return res.status(404).json({
-                message: "No Prefix data found for the organization."
-            });
+            return res.status(404).json({ message: "No Prefix data found for the organization." });
         }
+        console.log("Existing Prefix:", existingPrefix);
 
+        // Ensure series is an array and contains items
+        if (!Array.isArray(existingPrefix.series)) {
+            return res.status(500).json({ message: "Series is not an array or is missing." });
+        }
+        if (existingPrefix.series.length === 0) {
+            return res.status(404).json({ message: "No series data found for the organization." });
+        }
+        
+
+        // Find the series with status true
+        const activeSeries = existingPrefix.series.find(series => series.status === true);
+        if (!activeSeries) {
+            return res.status(404).json({ message: "No active series found for the organization." });
+        }
         // Generate the journalId by joining journal and journalNum
-        const journalId = `${existingPrefix.journal}${existingPrefix.journalNum}`;
+        const journalId = `${activeSeries.journal}${activeSeries.journalNum}`;
 
-        // Increment the journalNum and save it back to the Prefix collection
-        existingPrefix.journalNum += 1;
+        // Increment the journalNum for the active series
+        activeSeries.journalNum += 1;
+
+        // Save the updated prefix collection
         await existingPrefix.save();
 
         // Create a new journal entry
@@ -81,6 +105,7 @@ exports.addJournalEntry = async (req, res) => {
             organizationId: organizationId,
             journalId,
             date,
+            entryDate,
             reference,
             note,
             cashBasedJournal,
@@ -105,8 +130,9 @@ exports.addJournalEntry = async (req, res) => {
         for (const trans of transaction) {
             const newTrialEntry = new TrialBalance({
                 organizationId,
+                operationId:newJournalEntry._id,
                 transactionId: journalId,
-                date,
+                date:entryDate,
                 account_id: trans.accountId,
                 accountName: trans.accountName,
                 action: "Journal",
@@ -182,3 +208,39 @@ exports.getLastJournalPrefix = async (req, res) => {
         res.status(500).json({ message: "Internal server error." });
     }
 };
+
+
+
+
+
+
+
+
+
+// Function to generate time and date for storing in the database
+function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = new Date(), timeFormat = 'HH:mm:ss', timeSplit = ':') {
+    // Convert the base time to the desired time zone
+    const localDate = moment.tz(baseTime, timeZone);
+  
+    // Format date and time according to the specified formats
+    let formattedDate = localDate.format(dateFormat);
+    
+    // Handle date split if specified
+    if (dateSplit) {
+      // Replace default split characters with specified split characters
+      formattedDate = formattedDate.replace(/[-/]/g, dateSplit); // Adjust regex based on your date format separators
+    }
+  
+    const formattedTime = localDate.format(timeFormat);
+    const timeZoneName = localDate.format('z'); // Get time zone abbreviation
+  
+    // Combine the formatted date and time with the split characters and time zone
+    const dateTime = `${formattedDate} ${formattedTime.split(':').join(timeSplit)} (${timeZoneName})`;
+  
+    return {
+      date: formattedDate,
+      time: `${formattedTime} (${timeZoneName})`,
+      dateTime: dateTime
+    };
+  }
+  
