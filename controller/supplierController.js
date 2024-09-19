@@ -223,7 +223,7 @@ exports.addSupplier = async (req, res) => {
         "Fujairah",
         "Ras Al Khaimah",
       ],
-      India: [
+      "India": [
         "Andaman and Nicobar Island",
         "Andhra Pradesh",
         "Arunachal Pradesh",
