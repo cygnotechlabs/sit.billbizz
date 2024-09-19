@@ -1,267 +1,317 @@
 const Organization = require("../database/model/organization");
-const Account = require("../database/model/account")
-
+const Account = require("../database/model/account");
+const moment = require("moment-timezone");
 
 //Add Account
 exports.addAccount = async (req, res) => {
-    console.log("Add Account:", req.body);
-    try {
-      const {       
-        organizationId,
-        accountName,
-        accountCode,
+  console.log("Add Account:", req.body);
+  try {
+    const {
+      organizationId,
+      accountName,
+      accountCode,
 
-        accountSubhead,
-        accountHead,
-        accountGroup,
+      accountSubhead,
+      accountHead,
+      accountGroup,
 
-        openingBalance,
-        openingBalanceDate,
-        description,
-        bankAccNum,
-        bankIfsc,
-        bankCurrency,
-      } = req.body;
+      description,
+      bankAccNum,
+      bankIfsc,
+      bankCurrency,
+    } = req.body;
 
-
-      // Define valid groups, heads, and subheads
+    // Define valid groups, heads, and subheads
     const validStructure = {
-      "Asset": {
-        "Asset": ["Asset", "Current asset", "Cash", "Bank", "Fixed asset", "Stock", "Payment Clearing", "Sundry Debtors"],
-        "Equity": ["Equity"],
-        "Income": ["Income", "Other Income"]
+      Asset: {
+        Asset: [
+          "Asset",
+          "Current asset",
+          "Cash",
+          "Bank",
+          "Fixed asset",
+          "Stock",
+          "Payment Clearing",
+          "Sundry Debtors",
+        ],
+        Equity: ["Equity"],
+        Income: ["Income", "Other Income"],
       },
-      "Liability": {
-        "Liabilities": ["Current Liability", "Credit Card", "Long Term Liability", "Other Liability", "Overseas Tax Payable", "Sundry Creditors"],
-        "Expenses": ["Expense", "Cost of Goods Sold", "Other Expense"]
-      }
+      Liability: {
+        Liabilities: [
+          "Current Liability",
+          "Credit Card",
+          "Long Term Liability",
+          "Other Liability",
+          "Overseas Tax Payable",
+          "Sundry Creditors",
+        ],
+        Expenses: ["Expense", "Cost of Goods Sold", "Other Expense"],
+      },
     };
 
     // Validate accountGroup, accountHead, and accountSubhead
-    if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
+    if (
+      !validStructure[accountGroup] ||
+      !validStructure[accountGroup][accountHead] ||
+      !validStructure[accountGroup][accountHead].includes(accountSubhead)
+    ) {
       return res.status(400).json({
-        message: "Invalid account group, head, or subhead."
+        message: "Invalid account group, head, or subhead.",
       });
       console.log("Invalid account group, head, or subhead.");
     }
 
-
     // Validate bank details if accountSubhead is "Bank"
-    if (accountSubhead === "Bank" && (!bankAccNum || !bankIfsc || !bankCurrency)) {
+    if (
+      accountSubhead === "Bank" &&
+      (!bankAccNum || !bankIfsc || !bankCurrency)
+    ) {
       return res.status(400).json({
-        message: "Bank Details (Account Number, IFSC, Currency) are required"
+        message: "Bank Details (Account Number, IFSC, Currency) are required",
       });
       console.log("Bank Details (Account Number, IFSC, Currency) are required");
     }
 
     // Find the account by accountId and organizationId
-    const organization = await Account.findOne({
+    const organizationExists = await Organization.findOne({
       organizationId: organizationId,
     });
 
-  if (!organization) {
+    if (!organizationExists) {
       return res.status(404).json({
-          message: "Organization not found",
+        message: "Organization not found",
       });
-  }
-    
-  
-      // Check if an organization with the same organizationName already exists
-      const existingAccount = await Account.findOne({
-        accountName: accountName,
-        organizationId: organizationId,
-    });
-  
-      if (existingAccount) {
-        return res.status(409).json({
-          message: "Account with the provided Account Name already exists.",
-        });
-      }
-  
-      // Create a new Account
-      const newAccount = new Account({
-        organizationId,
-        accountName,
-        accountCode,
-
-        accountSubhead,
-        accountHead,
-        accountGroup,
-
-        openingBalance,
-        openingBalanceDate,
-        description,
-        bankAccNum,
-        bankIfsc,
-        bankCurrency,        
-      });
-  
-      
-      await newAccount.save();
-  
-      
-      res.status(201).json({
-        message: "Account created successfully."
-      });
-      console.log("Account created successfully:");
-    } catch (error) {
-      console.error("Error creating Account:", error);
-      res.status(500).json({ message: "Internal server error." });
     }
-};
+    const timeZoneExp = organizationExists.timeZoneExp;
+    const dateFormatExp = organizationExists.dateFormatExp;
+    const dateSplit = organizationExists.dateSplit;
+    const generatedDateTime = generateTimeAndDateForDB(
+      timeZoneExp,
+      dateFormatExp,
+      dateSplit
+    );
+    const openingDate = generatedDateTime.dateTime;
 
-  
+    // Check if an organization with the same organizationName already exists
+    const existingAccount = await Account.findOne({
+      accountName: accountName,
+      organizationId: organizationId,
+    });
+
+    if (existingAccount) {
+      return res.status(409).json({
+        message: "Account with the provided Account Name already exists.",
+      });
+    }
+
+    // Create a new Account
+    const newAccount = new Account({
+      organizationId,
+      accountName,
+      accountCode,
+
+      accountSubhead,
+      accountHead,
+      accountGroup,
+
+      openingDate,
+      description,
+      bankAccNum,
+      bankIfsc,
+      bankCurrency,
+    });
+
+    await newAccount.save();
+
+    res.status(201).json({
+      message: "Account created successfully.",
+    });
+    console.log("Account created successfully:");
+  } catch (error) {
+    console.error("Error creating Account:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
 
 // Get all accounts for a given organizationId
 exports.getAllAccount = async (req, res) => {
-    try {
-        const { organizationId } = req.body;
-        // console.log(organizationId);
+  try {
+    const { organizationId } = req.body;
+    // console.log(organizationId);
 
-        // Find all accounts where organizationId matches
-        const accounts = await Account.find({ organizationId:organizationId });
+    // Find all accounts where organizationId matches
+    const accounts = await Account.find({ organizationId: organizationId });
 
-        if (!accounts.length) {
-            return res.status(404).json({
-                message: "No accounts found for the provided organization ID.",
-            });
-        }
-
-        res.status(200).json(accounts);
-    } catch (error) {
-        console.error("Error fetching accounts:", error);
-        res.status(500).json({ message: "Internal server error." });
+    if (!accounts.length) {
+      return res.status(404).json({
+        message: "No accounts found for the provided organization ID.",
+      });
     }
+
+    res.status(200).json(accounts);
+  } catch (error) {
+    console.error("Error fetching accounts:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
 };
-
-
 
 //Get one Account for a given organizationId
 exports.getOneAccount = async (req, res) => {
   try {
-      const { accountId } = req.params;
-      const { organizationId } = req.body;
+    const { accountId } = req.params;
+    const { organizationId } = req.body;
 
-      // Find the account by accountId and organizationId
-      const account = await Account.findOne({
-          _id: accountId,
-          organizationId: organizationId,
+    // Find the account by accountId and organizationId
+    const account = await Account.findOne({
+      _id: accountId,
+      organizationId: organizationId,
+    });
+
+    if (!account) {
+      return res.status(404).json({
+        message:
+          "Account not found for the provided Organization ID and Account ID.",
       });
+    }
 
-      if (!account) {
-          return res.status(404).json({
-              message: "Account not found for the provided Organization ID and Account ID.",
-          });
-      }
-
-      res.status(200).json(account);
+    res.status(200).json(account);
   } catch (error) {
-      console.error("Error fetching account:", error);
-      res.status(500).json({ message: "Internal server error." });
+    console.error("Error fetching account:", error);
+    res.status(500).json({ message: "Internal server error." });
   }
 };
-
-
 
 //Edit account
 exports.editAccount = async (req, res) => {
   console.log("Edit Account:", req.body);
   try {
-      const { accountId } = req.params;
+    const { accountId } = req.params;
 
-      const {
-          organizationId,
-          accountName,
-          accountCode,
+    const {
+      organizationId,
+      accountName,
+      accountCode,
 
-          accountSubhead,
-          accountHead,
-          accountHeads,
+      accountSubhead,
+      accountHead,
+      accountHeads,
 
-          openingBalance,
-          openingBalanceDate,
-          description,
-          bankAccNum,
-          bankIfsc,
-          bankCurrency,
-      } = req.body;
+      openingBalance,
+      openingBalanceDate,
+      description,
+      bankAccNum,
+      bankIfsc,
+      bankCurrency,
+    } = req.body;
 
-      // Check if an account with the given organizationId and accountId exists
-      const account = await Account.findOne({
-          _id: accountId,
-          organizationId: organizationId,
+    // Check if an account with the given organizationId and accountId exists
+    const account = await Account.findOne({
+      _id: accountId,
+      organizationId: organizationId,
+    });
+
+    if (!account) {
+      return res.status(404).json({
+        message:
+          "Account not found for the provided Organization ID and Account ID.",
       });
+    }
 
-      if (!account) {
-          return res.status(404).json({
-              message: "Account not found for the provided Organization ID and Account ID.",
-          });
-      }
+    // Update account fields
+    account.accountName = accountName;
+    account.accountCode = accountCode;
 
-      // Update account fields
-      account.accountName = accountName;
-      account.accountCode = accountCode;
+    account.accountSubhead = accountSubhead;
+    account.accountHead = accountHead;
+    account.accountGroup = accountGroup;
 
-      account.accountSubhead = accountSubhead;
-      account.accountHead = accountHead;
-      account.accountGroup = accountGroup;
+    account.openingBalance = openingBalance;
+    account.openingBalanceDate = openingBalanceDate;
 
-      account.openingBalance = openingBalance;
-      account.openingBalanceDate = openingBalanceDate;
-      
-      account.description = description;
-      account.bankAccNum = bankAccNum;
-      account.bankIfsc = bankIfsc;
-      account.bankCurrency = bankCurrency;
+    account.description = description;
+    account.bankAccNum = bankAccNum;
+    account.bankIfsc = bankIfsc;
+    account.bankCurrency = bankCurrency;
 
-      // Save updated account
-      await account.save();
+    // Save updated account
+    await account.save();
 
-      res.status(200).json({
-          message: "Account updated successfully."
-      });
-      console.log("Account updated successfully:");
+    res.status(200).json({
+      message: "Account updated successfully.",
+    });
+    console.log("Account updated successfully:");
   } catch (error) {
-      console.error("Error updating Account:", error);
-      res.status(500).json({ message: "Internal server error." });
+    console.error("Error updating Account:", error);
+    res.status(500).json({ message: "Internal server error." });
   }
 };
-
-
 
 //Delete account
 exports.deleteAccount = async (req, res) => {
   try {
-      const { accountId } = req.params;
-      const { organizationId } = req.body;
+    const { accountId } = req.params;
+    const { organizationId } = req.body;
 
-      // Check if an account with the given organizationId and accountId exists
-      const account = await Account.findOne({
-          _id: accountId,
-          organizationId: organizationId,
+    // Check if an account with the given organizationId and accountId exists
+    const account = await Account.findOne({
+      _id: accountId,
+      organizationId: organizationId,
+    });
+
+    if (!account) {
+      return res.status(404).json({
+        message:
+          "Account not found for the provided Organization ID and Account ID.",
       });
+    }
 
-      if (!account) {
-          return res.status(404).json({
-              message: "Account not found for the provided Organization ID and Account ID.",
-          });
-      }
+    // Delete the account
+    await account.delete();
 
-      // Delete the account
-      await account.delete();
-
-      res.status(200).json({
-          message: "Account deleted successfully.",
-          deletedAccount: account,
-      });
-      console.log("Account deleted successfully:", account);
+    res.status(200).json({
+      message: "Account deleted successfully.",
+      deletedAccount: account,
+    });
+    console.log("Account deleted successfully:", account);
   } catch (error) {
-      console.error("Error deleting Account:", error);
-      res.status(500).json({ message: "Internal server error." });
+    console.error("Error deleting Account:", error);
+    res.status(500).json({ message: "Internal server error." });
   }
 };
 
+// Function to generate time and date for storing in the database
+function generateTimeAndDateForDB(
+  timeZone,
+  dateFormat,
+  dateSplit,
+  baseTime = new Date(),
+  timeFormat = "HH:mm:ss",
+  timeSplit = ":"
+) {
+  // Convert the base time to the desired time zone
+  const localDate = moment.tz(baseTime, timeZone);
 
+  // Format date and time according to the specified formats
+  let formattedDate = localDate.format(dateFormat);
 
+  // Handle date split if specified
+  if (dateSplit) {
+    // Replace default split characters with specified split characters
+    formattedDate = formattedDate.replace(/[-/]/g, dateSplit); // Adjust regex based on your date format separators
+  }
 
+  const formattedTime = localDate.format(timeFormat);
+  const timeZoneName = localDate.format("z"); // Get time zone abbreviation
 
+  // Combine the formatted date and time with the split characters and time zone
+  const dateTime = `${formattedDate} ${formattedTime
+    .split(":")
+    .join(timeSplit)} (${timeZoneName})`;
+
+  return {
+    date: formattedDate,
+    time: `${formattedTime} (${timeZoneName})`,
+    dateTime: dateTime,
+  };
+}
