@@ -6,7 +6,7 @@ import { endponits } from "../../../Services/apiEndpoints";
 import { Link } from "react-router-dom";
 
 interface Account {
-  id: string;
+  _id: string;
   accountName: string;
   accountCode: string;
   accountSubhead: string;
@@ -83,12 +83,12 @@ const Table = () => {
           </thead>
           <tbody className="text-dropdownText text-center text-[13px]">
             {filteredAccounts.map((item) => (
-              <tr key={item.id} className="relative">
+              <tr key={item._id} className="relative">
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input type="checkbox" className="form-checkbox w-4 h-4" />
                 </td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
-                  <Link to={`/accountant/view`}>
+                  <Link to={`/accountant/view/${item._id}`}>
                     {item.accountName}
                   </Link>
                 </td>
