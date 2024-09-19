@@ -890,13 +890,10 @@ exports.editCustomer = async (req, res) => {
     // customer.department = department || customer.department;
     // customer.designation = designation || customer.designation;
     // customer.websiteURL = websiteURL || customer.websiteURL;
-    // customer.taxPreference = taxPreference || customer.taxPreference;
     // customer.taxReason = taxReason || customer.taxReason;
     // customer.taxType = taxType || customer.taxType;
     // customer.gstTreatment = gstTreatment || customer.gstTreatment;
     // customer.gstin_uin = gstin_uin || customer.gstin_uin;
-    // customer.msmeType = msmeType || customer.msmeType;
-    // customer.msmeNumber = msmeNumber || customer.msmeNumber;
     // customer.placeOfSupply = placeOfSupply || customer.placeOfSupply;
     // customer.businessLegalName =  businessLegalName || customer.businessLegalName;
     // customer.businessTradeName =  businessTradeName || customer.businessTradeName;
@@ -998,6 +995,8 @@ exports.editCustomer = async (req, res) => {
 
       //Remark
       existingCustomer.remark= remark;
+
+      existingCustomer.lastModifiedDate= openingDate;
 
 
 
