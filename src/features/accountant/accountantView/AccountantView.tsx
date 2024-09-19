@@ -1,10 +1,37 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import CheveronLeftIcon from "../../../assets/icons/CheveronLeftIcon";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
+import { useEffect } from "react";
 
 type Props = {};
 
 function AccountantView({}: Props) {
   const tableHeaders = ["Date", "Transaction Details", "Type", "Debit", "Credit"];
+
+  const { request: getOneTrialBalance } = useApi('put', 5001);
+  const { id } = useParams<{ id: string }>();
+  
+
+  const getOneTrialBalanceData = async () => {
+    try {
+      const url = `${endponits.GET_ONE_TRIAL_BALANCE}/${id}`;
+      const body = { organizationId: "INDORG0001" };
+      const { response, error } = await getOneTrialBalance(url, body);
+      if (!error && response) {
+        console.log("res", response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching trialBalance:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (id) { 
+      getOneTrialBalanceData();
+    }
+  }, [id]);
+
 
   return (
     <div className="px-6">
