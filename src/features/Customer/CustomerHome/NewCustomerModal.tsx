@@ -29,14 +29,18 @@ type CustomerData = {
   cardNumber: string;
   pan: string;
   currency: string;
-  openingBalance: string;
   paymentTerms: string;
+  creditDays: string;
+  creditLimit: string;
+  interestPercentage: string;
+  debitOpeningBalance:string,
+  creditOpeningBalance:string,
   enablePortal: boolean;
   documents: string;
   department: string;
   designation: string;
   websiteURL: string;
-  taxPreference: string;
+  taxType: string;
   gstTreatment: string;
   gstin_uin: string;
   placeOfSupply: string;
@@ -73,19 +77,19 @@ type CustomerData = {
 
 const NewCustomerModal = ({ page }: Props) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-
   const [selected, setSelected] = useState<string | null>(null);
-  const [taxselected, setTaxSelected] = useState<string | null>("Taxable");
-
   const [currencyData, setcurrencyData] = useState<any | []>([]);
   const [countryData, setcountryData] = useState<any | []>([]);
   const [stateList, setStateList] = useState<any | []>([]);
   const [shippingstateList, setshippingStateList] = useState<any | []>([]);
   const [placeOfSupplyList, setPlaceOfSupplyList] = useState<any | []>([]);
-  const [activeTab, setActiveTab] = useState<string>("otherDetails");
   const [paymentTerms, setPaymentTerms] = useState<any | []>([]);
   const [gstOrVat, setgstOrVat] = useState<any | []>([]);
   const [oneOrganization, setOneOrganization] = useState<any | []>([]);
+  const [taxPreference, SetTaxPreference] = useState<string>("Taxable");
+  const [activeTab, setActiveTab] = useState<string>("otherDetails");
+  const [taxselected, setTaxSelected] = useState<string | null>("Taxable");
+  const [openingType, setOpeningtype] = useState<any | null>("Debit");
   const { request: getCountryData } = useApi("get", 5004);
   const { request: getCurrencyData } = useApi("put", 5004);
   const { request: CreateCustomer } = useApi("post", 5002);
@@ -94,33 +98,12 @@ const NewCustomerModal = ({ page }: Props) => {
   const { request: getTax } = useApi("put", 5002);
   const { setcustomerResponse } = useContext(CustomerResponseContext)!;
   const [errors, setErrors] = useState({
-    salutation: false,
-    customerType: false,
-    currency: false,
     firstName: false,
     lastName: false,
-    cardNumber: false,
-    pan: false,
+    companyName: false,
     customerDisplayName: false,
-    customerEmail: false,
-    workPhone: false,
-    mobile: false,
-    billingCountry: false,
-    billingCity: false,
-    billingPhone: false,
-    openingBalance: false,
-    department: false,
-    billingPinCode: false,
-    billingFaxNumber: false,
-    billingState: false,
-    shippingCountry: false,
-    shippingPinCode: false,
-    shippingFaxNumber: false,
-    shippingPhone: false,
-    shippingState: false,
-    gstin_uin: false,
-    gstTreatment: false,
   });
+
   const [rows, setRows] = useState([
     { salutation: "", firstName: "", lastName: "", email: "", mobile: "" },
   ]);
@@ -145,14 +128,18 @@ const NewCustomerModal = ({ page }: Props) => {
     cardNumber: "",
     pan: "",
     currency: "",
-    openingBalance: "",
+    creditOpeningBalance: "",
+    debitOpeningBalance:"",
     paymentTerms: "",
     enablePortal: false,
+    creditDays: "",
+    creditLimit: "",
+    interestPercentage: "",
     documents: "",
     department: "",
     designation: "",
     websiteURL: "",
-    taxPreference: "Taxable",
+    taxType: "",
     gstTreatment: "",
     gstin_uin: "",
     placeOfSupply: "",
@@ -189,24 +176,17 @@ const NewCustomerModal = ({ page }: Props) => {
     remark: "",
   });
 
-  // console.log(customerdata, "data");
-
   const getTabClassName = (tabName: string) => {
     return activeTab === tabName
       ? "cursor-pointer font-bold text-darkRed border-darkRed"
       : "cursor-pointer font-bold border-neutral-300";
   };
 
+  // input -----------------------------------------------------
   // data from radio
-  const handleRadioChange = (
-    type: string,
-    field: "customerType" | "taxPreference"
-  ) => {
+  const handleRadioChange = (type: string, field: "customerType") => {
     if (field === "customerType") {
       setSelected(type);
-      setErrors({ ...errors, customerType: false });
-    } else if (field === "taxPreference") {
-      setTaxSelected(type);
     }
 
     setCustomerData((prevFormData) => ({
@@ -239,25 +219,22 @@ const NewCustomerModal = ({ page }: Props) => {
     }));
   };
 
-  const handleBillingPhoneChange = (value: string) => {
+  // phone number change
+  const handlePhoneChange = (phoneType: string, value: string) => {
     setCustomerData((prevData) => ({
       ...prevData,
-      billingPhone: value,
+      [phoneType]: value,
     }));
   };
 
-  const handleShippingPhoneChange = (value: string) => {
-    setCustomerData((prevData) => ({
-      ...prevData,
-      shippingPhone: value,
-    }));
-  };
-
+  // input changes
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, type, value } = e.target;
-
+    if (name == "companyName") {
+      setCustomerData({ ...customerdata, customerDisplayName: value });
+    }
     if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
       setCustomerData((prevData) => ({
@@ -265,13 +242,55 @@ const NewCustomerModal = ({ page }: Props) => {
         [name]: checked,
       }));
     } else {
+      if(name!=='openingBalance'){
+
       setCustomerData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
     }
+        
+        
+    }
+
+    if (name === 'openingType') {
+      // Update openingType state first
+      setOpeningtype(value);
+  
+      // Update supplierData state based on the new openingType value
+      if (value === 'Debit') {
+        setCustomerData(prevData => ({
+          ...prevData,
+          debitOpeningBalance: prevData.creditOpeningBalance,
+          creditOpeningBalance: "" // Clear creditOpeningBalance
+        }));
+      } else if (value === 'Credit') {
+        setCustomerData(prevData => ({
+          ...prevData,
+          creditOpeningBalance: prevData.debitOpeningBalance,
+          debitOpeningBalance: "" // Clear debitOpeningBalance
+        }));
+      }
+    }
+  
+    // Update openingBalance field
+    if (name === 'openingBalance') {
+      if (openingType === 'Credit') {
+        setCustomerData(prevData => ({
+          ...prevData,
+          creditOpeningBalance: value
+        }));
+      } else if (openingType === 'Debit') {
+        setCustomerData(prevData => ({
+          ...prevData,
+          debitOpeningBalance: value
+        }));
+      }
+    }
+    
   };
 
+  // get-------------------------------------------------------
   const getAdditionalData = async () => {
     try {
       // Fetching currency data
@@ -304,8 +323,20 @@ const NewCustomerModal = ({ page }: Props) => {
       });
 
       if (!taxError && taxResponse) {
-        if (taxResponse) {
-          setgstOrVat(taxResponse.data);
+        if (!taxError && taxResponse) {
+          if (taxResponse) {
+            setgstOrVat(taxResponse.data);
+            setCustomerData((prevData) => ({
+              ...prevData,
+              taxType: taxResponse.data.taxType,
+            }));
+            if (taxResponse.data.taxType === "GST") {
+              setCustomerData((prevData) => ({
+                ...prevData,
+                gstTreatment: "Consumer",
+              }));
+            }
+          }
         }
       } else {
         console.log(taxError.response.data, "tax");
@@ -325,39 +356,93 @@ const NewCustomerModal = ({ page }: Props) => {
     }
   };
 
-  //api call
+  const getOneOrganization = async () => {
+    try {
+      const url = `${endponits.GET_ONE_ORGANIZATION}`;
+      const { response, error } = await getOrganization(url, {
+        organizationId: "INDORG0001",
+      });
+
+      if (!error && response?.data) {
+        setOneOrganization(response.data);
+        console.log(response.data,"org");
+        setCustomerData((preData) => ({
+          ...preData,
+          billingCountry: response.data.organizationCountry,
+          billingState: response.data.state,
+          shippingCountry: response.data.organizationCountry,
+          shippingState: response.data.state,
+          currency: response.data.baseCurrency,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching organization:", error);
+    }
+  };
+
+  const handleplaceofSupply = () => {
+    if (oneOrganization.organizationCountry) {
+      const country = countryData.find(
+        (c: any) =>
+          c.name.toLowerCase() ===
+          oneOrganization.organizationCountry.toLowerCase()
+      );
+
+      if (country) {
+        const states = country.states;
+        console.log("States:", states);
+        console.log(country);
+        
+
+        setPlaceOfSupplyList(states);
+        setCustomerData((prevData) => ({
+          ...prevData,
+          placeOfSupply: oneOrganization.state,
+        }));
+      } else {
+        console.log("Country not found");
+      }
+    } else {
+      console.log("No country selected");
+    }
+  };
+
+  // copy address
+  const handleCopyAddress = (e: any) => {
+    e.preventDefault();
+    setCustomerData((prevData) => ({
+      ...prevData,
+      shippingAttention: customerdata.billingAttention,
+      shippingCountry: customerdata.billingCountry,
+      shippingAddress1: customerdata.billingAddressLine1,
+      shippingAddress2: customerdata.billingAddressLine2,
+      shippingCity: customerdata.billingCity,
+      shippingState: customerdata.billingState,
+      shippingPinCode: customerdata.billingPinCode,
+      shippingPhone: customerdata.billingPhone,
+      shippingFaxNumber: customerdata.billingFaxNumber,
+    }));
+  };
+
+  // add customer api call---------------------------------------
   const handleSubmit = async () => {
+    console.log("add working");
+
     const newErrors = { ...errors };
-    if (customerdata.salutation === "") newErrors.salutation = true;
-    if (customerdata.firstName === "") newErrors.firstName = true;
-    if (customerdata.lastName === "") newErrors.lastName = true;
-    if (customerdata.customerEmail === "") newErrors.customerEmail = true;
-    if (customerdata.mobile === "") newErrors.mobile = true;
-    if (customerdata.customerDisplayName === "")
+
+    if (
+      !customerdata.customerDisplayName ||
+      !/^[A-Za-z\s]+$/.test(customerdata.customerDisplayName)
+    ) {
       newErrors.customerDisplayName = true;
-    if (customerdata.pan === "") newErrors.pan = true;
-    if (customerdata.billingPhone === "") newErrors.billingPhone = true;
-    if (customerdata.billingPinCode === "") newErrors.billingPinCode = true;
-    if (customerdata.billingFaxNumber === "") newErrors.billingFaxNumber = true;
-    if (customerdata.shippingPinCode === "") newErrors.shippingPinCode = true;
-    if (customerdata.shippingPhone === "") newErrors.shippingPhone = true;
-    if (customerdata.shippingFaxNumber === "")
-      newErrors.shippingFaxNumber = true;
-    if (customerdata.workPhone === "") newErrors.workPhone = true;
-    if (customerdata.billingCity === "") newErrors.billingCity = true;
-    if (customerdata.openingBalance === "") newErrors.openingBalance = true;
-    if (customerdata.cardNumber === "") newErrors.cardNumber = true;
-    if (customerdata.department === "") newErrors.department = true;
-    if (customerdata.billingCountry === "") newErrors.billingCountry = true;
-    if (customerdata.shippingCountry === "") newErrors.shippingCountry = true;
-    if (customerdata.billingState === "") newErrors.billingState = true;
-    if (customerdata.shippingState === "") newErrors.shippingState = true;
-    if (customerdata.customerType === "") newErrors.customerType = true;
-    if (customerdata.currency === "") newErrors.currency = true;
+    } else {
+      newErrors.customerDisplayName = false;
+    }
 
     if (Object.values(newErrors).some((error) => error)) {
-      setErrors(newErrors);
-      return;
+      console.log("Validation failed with errors:", newErrors);
+      setErrors(newErrors); 
+      return; 
     }
     try {
       const url = `${endponits.ADD_CUSTOMER}`;
@@ -384,14 +469,18 @@ const NewCustomerModal = ({ page }: Props) => {
           cardNumber: "",
           pan: "",
           currency: "",
-          openingBalance: "",
+          creditOpeningBalance: "",
+          debitOpeningBalance:"",
           paymentTerms: "",
+          creditDays: "",
+          creditLimit: "",
+          interestPercentage: "",
           enablePortal: false,
           documents: "",
           department: "",
           designation: "",
           websiteURL: "",
-          taxPreference: "",
+          taxType: "",
           gstTreatment: "",
           gstin_uin: "",
           placeOfSupply: "",
@@ -427,6 +516,7 @@ const NewCustomerModal = ({ page }: Props) => {
           ],
           remark: "",
         });
+        console.log(response);
       } else {
         console.log(error);
 
@@ -441,21 +531,16 @@ const NewCustomerModal = ({ page }: Props) => {
     }
   };
 
-  const handleCopyAddress = (e: any) => {
-    e.preventDefault();
-    setCustomerData((prevData) => ({
-      ...prevData,
-      shippingAttention: customerdata.billingAttention,
-      shippingCountry: customerdata.billingCountry,
-      shippingAddress1: customerdata.billingAddressLine1,
-      shippingAddress2: customerdata.billingAddressLine2,
-      shippingCity: customerdata.billingCity,
-      shippingState: customerdata.billingState,
-      shippingPinCode: customerdata.billingPinCode,
-      shippingPhone: customerdata.billingPhone,
-      shippingFaxNumber: customerdata.billingFaxNumber,
-    }));
-  };
+  useEffect(() => {
+    if (taxPreference === "Tax Exempt") {
+      setCustomerData((prevData:any) => ({
+        ...prevData,
+        taxType: null
+      }));
+    }
+  }, [taxPreference]);
+  
+console.log(customerdata);
 
   useEffect(() => {
     if (customerdata.billingCountry) {
@@ -477,47 +562,13 @@ const NewCustomerModal = ({ page }: Props) => {
     }
   }, [customerdata.shippingCountry, customerdata.billingCountry, countryData]);
 
-  const getOneOrganization = async () => {
-    try {
-      const url = `${endponits.GET_ONE_ORGANIZATION}`;
-      const { response, error } = await getOrganization(url, {
-        organizationId: "INDORG0001",
-      });
-
-      if (!error && response?.data) {
-        setOneOrganization(response.data);
-        // console.log(response.data,"org");
-      }
-    } catch (error) {
-      console.error("Error fetching organization:", error);
-    }
-  };
   useEffect(() => {
     getAdditionalData();
     getOneOrganization();
     handleplaceofSupply();
   }, []);
 
-  const handleplaceofSupply = () => {
-    if (oneOrganization.organizationCountry) {
-      const country = countryData.find(
-        (c: any) =>
-          c.name.toLowerCase() ===
-          oneOrganization.organizationCountry.toLowerCase()
-      );
-
-      if (country) {
-        const states = country.states;
-        // console.log("States:", states);
-
-        setPlaceOfSupplyList(states);
-      } else {
-        console.log("Country not found");
-      }
-    } else {
-      console.log("No country selected");
-    }
-  };
+  // console.log(customerdata);
 
   return (
     <div>
@@ -649,11 +700,6 @@ const NewCustomerModal = ({ page }: Props) => {
                     </label>
                   </div>
                 </div>
-                {errors.customerType && (
-                  <div className="text-red-800 text-xs ms-2 mt-1">
-                    Please select a customer type.
-                  </div>
-                )}
               </div>
 
               <div className="grid grid-cols-12 gap-4 mt-4">
@@ -665,15 +711,7 @@ const NewCustomerModal = ({ page }: Props) => {
                       className="block appearance-none w-full h-9 mt-1 text-[#818894] bg-white border border-inputBorder text-sm  pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                       value={customerdata.salutation}
                       onChange={handleChange}
-                      onBlur={() => {
-                        if (customerdata.salutation === "") {
-                          setErrors({ ...errors, salutation: true });
-                        } else {
-                          setErrors({ ...errors, salutation: false });
-                        }
-                      }}
                     >
-                      <option value="">Value</option>
                       <option value="Mr.">Mr.</option>
                       <option value="Mrs.">Mrs.</option>
                       <option value="Ms.">Ms.</option>
@@ -683,11 +721,6 @@ const NewCustomerModal = ({ page }: Props) => {
                       <CehvronDown color="gray" />
                     </div>
                   </div>
-                  {errors.salutation && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Please select a salutation
-                    </div>
-                  )}
                 </div>
                 <div className="grid grid-cols-2 col-span-10 gap-4 ">
                   <div>
@@ -700,20 +733,19 @@ const NewCustomerModal = ({ page }: Props) => {
                       className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
                       placeholder="Enter First Name"
                       value={customerdata.firstName}
-                      onChange={handleChange}
-                      onBlur={() => {
-                        if (
-                          customerdata.firstName === "" ||
-                          !/^[A-Za-z]+$/.test(customerdata.firstName)
-                        ) {
-                          setErrors({ ...errors, firstName: true });
-                        } else {
-                          setErrors({ ...errors, firstName: false });
-                        }
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        handleChange(e);
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          firstName:
+                            value && !/^[A-Za-z\s]+$/.test(value)
+                              ? true
+                              : false,
+                        }));
                       }}
                     />
-
-                    {errors.firstName && (
+                    {errors.firstName && customerdata.firstName.length > 0 && (
                       <div className="text-red-800 text-xs ms-2 mt-1">
                         Please enter a valid first name (letters only).
                       </div>
@@ -730,22 +762,26 @@ const NewCustomerModal = ({ page }: Props) => {
                       className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                       placeholder="Enter Last Name"
                       value={customerdata.lastName}
-                      onChange={handleChange}
-                      onBlur={() => {
-                        if (
-                          customerdata.lastName === "" ||
-                          !/^[A-Za-z]+$/.test(customerdata.lastName)
-                        ) {
-                          setErrors({ ...errors, lastName: true });
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        handleChange(e);
+                        if (value && !/^[A-Za-z\s]+$/.test(value)) {
+                          setErrors((prevErrors) => ({
+                            ...prevErrors,
+                            lastName: true,
+                          }));
                         } else {
-                          setErrors({ ...errors, lastName: false });
+                          setErrors((prevErrors) => ({
+                            ...prevErrors,
+                            lastName: false,
+                          }));
                         }
                       }}
                     />
 
-                    {errors.lastName && (
+                    {errors.lastName && customerdata.lastName.length > 0 && (
                       <div className="text-red-800 text-xs ms-2 mt-1">
-                        Please enter a valid Last name (letters only).
+                        Please enter a valid first name (letters only).
                       </div>
                     )}
                   </div>
@@ -761,8 +797,29 @@ const NewCustomerModal = ({ page }: Props) => {
                     className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Company Name"
                     value={customerdata.companyName}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      handleChange(e);
+                      if (value && !/^[A-Za-z\s]+$/.test(value)) {
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          companyName: true,
+                        }));
+                      } else {
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          companyName: false,
+                        }));
+                      }
+                    }}
                   />
+
+                  {errors.companyName &&
+                    customerdata.companyName.length > 0 && (
+                      <div className="text-red-800 text-xs ms-2 mt-1">
+                        Please enter a valid Company Name (letters only).
+                      </div>
+                    )}
                 </div>
                 <div>
                   <label htmlFor="companyName">Customer Display Name </label>
@@ -770,11 +827,32 @@ const NewCustomerModal = ({ page }: Props) => {
                     required
                     type="text"
                     name="customerDisplayName"
-                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
+                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
                     placeholder="Enter Display Name"
                     value={customerdata.customerDisplayName}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      handleChange(e);
+                      if (!value || !/^[A-Za-z\s]+$/.test(value)) {
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          customerDisplayName: true,
+                        }));
+                      } else {
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          customerDisplayName: false,
+                        }));
+                      }
+                    }}
                   />
+
+                  {errors.customerDisplayName &&
+                    customerdata.customerDisplayName.length > 0 && (
+                      <div className="text-red-800 text-xs ms-2 mt-1">
+                        Please enter a valid Company Name (letters only).
+                      </div>
+                    )}
                 </div>
                 <div>
                   <label htmlFor="">Customer Email</label>
@@ -783,26 +861,9 @@ const NewCustomerModal = ({ page }: Props) => {
                     name="customerEmail"
                     className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Email"
-                    value={customerdata.customerEmail}
                     onChange={handleChange}
-                    onFocus={() =>
-                      setErrors({ ...errors, customerEmail: false })
-                    }
-                    onBlur={() => {
-                      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                      if (
-                        customerdata.customerEmail === "" ||
-                        !emailPattern.test(customerdata.customerEmail)
-                      ) {
-                        setErrors({ ...errors, customerEmail: true });
-                      }
-                    }}
+                    value={customerdata.customerEmail}
                   />
-                  {errors.customerEmail && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter a valid Email
-                    </div>
-                  )}
                 </div>
                 <div>
                   <label htmlFor="cardNumber">Card Number</label>
@@ -812,82 +873,33 @@ const NewCustomerModal = ({ page }: Props) => {
                     placeholder="Enter Card Number"
                     name="cardNumber"
                     value={customerdata.cardNumber}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^\d*$/.test(value)) {
-                        handleChange(e);
-                      }
-                    }}
-                    onFocus={() => setErrors({ ...errors, cardNumber: false })}
-                    onBlur={() => {
-                      if (customerdata.cardNumber === "") {
-                        setErrors({ ...errors, cardNumber: true });
-                      }
-                    }}
+                    onChange={handleChange}
                   />
-
-                  {errors.cardNumber && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Please enter a valid card number (digits only).
-                    </div>
-                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label htmlFor="">Work Phone</label>
-                  <input
-                    type="text"
-                    name="workPhone"
-                    className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
-                    placeholder="Value"
+                  <PhoneInput
+                    inputClass="appearance-none text-[#818894] bg-white border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    inputStyle={{ height: "38px", width: "100%" }}
+                    containerStyle={{ width: "100%" }}
+                    country={"in"}
                     value={customerdata.workPhone}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^\d*$/.test(value)) {
-                        handleChange(e);
-                      }
-                    }}
-                    onFocus={() => setErrors({ ...errors, workPhone: false })}
-                    onBlur={() => {
-                      if (customerdata.workPhone === "") {
-                        setErrors({ ...errors, workPhone: true });
-                      }
-                    }}
+                    onChange={(e) => handlePhoneChange("workPhone", e)}
                   />
-                  {errors.workPhone && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter Work Phone
-                    </div>
-                  )}
                 </div>
                 <div>
                   <label htmlFor="">Mobile</label>
-                  <input
-                    type="text"
-                    name="mobile"
-                    className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
-                    placeholder="Value"
+                  <PhoneInput
+                    inputClass="appearance-none text-[#818894] bg-white border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                    inputStyle={{ height: "38px", width: "100%" }}
+                    containerStyle={{ width: "100%" }}
+                    country={"in"}
                     value={customerdata.mobile}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^\d*$/.test(value)) {
-                        handleChange(e);
-                      }
-                    }}
-                    onFocus={() => setErrors({ ...errors, mobile: false })}
-                    onBlur={() => {
-                      if (customerdata.mobile === "") {
-                        setErrors({ ...errors, mobile: true });
-                      }
-                    }}
+                    onChange={(e) => handlePhoneChange("mobile", e)}
                   />
-                  {errors.mobile && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter Mobile
-                    </div>
-                  )}
                 </div>
                 <div>
                   <label htmlFor="">Date of Birth</label>
@@ -951,32 +963,33 @@ const NewCustomerModal = ({ page }: Props) => {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block mb-1">Opening Balance</label>
-                          <input
-                            type="text"
-                            className="text-sm w-[100%] rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-                            placeholder="Enter Opening Balance"
-                            name="openingBalance"
-                            value={customerdata.openingBalance}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              if (/^\d*\.?\d*$/.test(value)) {
-                                handleChange(e);
-                              }
-                            }}
-                            onFocus={() =>
-                              setErrors({ ...errors, openingBalance: false })
-                            }
-                            onBlur={() => {
-                              if (customerdata.openingBalance === "") {
-                                setErrors({ ...errors, openingBalance: true });
-                              }
-                            }}
-                          />
-                          {errors.openingBalance && (
-                            <div className="text-red-800 text-xs ms-2 mt-1">
-                              Please enter a valid Amount.
+                          <div className="flex">
+                            <div className="relative w-20 ">
+                              <select
+                                className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder 
+                                   text-sm pl-2 pr-2 rounded-l-md leading-tight 
+                                   focus:outline-none focus:bg-white focus:border-gray-500"
+                                   name="openingType"
+                                   value={openingType}
+                                   onChange={handleChange}
+                              >
+                                <option value="Debit">Dr</option>
+
+                                <option value="Credit">Cr</option>
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <CehvronDown color="gray" />
+                              </div>
                             </div>
-                          )}
+                            <input
+        type="text"
+        className="text-sm w-[100%] rounded-r-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+        placeholder={`Enter ${openingType} Opening Balance`}
+        onChange={handleChange}
+        name="openingBalance"
+        value={openingType==="Debit"?customerdata.debitOpeningBalance:customerdata.creditOpeningBalance}
+      />
+                          </div>
                         </div>
                         <div>
                           <label className="block mb-1">PAN</label>
@@ -986,25 +999,8 @@ const NewCustomerModal = ({ page }: Props) => {
                             placeholder="Enter PAN Number"
                             name="pan"
                             value={customerdata.pan}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              if (/^[A-Za-z0-9]*$/.test(value)) {
-                                handleChange(e);
-                              }
-                            }}
-                            onFocus={() => setErrors({ ...errors, pan: false })}
-                            onBlur={() => {
-                              if (customerdata.pan === "") {
-                                setErrors({ ...errors, pan: true });
-                              }
-                            }}
+                            onChange={handleChange}
                           />
-                          {errors.pan && (
-                            <div className="text-red-800 text-xs ms-2 mt-1">
-                              Please enter a valid PAN number (alphanumeric
-                              characters only).
-                            </div>
-                          )}
                         </div>
 
                         <div>
@@ -1020,14 +1016,6 @@ const NewCustomerModal = ({ page }: Props) => {
                                 name="currency"
                                 value={customerdata.currency}
                                 onChange={handleChange}
-                                onFocus={() =>
-                                  setErrors({ ...errors, currency: false })
-                                }
-                                onBlur={() => {
-                                  if (customerdata.currency === "") {
-                                    setErrors({ ...errors, currency: true });
-                                  }
-                                }}
                               >
                                 <option value="">Select Currency</option>
 
@@ -1047,11 +1035,6 @@ const NewCustomerModal = ({ page }: Props) => {
                                 <CehvronDown color="gray" />
                               </div>
                             </div>
-                            {errors.currency && (
-                              <div className="text-red-800 text-xs ms-2 mt-1">
-                                Please select a currency.
-                              </div>
-                            )}
                           </div>
                         </div>
                         <div className="relative w-full">
@@ -1083,6 +1066,44 @@ const NewCustomerModal = ({ page }: Props) => {
                           <div className="pointer-events-none absolute inset-y-0  mt-6 right-0 flex items-center px-2 text-gray-700">
                             <CehvronDown color="gray" />
                           </div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <label className="block mb-1">Credit Days</label>
+                          <input
+                            type="text"
+                            className=" text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-p p-2 text-[#818894] "
+                            placeholder="Enter Credit Days"
+                            name="creditDays"
+                            value={customerdata.creditDays}
+                            onChange={handleChange}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block mb-1">Credit Limit</label>
+                          <input
+                            type="text"
+                            className=" text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-p p-2 text-[#818894] "
+                            placeholder="Enter Credit Limit"
+                            name="creditLimit"
+                            value={customerdata.creditLimit}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        <div>
+                          <label className="block mb-1">
+                            Interest Percentage
+                          </label>
+                          <input
+                            type="text"
+                            className=" text-sm w-[100%]  rounded-md text-start bg-white border border-slate-300  h-p p-2 text-[#818894] "
+                            placeholder="%"
+                            name="interestPercentage"
+                            value={customerdata.interestPercentage}
+                            onChange={handleChange}
+                          />
                         </div>
                       </div>
 
@@ -1145,50 +1166,36 @@ const NewCustomerModal = ({ page }: Props) => {
                           />
                         </label>
                       </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block mb-1">Derpartment</label>
+                          <input
+                            type="text"
+                            className=" text-sm w-full rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
+                            placeholder="Value"
+                            name="department"
+                            value={customerdata.department}
+                            onChange={handleChange}
+                          />
+                        </div>
 
-                      <div>
-                        <label className="block mb-1">Derpartment</label>
-                        <input
-                          type="text"
-                          className=" text-sm w-[49%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
-                          placeholder="Value"
-                          name="department"
-                          value={customerdata.department}
-                          onChange={handleChange}
-                          onBlur={() => {
-                            if (
-                              customerdata.department === "" ||
-                              !/^[A-Za-z]+$/.test(customerdata.department)
-                            ) {
-                              setErrors({ ...errors, department: true });
-                            } else {
-                              setErrors({ ...errors, department: false });
-                            }
-                          }}
-                        />
-                        {errors.department && (
-                          <div className="text-red-800 text-xs ms-2 mt-1">
-                            Please enter Department
-                          </div>
-                        )}
-                      </div>
+                        <div>
+                          <label className="block mb-1">Designation</label>
 
-                      <div>
-                        <label className="block mb-1">Designation</label>
-
-                        <input
-                          type="text"
-                          className=" text-sm w-[49%]  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
-                          placeholder="Value"
-                          name="designation"
-                          value={customerdata.designation}
-                          onChange={handleChange}
-                        />
+                          <input
+                            type="text"
+                            className=" text-sm w-full rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
+                            placeholder="Value"
+                            name="designation"
+                            value={customerdata.designation}
+                            onChange={handleChange}
+                          />
+                        </div>
                       </div>
 
                       <div className="">
                         <label htmlFor="" className="block mb-1">
-                          Website
+                          Website URL
                         </label>
                         <div className="relative w-full">
                           <div className="pointer-events-none absolute inset-y-0  flex items-center px-2 text-gray-700 w-[50%]">
@@ -1196,7 +1203,7 @@ const NewCustomerModal = ({ page }: Props) => {
                           </div>
                           <input
                             type="text"
-                            className=" text-sm w-[49%] ps-9 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
+                            className=" text-sm w-full ps-9 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                             placeholder="Value"
                             name="websiteURL"
                             value={customerdata.websiteURL}
@@ -1210,10 +1217,7 @@ const NewCustomerModal = ({ page }: Props) => {
                   {activeTab === "taxes" && (
                     <>
                       <div className="mb-3">
-                        <label
-                          className="block text-sm mb-1 text-labelColor"
-                          htmlFor=""
-                        >
+                        <label className="block text-sm mb-1 text-labelColor">
                           Tax Preference
                         </label>
                         <div className="flex items-center space-x-4 text-textColor text-sm">
@@ -1222,16 +1226,16 @@ const NewCustomerModal = ({ page }: Props) => {
                               <input
                                 id="Taxable"
                                 type="radio"
-                                name="taxPreference"
                                 className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${
                                   taxselected === "Taxable"
                                     ? "border-8 border-neutral-400"
                                     : "border-1 border-neutral-400"
                                 }`}
                                 checked={taxselected === "Taxable"}
-                                onChange={() =>
-                                  handleRadioChange("Taxable", "taxPreference")
-                                }
+                                onClick={() => {
+                                  SetTaxPreference("Taxable");
+                                  setTaxSelected("Taxable");
+                                }}
                               />
                               <div
                                 className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
@@ -1253,19 +1257,16 @@ const NewCustomerModal = ({ page }: Props) => {
                               <input
                                 id="Tax Exempt"
                                 type="radio"
-                                name="taxPreference"
                                 className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${
                                   taxselected === "Tax Exempt"
                                     ? "border-8 border-neutral-400"
                                     : "border-1 border-neutral-400"
                                 }`}
                                 checked={taxselected === "Tax Exempt"}
-                                onChange={() =>
-                                  handleRadioChange(
-                                    "Tax Exempt",
-                                    "taxPreference"
-                                  )
-                                }
+                                onClick={() => {
+                                  SetTaxPreference("Tax Exempt");
+                                  setTaxSelected("Tax Exempt");
+                                }}
                               />
                               <div
                                 className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
@@ -1285,7 +1286,7 @@ const NewCustomerModal = ({ page }: Props) => {
                         </div>
                       </div>
 
-                      {customerdata.taxPreference == "Taxable" && (
+                      {taxPreference == "Taxable" && (
                         <>
                           {gstOrVat.taxType === "GST" && (
                             <div>
@@ -1302,22 +1303,6 @@ const NewCustomerModal = ({ page }: Props) => {
                                     name="gstTreatment"
                                     value={customerdata.gstTreatment}
                                     onChange={handleChange}
-                                    onFocus={() =>
-                                      setErrors({
-                                        ...errors,
-                                        gstTreatment: false,
-                                      })
-                                    }
-                                    onBlur={() => {
-                                      if (
-                                        customerdata.gstTreatment.trim() === ""
-                                      ) {
-                                        setErrors({
-                                          ...errors,
-                                          gstTreatment: true,
-                                        });
-                                      }
-                                    }}
                                   >
                                     <option value="" className="text-gray">
                                       Select GST Treatment
@@ -1334,12 +1319,6 @@ const NewCustomerModal = ({ page }: Props) => {
                                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 mt-6 text-gray-700">
                                     <CehvronDown color="gray" />
                                   </div>
-
-                                  {errors.gstTreatment && (
-                                    <div className="text-red-800 text-xs ms-2 mt-1">
-                                      Please select a GST Treatment.
-                                    </div>
-                                  )}
                                 </div>
 
                                 <div>
@@ -1355,32 +1334,8 @@ const NewCustomerModal = ({ page }: Props) => {
                                     className="text-sm w-full rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
                                     placeholder="GSTIN/UIN"
                                     value={customerdata.gstin_uin}
-                                    onChange={(e) => {
-                                      const value = e.target.value;
-                                      if (/^[A-Za-z0-9]*$/.test(value)) {
-                                        handleChange(e);
-                                      }
-                                    }}
-                                    onFocus={() =>
-                                      setErrors({ ...errors, gstin_uin: false })
-                                    }
-                                    onBlur={() => {
-                                      if (
-                                        customerdata.gstin_uin.trim() === ""
-                                      ) {
-                                        setErrors({
-                                          ...errors,
-                                          gstin_uin: true,
-                                        });
-                                      }
-                                    }}
+                                    onChange={handleChange}
                                   />
-                                  {errors.gstin_uin && (
-                                    <div className="text-red-800 text-xs ms-2 mt-1">
-                                      Please enter a valid GSTIN/UIN
-                                      (alphanumeric characters only).
-                                    </div>
-                                  )}
                                 </div>
 
                                 <div>
@@ -1431,7 +1386,7 @@ const NewCustomerModal = ({ page }: Props) => {
                                     <option value="" className="text-gray">
                                       Value
                                     </option>
-                                    {placeOfSupplyList.length > 0 &&
+                                    {placeOfSupplyList &&
                                       placeOfSupplyList.map(
                                         (item: any, index: number) => (
                                           <option
@@ -1489,7 +1444,7 @@ const NewCustomerModal = ({ page }: Props) => {
                           )}
                         </>
                       )}
-                      {customerdata.taxPreference === "Tax Exempt" && (
+                      {taxPreference === "Tax Exempt" && (
                         <div>
                           <label className="block mb-1">Exemption Reason</label>
                           <input
@@ -1539,17 +1494,6 @@ const NewCustomerModal = ({ page }: Props) => {
                               name="billingCountry"
                               value={customerdata.billingCountry}
                               onChange={handleChange}
-                              onFocus={() =>
-                                setErrors({ ...errors, billingCountry: false })
-                              }
-                              onBlur={() => {
-                                if (customerdata.billingCountry === "") {
-                                  setErrors({
-                                    ...errors,
-                                    billingCountry: true,
-                                  });
-                                }
-                              }}
                             >
                               <option value="">Select a country</option>
                               {countryData && countryData.length > 0 ? (
@@ -1565,11 +1509,6 @@ const NewCustomerModal = ({ page }: Props) => {
                             <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
                               <CehvronDown color="gray" />
                             </div>
-                            {errors.billingCountry && (
-                              <div className="text-red-800 text-xs ms-2 mt-1">
-                                Please select a country/region.
-                              </div>
-                            )}
                           </div>
                         </div>
 
@@ -1615,48 +1554,39 @@ const NewCustomerModal = ({ page }: Props) => {
                           </div>
 
                           <div className="relative ">
-  <label className="text-slate-600" htmlFor="organizationAddress">
-    State / Region / County
-  </label>
-  <div className="relative w-full mt-2">
-    <select
-      value={customerdata.billingState}
-      onChange={handleChange}
-      name="billingState"
-      id="billingState"
-      className="block appearance-none w-full text-[#818894] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-      disabled={!customerdata.billingCountry}
-      onFocus={() => setErrors({ ...errors, billingState: false })}
-      onBlur={() => {
-        if (customerdata.billingState.trim() === "") {
-          setErrors({ ...errors, billingState: true });
-        }
-      }}
-    >
-      <option value="">State / Region / County</option>
-      {stateList.length > 0 ? (
-        stateList.map((item: any, index: number) => (
-          <option key={index} value={item}>
-            {item}
-          </option>
-        ))
-      ) : (
-        <></>
-      )}
-    </select>
-    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-      <CehvronDown color="gray" />
-    </div>
-  </div>
-
-  {/* Error message for invalid input */}
-  {errors.billingState && (
-    <div className="text-red-800 text-xs ms-2 mt-1">
-      Please select a State / Region / County.
-    </div>
-  )}
-</div>
-
+                            <label
+                              className="text-slate-600"
+                              htmlFor="organizationAddress"
+                            >
+                              State / Region / County
+                            </label>
+                            <div className="relative w-full mt-2">
+                              <select
+                                value={customerdata.billingState}
+                                onChange={handleChange}
+                                name="billingState"
+                                id="billingState"
+                                className="block appearance-none w-full text-[#818894] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                                disabled={!customerdata.billingCountry}
+                              >
+                                <option value="">
+                                  State / Region / County
+                                </option>
+                                {stateList.length > 0 ? (
+                                  stateList.map((item: any, index: number) => (
+                                    <option key={index} value={item}>
+                                      {item}
+                                    </option>
+                                  ))
+                                ) : (
+                                  <></>
+                                )}
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <CehvronDown color="gray" />
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
                         {/* Other fields */}
@@ -1674,29 +1604,8 @@ const NewCustomerModal = ({ page }: Props) => {
                               type="text"
                               name="billingPinCode"
                               value={customerdata.billingPinCode}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                if (/^\d*$/.test(value)) {
-                                  handleChange(e);
-                                }
-                              }}
-                              onFocus={() =>
-                                setErrors({ ...errors, billingPinCode: false })
-                              }
-                              onBlur={() => {
-                                if (customerdata.billingPinCode.trim() === "") {
-                                  setErrors({
-                                    ...errors,
-                                    billingPinCode: true,
-                                  });
-                                }
-                              }}
+                              onChange={handleChange}
                             />
-                            {errors.billingPinCode && (
-                              <div className="text-red-800 text-xs ms-2 mt-1">
-                                Please enter a valid Pincode (digits only).
-                              </div>
-                            )}
                           </div>
 
                           <div>
@@ -1711,37 +1620,12 @@ const NewCustomerModal = ({ page }: Props) => {
                                 inputClass="appearance-none text-[#818894] bg-white border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                                 inputStyle={{ height: "38px", width: "100%" }}
                                 containerStyle={{ width: "100%" }}
-                                country={
-                                  customerdata.billingCountry
-                                    ? customerdata.billingCountry.toLowerCase()
-                                    : "in"
-                                }
+                                country={"in"}
                                 value={customerdata.billingPhone}
-                                onChange={(value) =>
-                                  handleBillingPhoneChange(value)
+                                onChange={(e) =>
+                                  handlePhoneChange("billingPhone", e)
                                 }
-                                onBlur={() => {
-                                  if (
-                                    !customerdata.billingPhone ||
-                                    customerdata.billingPhone.length < 10
-                                  ) {
-                                    setErrors({
-                                      ...errors,
-                                      billingPhone: true,
-                                    });
-                                  } else {
-                                    setErrors({
-                                      ...errors,
-                                      billingPhone: false,
-                                    });
-                                  }
-                                }}
                               />
-                              {errors.billingPhone && (
-                                <div className="text-red-800 text-xs ms-2 mt-1">
-                                  Enter a valid phone number
-                                </div>
-                              )}
                             </div>
                           </div>
                           <div className="relative w-full">
@@ -1754,34 +1638,8 @@ const NewCustomerModal = ({ page }: Props) => {
                               placeholder="Enter Fax Number"
                               name="billingFaxNumber"
                               value={customerdata.billingFaxNumber}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                if (/^\d*$/.test(value)) {
-                                  handleChange(e);
-                                }
-                              }}
-                              onFocus={() =>
-                                setErrors({
-                                  ...errors,
-                                  billingFaxNumber: false,
-                                })
-                              }
-                              onBlur={() => {
-                                if (
-                                  customerdata.billingFaxNumber.trim() === ""
-                                ) {
-                                  setErrors({
-                                    ...errors,
-                                    billingFaxNumber: true,
-                                  });
-                                }
-                              }}
+                              onChange={handleChange}
                             />
-                            {errors.billingFaxNumber && (
-                              <div className="text-red-800 text-xs ms-2 mt-1">
-                                Please enter a valid Fax Number (digits only).
-                              </div>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -1816,43 +1674,30 @@ const NewCustomerModal = ({ page }: Props) => {
 
                           {/* Country */}
                           <div className="relative w-full">
-  <label htmlFor="" className="mb-1 block">
-    Country/Region
-  </label>
-  <select
-    className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-    name="shippingCountry"
-    value={customerdata.shippingCountry}
-    onChange={handleChange}
-    onFocus={() => setErrors({ ...errors, shippingCountry: false })}
-    onBlur={() => {
-      if (customerdata.shippingCountry.trim() === "") {
-        setErrors({ ...errors, shippingCountry: true });
-      }
-    }}
-  >
-    <option value="">Select a country</option>
-    {countryData && countryData.length > 0 ? (
-      countryData.map((item: any, index: number) => (
-        <option key={index} value={item.name}>
-          {item.name}
-        </option>
-      ))
-    ) : (
-      <option disabled></option>
-    )}
-  </select>
-  <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
-    <CehvronDown color="gray" />
-  </div>
-
-  {errors.shippingCountry && (
-    <div className="text-red-800 text-xs ms-2 mt-1">
-      Please select a country/region.
-    </div>
-  )}
-</div>
-
+                            <label htmlFor="" className="mb-1 block">
+                              Country/Region
+                            </label>
+                            <select
+                              className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                              name="shippingCountry"
+                              value={customerdata.shippingCountry}
+                              onChange={handleChange}
+                            >
+                              <option value="">Select a country</option>
+                              {countryData && countryData.length > 0 ? (
+                                countryData.map((item: any, index: number) => (
+                                  <option key={index} value={item.name}>
+                                    {item.name}
+                                  </option>
+                                ))
+                              ) : (
+                                <option disabled></option>
+                              )}
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 mt-6 flex items-center px-2 text-gray-700">
+                              <CehvronDown color="gray" />
+                            </div>
+                          </div>
                         </div>
 
                         {/* Address */}
@@ -1897,47 +1742,41 @@ const NewCustomerModal = ({ page }: Props) => {
                           </div>
 
                           <div className="relative ">
-  <label className="text-slate-600" htmlFor="organizationAddress">
-    State / Region / County
-  </label>
-  <div className="relative w-full mt-2">
-    <select
-      value={customerdata.shippingState}
-      onChange={handleChange}
-      name="shippingState"
-      id="shippingState"
-      className="block appearance-none w-full text-[#818894] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-      disabled={!customerdata.shippingCountry}
-      onFocus={() => setErrors({ ...errors, shippingState: false })}
-      onBlur={() => {
-        if (customerdata.shippingState.trim() === "") {
-          setErrors({ ...errors, shippingState: true });
-        }
-      }}
-    >
-      <option value="">State / Region / County</option>
-      {shippingstateList.length > 0 ? (
-        shippingstateList.map((item: any, index: number) => (
-          <option key={index} value={item}>
-            {item}
-          </option>
-        ))
-      ) : (
-        <></>
-      )}
-    </select>
-    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-      <CehvronDown color="gray" />
-    </div>
-  </div>
-
-  {errors.shippingState && (
-    <div className="text-red-800 text-xs ms-2 mt-1">
-      Please select a state/region/county.
-    </div>
-  )}
-</div>
-
+                            <label
+                              className="text-slate-600"
+                              htmlFor="organizationAddress"
+                            >
+                              State / Region / County
+                            </label>
+                            <div className="relative w-full mt-2">
+                              <select
+                                value={customerdata.shippingState}
+                                onChange={handleChange}
+                                name="shippingState"
+                                id="shippingState"
+                                className="block appearance-none w-full text-[#818894] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                                disabled={!customerdata.shippingCountry}
+                              >
+                                <option value="">
+                                  State / Region / County
+                                </option>
+                                {shippingstateList.length > 0 ? (
+                                  shippingstateList.map(
+                                    (item: any, index: number) => (
+                                      <option key={index} value={item}>
+                                        {item}
+                                      </option>
+                                    )
+                                  )
+                                ) : (
+                                  <></>
+                                )}
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <CehvronDown color="gray" />
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
                         {/* Other fields */}
@@ -1961,25 +1800,7 @@ const NewCustomerModal = ({ page }: Props) => {
                                   handleChange(e);
                                 }
                               }}
-                              onFocus={() =>
-                                setErrors({ ...errors, shippingPinCode: false })
-                              }
-                              onBlur={() => {
-                                if (
-                                  customerdata.shippingPinCode.trim() === ""
-                                ) {
-                                  setErrors({
-                                    ...errors,
-                                    shippingPinCode: true,
-                                  });
-                                }
-                              }}
                             />
-                            {errors.shippingPinCode && (
-                              <div className="text-red-800 text-xs ms-2 mt-1">
-                                Please enter a valid Pincode (digits only).
-                              </div>
-                            )}
                           </div>
                           <div>
                             <label
@@ -1993,37 +1814,12 @@ const NewCustomerModal = ({ page }: Props) => {
                                 inputClass="appearance-none text-[#818894] bg-white border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                                 inputStyle={{ height: "38px", width: "100%" }}
                                 containerStyle={{ width: "100%" }}
-                                country={
-                                  customerdata.shippingCountry
-                                    ? customerdata.shippingCountry.toLowerCase()
-                                    : "in"
-                                }
+                                country={"in"}
                                 value={customerdata.shippingPhone}
-                                onChange={(value) =>
-                                  handleShippingPhoneChange(value)
+                                onChange={(e) =>
+                                  handlePhoneChange("shippingPhone", e)
                                 }
-                                onBlur={() => {
-                                  if (
-                                    !customerdata.shippingPhone ||
-                                    customerdata.shippingPhone.length < 10
-                                  ) {
-                                    setErrors({
-                                      ...errors,
-                                      shippingPhone: true,
-                                    });
-                                  } else {
-                                    setErrors({
-                                      ...errors,
-                                      shippingPhone: false,
-                                    });
-                                  }
-                                }}
                               />
-                              {errors.shippingPhone && (
-                                <div className="text-red-800 text-xs ms-2 mt-1">
-                                  Enter a valid phone number
-                                </div>
-                              )}
                             </div>
                           </div>
                           <div className="relative w-full">
@@ -2036,34 +1832,8 @@ const NewCustomerModal = ({ page }: Props) => {
                               placeholder="Enter Fax Number"
                               name="shippingFaxNumber"
                               value={customerdata.shippingFaxNumber}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                if (/^\d*$/.test(value)) {
-                                  handleChange(e);
-                                }
-                              }}
-                              onFocus={() =>
-                                setErrors({
-                                  ...errors,
-                                  shippingFaxNumber: false,
-                                })
-                              }
-                              onBlur={() => {
-                                if (
-                                  customerdata.shippingFaxNumber.trim() === ""
-                                ) {
-                                  setErrors({
-                                    ...errors,
-                                    shippingFaxNumber: true,
-                                  });
-                                }
-                              }}
+                              onChange={handleChange}
                             />
-                            {errors.shippingFaxNumber && (
-                              <div className="text-red-800 text-xs ms-2 mt-1">
-                                Please enter a valid Fax Number (digits only).
-                              </div>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -2228,15 +1998,20 @@ const NewCustomerModal = ({ page }: Props) => {
           </div>
 
           <div className="flex justify-end gap-2 mb-3 m-5">
-            <Button onClick={handleSubmit} variant="primary" size="sm">
-              Save
-            </Button>
             <Button
               onClick={() => setModalOpen(false)}
               variant="secondary"
               size="sm"
             >
               Cancel
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              variant="primary"
+              size="sm"
+              type="submit"
+            >
+              Save
             </Button>
           </div>
         </>
