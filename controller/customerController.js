@@ -5,6 +5,7 @@ const Tax = require("../database/model/tax");
 const Currency = require("../database/model/currency");
 const moment = require("moment-timezone");
 const TrialBalance = require("../database/model/trialBalance");
+const CustomerHistory = require("../database/model/customerHistory");
 
 
 
@@ -97,6 +98,9 @@ exports.addCustomer = async (req, res) => {
       //Remark
       remark,
     } = req.body;
+
+    const userId = "6434bd73222";
+    const userName = "Test User";
 
 
       //Data Cleaning   
@@ -266,6 +270,7 @@ exports.addCustomer = async (req, res) => {
         "Tabuk",
       ],
     };
+    
 
     if (currency !== undefined && !validCurrencies.includes(currency)) {
       return res.status(400).json({ message: `Invalid Currency: ${currency}` });
@@ -299,6 +304,7 @@ exports.addCustomer = async (req, res) => {
       gstTreatment = undefined;
       gstin_uin = undefined;
       vatNumber = undefined;
+      placeOfSupply = undefined;
     }
 
     if (placeOfSupply !== undefined && 
@@ -450,7 +456,7 @@ exports.addCustomer = async (req, res) => {
       description: "Customer",
     });
 
-    await newAccount.save();
+    const savedAccount = await newAccount.save();
 
     res.status(201).json({
       message: "Customer created successfully.",
@@ -459,10 +465,10 @@ exports.addCustomer = async (req, res) => {
     //Trial Balance entry
     const newTrialEntry = new TrialBalance({
       organizationId,
-      transactionId: savedCustomer._id,
+      operationId: savedCustomer._id,
       date: openingDate,
-      account_id: newAccount._id,
-      accountName: newAccount.accountName,
+      accountId: savedAccount._id,
+      accountName: savedAccount.accountName,
       action: "Opening Balance",
       debitAmount: debitOpeningBalance,
       creditAmount: creditOpeningBalance,
@@ -470,6 +476,69 @@ exports.addCustomer = async (req, res) => {
   });
 
   await newTrialEntry.save();
+  
+  let description;
+  if(taxType="GST" && gstTreatment && gstin_uin && placeOfSupply){
+    description=` ${customerDisplayName} Contact created with GST Treatment '${gstTreatment}' & GSTIN '${gstin_uin}'. 
+State updated to ${placeOfSupply}.
+Created by ${userName}`;
+  }
+  else if(taxType="GST" && gstTreatment && placeOfSupply){
+    description=` ${customerDisplayName} Contact created with GST Treatment '${gstTreatment}'. 
+State updated to ${placeOfSupply}.
+Created by ${userName}`;
+  }
+  else if(taxType="VAT" && vatNumber && placeOfSupply){
+    description=` ${customerDisplayName} Contact created with VAT Number '${vatNumber}'.
+State updated to ${placeOfSupply}.
+Created by ${userName}`;
+  }
+  else if(taxType="None"){
+    description=` ${customerDisplayName} Contact created with Tax Exemption.
+Created by ${userName}`;
+  }
+
+  // Customer History entry
+  const customerHistoryEntry = new CustomerHistory({
+    organizationId,
+    operationId:newCustomer._id,
+    customerId:newCustomer._id,
+    customerDisplayName,
+    date: openingDate,
+    title: "Customer Added",
+    description: description,
+    userId: userId,
+    userName: userName,
+});
+
+await customerHistoryEntry.save();
+
+let description1; 
+
+if(debitOpeningBalance !==undefined && debitOpeningBalance){
+  description1=` ${customerDisplayName} Account created with Opening Balance (Debit):'${debitOpeningBalance}'.
+Created by ${userName}`;
+}
+else if(creditOpeningBalance !==undefined && creditOpeningBalance){
+  description1=` ${customerDisplayName} Account created with Opening Balance (Credit):'${creditOpeningBalance}'.
+Created by ${userName}`;
+}
+
+// Customer History entry
+const accountcustomerHistoryEntry = new CustomerHistory({
+  organizationId,
+  operationId:newAccount._id,
+  customerId:newCustomer._id,
+  customerDisplayName,
+  date: openingDate,
+  title: "Customer Account Created",
+  description: description1,
+  userId: userId,
+    userName: userName,
+});
+
+await accountcustomerHistoryEntry.save();
+
     console.log("Customer & Account created successfully");
   } catch (error) {
     console.error("Error creating customer:", error);
@@ -483,6 +552,12 @@ exports.getAllCustomer = async (req, res) => {
     const { organizationId } = req.body;
 
     const { organizationExists, allCustomer } = await dataExist(organizationId);
+
+    if (!organizationExists) {
+      return res.status(404).json({
+        message: "Organization not found",
+      });
+    }
 
     if (!allCustomer.length) {
       return res.status(404).json({
@@ -504,6 +579,12 @@ exports.getOneCustomer = async (req, res) => {
     const { organizationId } = req.body;
 
     const {organizationExists} = await dataExist(organizationId);
+
+    if (!organizationExists) {
+      return res.status(404).json({
+        message: "Organization not found",
+      });
+    }
 
     // Find the Customer by CustomerId and organizationId
     const customers = await Customer.findOne({
@@ -602,6 +683,9 @@ exports.editCustomer = async (req, res) => {
 
       //status
     } = req.body;
+
+    const userId = "6434bd73222";
+    const userName = "Test User";
 
     //Data Cleaning   
     organizationId = cleanData(organizationId);
@@ -864,70 +948,6 @@ exports.editCustomer = async (req, res) => {
       return res.status(400).json({ message: validationErrors.join(", ") });
     }
 
-
-
-    // Update customer details
-    // customer.customerType = customerType || customer.customerType;
-    // customer.salutation = salutation || customer.salutation;
-    // customer.firstName = firstName || customer.firstName;
-    // customer.lastName = lastName || customer.lastName;
-    // customer.companyName = companyName || customer.companyName;
-    // customer.customerDisplayName = customerDisplayName || customer.customerDisplayName;
-    // customer.customerEmail = customerEmail || customer.customerEmail;
-    // customer.workPhone = workPhone || customer.workPhone;
-    // customer.mobile = mobile || customer.mobile;
-    // customer.dob = dob || customer.dob;
-    // customer.cardNumber = cardNumber || customer.cardNumber;
-    // customer.pan = pan || customer.pan;
-    // customer.currency = currency || customer.currency;
-    // customer.creditDays = creditDays || customer.creditDays;
-    // customer.creditLimits = creditLimits || customer.creditLimits;
-    // customer.interestPercentage = interestPercentage || customer.interestPercentage;
-    // // customer.openingBalance = openingBalance || customer.openingBalance;
-    // customer.paymentTerms = paymentTerms || customer.paymentTerms;
-    // customer.enablePortal = enablePortal || customer.enablePortal;
-    // customer.documents = documents || customer.documents;
-    // customer.department = department || customer.department;
-    // customer.designation = designation || customer.designation;
-    // customer.websiteURL = websiteURL || customer.websiteURL;
-    // customer.taxReason = taxReason || customer.taxReason;
-    // customer.taxType = taxType || customer.taxType;
-    // customer.gstTreatment = gstTreatment || customer.gstTreatment;
-    // customer.gstin_uin = gstin_uin || customer.gstin_uin;
-    // customer.placeOfSupply = placeOfSupply || customer.placeOfSupply;
-    // customer.businessLegalName =  businessLegalName || customer.businessLegalName;
-    // customer.businessTradeName =  businessTradeName || customer.businessTradeName;
-    // customer.vatNumber = vatNumber || customer.vatNumber;
-    // // Update Billing Address
-    // customer.billingAttention = billingAttention || customer.billingAttention;
-    // customer.billingCountry = billingCountry || customer.billingCountry;
-    // customer.billingAddressLine1 = billingAddressLine1 || customer.billingAddressLine1;
-    // customer.billingAddressLine2 = billingAddressLine2 || customer.billingAddressLine2;
-    // customer.billingCity = billingCity || customer.billingCity;
-    // customer.billingState = billingState || customer.billingState;
-    // customer.billingPinCode = billingPinCode || customer.billingPinCode;
-    // customer.billingPhone = billingPhone || customer.billingPhone;
-    // customer.billingFaxNumber = billingFaxNumber || customer.billingFaxNumber;
-    // // Update Shipping Address
-    // customer.shippingAttention = shippingAttention || customer.shippingAttention;
-    // customer.shippingCountry = shippingCountry || customer.shippingCountry;
-    // customer.shippingAddress1 = shippingAddress1 || customer.shippingAddress1;
-    // customer.shippingAddress2 = shippingAddress2 || customer.shippingAddress2;
-    // customer.shippingCity = shippingCity || customer.shippingCity;
-    // customer.shippingState = shippingState || customer.shippingState;
-    // customer.shippingPinCode = shippingPinCode || customer.shippingPinCode;
-    // customer.shippingPhone = shippingPhone || customer.shippingPhone;
-    // customer.shippingFaxNumber = shippingFaxNumber || customer.shippingFaxNumber;
-    // // Update Contact Person
-    // customer.contactPerson = contactPerson || customer.contactPerson;
-    // // Update Remark
-    // customer.remark = remark || customer.remark;
-    // // Optional: Update Status if needed
-    // // customer.status = status || customer.status;
-    // customer.lastModifiedDate = openingDate;
-
-    // await customer.save();
-
     
     //Update Fields
       existingCustomer.customerType= customerType;
@@ -1023,6 +1043,21 @@ exports.editCustomer = async (req, res) => {
         `${updatedAccount.modifiedCount} account associated with the accountName have been updated with the new customerDisplayName.`
       );
     }
+
+    // Customer History entry
+const accountcustomerHistoryEntry = new CustomerHistory({
+  organizationId,
+  operationId:savedCustomer._id,
+  customerId:customerId,
+  customerDisplayName:savedCustomer.customerDisplayName,
+  date: openingDate,
+  title: "Customer Data Modified",
+  description: ` ${savedCustomer.customerDisplayName} Account Modified by ${userName}`,
+  userId: userId,
+  userName: userName,
+});
+
+await accountcustomerHistoryEntry.save();
 
     res.status(200).json({
       message: "Customer updated successfully.",
@@ -1124,6 +1159,38 @@ exports.getCustomerAdditionalData = async (req, res) => {
   }
 };
 
+//Get One Customer History for a given organizationId
+exports.getOneCustomerHistory = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const { organizationId } = req.body;
+
+    const {organizationExists} = await dataExist(organizationId);
+
+    if (!organizationExists) {
+      return res.status(404).json({
+        message: "Organization not found",
+      });
+    }
+
+    // Find the Customer History by CustomerId and organizationId
+    const customersHistory = await CustomerHistory.findOne({
+      _id: customerId,
+      organizationId: organizationId,
+    });
+
+    if (!customersHistory) {
+      return res.status(404).json({
+        message: "Customer History not found",
+      });
+    }
+
+    res.status(200).json(customersHistory);
+  } catch (error) {
+    console.error("Error fetching customer:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
 // Function to generate time and date for storing in the database
 function generateTimeAndDateForDB(
   timeZone,
@@ -1327,6 +1394,7 @@ function isValidEmail(value) {
 function isValidDate(value) {
   return !isNaN(Date.parse(value));
 }
+
 function cleanData(value) {
   return value === null || value === undefined || value === "" || value === 0
     ? undefined

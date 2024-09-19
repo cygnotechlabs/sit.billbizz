@@ -23,8 +23,13 @@ router.put('/update-customer-status/:customerId', customerController.updateCusto
 
 router.put('/customer-additional-data', customerController.getCustomerAdditionalData);
 
+
+//Import
 router.post('/import-customer', importController.importCustomer);
 
+
+//Customer History
+router.put('/get-one-customer-history/:customerId',customerController.getOneCustomerHistory)
 
 module.exports = router
 

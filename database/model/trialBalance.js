@@ -4,7 +4,8 @@ const { Schema } = mongoose;
 
 const trialBalanceSchema = new Schema({
     organizationId: {type:String},
-    transactionId: {type:String},
+    operationId: {type:String},
+    transactionId: {type:String}, //prefix
 
     date: {type:String},
 
