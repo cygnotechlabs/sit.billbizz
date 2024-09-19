@@ -7,6 +7,7 @@ import chartOfAcc from "../../../assets/constants/chartOfAcc";
 import Modal from "../../../Components/model/Modal";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
+import CehvronDown from "../../../assets/icons/CehvronDown";
 
 type Props = {};
 
@@ -21,6 +22,9 @@ function NewAccountModal({}: Props) {
     accountHead: "",
     accountGroup: "",
     description: "",
+    bankAccNum: "", // Added bank fields to the form state
+    bankIfsc: "",
+    bankCurrency: "",
   });
 
   const openModal = () => {
@@ -53,7 +57,7 @@ function NewAccountModal({}: Props) {
         "Asset",
         "Current asset",
         "Cash",
-        "Bank",
+        "Bank", // Bank category
         "Fixed asset",
         "Stock",
         "Payment Clearing",
@@ -123,7 +127,7 @@ function NewAccountModal({}: Props) {
         <CirclePlus color="white" size="16" />
         <p className="text-sm">New Account</p>
       </Button>
-      <Modal open={isModalOpen} onClose={closeModal} className="">
+      <Modal open={isModalOpen} onClose={closeModal} className="w-[68%]">
         <div className="p-5 mt-3">
           <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
             <div
@@ -131,9 +135,7 @@ function NewAccountModal({}: Props) {
               style={{ backgroundImage: `url(${bgImage})` }}
             ></div>
             <div className="relative z-10">
-              <h3 className="text-xl font-bold text-textColor">
-                Create Account
-              </h3>
+              <h3 className="text-xl font-bold text-textColor">Create Account</h3>
               <p className="text-dropdownText font-semibold text-sm mt-2">
                 Start your journey with us—create your account in moments!
               </p>
@@ -181,6 +183,67 @@ function NewAccountModal({}: Props) {
                   ))}
                 </select>
               </div>
+
+              {/* Conditionally render the Bank fields when "Bank" is selected */}
+              {formValues.accountSubhead === "Bank" && (
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm mb-1 text-labelColor">
+                      Account Number
+                    </label>
+                    <input
+                      type="text"
+                      name="bankAccNum"
+                      value={formValues.bankAccNum}
+                      onChange={handleChange}
+                      placeholder="Enter Account Number"
+                      className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm mb-1 text-labelColor">
+                      IFSC
+                    </label>
+                    <input
+                      type="text"
+                      name="bankIfsc"
+                      value={formValues.bankIfsc}
+                      onChange={handleChange}
+                      placeholder="Enter IFSC"
+                      className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
+                    />
+                  </div>
+                  <div>
+                  <label className="block text-sm mb-1 text-labelColor">
+                    Currency
+                  </label>
+                  <div className="relative">
+                    <div className="relative w-full">
+                      <select
+                        name="bankCurrency"
+                        value={formValues.bankCurrency}
+                        onChange={handleChange}
+                        className="block appearance-none w-full text-zinc-400 bg-white border border-slate-200 text-sm h-[39px] pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      >
+                        <option value="" className="text-gray">
+                          Select currency
+                        </option>
+                        <option value="INR" className="text-slate-300">
+                          INR
+                        </option>
+                        <option value="INR" className="text-slate-300">
+                          USD
+                        </option>
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <CehvronDown color="gray" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              )}
+
               <div className="mb-4">
                 <label className="block text-sm mb-1 text-labelColor">
                   Account Name
@@ -190,7 +253,7 @@ function NewAccountModal({}: Props) {
                   name="accountName"
                   value={formValues.accountName}
                   onChange={handleChange}
-                  placeholder="Value"
+                  placeholder="Enter Account Name"
                   className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
                 />
               </div>
@@ -202,7 +265,7 @@ function NewAccountModal({}: Props) {
                   name="description"
                   value={formValues.description}
                   onChange={handleChange}
-                  placeholder="Value"
+                  placeholder="Enter Description"
                   className="border-inputBorder w-full text-sm border rounded p-2 pt-5 pl-2"
                 />
               </div>
@@ -215,17 +278,22 @@ function NewAccountModal({}: Props) {
                   name="accountCode"
                   value={formValues.accountCode}
                   onChange={handleChange}
-                  placeholder="Value"
-                  className="w-full border rounded p-1.5 pl-2 border-inputBorder text-sm"
+                  placeholder="Enter Account Code"
+                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
                 />
               </div>
               <br />
-              <div className="flex justify-end gap-2 mb-3">
-                <Button onClick={closeModal} variant="secondary" size="sm">
+              <div className="flex justify-end gap-2">
+                <Button
+                  onClick={closeModal}
+                  type="button"
+                  variant="secondary"
+                  className="rounded"
+                >
                   Cancel
                 </Button>
-                <Button variant="primary" size="sm">
-                  Save
+                <Button type="submit" variant="primary" className="rounded">
+                  Add Account
                 </Button>
               </div>
             </div>

@@ -3,6 +3,7 @@ import Ellipsis from "../../../assets/icons/Ellipsis";
 import SearchBar from "../../../Components/SearchBar";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
+import { Link } from "react-router-dom";
 
 interface Account {
   id: string;
@@ -59,7 +60,7 @@ const Table = () => {
   return (
     <div>
       <SearchBar
-        placeholder="Serach"
+        placeholder="Search"
         searchValue={searchValue}
         onSearchChange={setSearchValue}
       />
@@ -87,7 +88,9 @@ const Table = () => {
                   <input type="checkbox" className="form-checkbox w-4 h-4" />
                 </td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
-                  {item.accountName}
+                  <Link to={`/accountant/view`}>
+                    {item.accountName}
+                  </Link>
                 </td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   {item.accountCode}
