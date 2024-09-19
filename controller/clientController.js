@@ -567,7 +567,7 @@ exports.createOrganizationAndClient = async (req, res) => {
       organizationId,
       userName: contactName,
       userNum: contactNum,
-      useremail: email,
+      userEmail: email,
       password: hashedPassword,
       role: 'Admin',
       // Add other fields as needed

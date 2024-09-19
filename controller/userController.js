@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
     }
 
     // Find the user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ userEmail:email });
 
     // Check if user exists
     if (!user) {
@@ -37,7 +37,7 @@ exports.login = async (req, res) => {
     otpCache.set(email, otp);
 
     // Send OTP email
-    await sendOtpEmail(user.email, otp);
+    await sendOtpEmail(user.userEmail, otp);
 
     res.status(200).json({
       success: true,
@@ -61,7 +61,7 @@ exports.verifyOtp = async (req, res) => {
     }
 
     // Find the user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ userEmail:email });
 
     // Check if user exists
     if (!user) {
@@ -93,8 +93,9 @@ exports.verifyOtp = async (req, res) => {
         token: `Bearer ${token}`, // Prepend "Bearer " to the token
         user: {
           id: user._id,
-          email: user.email,
-          // Include any other user fields you want to return
+          email: user.userEmail,
+          userName: user.userName,
+          role: user.role,
         },
       });
 
@@ -118,15 +119,15 @@ exports.verifyOtp = async (req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.EMAIL,
+    pass: process.env.PASSWORD,
   },
 });
 
 // Function to send OTP email
 const sendOtpEmail = (email, otp) => {
   const mailOptions = {
-    from: `"BillBizz" <${process.env.EMAIL_USER}>`,
+    from: `"BillBizz" <${process.env.EMAIL}>`,
     to: email,
     subject: 'BillBizz Software OTP',
     text: `Hey there,

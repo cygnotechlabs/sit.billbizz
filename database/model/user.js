@@ -7,13 +7,13 @@ const userSchema = new Schema({
   organizationId: { type: String },
   userName: { type: String },
   userNum: { type: String },
-  useremail: { type: String },
+  userEmail: { type: String },
   password: { type: String },
   role: { type: String },
     
 });
 
-userSchema.index({ organizationId: 1, useremail: 1 });
+userSchema.index({ organizationId: 1, userEmail: 1 });
 
 const User = mongoose.model("User", userSchema);
 
