@@ -25,6 +25,8 @@ router.put('/get-one-organization',organizationController.getOneOrganization)
 
 router.delete('/delete-organization/:organizationId',organizationController.deleteOrganization)
 
+router.get('/get-countries-data',organizationController.getCountriesData)
+
 
 
 

@@ -414,7 +414,7 @@ async function insertAccounts(accounts,organizationId,createdDateAndTime) {
 
          // Loop through the created accounts and add a trial balance entry for each one
   for (const savedAccount of autoAccountCreation) {
-    const debitOpeningBalance = 400;  
+    const debitOpeningBalance = 0;  
     const creditOpeningBalance = 0; 
 
 
@@ -527,6 +527,55 @@ exports.getAdditionalData = (req, res) => {
 
     if (additionalData.length > 0) {
       res.status(200).json(additionalData);
+    } else {
+      res.status(404).json("No Additional Data found");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Internal server error");
+  }
+};
+
+// Countries Data
+exports.getCountriesData = (req, res) => {
+  try {
+    const countriesData = [
+      {
+        countries: [
+          // {
+          //   name: "United States",
+          //   states: ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"],
+          //   phoneNumberCode: "+1",
+          //   taxType:"GST"
+          // },
+          // {
+          //   name: "Canada",
+          //   states: ["Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories", "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon"],
+          //   phoneNumberCode: "+1"
+          // },
+          {
+            name: "India",
+            states: ["Andaman and Nicobar Island", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"],
+            phoneNumberCode: "+91",
+            taxType:"GST"
+          },
+          {
+            name: "Saudi Arabia",
+            states: ["Asir","Al Bahah", "Al Jawf", "Al Madinah", "Al-Qassim", "Eastern Province", "Hail", "Jazan", "Makkah","Medina", "Najran", "Northern Borders", "Riyadh", "Tabuk"],
+            phoneNumberCode: "+966",
+            taxType:"VAT"
+          },
+          {
+            name: "United Arab Emirates",
+            states: ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al-Quwain", "Fujairah", "Ras Al Khaimah"],
+            phoneNumberCode: "+971",
+            taxType:"VAT"
+          },
+        ]
+      }
+    ];
+    if (countriesData.length > 0) {
+      res.status(200).json(countriesData);
     } else {
       res.status(404).json("No Additional Data found");
     }
