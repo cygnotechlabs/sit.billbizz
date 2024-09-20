@@ -1,7 +1,7 @@
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account")
 const Currency = require("../database/model/currency")
-const mongoose = require('mongoose');
+const TrialBalance = require("../database/model/trialBalance")
 const moment = require('moment-timezone');
 
 
@@ -74,14 +74,39 @@ async function insertAccounts(accounts,organizationId,createdDateAndTime) {
                 accountHead: account.accountHead,
                 accountGroup: account.accountGroup,
 
-                // balance: 0, 
                 openingDate: createdDateAndTime, 
                 description: account.description
             };});
 
           try {
-              await Account.insertMany(accountDocuments);
+              const autoAccountCreation = await Account.insertMany(accountDocuments);
               console.log('Accounts created successfully');
+
+               // Loop through the created accounts and add a trial balance entry for each one
+        for (const savedAccount of autoAccountCreation) {
+          const debitOpeningBalance = 400;  
+          const creditOpeningBalance = 0; 
+
+
+          const newTrialEntry = new TrialBalance({
+              organizationId,
+              operationId: savedAccount._id,
+              date: savedAccount.openingDate,
+              accountId: savedAccount._id,
+              accountName: savedAccount.accountName,
+              action: "Opening Balance",
+              debitAmount: debitOpeningBalance,
+              creditAmount: creditOpeningBalance,
+              remark: 'Opening Balance'
+          });
+
+          await newTrialEntry.save();
+      }
+
+      console.log('Trial balance entries created successfully');
+              
+              
+              
           } catch (error) {
               console.error('Error inserting accounts:', error);
           }
