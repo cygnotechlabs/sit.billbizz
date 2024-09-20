@@ -122,7 +122,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
             </tr>
           </thead>
           <tbody className="text-dropdownText text-center text-[13px]">
-            {filteredAccounts.map((item) => (
+            {filteredAccounts.reverse().map((item) => (
               <tr key={item._id} className="relative">
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input type="checkbox" className="form-checkbox w-4 h-4" />
