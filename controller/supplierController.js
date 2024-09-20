@@ -313,150 +313,150 @@ function isValidEmail(value) {
 const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
 
  // Perform validations
-if (salutation && !validSalutations.includes(salutation)) {
-  return { isValid: false, message: `Invalid salutation: ${salutation}` };
-}
+// if (salutation!== "" && !validSalutations.includes(salutation)) {
+//   return { isValid: false, message: `Invalid salutation: ${salutation}` };
+// }
 
-if (!isAlphabets(firstName)) {
-  return { isValid: false, message: "First name should contain only alphabets." };
-}
+// if (!isAlphabets(firstName)) {
+//   return { isValid: false, message: "First name should contain only alphabets." };
+// }
 
-if (!isAlphabets(lastName)) {
-  return { isValid: false, message: "Last name should contain only alphabets." };
-}
+// if (!isAlphabets(lastName)) {
+//   return { isValid: false, message: "Last name should contain only alphabets." };
+// }
 
-if (!isAlphabets(supplierDisplayName)) {
-  return { isValid: false, message: "Supplier display name should contain only alphabets." };
-}
+// if (!isAlphabets(supplierDisplayName)) {
+//   return { isValid: false, message: "Supplier display name should contain only alphabets." };
+// }
 
-if (!isValidEmail(supplierEmail)) {
-  return { isValid: false, message: `Invalid email: ${supplierEmail}` };
-}
+// if (!isValidEmail(supplierEmail)) {
+//   return { isValid: false, message: `Invalid email: ${supplierEmail}` };
+// }
 
-if (!isInteger(workPhone)) {
-  return { isValid: false, message: "Work phone should contain only digits." };
-}
+// if (!isInteger(workPhone)) {
+//   return { isValid: false, message: "Work phone should contain only digits." };
+// }
 
-if (!isInteger(mobile)) {
-  return { isValid: false, message: "Mobile number should contain only digits." };
-}
+// if (!isInteger(mobile)) {
+//   return { isValid: false, message: "Mobile number should contain only digits." };
+// }
 
-if (!isAlphanumeric(pan)) {
-  return { isValid: false, message: `Invalid PAN: ${pan}` };
-}
+// if (!isAlphanumeric(pan)) {
+//   return { isValid: false, message: `Invalid PAN: ${pan}` };
+// }
 
-if (!isFloat(openingBalance)) {
-  return res.status(400).json({ message: `Invalid Opening Balance: ${openingBalance}` });
-}
+// if (!isFloat(openingBalance)) {
+//   return res.status(400).json({ message: `Invalid Opening Balance: ${openingBalance}` });
+// }
 
-if (!validCurrencies.includes(currency)) {
-  return res.status(400).json({ message: `Invalid Currency: ${currency}` });
-}
+// if (!validCurrencies.includes(currency)) {
+//   return res.status(400).json({ message: `Invalid Currency: ${currency}` });
+// }
 
-if (!isAlphabets(department)) {
-  return { isValid: false, message: "Department should contain only alphabets." };
-}
+// if (!isAlphabets(department)) {
+//   return { isValid: false, message: "Department should contain only alphabets." };
+// }
 
-if ( !isAlphabets(designation)) {
-  return { isValid: false, message: "Designation should contain only alphabets." };
-}
+// if ( !isAlphabets(designation)) {
+//   return { isValid: false, message: "Designation should contain only alphabets." };
+// }
 
-if (  !isValidUrl(websiteURL)) {
-  return { isValid: false, message: `Invalid website URL: ${websiteURL}` };
-}
+// if (  !isValidUrl(websiteURL)) {
+//   return { isValid: false, message: `Invalid website URL: ${websiteURL}` };
+// }
 
-if (  !isAlphanumeric(gstin_uin)) {
-  return { isValid: false, message: `Invalid GSTIN/UIN: ${gstin_uin}` };
-}
+// if (  !isAlphanumeric(gstin_uin)) {
+//   return { isValid: false, message: `Invalid GSTIN/UIN: ${gstin_uin}` };
+// }
 
-if (!validCountries[billingCountry] || !validCountries[billingCountry].includes(billingState)) {
-  return res
-    .status(400)
-    .json({ message: `Invalid Billing Country or State: ${billingCountry}, ${billingState}` });
-}
-if (!validCountries[shippingCountry] || !validCountries[shippingCountry].includes(shippingState)) {
-  return res
-    .status(400)
-    .json({ message: `Invalid Billing Country or State: ${shippingCountry}, ${shippingState}` });
-}
-if (!isInteger(billingPinCode)) {
-  return res
-    .status(400)
-    .json({ message: `Invalid Billing Pin Code Number fields :${billingPhone}` });
-}
-if (!isInteger(billingPhone)) {
-  return res
-    .status(400)
-    .json({ message: `Invalid Billing Phone Number fields :${billingPhone}` });
-}    
-if (!isInteger(billingFaxNum)) {
-  return res
-    .status(400)
-    .json({ message: `Invalid Billing Fax Number fields:${billingFaxNum}` });
-}
+// if (!validCountries[billingCountry] || !validCountries[billingCountry].includes(billingState)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Billing Country or State: ${billingCountry}, ${billingState}` });
+// }
+// if (!validCountries[shippingCountry] || !validCountries[shippingCountry].includes(shippingState)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Billing Country or State: ${shippingCountry}, ${shippingState}` });
+// }
+// if (!isInteger(billingPinCode)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Billing Pin Code Number fields :${billingPhone}` });
+// }
+// if (!isInteger(billingPhone)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Billing Phone Number fields :${billingPhone}` });
+// }    
+// if (!isInteger(billingFaxNum)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Billing Fax Number fields:${billingFaxNum}` });
+// }
 
-if (!isInteger(shippingPinCode)) {
-  return res
-    .status(400)
-    .json({ message: `Invalid Shipping Pin Code Number fields :${shippingPinCode}` });
-}
-if (!isInteger(shippingPhone)) {
-  return res
-    .status(400)
-    .json({ message: `Invalid Shipping Phone Number fields :${shippingPhone}` });
-}    
-if (!isInteger(shippingFaxNum)) {
-  return res
-    .status(400)
-    .json({ message: `Invalid Shipping Fax Number fields:${shippingFaxNum}` });
-}
+// if (!isInteger(shippingPinCode)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Shipping Pin Code Number fields :${shippingPinCode}` });
+// }
+// if (!isInteger(shippingPhone)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Shipping Phone Number fields :${shippingPhone}` });
+// }    
+// if (!isInteger(shippingFaxNum)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Shipping Fax Number fields:${shippingFaxNum}` });
+// }
 
-if (!validTaxTypes.includes(taxType)) {
-  return res
-    .status(400)
-    .json({ message: `Invalid Tax Type: ${taxType}` });
-}
+// if (!validTaxTypes.includes(taxType)) {
+//   return res
+//     .status(400)
+//     .json({ message: `Invalid Tax Type: ${taxType}` });
+// }
 
-if (taxType === "GST") {                  
-  if (!validGSTTreatments.includes(gstTreatment)) {
-    return res
-    .status(400)
-    .json({ message: `Invalid GST treatment: ${gstTreatment}` });        
-  }
+// if (taxType === "GST") {                  
+//   if (!validGSTTreatments.includes(gstTreatment)) {
+//     return res
+//     .status(400)
+//     .json({ message: `Invalid GST treatment: ${gstTreatment}` });        
+//   }
 
-  if (!isAlphanumeric(gstin_uin)) {
-    return res
-    .status(400)
-    .json({ message: `Invalid GSTIN/UIN: ${gstin_uin}` });          
-  }
-} else if (taxType === "VAT") {
-  if (!isAlphanumeric(vatNumber)) {
-    return res
-    .status(400)
-    .json({ message: `Invalid VAT number: ${vatNumber}` });          
-  }
-} else if (taxType === "None") {
-gstTreatment = undefined;
-gstin_uin = undefined;
-vatNumber = undefined;                    
-}
-console.log("Organization exists: ", organizationExists);
-console.log("Tax exists: ", taxExists);
-console.log("Currency found: ", currencyExists);
+//   if (!isAlphanumeric(gstin_uin)) {
+//     return res
+//     .status(400)
+//     .json({ message: `Invalid GSTIN/UIN: ${gstin_uin}` });          
+//   }
+// } else if (taxType === "VAT") {
+//   if (!isAlphanumeric(vatNumber)) {
+//     return res
+//     .status(400)
+//     .json({ message: `Invalid VAT number: ${vatNumber}` });          
+//   }
+// } else if (taxType === "None") {
+// gstTreatment = undefined;
+// gstin_uin = undefined;
+// vatNumber = undefined;                    
+// }
+// console.log("Organization exists: ", organizationExists);
+// console.log("Tax exists: ", taxExists);
+// console.log("Currency found: ", currencyExists);
 
 
 
 
     // Check if a supplier with the same organizationId already exists
-    const existingSupplier = await Supplier.findOne({
-      supplierEmail: supplierEmail,
-      organizationId: organizationId,
-    });
-    if (existingSupplier) {
-      return res.status(409).json({
-        message: "Supplier with the provided email already exists.",
-      });
-    }
+    // const existingSupplier = await Supplier.findOne({
+    //   supplierEmail: supplierEmail,
+    //   organizationId: organizationId,
+    // });
+    // if (existingSupplier) {
+    //   return res.status(409).json({
+    //     message: "Supplier with the provided email already exists.",
+    //   });
+    // }
 
 
     // Create a new supplier
