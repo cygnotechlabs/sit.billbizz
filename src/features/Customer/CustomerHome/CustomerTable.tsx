@@ -22,6 +22,7 @@ const Table = () => {
     { id: "mobile", label: "Contact", visible: true },
     { id: "customerEmail", label: "Email", visible: true },
     { id: "supplierDetails", label: "Customer details", visible: true },
+    { id: "status", label: "Status", visible: true },
     { id: "skypeNameNumber", label: "Receivables(BCY)", visible: true },
   ];
 
@@ -38,7 +39,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
       const { response, error } = await AllCustomers(url, body);
       if (!error && response) {
         setCustomerData(response.data);
-        console.log(response.data);
+        console.log(response.data,"all sutomers");
       }
     } catch (error) {
       console.error("Error fetching accounts:", error);
@@ -52,11 +53,11 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
   const filteredAccounts = customerData.filter((account) => {
     const searchValueLower = searchValue.toLowerCase();
     return (
-      account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
-      account.companyName.toLowerCase().startsWith(searchValueLower) ||
-      account.mobile.toLowerCase().startsWith(searchValueLower) ||
-      account.customerEmail.toLowerCase().startsWith(searchValueLower) ||
-      account.skypeNameNumber.toLowerCase().startsWith(searchValueLower)
+      account?.billingAttention?.toLowerCase().startsWith(searchValueLower) ||
+      account?.companyName?.toLowerCase().startsWith(searchValueLower) ||
+      account?.mobile?.toLowerCase().startsWith(searchValueLower) ||
+      account?.customerEmail?.toLowerCase().startsWith(searchValueLower) ||
+      account?.customerDisplayName?.toLowerCase().startsWith(searchValueLower)
     );
   });
 
@@ -75,9 +76,13 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
         </div>
       );
     }
-    return item[colId as keyof typeof item];
-  };
-
+    else if(colId=="status"){
+      return (
+        <p className={`${item.status=='Active'?"bg-[#78AA86]": "bg-zinc-400"} text-[13px] rounded items-center ms-auto text-white  h-[18px] flex justify-center`}>{item.status}</p>
+      );
+    }
+    return item[colId as keyof typeof item];
+  };
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -93,7 +98,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
           <Print />
         </div>
       </div>
-      <div className="overflow-x-auto mt-3">
+      <div className="overflow-x-auto mt-3 h-96 hide-scrollbar">
         <table className="min-w-full bg-white mb-5">
           <thead className="text-[12px] text-center text-dropdownText">
             <tr style={{ backgroundColor: "#F9F7F0" }}>
