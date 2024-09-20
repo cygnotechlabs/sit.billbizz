@@ -193,14 +193,17 @@ exports.getLastJournalPrefix = async (req, res) => {
         const { organizationId } = req.body;
 
         // Find all accounts where organizationId matches
-        const prefix = await Prefix.findOne({ organizationId:organizationId });
+        const prefix = await Prefix.findOne({ organizationId:organizationId,'series.status': true });
 
         if (!prefix) {
             return res.status(404).json({
                 message: "No Prefix found for the provided organization ID.",
             });
         }
-        const lastPrefix = prefix.journal + prefix.journalNum
+        
+        const series = prefix.series[0];     
+        const lastPrefix = series.journal + series.journalNum;
+        console.log(lastPrefix);
 
         res.status(200).json(lastPrefix);
     } catch (error) {
