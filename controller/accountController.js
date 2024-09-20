@@ -59,36 +59,52 @@ exports.addAccount = async (req, res) => {
         bankCurrency,
       } = req.body;
 
-
-      // Define valid groups, heads, and subheads
+    // Define valid groups, heads, and subheads
     const validStructure = {
-      "Asset": {
-        "Asset": ["Asset", "Current asset", "Cash", "Bank", "Fixed asset", "Stock", "Payment Clearing", "Sundry Debtors"],
-        "Equity": ["Equity"],
-        "Income": ["Income", "Other Income"]
+      Asset: {
+        Asset: [
+          "Asset",
+          "Current asset",
+          "Cash",
+          "Bank",
+          "Fixed asset",
+          "Stock",
+          "Payment Clearing",
+          "Sundry Debtors",
+        ],
+        Equity: ["Equity"],
+        Income: ["Income", "Other Income"],
       },
-      "Liability": {
-        "Liabilities": ["Current Liability", "Credit Card", "Long Term Liability", "Other Liability", "Overseas Tax Payable", "Sundry Creditors"],
-        "Expenses": ["Expense", "Cost of Goods Sold", "Other Expense"]
-      }
+      Liability: {
+        Liabilities: [
+          "Current Liability",
+          "Credit Card",
+          "Long Term Liability",
+          "Other Liability",
+          "Overseas Tax Payable",
+          "Sundry Creditors",
+        ],
+        Expenses: ["Expense", "Cost of Goods Sold", "Other Expense"],
+      },
     };
 
     // Validate accountGroup, accountHead, and accountSubhead
     if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
       console.log("Invalid account group, head, or subhead.");
       return res.status(400).json({
-        message: "Invalid account group, head, or subhead."
+        message: "Invalid account group, head, or subhead.",
       });
 
     }
 
-
     // Validate bank details if accountSubhead is "Bank"
-    if (accountSubhead === "Bank" && (!bankAccNum || !bankIfsc || !bankCurrency)) {
+    if (
+      accountSubhead === "Bank" &&
+      (!bankAccNum || !bankIfsc || !bankCurrency)
+    ) {
       return res.status(400).json({
-        message: "Bank Details (Account Number, IFSC, Currency) are required"
+        message: "Bank Details (Account Number, IFSC, Currency) are required",
       });
-      console.log("Bank Details (Account Number, IFSC, Currency) are required");
     }
 
     // Check if an Organization already exists
@@ -100,10 +116,8 @@ exports.addAccount = async (req, res) => {
       });
     }
 
-    const timeZoneExp = existingOrganization.timeZoneExp;
-    const dateFormatExp = existingOrganization.dateFormatExp;
-    const dateSplit = existingOrganization.dateSplit;
-    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+
+    const generatedDateTime = generateTimeAndDateForDB(existingOrganization.timeZoneExp, existingOrganization.dateFormatExp, existingOrganization.dateSplit);
     const openingDate = generatedDateTime.dateTime;
     
     
@@ -155,10 +169,8 @@ exports.addAccount = async (req, res) => {
     } catch (error) {
       console.error("Error creating Account:", error);
       res.status(500).json({ message: "Internal server error." });
-    }
+    }  
 };
-
-  
 
 // Get all accounts for a given organizationId
 exports.getAllAccount = async (req, res) => {
@@ -170,43 +182,42 @@ exports.getAllAccount = async (req, res) => {
           { organizationId: organizationId },{ bankAccNum: 0 } 
       );
 
-        if (!accounts.length) {
-            return res.status(404).json({
-                message: "No accounts found for the provided organization ID.",
-            });
-        }
-
-        res.status(200).json(accounts);
-    } catch (error) {
-        console.error("Error fetching accounts:", error);
-        res.status(500).json({ message: "Internal server error." });
+    if (!accounts.length) {
+      return res.status(404).json({
+        message: "No accounts found for the provided organization ID.",
+      });
     }
+
+    res.status(200).json(accounts);
+  } catch (error) {
+    console.error("Error fetching accounts:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
 };
-
-
 
 //Get one Account for a given organizationId
 exports.getOneAccount = async (req, res) => {
   try {
-      const { accountId } = req.params;
-      const { organizationId } = req.body;
+    const { accountId } = req.params;
+    const { organizationId } = req.body;
 
-      // Find the account by accountId and organizationId
-      const account = await Account.findOne({
-          _id: accountId,
-          organizationId: organizationId,
-      },{ bankAccNum: 0 });
+    // Find the account by accountId and organizationId
+    const account = await Account.findOne({
+      _id: accountId,
+      organizationId: organizationId,
+    });
 
-      if (!account) {
-          return res.status(404).json({
-              message: "Account not found for the provided Organization ID and Account ID.",
-          });
-      }
+    if (!account) {
+      return res.status(404).json({
+        message:
+          "Account not found for the provided Organization ID and Account ID.",
+      });
+    }
 
-      res.status(200).json(account);
+    res.status(200).json(account);
   } catch (error) {
-      console.error("Error fetching account:", error);
-      res.status(500).json({ message: "Internal server error." });
+    console.error("Error fetching account:", error);
+    res.status(500).json({ message: "Internal server error." });
   }
 };
 
@@ -247,95 +258,152 @@ exports.getBankAccNum = async (req, res) => {
 exports.editAccount = async (req, res) => {
   console.log("Edit Account:", req.body);
   try {
-      const { accountId } = req.params;
+    const { accountId } = req.params;
 
-      const {
-          organizationId,
-          accountName,
-          accountCode,
+    const {
+      organizationId,
+      accountName,
+      accountCode,
 
-          accountSubhead,
-          accountHead,
-          accountGroup,
+      accountSubhead,
+      accountHead,
+      accountGroup,    
+      
+      description,
+      bankAccNum,
+      bankIfsc,
+      bankCurrency,
+    } = req.body;
 
-          description,
-          bankAccNum,
-          bankIfsc,
-          bankCurrency,
-      } = req.body;
+    // Define valid groups, heads, and subheads
+    const validStructure = {
+      Asset: {
+        Asset: [
+          "Asset",
+          "Current asset",
+          "Cash",
+          "Bank",
+          "Fixed asset",
+          "Stock",
+          "Payment Clearing",
+          "Sundry Debtors",
+        ],
+        Equity: ["Equity"],
+        Income: ["Income", "Other Income"],
+      },
+      Liability: {
+        Liabilities: [
+          "Current Liability",
+          "Credit Card",
+          "Long Term Liability",
+          "Other Liability",
+          "Overseas Tax Payable",
+          "Sundry Creditors",
+        ],
+        Expenses: ["Expense", "Cost of Goods Sold", "Other Expense"],
+      },
+    };
 
-      // Check if an account with the given organizationId and accountId exists
-      const account = await Account.findOne({
-          _id: accountId,
-          organizationId: organizationId,
+    // Validate accountGroup, accountHead, and accountSubhead
+    if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
+      console.log("Invalid account group, head, or subhead.");
+      return res.status(400).json({
+        message: "Invalid account group, head, or subhead.",
       });
 
-      if (!account) {
-          return res.status(404).json({
-              message: "Account not found for the provided Organization ID and Account ID.",
-          });
-      }
+    }
 
-      // Update account fields
-      account.accountName = accountName;
-      account.accountCode = accountCode;
+    // Validate bank details if accountSubhead is "Bank"
+    if (
+      accountSubhead === "Bank" &&
+      (!bankAccNum || !bankIfsc || !bankCurrency)
+    ) {
+      return res.status(400).json({
+        message: "Bank Details (Account Number, IFSC, Currency) are required",
+      });
+    }
 
-      account.accountSubhead = accountSubhead;
-      account.accountHead = accountHead;
-      account.accountGroup = accountGroup;
+    const generatedDateTime = generateTimeAndDateForDB(existingOrganization.timeZoneExp, existingOrganization.dateFormatExp, existingOrganization.dateSplit);
+    const openingDate = generatedDateTime.dateTime;
+
+    // Check if an account with the given organizationId and accountId exists
+    const account = await Account.findOne({
+      _id: accountId,
+      organizationId: organizationId,
+    });
+
+    if (!account) {
+      return res.status(404).json({
+        message:
+          "Account not found for the provided Account ID.",
+      });
+    }
+    // Encrypt bankAccNum before storing it
+    let encryptedBankAccNum = null;
+    if(bankAccNum){
+      encryptedBankAccNum = encrypt(bankAccNum);        
+    }
+
+    // Update account fields
+    account.accountName = accountName;
+    account.accountCode = accountCode;
+
+    account.accountSubhead = accountSubhead;
+    account.accountHead = accountHead;
+    account.accountGroup = accountGroup;
+
+
 
       account.description = description;
-      account.bankAccNum = bankAccNum;
+      account.bankAccNum = encryptedBankAccNum;
       account.bankIfsc = bankIfsc;
       account.bankCurrency = bankCurrency;
 
-      // Save updated account
-      await account.save();
+    // Save updated account
+    await account.save();
 
-      res.status(200).json({
-          message: "Account updated successfully."
-      });
-      console.log("Account updated successfully:");
+    res.status(200).json({
+      message: "Account updated successfully.",
+    });
+    console.log("Account updated successfully:");
   } catch (error) {
-      console.error("Error updating Account:", error);
-      res.status(500).json({ message: "Internal server error." });
+    console.error("Error updating Account:", error);
+    res.status(500).json({ message: "Internal server error." });
   }
 };
-
-
 
 //Delete account
 exports.deleteAccount = async (req, res) => {
   try {
-      const { accountId } = req.params;
-      const { organizationId } = req.body;
+    const { accountId } = req.params;
+    const { organizationId } = req.body;
 
-      // Check if an account with the given organizationId and accountId exists
-      const account = await Account.findOne({
-          _id: accountId,
-          organizationId: organizationId,
+    // Check if an account with the given organizationId and accountId exists
+    const account = await Account.findOne({
+      _id: accountId,
+      organizationId: organizationId,
+    });
+
+    if (!account) {
+      return res.status(404).json({
+        message:
+          "Account not found for the provided Organization ID and Account ID.",
       });
+    }
 
-      if (!account) {
-          return res.status(404).json({
-              message: "Account not found for the provided Organization ID and Account ID.",
-          });
-      }
+    // Delete the account
+    await account.delete();
 
-      // Delete the account
-      await account.delete();
-
-      res.status(200).json({
-          message: "Account deleted successfully.",
-          deletedAccount: account,
-      });
-      console.log("Account deleted successfully:", account);
+    res.status(200).json({
+      message: "Account deleted successfully.",
+      deletedAccount: account,
+    });
+    console.log("Account deleted successfully:", account);
   } catch (error) {
-      console.error("Error deleting Account:", error);
-      res.status(500).json({ message: "Internal server error." });
+    console.error("Error deleting Account:", error);
+    res.status(500).json({ message: "Internal server error." });
   }
 };
-
 
 
 //Get one Account for a given organizationId
@@ -363,15 +431,21 @@ exports.getOneTrailBalance = async (req, res) => {
   }
 };
 
-
 // Function to generate time and date for storing in the database
-function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = new Date(), timeFormat = 'HH:mm:ss', timeSplit = ':') {
+function generateTimeAndDateForDB(
+  timeZone,
+  dateFormat,
+  dateSplit,
+  baseTime = new Date(),
+  timeFormat = "HH:mm:ss",
+  timeSplit = ":"
+) {
   // Convert the base time to the desired time zone
   const localDate = moment.tz(baseTime, timeZone);
 
   // Format date and time according to the specified formats
   let formattedDate = localDate.format(dateFormat);
-  
+
   // Handle date split if specified
   if (dateSplit) {
     // Replace default split characters with specified split characters
@@ -379,14 +453,16 @@ function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = ne
   }
 
   const formattedTime = localDate.format(timeFormat);
-  const timeZoneName = localDate.format('z'); // Get time zone abbreviation
+  const timeZoneName = localDate.format("z"); // Get time zone abbreviation
 
   // Combine the formatted date and time with the split characters and time zone
-  const dateTime = `${formattedDate} ${formattedTime.split(':').join(timeSplit)} (${timeZoneName})`;
+  const dateTime = `${formattedDate} ${formattedTime
+    .split(":")
+    .join(timeSplit)} (${timeZoneName})`;
 
   return {
     date: formattedDate,
     time: `${formattedTime} (${timeZoneName})`,
-    dateTime: dateTime
+    dateTime: dateTime,
   };
 }
