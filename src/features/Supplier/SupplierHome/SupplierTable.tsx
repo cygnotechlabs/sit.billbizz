@@ -61,11 +61,11 @@ const SupplierTable = () => {
       console.error("Error fetching suppliers:", error);
     }
   };
-  const activeSort=()=>{
-    setSupplierData(supplierData.filter((item:any)=>(
-      item.status=='Active'
-    )))
-  }
+  // const activeSort=()=>{
+  //   setSupplierData(supplierData.filter((item:any)=>(
+  //     item.status=='Active'
+  //   )))
+  // }
   useEffect(() => {
     fetchAllSuppliers();
   }, [supplierResponse]);

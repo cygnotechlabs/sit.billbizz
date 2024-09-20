@@ -9,7 +9,6 @@ import CehvronDown from "../../../assets/icons/CehvronDown";
 import Eye from "../../../assets/icons/Eye";
 import EyeOff from "../../../assets/icons/EyeOff";
 import Globe from "../../../assets/icons/Globe";
-import Pen from "../../../assets/icons/Pen";
 import PlusCircle from "../../../assets/icons/PlusCircle";
 import Trash2 from "../../../assets/icons/Trash2";
 import Upload from "../../../assets/icons/Upload";
@@ -24,7 +23,7 @@ type Props = {
   addressEdit?:string
 };
 
-const EditSupplier: React.FC<Props> = ({ supplier, isModalOpen, openModal, closeModal,addressEdit}) => {
+const EditSupplier: React.FC<Props> = ({ supplier, isModalOpen, closeModal,addressEdit}) => {
   const [activeTab, setActiveTab] = useState<string>(addressEdit?'address':'otherDetails');
   const {request:editSupplier}=useApi('put',5009)
   const [countryData, setcountryData] = useState<any | []>([]);
