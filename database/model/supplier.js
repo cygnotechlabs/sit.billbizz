@@ -41,7 +41,7 @@ const supplierSchema = new Schema({
     //Other Details
     pan: {type:String},
     currency: {type:String},
-    openingBalance: {type:String},
+    // openingBalance: {type:String},
     paymentTerms: {type:String},
     tds: {type:String},
     creditDays :{type:Number},

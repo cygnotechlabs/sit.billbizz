@@ -4,16 +4,27 @@ const Account = require("../database/model/account");
 const Tax = require("../database/model/tax");
 const moment = require('moment-timezone');
 const Currency = require("../database/model/currency");
+const SupplierHistory = require("../database/model/supplierHistory")
+const TrialBalance = require("../database/model/trialBalance")
 
 
 function cleanData(value) {
   return value !== "" ? value : undefined;
 }
 
+const dataExist = async (organizationId) => {
+  const [organizationExists, taxExists, currencyExists, allCustomer] = await Promise.all([
+    Organization.findOne({ organizationId }),
+    Tax.findOne({ organizationId }),
+    Currency.find({ organizationId }, { currencyCode: 1, _id: 0 }),
+    Supplier.find({ organizationId })
+  ]);
+  return { organizationExists, taxExists, currencyExists ,allCustomer};
+};
 
 exports.addSupplier = async (req, res) => {
   console.log("Add supplier:", req.body);
-  const {
+  let {
     // Basic
     organizationId,
     salutation,
@@ -34,7 +45,9 @@ exports.addSupplier = async (req, res) => {
     //Other Details
     pan,
     currency,
-    openingBalance,
+    creditOpeningBalance,
+    debitOpeningBalance,
+    // openingBalance,
     paymentTerms,
     tds,
     documents,
@@ -85,80 +98,81 @@ exports.addSupplier = async (req, res) => {
     remarks,
   } = req.body;
 
-  const customerData = {
-    organizationId: cleanData(organizationId),
-    salutation: cleanData(salutation),
-    firstName: cleanData(firstName),
-    lastName: cleanData(lastName),
+  const userId = "6434bd73222";
+  const userName = "Test User";
+    organizationId= cleanData(organizationId);
+    salutation= cleanData(salutation);
+    firstName= cleanData(firstName);
+    lastName= cleanData(lastName);
 
-    companyName: cleanData(companyName),
-    supplierDisplayName: cleanData(supplierDisplayName),
-    supplierEmail: cleanData(supplierEmail),
-    workPhone: cleanData(workPhone),
-    mobile: cleanData(mobile),
+    companyName= cleanData(companyName);
+    supplierDisplayName= cleanData(supplierDisplayName);
+    supplierEmail= cleanData(supplierEmail);
+    workPhone= cleanData(workPhone);
+    mobile= cleanData(mobile);
 
     //Unverified
-    creditDays: cleanData(creditDays),
-    creditLimit: cleanData(creditLimit),
-    interestPercentage: cleanData(interestPercentage),
+    creditDays= cleanData(creditDays);
+    creditLimit= cleanData(creditLimit);
+    interestPercentage= cleanData(interestPercentage);
 
     //Other Details
-    pan: cleanData(pan),
-    currency: cleanData(currency),
-    openingBalance: cleanData(openingBalance),
-    paymentTerms: cleanData(paymentTerms),
-    tds: cleanData(tds),
-    documents: cleanData(documents),
-    websiteURL: cleanData(websiteURL),
-    department: cleanData(department),
-    designation: cleanData(designation),
+    pan= cleanData(pan);
+    currency= cleanData(currency);
+    creditOpeningBalance= cleanData(creditOpeningBalance);
+    debitOpeningBalance= cleanData(debitOpeningBalance);
+    paymentTerms= cleanData(paymentTerms);
+    tds= cleanData(tds);
+    documents= cleanData(documents);
+    websiteURL= cleanData(websiteURL);
+    department= cleanData(department);
+    designation= cleanData(designation);
 
     //Tax
-    taxType: cleanData(taxType),
-    gstTreatment: cleanData(gstTreatment),
-    gstin_uin: cleanData(gstin_uin),
-    sourceOfSupply: cleanData(sourceOfSupply),
-    msmeType: cleanData(msmeType),
-    msmeNumber: cleanData(msmeNumber),
-    msmeRegistered: cleanData(msmeRegistered),
-    vatNumber: cleanData(vatNumber),
+    taxType= cleanData(taxType);
+    gstTreatment= cleanData(gstTreatment);
+    gstin_uin= cleanData(gstin_uin);
+    sourceOfSupply= cleanData(sourceOfSupply);
+    msmeType= cleanData(msmeType);
+    msmeNumber= cleanData(msmeNumber);
+    msmeRegistered= cleanData(msmeRegistered);
+    vatNumber= cleanData(vatNumber);
 
 
     // Billing Address
-    billingAttention: cleanData(billingAttention),
-    billingCountry: cleanData(billingCountry),
-    billingAddressStreet1: cleanData(billingAddressStreet1),
-    billingAddressStreet2: cleanData(billingAddressStreet2),
-    billingCity: cleanData(billingCity),
-    billingState: cleanData(billingState),
-    billingPinCode: cleanData(billingPinCode),
-    billingPhone: cleanData(billingPhone),
-    billingFaxNum: cleanData(billingFaxNum),
+    billingAttention= cleanData(billingAttention);
+    billingCountry= cleanData(billingCountry);
+    billingAddressStreet1= cleanData(billingAddressStreet1);
+    billingAddressStreet2= cleanData(billingAddressStreet2);
+    billingCity= cleanData(billingCity);
+    billingState= cleanData(billingState);
+    billingPinCode= cleanData(billingPinCode);
+    billingPhone= cleanData(billingPhone);
+    billingFaxNum= cleanData(billingFaxNum);
 
     // Shipping Address
-    shippingAttention: cleanData(shippingAttention),
-    shippingCountry: cleanData(shippingCountry),
-    shippingAddressStreet1: cleanData(shippingAddressStreet1),
-    shippingAddressStreet2: cleanData(shippingAddressStreet2),
-    shippingCity: cleanData(shippingCity),
-    shippingState: cleanData(shippingState),
-    shippingPinCode: cleanData(shippingPinCode),
-    shippingPhone: cleanData(shippingPhone),
-    shippingFaxNum: cleanData(shippingFaxNum),
+    shippingAttention= cleanData(shippingAttention);
+    shippingCountry= cleanData(shippingCountry);
+    shippingAddressStreet1= cleanData(shippingAddressStreet1);
+    shippingAddressStreet2= cleanData(shippingAddressStreet2);
+    shippingCity= cleanData(shippingCity);
+    shippingState= cleanData(shippingState);
+    shippingPinCode= cleanData(shippingPinCode);
+    shippingPhone= cleanData(shippingPhone);
+    shippingFaxNum= cleanData(shippingFaxNum);
 
     // Contact Person
-    contactPersons: cleanData(contactPersons),
+    contactPersons= cleanData(contactPersons);
 
     //Bank Details
-    bankDetails: cleanData(bankDetails),
+    bankDetails= cleanData(bankDetails);
 
     //Remark
-    remarks: cleanData(remarks),
+    remarks= cleanData(remarks);
     
-  };
 
-  console.log(firstName);
-  
+
+ 
 
  
 
@@ -191,10 +205,8 @@ exports.addSupplier = async (req, res) => {
       });
     }
 
-    const timeZoneExp = organizationExists.timeZoneExp;
-    const dateFormatExp = organizationExists.dateFormatExp;
-    const dateSplit = organizationExists.dateSplit;
-    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+
+    const generatedDateTime = generateTimeAndDateForDB(organizationExists.timeZoneExp, organizationExists.dateFormatExp, organizationExists.dateSplit);
     const openingDate = generatedDateTime.dateTime;  
     
     const validCurrencies = currencyExists.map(
@@ -311,6 +323,16 @@ function isValidEmail(value) {
 
 // Constants for validation
 const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
+
+// const existingSupplier = await Supplier.findOne({
+//   supplierEmail,
+//    organizationId,
+// });
+// if (existingSupplier) {
+//   return res.status(409).json({
+//     message: "Supplier with the provided email already exists.",
+//   });
+// }
 
  // Perform validations
 // if (salutation!== "" && !validSalutations.includes(salutation)) {
@@ -480,7 +502,8 @@ const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
       //Other Details
       pan,
       currency,
-      openingBalance,
+      creditOpeningBalance,
+      debitOpeningBalance,
       paymentTerms,
       tds,
       documents,
@@ -557,15 +580,92 @@ const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
       accountHead: "Liabilities",
       accountGroup: "Liability",
 
-      openingBalance: openingBalance,
       openingBalanceDate: openingDate,
       description: "Suppliers",
     });
 
-    await newAccount.save();
+    const savedAccount = await newAccount.save();
     res.status(201).json({
       message: "Supplier Added successfully.",
     });
+
+ //Trial Balance entry
+ const newTrialEntry = new TrialBalance({
+  organizationId,
+  operationId: savedSupplier._id,
+  date: openingDate,
+  accountId: savedAccount._id,
+  accountName: savedAccount.accountName,
+  action: "Opening Balance",
+  debitAmount: debitOpeningBalance,
+  creditAmount: creditOpeningBalance,
+  remarks: remarks
+});
+
+await newTrialEntry.save();
+
+let description;
+if(taxType="GST" && gstTreatment && gstin_uin && sourceOfSupply){
+description=` ${supplierDisplayName} Contact created with GST Treatment '${gstTreatment}' & GSTIN '${gstin_uin}'. 
+State updated to ${sourceOfSupply}.
+Created by ${userName}`;
+}
+else if(taxType="GST" && gstTreatment && sourceOfSupply){
+description=` ${supplierDisplayName} Contact created with GST Treatment '${gstTreatment}'. 
+State updated to ${sourceOfSupply}.
+Created by ${userName}`;
+}
+else if(taxType="VAT" && vatNumber && sourceOfSupply){
+description=` ${supplierDisplayName} Contact created with VAT Number '${vatNumber}'.
+State updated to ${sourceOfSupply}.
+Created by ${userName}`;
+}
+else if(taxType="None"){
+description=` ${supplierDisplayName} Contact created with Tax Exemption.
+Created by ${userName}`;
+}
+
+// supplier History entry
+const supplierHistoryEntry = new SupplierHistory({
+organizationId,
+operationId:newSupplier._id,
+supplierId:newSupplier._id,
+supplierDisplayName,
+date: openingDate,
+title: "Supplier Added",
+description: description,
+userId: userId,
+userName: userName,
+});
+
+await supplierHistoryEntry.save();
+
+let description1; 
+
+if(debitOpeningBalance !==undefined && debitOpeningBalance){
+description1=` ${supplierDisplayName} Account created with Opening Balance (Debit):'${debitOpeningBalance}'.
+Created by ${userName}`;
+}
+else if(creditOpeningBalance !==undefined && creditOpeningBalance){
+description1=` ${supplierDisplayName} Account created with Opening Balance (Credit):'${creditOpeningBalance}'.
+Created by ${userName}`;
+}
+
+// supplier History entry
+const accountsupplierHistoryEntry = new SupplierHistory({
+organizationId,
+operationId:newAccount._id,
+supplierId:newSupplier._id,
+supplierDisplayName,
+date: openingDate,
+title: "Supplier Account Created",
+description: description1,
+userId: userId,
+userName: userName,
+});
+
+await accountsupplierHistoryEntry.save();
+
     console.log("Supplier Added successfully");
   } catch (error) {
     console.error("Error adding supplier:", error);
@@ -581,7 +681,7 @@ exports.getAllSuppliers = async (req, res) => {
     console.log(organizationId);
 
     const suppliers = await Supplier.find({ organizationId: organizationId });
-    console.log(suppliers);
+    // console.log(suppliers);
 
     if (!suppliers) {
       return res.status(404).json({
@@ -729,56 +829,56 @@ exports.updateSupplier = async (req, res) => {
     const validSalutations = ['Mr.', 'Mrs.', 'Ms.', 'Miss.', 'Dr.'];
     
      // Perform validations
-     if (salutation && !validSalutations.includes(salutation)) {
-      return { isValid: false, message: `Invalid salutation: ${salutation}` };
-    }
+    //  if (salutation && !validSalutations.includes(salutation)) {
+    //   return { isValid: false, message: `Invalid salutation: ${salutation}` };
+    // }
     
-    if (firstName && !isAlphabets(firstName)) {
-      return { isValid: false, message: "First name should contain only alphabets." };
-    }
+    // if (firstName && !isAlphabets(firstName)) {
+    //   return { isValid: false, message: "First name should contain only alphabets." };
+    // }
     
-    if (lastName && !isAlphabets(lastName)) {
-      return { isValid: false, message: "Last name should contain only alphabets." };
-    }
+    // if (lastName && !isAlphabets(lastName)) {
+    //   return { isValid: false, message: "Last name should contain only alphabets." };
+    // }
     
-    if (supplierDisplayName && !isAlphabets(supplierDisplayName)) {
-      return { isValid: false, message: "Supplier display name should contain only alphabets." };
-    }
+    // if (supplierDisplayName && !isAlphabets(supplierDisplayName)) {
+    //   return { isValid: false, message: "Supplier display name should contain only alphabets." };
+    // }
     
-    if (supplierEmail && !isValidEmail(supplierEmail)) {
-      return { isValid: false, message: `Invalid email: ${supplierEmail}` };
-    }
+    // if (supplierEmail && !isValidEmail(supplierEmail)) {
+    //   return { isValid: false, message: `Invalid email: ${supplierEmail}` };
+    // }
     
-    if (workPhone && !isInteger(workPhone)) {
-      return { isValid: false, message: "Work phone should contain only digits." };
-    }
+    // if (workPhone && !isInteger(workPhone)) {
+    //   return { isValid: false, message: "Work phone should contain only digits." };
+    // }
     
-    if (mobile && !isInteger(mobile)) {
-      return { isValid: false, message: "Mobile number should contain only digits." };
-    }
+    // if (mobile && !isInteger(mobile)) {
+    //   return { isValid: false, message: "Mobile number should contain only digits." };
+    // }
     
-    if (pan && !isAlphanumeric(pan)) {
-      return { isValid: false, message: `Invalid PAN: ${pan}` };
-    }
+    // if (pan && !isAlphanumeric(pan)) {
+    //   return { isValid: false, message: `Invalid PAN: ${pan}` };
+    // }
     
-    if (department && !isAlphabets(department)) {
-      return { isValid: false, message: "Department should contain only alphabets." };
-    }
+    // if (department && !isAlphabets(department)) {
+    //   return { isValid: false, message: "Department should contain only alphabets." };
+    // }
     
-    if (designation && !isAlphabets(designation)) {
-      return { isValid: false, message: "Designation should contain only alphabets." };
-    }
+    // if (designation && !isAlphabets(designation)) {
+    //   return { isValid: false, message: "Designation should contain only alphabets." };
+    // }
     
-    if (websiteURL && !isValidUrl(websiteURL)) {
-      return { isValid: false, message: `Invalid website URL: ${websiteURL}` };
-    }
+    // if (websiteURL && !isValidUrl(websiteURL)) {
+    //   return { isValid: false, message: `Invalid website URL: ${websiteURL}` };
+    // }
     
-    if (gstin_uin && !isAlphanumeric(gstin_uin)) {
-      return { isValid: false, message: `Invalid GSTIN/UIN: ${gstin_uin}` };
-    }
+    // if (gstin_uin && !isAlphanumeric(gstin_uin)) {
+    //   return { isValid: false, message: `Invalid GSTIN/UIN: ${gstin_uin}` };
+    // }
         
 
-    // Find the existing supplier to check for duplicates or to reject if not found
+    // // Find the existing supplier to check for duplicates or to reject if not found
     const existingSupplier = await Supplier.findById(supplierId);
     if (!existingSupplier) {
       console.log("Supplier not found with ID:", supplierId);
@@ -1125,7 +1225,37 @@ exports.getSupplierAdditionalData = async (req, res) => {
 };
 
 
+exports.getOneSupplierHistory = async (req, res) => {
+  try {
+    const { supplierId } = req.params;
+    const { organizationId } = req.body;
 
+    const {organizationExists} = await dataExist(organizationId);
+
+    if (!organizationExists) {
+      return res.status(404).json({
+        message: "Organization not found",
+      });
+    }
+
+    // Find the Customer History by CustomerId and organizationId
+    const supplierHistory = await SupplierHistory.find({
+      supplierId,
+      organizationId,
+    });
+
+    if (!supplierHistory) {
+      return res.status(404).json({
+        message: "Supplier History not found",
+      });
+    }
+
+    res.status(200).json(supplierHistory);
+  } catch (error) {
+    console.error("Error fetching Supplier:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
 
 
 
