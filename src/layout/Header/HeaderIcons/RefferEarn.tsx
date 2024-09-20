@@ -2,6 +2,9 @@ import { useState } from "react";
 import UserIcon from "../../../assets/icons/UserIcon"
 import Drawer from "../../../Components/drawer/drawer";
 import Button from "../../../Components/Button";
+import twoMenImage from "../../../assets/Images/excited-men-watching-smartphones 1.png"
+import frameBgIMage from "../../../assets/Images/Line 8.png"
+
 type Props = {}
 
 function RefferEarn({}: Props) {
@@ -36,9 +39,20 @@ function RefferEarn({}: Props) {
                 <div className="flex justify-center">
                <Button size="sm"><p className="text-xs">Refer & earn</p></Button>
                 </div>
-                <img src="https://s3-alpha-sig.figma.com/img/3a24/9dc3/03588a773ed10447ad5e1a6065b65b48?Expires=1721001600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=B5~EbiFBl9exvI~GsugO20Bu33Sfc9WxShzAhn6q5pa3fCjaE9RR7Sh-3uTq1LeLgN8kcXcd5PJ66W1fnw2pzwrQirQ6Ucvs3LZItJnWM7C9~PyRe3fMCHcmqGDSI40Vwre-ooNxDHq~g7Taenh0EXa~JSHHCp46lzTq9jc~bTgi-GzMmZ1FJZQhFXVm~Hk-AB1JkQnAOY~DfwuU-mkSHomAuiQaqiO83ug6xKskeJ7dLhZRdYykmnqBB6SBUvia9zEpDmKKgfcod50vQ4IR5WVyf9OIe0J7~opSj0bCGF-HQbcRrkwSps7WR0G6OWI0M05F-EExN-ORiuDO-tqtzQ__" alt="" className='mx-auto w-[286px] h-[220px]' style={{objectFit:"cover"}}/>
-                <div className="text-left mt-4">
-                  <h4 className="text-md text-center font-semibold">How does it work?</h4>
+                <div 
+  className="relative"
+  style={{
+    backgroundImage: `url(${frameBgIMage})`,
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+  }}
+>
+  <img src={twoMenImage} alt="" className="mx-auto" style={{objectFit: "cover"}} />
+</div>
+
+                <div className="text-left">
+                  <h4 className="text-md text-center font-semibold mt-6">How does it work?</h4>
                   <p className="text-gray-600 text-center text-xs mt-1">
                   Invite your friends to join our inventory management platform and earn exclusive rewards for every successful referral. The more you share, the more you earn!
                 </p><br />

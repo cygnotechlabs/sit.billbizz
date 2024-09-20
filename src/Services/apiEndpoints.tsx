@@ -39,6 +39,7 @@ GET_ALL_ITEM:"get-all-item",
   Add_NEW_Journel: "add-journal-entry",
   GET_ALL_JOURNALS: "get-all-journal",
   Add_NEW_ACCOUNT: "add-account",
+  GET_ONE_TRIAL_BALANCE:"get-one-trial-balance",
 
   // Customer
   GET_ALL_CUSTOMER: "get-all-customer",
