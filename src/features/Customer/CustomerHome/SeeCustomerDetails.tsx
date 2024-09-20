@@ -141,7 +141,7 @@ console.log(customerData);
               </p>
               <div className="flex items-center mt-3">
                 <img
-                  src="https://s3-alpha-sig.figma.com/img/a028/8907/fef415dd8f2188e586883af38bed1558?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=nZ7oGkkq0tHpxEYBFp5mdRE0FOSRzXGZOjngXWn03e1-rHgmwZLnHVfd1dWC0Tk45bsST2Pl5d5km9D7h~MOHw6-S~GQJISN7JD78tTHB-FZXEvDQpLLXQj5E1ME4VMiHgtjv4VzoB6WAw2PbN1loPE6eXA9ACX76Qy6-NCAa3Xdm2i2~TjaRAAdDAhJN1htZYRZs-RUPjKD5DjUnzVYUwuc-MoSOBLn4Xj9X1To792JpsZW1zetVmexKz0ck2ZlFsXNmwKXWCSzEFUNXjC~fZfgWUUpZBxUHkkE5rq~jboBM1iCK1Dz-o81Ph7SFjzB36q2QjRLuUxdIjBi1TUJWg__"
+                src="https://i.postimg.cc/05XQMpkS/Ellipse-2.png"
                   alt="Profile"
                   className="w-8 h-8 object-cover rounded-full mr-3"
                 />
@@ -232,9 +232,9 @@ console.log(customerData);
               <p className="font-bold text-textColor  px-5 border-e pe-5 border-e-textColor ">
               <span className="font-medium"> Company Name : </span> {customerData.companyName}
               </p>
-              <p className="font-bold text-textColor  px-5 ">
+              {/* <p className="font-bold text-textColor  px-5 ">
               <span className="font-medium"> Opening Balance : </span> 
-              </p>
+              </p> */}
 
               {
                <div className=" w-[33.6%] ml-auto">

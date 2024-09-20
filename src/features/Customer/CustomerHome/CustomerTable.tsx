@@ -17,7 +17,7 @@ interface Column {
 
 const Table = () => {
   const initialColumns: Column[] = [
-    { id: "billingAttention", label: "Name", visible: true },
+    { id: "customerDisplayName", label: "Name", visible: true },
     { id: "companyName", label: "Company Name", visible: true },
     { id: "mobile", label: "Contact", visible: true },
     { id: "customerEmail", label: "Email", visible: true },
