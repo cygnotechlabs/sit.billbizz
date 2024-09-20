@@ -60,7 +60,11 @@ const SupplierTable = () => {
       console.error("Error fetching suppliers:", error);
     }
   };
- 
+  const activeSort=()=>{
+    setSupplierData(supplierData.filter((item:any)=>(
+      item.status=='Active'
+    )))
+  }
   useEffect(() => {
     fetchAllSuppliers();
   }, [supplierResponse]);
@@ -68,7 +72,7 @@ const SupplierTable = () => {
   const filteredAccounts = supplierData.filter((account) => {
     const searchValueLower = searchValue.toLowerCase();
     return (
-      account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
+      // account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
       account.companyName.toLowerCase().startsWith(searchValueLower) ||
       account.mobile.toLowerCase().startsWith(searchValueLower) ||
       account.supplierEmail.toLowerCase().startsWith(searchValueLower) ||
