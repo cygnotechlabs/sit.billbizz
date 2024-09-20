@@ -34,8 +34,7 @@ const organizationSchema = new Schema({
   dateFormat: { type: String },
   dateFormatExp: { type: String },
   dateSplit: { type: String },
-
-  phoneNumberCode: { type: String },  
+ 
 
 }, { versionKey: false }); 
 
