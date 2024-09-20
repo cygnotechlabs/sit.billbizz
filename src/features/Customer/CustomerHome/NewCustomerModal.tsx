@@ -529,7 +529,7 @@ const NewCustomerModal = ({ page }: Props) => {
     if (taxPreference === "Tax Exempt") {
       setCustomerData((prevData:any) => ({
         ...prevData,
-        taxType: null
+        taxType: "none"
       }));
     }
   }, [taxPreference]);

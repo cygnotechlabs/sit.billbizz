@@ -9,7 +9,6 @@ import cardBackground from "../../../assets/Images/Frame 629314.png";
 import MailIcon from "../../../assets/icons/MailIcon";
 import PhoneIcon from "../../../assets/icons/PhoneIcon";
 import Button from "../../../Components/Button";
-import Pen from "../../../assets/icons/Pen";
 import Vector from "../../../assets/icons/Vector";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
@@ -80,6 +79,7 @@ function SeeCustomerDetails({}: Props) {
   ];
 
   
+console.log(customerData);
 
 
   const handleStatusSubmit = async (e: ChangeEvent<HTMLSelectElement>) => {
@@ -95,7 +95,7 @@ function SeeCustomerDetails({}: Props) {
     try {
       const { response, error } = await updateCustomerStatus(url, {
         ...statusData,
-        status: value, // Pass the updated status value here
+        status: value,
       });
       if (!error && response) {
         toast.success(response.data.message);
@@ -229,8 +229,11 @@ function SeeCustomerDetails({}: Props) {
               <p className="font-bold text-textColor border-e pe-5 border-e-textColor">
               <span className="font-medium"> Customer Name : </span>{customerData?.customerDisplayName}
               </p>
-              <p className="font-bold text-textColor  px-5 ">
+              <p className="font-bold text-textColor  px-5 border-e pe-5 border-e-textColor ">
               <span className="font-medium"> Company Name : </span> {customerData.companyName}
+              </p>
+              <p className="font-bold text-textColor  px-5 ">
+              <span className="font-medium"> Opening Balance : </span> 
               </p>
 
               {
@@ -281,7 +284,7 @@ function SeeCustomerDetails({}: Props) {
                 <div className="flex w-full p-2">
                   <p className="font-bold">Billing Address</p>
                   <div className="ml-auto">
-                    <Pen color={"#303F58"} />
+                  <EditCustomerModal addressEdit="billingAddressEdit" customerDataPorps={customerData}/>
                   </div>
                 </div>
                 <div className=" text-xs p-2">
@@ -300,7 +303,8 @@ function SeeCustomerDetails({}: Props) {
                 <div className="flex w-full p-2 ">
                   <p className="font-bold">Shipping Address</p>
                   <div className="ml-auto">
-                    <Pen color={"#303F58"} />
+                    <EditCustomerModal addressEdit="shippingAddressEdit" customerDataPorps={customerData}/>
+                    {/* <Pen color={"#303F58"} /> */}
                   </div>
                 </div>
                 <div className=" text-xs  p-2">
