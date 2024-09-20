@@ -53,11 +53,11 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
   const filteredAccounts = customerData.filter((account) => {
     const searchValueLower = searchValue.toLowerCase();
     return (
-      // account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
-      // account.companyName.toLowerCase().startsWith(searchValueLower) ||
-      // account.mobile.toLowerCase().startsWith(searchValueLower) ||
-      // account.customerEmail.toLowerCase().startsWith(searchValueLower) ||
-      account.placeOfSupply.toLowerCase().startsWith(searchValueLower)
+      account?.billingAttention?.toLowerCase().startsWith(searchValueLower) ||
+      account?.companyName?.toLowerCase().startsWith(searchValueLower) ||
+      account?.mobile?.toLowerCase().startsWith(searchValueLower) ||
+      account?.customerEmail?.toLowerCase().startsWith(searchValueLower) ||
+      account?.customerDisplayName?.toLowerCase().startsWith(searchValueLower)
     );
   });
 
@@ -98,7 +98,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
           <Print />
         </div>
       </div>
-      <div className="overflow-x-auto mt-3">
+      <div className="overflow-x-auto mt-3 h-96 hide-scrollbar">
         <table className="min-w-full bg-white mb-5">
           <thead className="text-[12px] text-center text-dropdownText">
             <tr style={{ backgroundColor: "#F9F7F0" }}>

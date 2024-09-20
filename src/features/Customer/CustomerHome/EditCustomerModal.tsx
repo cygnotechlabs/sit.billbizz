@@ -464,21 +464,13 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
       const apiResponse = await getOrganization(url, {
         organizationId: "INDORG0001",
       });
-      console.log(apiResponse,"get one organization");
       
       const{response,error}=apiResponse
 
       if (!error && response?.data) {
         setOneOrganization(response.data);
-        console.log(response.data,"org");
-        setCustomerData((preData) => ({
-          ...preData,
-          billingCountry: response.data.organizationCountry,
-          billingState: response.data.state,
-          shippingCountry: response.data.organizationCountry,
-          shippingState: response.data.state,
-          currency: response.data.baseCurrency,
-        }));
+        // console.log(response.data,"org");
+      
       }
     } catch (error) {
       console.error("Error fetching organization:", error);
@@ -488,18 +480,19 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
     getOneOrganization()
   },[])
   
-  // console.log(oneOrganization,"oneOrg");
+  useEffect(()=>{
+    handleplaceofSupply()
+  },[getOneOrganization])
   
    
   useEffect(() => {
-    handleplaceofSupply()
     getAdditionalData();
     if (customerDataPorps) {
       setCustomerData(customerDataPorps);
       setRows(customerDataPorps.contactPerson || []);
       setSelected(customerDataPorps.customerType);
     }
-  }, [customerDataPorps,getOneOrganization]);
+  }, [customerDataPorps]);
 
   return (
     <div>
@@ -622,8 +615,7 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                       onChange={handleChange}
                     
                     >
-                      <option value="">Value</option>
-                      <option value="Mr.">Mr.</option>
+                      <option defaultChecked value="Mr.">Mr.</option>
                       <option value="Mrs.">Mrs.</option>
                       <option value="Ms.">Ms.</option>
                       <option value="Dr.">Dr.</option>
@@ -685,23 +677,22 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                         if (value && !/^[A-Za-z\s]+$/.test(value)) {
                           setErrors((prevErrors) => ({
                             ...prevErrors,
-                            companyName: true,
+                            lastName: true,
                           }));
                         } else {
                           setErrors((prevErrors) => ({
                             ...prevErrors,
-                            companyName: false,
+                            lastName: false,
                           }));
                         }
                       }}
                     />
-  
-                    {errors.companyName &&
-                      customerdata.companyName.length > 0 && (
-                        <div className="text-red-800 text-xs ms-2 mt-1">
-                          Please enter a valid Company Name (letters only).
-                        </div>
-                      )}
+
+                    {errors.lastName && customerdata.lastName.length > 0 && (
+                      <div className="text-red-800 text-xs ms-2 mt-1">
+                        Please enter a valid Last name (letters only).
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -715,8 +706,29 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                     className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Company Name"
                     value={customerdata.companyName}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      handleChange(e);
+                      if (value && !/^[A-Za-z\s]+$/.test(value)) {
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          companyName: true,
+                        }));
+                      } else {
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          companyName: false,
+                        }));
+                      }
+                    }}
                   />
+
+                  {errors.companyName &&
+                    customerdata.companyName.length > 0 && (
+                      <div className="text-red-800 text-xs ms-2 mt-1">
+                        Please enter a valid Company Name (letters only).
+                      </div>
+                    )}
                 </div>
                 <div>
                   <label htmlFor="companyName">Customer Display Name </label>
@@ -727,8 +739,29 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                     className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Display Name"
                     value={customerdata.customerDisplayName}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      handleChange(e);
+                      if (!value || !/^[A-Za-z\s]+$/.test(value)) {
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          customerDisplayName: true,
+                        }));
+                      } else {
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          customerDisplayName: false,
+                        }));
+                      }
+                    }}
                   />
+
+                  {errors.customerDisplayName &&
+                    customerdata.customerDisplayName.length > 0 && (
+                      <div className="text-red-800 text-xs ms-2 mt-1">
+                        Please enter a valid Company Name (letters only).
+                      </div>
+                    )}
                 </div>
                 <div>
                   <label htmlFor="">Customer Email</label>
@@ -763,7 +796,7 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                     )}
                 </div>
                 <div>
-                  <label htmlFor="">Card Number</label>
+                  <label htmlFor="">Membership Card Number</label>
                   <input
                     type="text"
                     className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
@@ -1156,7 +1189,7 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                         </div>
                       </div>
 
-                      {/* {customerdata.taxPreference == "Taxable" && ( */}
+                      {taxPreference == "Taxable" && (
                         <>
                           {gstOrVat.taxType === "GST" && (
                             <div>
@@ -1317,7 +1350,7 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
                             </div>
                           )}
                         </>
-                      {/* )}  */}
+                       )} 
                       {taxPreference === "Tax Exempt" && (
                         <div>
                           <label className="block mb-1">Exemption Reason</label>
@@ -1582,7 +1615,7 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
           <input
             className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
             placeholder="Street 1"
-            name="shippingAddressLine1"
+            name="shippingAddress1"
             value={customerdata.shippingAddress1}
             onChange={handleChange}
           />
@@ -1591,8 +1624,8 @@ const EditCustomerModal = ({customerDataPorps}: Props) => {
           <input
             className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2 leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
             placeholder="Street 2"
-            name="shippingAddressLine2"
-            value={customerdata.shippingAddress2}
+            name="shippingAddress1"
+            value={customerdata.shippingAddress1}
             onChange={handleChange}
           />
         </div>
