@@ -479,7 +479,7 @@ exports.addCustomer = async (req, res) => {
   
   let description;
   if(taxType="GST" && gstTreatment && gstin_uin && placeOfSupply){
-    description=` ${customerDisplayName} Contact created with GST Treatment '${gstTreatment}' & GSTIN '${gstin_uin}'. 
+    description=` ${customerDisplayName} Contact created with GST Treatment '${gstTreatment}' & GSTIN '${gstin_uin}'.
 State updated to ${placeOfSupply}.
 Created by ${userName}`;
   }
@@ -1159,6 +1159,9 @@ exports.getCustomerAdditionalData = async (req, res) => {
   }
 };
 
+
+
+
 //Get One Customer History for a given organizationId
 exports.getOneCustomerHistory = async (req, res) => {
   try {
@@ -1174,9 +1177,9 @@ exports.getOneCustomerHistory = async (req, res) => {
     }
 
     // Find the Customer History by CustomerId and organizationId
-    const customersHistory = await CustomerHistory.findOne({
-      _id: customerId,
-      organizationId: organizationId,
+    const customersHistory = await CustomerHistory.find({
+      customerId,
+      organizationId,
     });
 
     if (!customersHistory) {
