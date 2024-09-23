@@ -9,25 +9,31 @@ const key = Buffer.from(process.env.ENCRYPTION_KEY, 'utf8');
 const iv = Buffer.from(process.env.ENCRYPTION_IV, 'utf8'); 
 
 function encrypt(text) {
-    try {
-        const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-        let encrypted = cipher.update(text, 'utf8', 'hex');
-        encrypted += cipher.final('hex');
-        return `${iv.toString('hex')}:${encrypted}`;
-    } catch (error) {
-        console.error("Encryption error:", error);
-        throw error;
-    }
+  try {
+      const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+      let encrypted = cipher.update(text, 'utf8', 'hex');
+      encrypted += cipher.final('hex');
+
+      const authTag = cipher.getAuthTag().toString('hex'); // Get authentication tag
+
+      return `${iv.toString('hex')}:${encrypted}:${authTag}`; // Return IV, encrypted text, and tag
+  } catch (error) {
+      console.error("Encryption error:", error);
+      throw error;
+  }
 }
 
 function decrypt(encryptedText) {
   try {
-      // Split the encrypted text to get the IV and the actual encrypted data
-      const [ivHex, encryptedData] = encryptedText.split(':');
+      // Split the encrypted text to get the IV, encrypted data, and authentication tag
+      const [ivHex, encryptedData, authTagHex] = encryptedText.split(':');
       const iv = Buffer.from(ivHex, 'hex');
+      const authTag = Buffer.from(authTagHex, 'hex');
 
       // Create the decipher with the algorithm, key, and IV
-      const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+      const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+      decipher.setAuthTag(authTag); // Set the authentication tag
+
       let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
       return decrypted;
@@ -89,13 +95,20 @@ exports.addAccount = async (req, res) => {
     };
 
     // Validate accountGroup, accountHead, and accountSubhead
-    if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
-      console.log("Invalid account group, head, or subhead.");
-      return res.status(400).json({
-        message: "Invalid account group, head, or subhead.",
-      });
+    // if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
+    //   console.log("Invalid account group, head, or subhead.");
+    //   return res.status(400).json({
+    //     message: "Invalid account group, head, or subhead.",
+    //   });
 
-    }
+    // }
+
+if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
+  console.log("Invalid account group, head, or subhead.");
+  return res.status(400).json({
+    message: "Invalid account group, head, or subhead.",
+  });
+}
 
     // Validate bank details if accountSubhead is "Bank"
     if (
@@ -305,13 +318,19 @@ exports.editAccount = async (req, res) => {
     };
 
     // Validate accountGroup, accountHead, and accountSubhead
-    if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
-      console.log("Invalid account group, head, or subhead.");
-      return res.status(400).json({
-        message: "Invalid account group, head, or subhead.",
-      });
+    // if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
+    //   console.log("Invalid account group, head, or subhead.");
+    //   return res.status(400).json({
+    //     message: "Invalid account group, head, or subhead.",
+    //   });
 
-    }
+    // }
+if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
+  console.log("Invalid account group, head, or subhead.");
+  return res.status(400).json({
+    message: "Invalid account group, head, or subhead.",
+  });
+}
 
     // Validate bank details if accountSubhead is "Bank"
     if (
@@ -323,8 +342,6 @@ exports.editAccount = async (req, res) => {
       });
     }
 
-    const generatedDateTime = generateTimeAndDateForDB(existingOrganization.timeZoneExp, existingOrganization.dateFormatExp, existingOrganization.dateSplit);
-    const openingDate = generatedDateTime.dateTime;
 
     // Check if an account with the given organizationId and accountId exists
     const account = await Account.findOne({

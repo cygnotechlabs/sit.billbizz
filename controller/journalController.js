@@ -166,7 +166,6 @@ exports.addJournalEntry = async (req, res) => {
 exports.getAllJournal = async (req, res) => {
     try {
         const { organizationId } = req.body;
-        // console.log(organizationId);
 
         // Find all accounts where organizationId matches
         const journal = await Journal.find({ organizationId:organizationId });

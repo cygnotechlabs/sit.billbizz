@@ -16,7 +16,7 @@ server.use(express.json())
 
 server.use(accountRouter)
 
-PORT = 5001
+const PORT = process.env.PORT || 5001;
 
 server.get('/',(req,res)=>{
     res.status(200).json("Bill BIZZ server started - Accounts")
