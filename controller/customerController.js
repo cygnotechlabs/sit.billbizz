@@ -758,6 +758,21 @@ exports.editCustomer = async (req, res) => {
 
     const { organizationExists, taxExists, currencyExists } = await dataExist(organizationId);
     
+    if (!organizationExists) {
+      return res.status(404).json({
+        message: "Organization not found",
+      });
+    }
+  if (!taxExists) {
+    return res.status(404).json({
+      message: "Tax not found",
+    });
+  }
+  if (!currencyExists.length) {
+    return res.status(404).json({
+      message: "Currency not found",
+    });
+  }
 
     const generatedDateTime = generateTimeAndDateForDB(
       organizationExists.timeZoneExp,
@@ -1356,7 +1371,7 @@ function validateCustomerData(data) {
   if (data.billingFaxNumber !== undefined && !isInteger(data.billingFaxNumber))
     errors.push(`Invalid Billing Fax Number: ${data.billingFaxNumber}`);
 
-  if (data.shippingState !== undefined && !validCountries[data.shippingCountry]?.includes(data.shippingState))
+  if (data.shippingCountry !== undefined && data.shippingState !== undefined && !validCountries[data.shippingCountry]?.includes(data.shippingState))
     errors.push(
       `Invalid Shipping Country or State: ${data.shippingCountry}, ${data.shippingState}`
     );
