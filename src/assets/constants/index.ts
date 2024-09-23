@@ -310,6 +310,16 @@ export const newPurchaseOrderTableHead = [
   "Actions",
 ];
 
+
+export const PaymentMadeUnpaidBillTable=[
+  "Date",
+  "Due Date", 
+  "Bill ID", 
+"Bill Amount",
+"Amount Due", 
+"Payment",
+];
+
 export const bankAccountviewTableHaed = [
   "Date",
   "Transaction Details",
