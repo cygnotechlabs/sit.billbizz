@@ -1,47 +1,7 @@
 const Organization = require("../database/model/organization")
 const Settings = require("../database/model/settings")
 
-// exports.addItemSettings = async (req, res) => {
-//     console.log("Add Settings",req.body);
-//     const {
-//         itemDecimal,
-//         itemDimensions,
-//         itemWeights,
-//         barcodeScan,
-//         itemDuplicateName,
-//         hsnSac,
-//         hsnDigits,
-//         priceList,
-//         priceListAtLineLevel,
-//         compositeItem,
-//         stockBelowZero,
-//         outOfStockBelowZero,
-//         notifyReorderPoint,
-//         trackCostOnItems
-//     }= req.body
-//     try {
-        
-//        // Check if an Organization already exists
-//        const existingOrganization = await Organization.findOne({ organizationId });
-    
-//        if (!existingOrganization) {
-//        return res.status(404).json({
-//            message: "No Organization Found.",
-//        });
-//        }  
 
-//        // Check if an Organization already exists
-//        const settings = await Organization.findOne({ organizationId });
-    
-//        if (!existingOrganization) {
-//        return res.status(404).json({
-//            message: "No Organization Found.",
-//        });
-//        } 
-//     } catch (error) {
-        
-//     }
-// }
 
 exports.addItemSettings = async (req, res) => {
     try {
@@ -85,23 +45,3 @@ exports.addItemSettings = async (req, res) => {
     }
   };
 
-// Get all Settings
-// exports.getItemSettings = async (req, res) => {
-//     const { organizationId } = req.body;
-//     try {
-//         // Check if an Organization already exists
-//         const existingOrganization = await Organization.findOne({ organizationId });
-    
-//         if (!existingOrganization) {
-//         return res.status(404).json({
-//             message: "No Organization Found.",
-//         });
-//         }
-//         const settings = await Settings.find({ organizationId })
-//         res.status(200).json(settings);
-        
-//     } catch (error) {
-//         console.error("Error fetching Items:", error);
-//         res.status(500).json({ message: "Internal server error." });
-//     }
-// };
