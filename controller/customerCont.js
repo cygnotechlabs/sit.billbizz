@@ -18,6 +18,10 @@ const dataExist = async (organizationId) => {
     return { organizationExists, taxExists, currencyExists, allCustomer };
   };
   
+
+
+
+
   // Add Customer
   exports.addCustomer = async (req, res) => {
     console.log("Add Customer:", req.body);
@@ -50,10 +54,6 @@ const dataExist = async (organizationId) => {
       res.status(500).json({ message: "Internal server error." });
     }
   };
-  
-
-
-
 
   // Edit Customer
 exports.editCustomer = async (req, res) => {
@@ -130,7 +130,193 @@ exports.editCustomer = async (req, res) => {
     }
   };
 
-  
+  // Get All Customer for a given organizationId
+exports.getAllCustomer = async (req, res) => {
+  try {
+    const { organizationId } = req.body;
+
+    const { organizationExists, allCustomer } = await dataExist(organizationId);
+
+    if (!organizationExists) {
+      return res.status(404).json({
+        message: "Organization not found",
+      });
+    }
+
+    if (!allCustomer.length) {
+      return res.status(404).json({
+        message: "No Customer found",
+      });
+    }
+
+    res.status(200).json(allCustomer);
+  } catch (error) {
+    console.error("Error fetching customer:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+//Get one Customer for a given organizationId
+exports.getOneCustomer = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const { organizationId } = req.body;
+
+    const {organizationExists} = await dataExist(organizationId);
+
+    if (!organizationExists) {
+      return res.status(404).json({
+        message: "Organization not found",
+      });
+    }
+
+    // Find the Customer by CustomerId and organizationId
+    const customers = await Customer.findOne({
+      _id: customerId,
+      organizationId: organizationId,
+    });
+
+    if (!customers) {
+      return res.status(404).json({
+        message: "Customer not found",
+      });
+    }
+
+    res.status(200).json(customers);
+  } catch (error) {
+    console.error("Error fetching customer:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Update the status of a Customer based on the provided status value
+exports.updateCustomerStatus = async (req, res) => {
+  console.log("Update Customer Status:", req.body);
+  try {
+    const { customerId } = req.params;
+    const { organizationId, status } = req.body; // Status is now taken from the request body
+
+    // Validate organizationId
+    const organizationExists = await Organization.findOne({
+      organizationId: organizationId,
+    });
+    if (!organizationExists) {
+      return res.status(404).json({
+        message: "Organization not found",
+      });
+    }
+
+    // Check if the customer exists
+    const customer = await Customer.findOne({
+      _id: customerId,
+      organizationId: organizationId,
+    });
+    if (!customer) {
+      return res.status(404).json({
+        message: "Customer not found",
+      });
+    }
+
+    // Update the customer status with the value provided by the frontend
+    customer.status = status;
+
+    // Save the updated customer
+    await customer.save();
+
+    res.status(200).json({
+      message: "Customer status updated successfully.",
+      status: customer.status,
+    });
+    console.log("Customer status updated successfully.");
+  } catch (error) {
+    console.error("Error updating customer status:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Customer Additional data
+exports.getCustomerAdditionalData = async (req, res) => {
+  const { organizationId } = req.body;
+
+  try {
+    // Check if an Organization already exists
+    const organization = await Organization.findOne({ organizationId });
+    if (!organization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+
+    // Fetch tax data to check tax type
+    const taxData = await Tax.findOne({ organizationId });
+    if (!taxData) {
+      return res.status(404).json({
+        message: "No tax data found for the organization.",
+      });
+    }
+
+    // Prepare the response object
+    const response = {
+      taxType: taxData.taxType,
+      gstTreatment: [
+        "Registered Business - Regular",
+        "Registered Business - Composition",
+        "Unregistered Business",
+        "Consumer",
+        "Overseas",
+        "Special Economic Zone",
+        "Deemed Export",
+        "Tax Deductor",
+        "SEZ Developer",
+      ],
+    };
+
+    // Return the combined response data
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error("Error fetching customer additional data:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+//Get One Customer History for a given organizationId
+exports.getOneCustomerHistory = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const { organizationId } = req.body;
+
+    const {organizationExists} = await dataExist(organizationId);
+
+    if (!organizationExists) {
+      return res.status(404).json({
+        message: "Organization not found",
+      });
+    }
+
+    // Find the Customer History by CustomerId and organizationId
+    const customersHistory = await CustomerHistory.find({
+      customerId,
+      organizationId,
+    });
+
+    if (!customersHistory) {
+      return res.status(404).json({
+        message: "Customer History not found",
+      });
+    }
+
+    res.status(200).json(customersHistory);
+  } catch (error) {
+    console.error("Error fetching customer:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
+
+
+
+
 
 
 
@@ -349,88 +535,76 @@ exports.editCustomer = async (req, res) => {
   
   function validateCustomerData(data, validCurrencies, validTaxTypes, organization) {
     const errors = [];
-    // Extract individual validations to separate functions for clarity
+    
     validateBasicInfo(data, errors);
     validateOtherDetails(data, errors);
     validateTaxDetails(data, validTaxTypes, organization, errors);
     validateCurrency(data.currency, validCurrencies, errors);
     validateAddresses(data, organization, errors);
+  
     return errors;
+  }
+
+  function validateField(condition, errorMsg, errors) {
+    if (condition) errors.push(errorMsg);
   }
 
 
   function validateBasicInfo(data, errors) {
-    if (data.customerType && !validCustomerTypes.includes(data.customerType)) errors.push(`Invalid customer type: ${data.customerType}`);
-    if (data.salutation && !validSalutations.includes(data.salutation)) errors.push(`Invalid salutation: ${data.salutation}`);
-    if (data.firstName && !isAlphabets(data.firstName)) errors.push("First Name should contain only alphabets.");
-    if (data.lastName && !isAlphabets(data.lastName)) errors.push("Last Name should contain only alphabets.");
-    if (data.customerEmail && !isValidEmail(data.customerEmail)) errors.push(`Invalid email: ${data.customerEmail}`);
-    if (data.workPhone && !isInteger(data.workPhone)) errors.push(`Work Phone should contain only digits: ${data.workPhone}`);
-    if (data.mobile && !isInteger(data.mobile)) errors.push(`Mobile should contain only digits: ${data.mobile}`);
-    if (data.cardNumber && !isInteger(data.cardNumber)) errors.push(`Invalid card number: ${data.cardNumber}`);
-
-}
+    validateField(data.customerType && !validCustomerTypes.includes(data.customerType), `Invalid customer type: ${data.customerType}`, errors);
+    validateField(data.salutation && !validSalutations.includes(data.salutation), `Invalid salutation: ${data.salutation}`, errors);
+    ['firstName', 'lastName'].forEach(name => {
+      validateField(data[name] && !isAlphabets(data[name]), `${name.charAt(0).toUpperCase() + name.slice(1)} should contain only alphabets.`, errors);
+    });
+    validateField(data.customerEmail && !isValidEmail(data.customerEmail), `Invalid email: ${data.customerEmail}`, errors);
+    ['workPhone', 'mobile', 'cardNumber'].forEach(phone => {
+      validateField(data[phone] && !isInteger(data[phone]), `${phone.charAt(0).toUpperCase() + phone.slice(1)} should contain only digits: ${data[phone]}`, errors);
+    });
+  }
   
-  function validateOtherDetails(data, errors) {    
-    if (data.pan && !isAlphanumeric(data.pan)) errors.push(`Invalid PAN: ${data.pan}`);
-    if (data.creditDays && !isInteger(data.creditDays)) errors.push(`Invalid Credit Days: ${data.creditDays}`);
-    if (data.creditLimits && !isInteger(data.creditLimits)) errors.push(`Invalid Credit Limits: ${data.creditLimits}`);
-    if (data.interestPercentage && !isInteger(data.interestPercentage)) errors.push(`Invalid Interest Percentage: ${data.interestPercentage}`);
-    if (data.debitOpeningBalance && !isFloat(data.debitOpeningBalance)) errors.push(`Invalid Debit Opening Balance: ${data.debitOpeningBalance}`);
-    if (data.creditOpeningBalance && !isFloat(data.creditOpeningBalance)) errors.push(`Invalid Credit Opening Balance: ${data.creditOpeningBalance}`);
-    if (data.department !== undefined && !isAlphabets(data.department)) errors.push("Department should contain only alphabets.");
-    if (data.designation !== undefined && !isAlphabets(data.designation)) errors.push("Designation should contain only alphabets.");
-}
+  function validateOtherDetails(data, errors) {
+    ['pan', 'creditDays', 'creditLimits', 'interestPercentage'].forEach(field => {
+      validateField(data[field] && !isAlphanumeric(data[field]), `Invalid ${field}: ${data[field]}`, errors);
+    });
+    ['debitOpeningBalance', 'creditOpeningBalance'].forEach(balance => {
+      validateField(data[balance] && !isFloat(data[balance]), `Invalid ${balance.replace(/([A-Z])/g, ' $1')}: ${data[balance]}`, errors);
+    });
+    ['department', 'designation'].forEach(field => {
+      if (data[field] !== undefined) validateField(!isAlphabets(data[field]), `${field.charAt(0).toUpperCase() + field.slice(1)} should contain only alphabets.`, errors);
+    });
+  }
   
   function validateTaxDetails(data, validTaxTypes, organization, errors) {
-    if (data.taxType && !validTaxTypes.includes(data.taxType)) errors.push(`Invalid Tax Type: ${data.taxType}`);
-    if (data.placeOfSupply && !validCountries[organization.organizationCountry].includes(data.placeOfSupply)) {
+    validateField(data.taxType && !validTaxTypes.includes(data.taxType), `Invalid Tax Type: ${data.taxType}`, errors);
+    
+    if (data.placeOfSupply && !validCountries[organization.organizationCountry]?.includes(data.placeOfSupply)) {
       errors.push(`Invalid Place of Supply: ${data.placeOfSupply}`);
     }
-    if (data.taxType === "GST") {
-        if (data.gstTreatment  && !validGSTTreatments.includes(data.gstTreatment)) {
-            errors.push( `Invalid GST treatment: ${data.gstTreatment}` );
-        }
   
-        if (data.gstin_uin  && !isAlphanumeric(data.gstin_uin)) {
-          errors.push( `Invalid GSTIN/UIN: ${data.gstin_uin}` );
-        }
-      } else if (data.taxType === "VAT") {
-        if (data.vatNumber  && !isAlphanumeric(data.vatNumber)) {
-          errors.push( `Invalid VAT number: ${data.vatNumber}` );
-        }
-      } else if (data.taxType === "None") {
-        data.gstTreatment = undefined;
-        data.gstin_uin = undefined;
-        data.vatNumber = undefined;
-        data.placeOfSupply = undefined;
-      }
+    if (data.taxType === "GST") {
+      validateField(data.gstTreatment && !validGSTTreatments.includes(data.gstTreatment), `Invalid GST treatment: ${data.gstTreatment}`, errors);
+      validateField(data.gstin_uin && !isAlphanumeric(data.gstin_uin), `Invalid GSTIN/UIN: ${data.gstin_uin}`, errors);
+    } else if (data.taxType === "VAT") {
+      validateField(data.vatNumber && !isAlphanumeric(data.vatNumber), `Invalid VAT number: ${data.vatNumber}`, errors);
+    } else if (data.taxType === "None") {
+      ['gstTreatment', 'gstin_uin', 'vatNumber', 'placeOfSupply'].forEach(field => data[field] = undefined);
+    }
   }
   
   function validateCurrency(currency, validCurrencies, errors) {
-    if (currency && !validCurrencies.includes(currency)) errors.push(`Invalid Currency: ${currency}`);
+    validateField(currency && !validCurrencies.includes(currency), `Invalid Currency: ${currency}`, errors);
   }
   
   function validateAddresses(data, organization, errors) {
-    if (data.billingCountry && data.billingState && !validCountries[data.billingCountry]?.includes(data.billingState)) {
-      errors.push(`Invalid Billing Country or State: ${data.billingCountry}, ${data.billingState}`);
-    }
-    if (data.billingPinCode  && !isInteger(data.billingPinCode))
-        errors.push(`Invalid Billing Pin Code: ${data.billingPinCode}`);
-      if (data.billingPhone  && !isInteger(data.billingPhone))
-        errors.push(`Invalid Billing Phone: ${data.billingPhone}`);
-      if (data.billingFaxNumber  && !isInteger(data.billingFaxNumber))
-        errors.push(`Invalid Billing Fax Number: ${data.billingFaxNumber}`);
-    
-      if (data.shippingCountry  && data.shippingState  && !validCountries[data.shippingCountry]?.includes(data.shippingState))
-        errors.push( `Invalid Shipping Country or State: ${data.shippingCountry}, ${data.shippingState}`
-        );
-      if (data.shippingPinCode  && !isInteger(data.shippingPinCode))
-        errors.push(`Invalid Shipping Pin Code: ${data.shippingPinCode}`);
-      if (data.shippingPhone  && !isInteger(data.shippingPhone))
-        errors.push(`Invalid Shipping Phone: ${data.shippingPhone}`);
-      if (data.shippingFaxNumber  && !isInteger(data.shippingFaxNumber))
-        errors.push(`Invalid Shipping Fax Number: ${data.shippingFaxNumber}`);
+    const fields = ['billing', 'shipping'];
+    fields.forEach(type => {
+      if (data[`${type}Country`] && data[`${type}State`] && !validCountries[data[`${type}Country`]]?.includes(data[`${type}State`])) {
+        errors.push(`Invalid ${type.charAt(0).toUpperCase() + type.slice(1)} Country or State: ${data[`${type}Country`]}, ${data[`${type}State`]}`);
+      }
+      ['PinCode', 'Phone', 'FaxNumber'].forEach(field => {
+        validateField(data[`${type}${field}`] && !isInteger(data[`${type}${field}`]), `Invalid ${type.charAt(0).toUpperCase() + type.slice(1)} ${field.replace(/([A-Z])/g, ' $1')}: ${data[`${type}${field}`]}`, errors);
+      });
+    });
   }
   
   // Function to generate time and date for storing in the database
@@ -471,22 +645,4 @@ function generateTimeAndDateForDB(
 
 
 
-  function isAlphabets(value) {
-    return /^[A-Za-z\s]+$/.test(value);
-  }
   
-  function isFloat(value) {
-    return /^-?\d+(\.\d+)?$/.test(value);
-  }
-  
-  function isInteger(value) {
-    return /^[0-9]+$/.test(value);
-  }
-  
-  function isAlphanumeric(value) {
-    return /^[A-Za-z0-9]+$/.test(value);
-  }
-  
-  function isValidEmail(value) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  }
