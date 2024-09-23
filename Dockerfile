@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install the dependencies
 RUN npm install --production
 
+# Install aws-sdk to interact with AWS services (optional if not in package.json)
+RUN npm install aws-sdk
+
 # Copy the rest of the application code to the working directory
 COPY . .
 
