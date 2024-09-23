@@ -69,7 +69,7 @@ type CustomerData = {
     salutation: string;
     firstName: string;
     lastName: string;
-    customerEmail: string;
+    email: string;
     mobile: string;
   }[];
   remark: string;
@@ -116,7 +116,7 @@ const NewCustomerModal = ({ page }: Props) => {
   const [customerdata, setCustomerData] = useState<CustomerData>({
     organizationId: "INDORG0001",
     customerType: "",
-    salutation: "",
+    salutation: "Mr.",
     firstName: "",
     lastName: "",
     companyName: "",
@@ -169,7 +169,7 @@ const NewCustomerModal = ({ page }: Props) => {
         salutation: "",
         firstName: "",
         lastName: "",
-        customerEmail: "",
+        email: "",
         mobile: "",
       },
     ],
@@ -209,7 +209,7 @@ const NewCustomerModal = ({ page }: Props) => {
       salutation: row.salutation,
       firstName: row.firstName,
       lastName: row.lastName,
-      customerEmail: row.email,
+      email: row.email,
       mobile: row.mobile,
     }));
 
@@ -232,9 +232,11 @@ const NewCustomerModal = ({ page }: Props) => {
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, type, value } = e.target;
-    if (name == "companyName") {
+  
+    if (name === "companyName") {
       setCustomerData({ ...customerdata, customerDisplayName: value });
     }
+  
     if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
       setCustomerData((prevData) => ({
@@ -242,22 +244,17 @@ const NewCustomerModal = ({ page }: Props) => {
         [name]: checked,
       }));
     } else {
-      if(name!=='openingBalance'){
-
-      setCustomerData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+      if (name !== 'openingBalance') {
+        setCustomerData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+      }
     }
-        
-        
-    }
-
+  
     if (name === 'openingType') {
-      // Update openingType state first
       setOpeningtype(value);
   
-      // Update supplierData state based on the new openingType value
       if (value === 'Debit') {
         setCustomerData(prevData => ({
           ...prevData,
@@ -268,12 +265,11 @@ const NewCustomerModal = ({ page }: Props) => {
         setCustomerData(prevData => ({
           ...prevData,
           creditOpeningBalance: prevData.debitOpeningBalance,
-          debitOpeningBalance: "" // Clear debitOpeningBalance
+          debitOpeningBalance: ""
         }));
       }
     }
   
-    // Update openingBalance field
     if (name === 'openingBalance') {
       if (openingType === 'Credit') {
         setCustomerData(prevData => ({
@@ -287,8 +283,9 @@ const NewCustomerModal = ({ page }: Props) => {
         }));
       }
     }
-    
+  
   };
+  
 
   // get-------------------------------------------------------
   const getAdditionalData = async () => {
@@ -362,32 +359,33 @@ const NewCustomerModal = ({ page }: Props) => {
       const { response, error } = await getOrganization(url, {
         organizationId: "INDORG0001",
       });
-
+  
       if (!error && response?.data) {
         setOneOrganization(response.data);
-        console.log(response.data,"org");
+        console.log(response.data.organizationCountry, "org");
         setCustomerData((preData) => ({
           ...preData,
           billingCountry: response.data.organizationCountry,
           billingState: response.data.state,
-          shippingCountry: response.data.organizationCountry,
+          shippingCountry: response.data.organizationCountry, 
           shippingState: response.data.state,
           currency: response.data.baseCurrency,
+          placeOfSupply:response.data.state
         }));
       }
     } catch (error) {
       console.error("Error fetching organization:", error);
     }
   };
+  
 
   const handleplaceofSupply = () => {
     if (oneOrganization.organizationCountry) {
       const country = countryData.find(
         (c: any) =>
-          c.name.toLowerCase() ===
-          oneOrganization.organizationCountry.toLowerCase()
+          c.name.toLowerCase().trim() ===
+          oneOrganization.organizationCountry.toLowerCase().trim()
       );
-
       if (country) {
         const states = country.states;
         console.log("States:", states);
@@ -395,10 +393,6 @@ const NewCustomerModal = ({ page }: Props) => {
         
 
         setPlaceOfSupplyList(states);
-        setCustomerData((prevData) => ({
-          ...prevData,
-          placeOfSupply: oneOrganization.state,
-        }));
       } else {
         console.log("Country not found");
       }
@@ -510,7 +504,7 @@ const NewCustomerModal = ({ page }: Props) => {
               salutation: "",
               firstName: "",
               lastName: "",
-              customerEmail: "",
+              email: "",
               mobile: "",
             },
           ],
@@ -535,7 +529,7 @@ const NewCustomerModal = ({ page }: Props) => {
     if (taxPreference === "Tax Exempt") {
       setCustomerData((prevData:any) => ({
         ...prevData,
-        taxType: null
+        taxType: "none"
       }));
     }
   }, [taxPreference]);
@@ -565,9 +559,11 @@ console.log(customerdata);
   useEffect(() => {
     getAdditionalData();
     getOneOrganization();
-    handleplaceofSupply();
   }, []);
 
+  useEffect(() => {
+    handleplaceofSupply();
+  }, [getOneOrganization]);
   // console.log(customerdata);
 
   return (
@@ -712,7 +708,7 @@ console.log(customerdata);
                       value={customerdata.salutation}
                       onChange={handleChange}
                     >
-                      <option value="Mr.">Mr.</option>
+                      <option defaultChecked value="Mr.">Mr.</option>
                       <option value="Mrs.">Mrs.</option>
                       <option value="Ms.">Ms.</option>
                       <option value="Dr.">Dr.</option>
@@ -866,7 +862,7 @@ console.log(customerdata);
                   />
                 </div>
                 <div>
-                  <label htmlFor="cardNumber">Card Number</label>
+                  <label htmlFor="cardNumber">Membership Card Number</label>
                   <input
                     type="tel"
                     className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
@@ -1383,9 +1379,7 @@ console.log(customerdata);
                                     value={customerdata.placeOfSupply}
                                     onChange={handleChange}
                                   >
-                                    <option value="" className="text-gray">
-                                      Value
-                                    </option>
+                                   
                                     {placeOfSupplyList &&
                                       placeOfSupplyList.map(
                                         (item: any, index: number) => (

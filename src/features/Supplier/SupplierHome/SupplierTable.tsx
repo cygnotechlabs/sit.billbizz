@@ -54,13 +54,18 @@ const SupplierTable = () => {
       const { response, error } = await AllSuppliers(url, body);
       if (!error && response) {
         console.log(response.data);
+        
         setSupplierData(response.data);
       }
     } catch (error) {
       console.error("Error fetching suppliers:", error);
     }
   };
- 
+  // const activeSort=()=>{
+  //   setSupplierData(supplierData.filter((item:any)=>(
+  //     item.status=='Active'
+  //   )))
+  // }
   useEffect(() => {
     fetchAllSuppliers();
   }, [supplierResponse]);
@@ -68,7 +73,7 @@ const SupplierTable = () => {
   const filteredAccounts = supplierData.filter((account) => {
     const searchValueLower = searchValue.toLowerCase();
     return (
-      account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
+      // account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
       account.companyName.toLowerCase().startsWith(searchValueLower) ||
       account.mobile.toLowerCase().startsWith(searchValueLower) ||
       account.supplierEmail.toLowerCase().startsWith(searchValueLower) ||
@@ -116,7 +121,7 @@ const SupplierTable = () => {
       </div>
       <div className="overflow-x-auto mt-3">
         <table className="min-w-full bg-white mb-5">
-          <thead className="text-[12px] text-center text-dropdownText">
+          <thead className="text-[12px] text-center sticky text-dropdownText">
             <tr style={{ backgroundColor: "#F9F7F0" }}>
               <th className="py-3 px-4 border-b border-tableBorder">
                 <input type="checkbox" className="form-checkbox w-4 h-4" />
@@ -138,7 +143,7 @@ const SupplierTable = () => {
             </tr>
           </thead>
           <tbody className="text-dropdownText text-center text-[13px]">
-            {filteredAccounts.map((item) => (
+            {filteredAccounts.reverse().map((item) => (
               <tr key={item.id} className="relative">
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input type="checkbox" className="form-checkbox w-4 h-4" />

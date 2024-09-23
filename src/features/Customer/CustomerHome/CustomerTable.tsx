@@ -17,7 +17,7 @@ interface Column {
 
 const Table = () => {
   const initialColumns: Column[] = [
-    { id: "billingAttention", label: "Name", visible: true },
+    { id: "customerDisplayName", label: "Name", visible: true },
     { id: "companyName", label: "Company Name", visible: true },
     { id: "mobile", label: "Contact", visible: true },
     { id: "customerEmail", label: "Email", visible: true },
@@ -53,11 +53,11 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
   const filteredAccounts = customerData.filter((account) => {
     const searchValueLower = searchValue.toLowerCase();
     return (
-      // account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
-      // account.companyName.toLowerCase().startsWith(searchValueLower) ||
-      // account.mobile.toLowerCase().startsWith(searchValueLower) ||
-      // account.customerEmail.toLowerCase().startsWith(searchValueLower) ||
-      account.placeOfSupply.toLowerCase().startsWith(searchValueLower)
+      account?.billingAttention?.toLowerCase().startsWith(searchValueLower) ||
+      account?.companyName?.toLowerCase().startsWith(searchValueLower) ||
+      account?.mobile?.toLowerCase().startsWith(searchValueLower) ||
+      account?.customerEmail?.toLowerCase().startsWith(searchValueLower) ||
+      account?.customerDisplayName?.toLowerCase().startsWith(searchValueLower)
     );
   });
 
@@ -98,7 +98,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
           <Print />
         </div>
       </div>
-      <div className="overflow-x-auto mt-3">
+      <div className="overflow-x-auto mt-3 h-96 hide-scrollbar">
         <table className="min-w-full bg-white mb-5">
           <thead className="text-[12px] text-center text-dropdownText">
             <tr style={{ backgroundColor: "#F9F7F0" }}>
@@ -122,7 +122,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
             </tr>
           </thead>
           <tbody className="text-dropdownText text-center text-[13px]">
-            {filteredAccounts.map((item) => (
+            {filteredAccounts.reverse().map((item) => (
               <tr key={item._id} className="relative">
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input type="checkbox" className="form-checkbox w-4 h-4" />

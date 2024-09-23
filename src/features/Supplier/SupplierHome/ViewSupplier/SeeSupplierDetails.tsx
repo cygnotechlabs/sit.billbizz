@@ -15,6 +15,8 @@ import Overview from "./Overview";
 import Statement from "./Statement";
 import Transaction from "./Transaction";
 import toast from "react-hot-toast";
+import Button from "../../../../Components/Button";
+import Pen from "../../../../assets/icons/Pen";
 
 type Props = {};
 interface Status {
@@ -33,6 +35,15 @@ function SeeSupplierDetails({}: Props) {
     organizationId: "INDORG0001",
     status: "",
   });
+  const [isModalOpen, setModalOpen] = useState(false);
+  const openModal = () => {
+    setModalOpen((prev)=>!prev);
+  };
+
+  const closeModal = () => {
+    setModalOpen((prev)=>!prev);
+  };
+
   const handleTabSwitch = (tabName: string) => {
     setTabSwitch(tabName);
   };
@@ -98,8 +109,14 @@ function SeeSupplierDetails({}: Props) {
             </Link>
             <p className="text-textColor text-xl font-bold">Office Vendors</p>
           </div>
-          <div className="flex gap-3 items-center">
-            <EditSupplier supplier={supplier} />
+          <div className="flex gap-1 items-center">
+            <Button onClick={openModal} variant="secondary" className="pl-6 pr-6"  size="sm"><Pen size={18} color="#565148" /> <p className="text-sm font-medium">Edit</p></Button>
+            <EditSupplier 
+        isModalOpen={isModalOpen} 
+        openModal={openModal} 
+        closeModal={closeModal} 
+        supplier={supplier} 
+      />
             <select
                   id=""
                   className=" pl-6 pr-6 w-24 text-sm h-[40px]  flex items-center justify-center text-[#565148] ps-2 bg-[#FEFDFA] rounded-md border font-medium border-[#565148]"
