@@ -16,7 +16,6 @@ const bankDetailsSchema = new Schema({
     accountHolderName: {type:String},
     bankName: {type:String},
     accountNum: {type:String},
-    //reEnterAccountNumber:{type:String},
     ifscCode: {type:String},
 }, { _id: false });
  
@@ -32,16 +31,12 @@ const supplierSchema = new Schema({
     supplierDisplayName:{type:String},
     supplierEmail: {type:String},
     workPhone: {type:String},
-    mobile: {type:String},
-    createdDate: {type:String},
-    lastModifiedDate:{type:String},
-    
+    mobile: {type:String},     
 
 
     //Other Details
     pan: {type:String},
     currency: {type:String},
-    openingBalance: {type:String},
     paymentTerms: {type:String},
     tds: {type:String},
     creditDays :{type:Number},
@@ -95,6 +90,9 @@ const supplierSchema = new Schema({
 
     //Remark
     remarks: {type:String},
+
+    createdDate: {type:String},
+    lastModifiedDate:{type:String}, 
         
     //Status
     status: {type:String},
