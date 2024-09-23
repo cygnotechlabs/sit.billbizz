@@ -76,7 +76,7 @@ exports.addCurrency = async (req, res) => {
       baseCurrency:false
     });
 
-    const savedCurrency = await newCurrency.save();
+    await newCurrency.save();
 
     res.status(201).json("Currency added successfully");
   } catch (error) {
@@ -337,7 +337,7 @@ exports.addPaymentTerm = async (req, res) => {
       days
     });
 
-    const savedPaymentTerm = await newPaymentTerm.save();
+    await newPaymentTerm.save();
 
     res.status(201).json("Payment Term added successfully");
   } catch (error) {

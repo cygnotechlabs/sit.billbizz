@@ -600,7 +600,6 @@ exports.setupOrganization = async (req, res) => {
       city,
       pincode,
       state,
-      phoneNumberCode,
       organizationPhNum,
       website,
       baseCurrency,
@@ -622,7 +621,6 @@ exports.setupOrganization = async (req, res) => {
     city = cleanData(city);
     pincode = cleanData(pincode);
     state = cleanData(state);
-    phoneNumberCode = cleanData(phoneNumberCode);
     organizationPhNum = cleanData(organizationPhNum);
     website = cleanData(website);
     baseCurrency = cleanData(baseCurrency);
@@ -1120,7 +1118,7 @@ function isFloat(value) {
 }
 
 function isInteger(value) {
-  return /^[0-9]+$/.test(value);
+  return /^\d+$/.test(value);
 }
 
 function isAlphanumeric(value) {
