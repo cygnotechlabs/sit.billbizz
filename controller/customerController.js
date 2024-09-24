@@ -351,6 +351,7 @@ exports.addCustomer = async (req, res) => {
 
     //Check if customer with the same email already exists in the organization
     //if(taxsetting.emailValidation== true)
+    if (customerEmail) {
     const existingCustomer = await Customer.findOne({
       customerEmail: customerEmail,
       organizationId: organizationId,
@@ -359,7 +360,7 @@ exports.addCustomer = async (req, res) => {
       return res.status(409).json({
         message: "Customer with the provided email already exists.",
       });
-    }
+    }}
 
     // Create a new customer
     const newCustomer = new Customer({
