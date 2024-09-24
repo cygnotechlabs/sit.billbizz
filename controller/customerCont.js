@@ -606,6 +606,35 @@ exports.getOneCustomerHistory = async (req, res) => {
       });
     });
   }
+
+
+
+
+
+
+  function isAlphabets(value) {
+    return /^[A-Za-z\s]+$/.test(value);
+  }
+  
+  function isFloat(value) {
+    return /^-?\d+(\.\d+)?$/.test(value);
+  }
+  
+  function isInteger(value) {
+    return /^\d+$/.test(value);
+  }
+  
+  function isAlphanumeric(value) {
+    return /^[A-Za-z0-9]+$/.test(value);
+  }
+  
+  function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+
+
+
   
   // Function to generate time and date for storing in the database
 function generateTimeAndDateForDB(

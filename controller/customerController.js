@@ -1398,7 +1398,7 @@ function isFloat(value) {
 }
 
 function isInteger(value) {
-  return /^[0-9]+$/.test(value);
+  return /^\d+$/.test(value);
 }
 
 function isAlphanumeric(value) {
