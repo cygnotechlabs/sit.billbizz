@@ -343,6 +343,8 @@ if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
     }
 
 
+    
+
     // Check if an account with the given organizationId and accountId exists
     const account = await Account.findOne({
       _id: accountId,
