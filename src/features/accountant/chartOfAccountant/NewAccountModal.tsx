@@ -7,7 +7,6 @@ import chartOfAcc from "../../../assets/constants/chartOfAcc";
 import Modal from "../../../Components/model/Modal";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
-import CehvronDown from "../../../assets/icons/CehvronDown";
 
 type Props = {};
 
@@ -56,8 +55,8 @@ function NewAccountModal({}: Props) {
       Asset: [
         "Asset",
         "Current asset",
-        "Cash",
-        "Bank", // Bank category
+        // "Cash",
+        // "Bank", // Bank category
         "Fixed asset",
         "Stock",
         "Payment Clearing",
@@ -198,7 +197,7 @@ function NewAccountModal({}: Props) {
                 />
               </div>
                    {/* Conditionally render the Bank fields when "Bank" is selected */}
-                   {formValues.accountSubhead === "Bank" && (
+                   {/* {formValues.accountSubhead === "Bank" && (
                 <div className="grid grid-cols-3 gap-4 mb-4">
                   <div>
                     <label className="block text-sm mb-1 text-labelColor">
@@ -255,7 +254,7 @@ function NewAccountModal({}: Props) {
                   </div>
                 </div>
                 </div>
-              )}
+              )} */}
               <div className="mb-4">
                 <label className="block text-sm mb-1 text-labelColor">
                   Description
