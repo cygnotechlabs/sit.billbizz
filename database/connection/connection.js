@@ -14,7 +14,7 @@
 
 
 
-
+const mongoose = require('mongoose')
 
 const { SSMClient, GetParameterCommand } = require("@aws-sdk/client-ssm");
  
