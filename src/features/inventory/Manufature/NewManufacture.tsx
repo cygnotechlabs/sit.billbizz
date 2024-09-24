@@ -1,4 +1,4 @@
-import { forwardRef, useState, useEffect } from "react";
+import { forwardRef, useState, useEffect, ChangeEvent } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Button from "../../../Components/Button";
 import Modal from "../../../Components/model/Modal";
@@ -13,7 +13,8 @@ type Manufacturer = {
   _id?: string;
   name: string;
   description: string;
-  organizationId?: string;
+  organizationId: string;
+  type?: string;
   createdDate?: string;
 };
 
@@ -26,111 +27,108 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const { request: deleteManufacturerRequest } = useApi("delete", 5003);
   const { request: updateManufacturerRequest } = useApi("put", 5003);
   const { request: addManufacturerRequest } = useApi("post", 5003);
-
-  const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
+  const [allManufactures, setAllManufatures] = useState([]);
+  const [manufacturers, setManufacturers] = useState<Manufacturer>({
+    organizationId: "INDORG0001",
+    name: "",
+    description: "",
+    type: "manufacturer",
+  });
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [editableManufacturer, setEditableManufacturer] =
-    useState<Manufacturer | null>(null);
+  console.log(manufacturers);
 
-  useEffect(() => {
-    const loadManufacturers = async () => {
-      try {
-        const url = `${endponits.GET_ALL_MANUFACTURER}`;
-        const body = { organizationId: "INDORG0001" };
-        const { response, error } = await fetchAllManufacturers(url, body);
-        if (!error && response) {
-          setManufacturers(response.data);
-        } else {
-          toast.error("Failed to fetch manufacturers.");
-        }
-      } catch (error) {
-        toast.error("Error fetching manufacturers data");
-        console.error("Error fetching manufacturers data", error);
-      }
-    };
-
-    loadManufacturers();
-  }, [manufacturers]);
-
-  const openModal = (manufacturer?: Manufacturer) => {
-    if (manufacturer) {
-      setEditableManufacturer(manufacturer);
+  const openModal = (item?: any) => {
+    if (item) {
+      setIsEdit(true);
+      setManufacturers({
+        _id: item.id,
+        name: item.manufacturerName,
+        description: item.description,
+        organizationId: item.organizationId || "INDORG0001",
+        type: item.type || "manufacturer",
+      });
     } else {
-      setEditableManufacturer({ name: "", description: "" });
+      setIsEdit(false);
+      setManufacturers({
+        organizationId: "INDORG0001",
+        name: "",
+        description: "",
+        type: "manufacturer",
+      });
     }
     setModalOpen(true);
   };
 
+  const loadManufacturers = async () => {
+    try {
+      const url = `${endponits.GET_ALL_BRMC}`;
+      const body = { type: "manufacturer", organizationId: "INDORG0001" };
+      const { response, error } = await fetchAllManufacturers(url, body);
+      if (!error && response) {
+        setAllManufatures(response.data);
+      } else {
+        toast.error("Failed to fetch manufacturers.");
+      }
+    } catch (error) {
+      toast.error("Error fetching manufacturers data");
+      console.error("Error fetching manufacturers data", error);
+    }
+  };
+
+  useEffect(() => {
+    loadManufacturers();
+  }, []);
+
   const closeModal = () => {
     setModalOpen(false);
-    setEditableManufacturer(null);
   };
 
   const handleSave = async () => {
     try {
-      const isEditing = Boolean(editableManufacturer?._id);
-      const manufacturer: Partial<Manufacturer> = {
-        organizationId: "INDORG0001",
-        name: editableManufacturer?.name || "",
-        description: editableManufacturer?.description || "",
-        ...(isEditing && { _id: editableManufacturer!._id }),
-      };
-
-      const url = isEditing
-        ? `${endponits.UPDATE_MANUFACTURER}`
-        : `${endponits.ADD_MANUFACTURER}`;
-      const apiCall = isEditing
+      const url = isEdit ? `${endponits.UPDATE_BRMC}` : `${endponits.ADD_BRMC}`;
+      const apiCall = isEdit
         ? updateManufacturerRequest
         : addManufacturerRequest;
-      const { response, error } = await apiCall(url, manufacturer);
+
+      const { response, error } = await apiCall(url, manufacturers);
 
       if (!error && response) {
-        setManufacturers((prevData) =>
-          isEditing
-            ? prevData.map((m) =>
-                m._id === editableManufacturer!._id
-                  ? { ...m, ...manufacturer }
-                  : m
-              )
-            : [...prevData, response.data]
-        );
-        toast.success(
-          `Manufacturer ${isEditing ? "updated" : "added"} successfully`
-        );
+        toast.success(`Manufacturer ${isEdit ? "updated" : "added"} successfully!`);
+        loadManufacturers();
         closeModal();
       } else {
-        toast.error(`Error saving manufacturer: ${error.message}`);
-        console.error(`Error saving manufacturer: ${error.message}`);
+        toast.error(error.response.data.message);
       }
     } catch (error) {
-      toast.error("Error in save operation");
-      console.error("Error in save operation", error);
+      toast.error("Error in save operation.");
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (item: any) => {
     try {
-      const url = `${endponits.DELETE_MANUFACTURER(id)}`;
-      const { response, error } = await deleteManufacturerRequest(url);
+      const body = { organizationId: "INDORG0001" };
+      const url = `${endponits.DELETE_BRMC}/${item.id}`;
+      const { response, error } = await deleteManufacturerRequest(url, body);
       if (!error && response) {
-        setManufacturers(
-          manufacturers.filter((manufacturer) => manufacturer._id !== id)
-        );
-        toast.success("Manufacturer deleted successfully");
+        toast.success("Manufaturer deleted successfully!");
+        loadManufacturers();
       } else {
-        toast.error(`Error deleting manufacturer: ${error.message}`);
-        console.error(`Error deleting manufacturer: ${error.message}`);
+        toast.error(error.response.data.message);
       }
     } catch (error) {
-      toast.error("Error in delete operation");
-      console.error("Error in delete operation", error);
+      toast.error("Error occurred while deleting Manufacturer.");
     }
   };
 
-  const handleEditChange = (field: keyof Manufacturer, value: string) => {
-    if (editableManufacturer) {
-      setEditableManufacturer({ ...editableManufacturer, [field]: value });
-    }
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setManufacturers((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   return (
@@ -173,26 +171,31 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
           </div>
 
           <div className="grid grid-cols-3 gap-5">
-            {manufacturers.map((item) => (
+            {allManufactures?.map((item: any) => (
               <div key={item._id} className="flex p-2">
                 <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
                   <div>
-                    <h3 className="text-sm font-bold">{item.name}</h3>
+                    <h3 className="text-sm font-bold">
+                      {item.manufacturerName}
+                    </h3>
                     <p className="text-xs text-textColor">{item.description}</p>
                   </div>
                   <div className="flex space-x-2">
-                    <p
+                    {/* Edit Button */}
+                    <button
                       className="cursor-pointer"
                       onClick={() => openModal(item)}
                     >
                       <PencilEdit color="currentColor" />
-                    </p>
-                    <p
+                    </button>
+
+                    {/* Delete Button */}
+                    <button
                       className="cursor-pointer"
-                      onClick={() => handleDelete(item._id!)}
+                      onClick={() => handleDelete(item)}
                     >
                       <TrashCan color="currentColor" />
-                    </p>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -210,9 +213,7 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
         <div className="p-5 mt-3">
           <div className="flex p-4 rounded-xl relative overflow-hidden">
             <h3 className="text-xl font-bold text-textColor">
-              {editableManufacturer?._id
-                ? "Edit Manufacturer"
-                : "Add Manufacturer"}
+              {isEdit ? "Edit Manufacturer" : "Add Manufacturer"}
             </h3>
             <div
               className="ms-auto text-3xl cursor-pointer relative z-10"
@@ -233,8 +234,9 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               <input
                 placeholder="Sony Corporation"
                 type="text"
-                value={editableManufacturer?.name || ""}
-                onChange={(e) => handleEditChange("name", e.target.value)}
+                value={manufacturers.name}
+                name="name"
+                onChange={handleInputChange}
                 className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10"
               />
             </div>
@@ -246,10 +248,9 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               <textarea
                 rows={4}
                 placeholder="Description"
-                value={editableManufacturer?.description || ""}
-                onChange={(e) =>
-                  handleEditChange("description", e.target.value)
-                }
+                name="description"
+                value={manufacturers.description}
+                onChange={handleInputChange}
                 className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
               />
             </div>

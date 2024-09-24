@@ -82,32 +82,12 @@ GET_ALL_ITEM:"get-all-item",
   ADD_CREDIT_NOTE_SETTINGS: `add-creditNote-settings`,
 
   // Inventory
-  // Brand
-  GET_ALL_BRAND: "get-all-brands",
-  GET_BRAND: (id: string) => `get-one-brand/${id}`,
-  UPDATE_BRAND: `update-brand`,
-  DELETE_BRAND: (id: string) => `delete-brand/${id}`,
-  ADD_BRAND: "add-brand",
+GET_ALL_BRMC:`get-all-bmcr`,
+ADD_BRMC:`add-bmcr`,
+UPDATE_BRMC:`update-bmcr`,
+DELETE_BRMC:`delete-bmcr`,
+GET_ONE_BRMC:`get-a-bmcr`,
 
-  // Category
-  GET_ALL_CATEGORIES: "get-all-category",
-  ADD_CATEGORY: "add-category",
-  DELETE_CATEGORY: (id: string) => `delete-category/${id}`,
-  UPDATE_CATEGORY: `update-category`,
-  GET_CATEGORY: (id: string) => `get-one-category/${id}`,
-
-  // Manufacturer
-  GET_ALL_MANUFACTURER: "get-all-manufacturer",
-  ADD_MANUFACTURER: "add-manufacturer",
-  DELETE_MANUFACTURER: (id: string) => `delete-manufacturer/${id}`,
-  UPDATE_MANUFACTURER: `update-manufacturer`,
-
-  // Rack
-  GET_ALL_RACK: "get-all-rack",
-  ADD_RACK: "add-rack",
-  UPDATE_RACK: "update-rack",
-  GET_RACK: (id: string) => `get-one-rack/${id}`,
-  DELETE_RACK: (id: string) => `delete-rack/${id}`,
 
 
   
