@@ -10,6 +10,9 @@ COPY package.json package-lock.json ./
 # Install dependencies
 RUN npm install
 
+# Install aws-sdk if it's not already in package.json
+RUN npm install aws-sdk
+
 # Copy the rest of the application code
 COPY . .
 

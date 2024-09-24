@@ -11,6 +11,7 @@ import PaymentView from "../features/purchase/paymentMade/PaymentView/PaymentVie
 import PurchaseOrder from "../features/purchase/purchaseOrder/PurchaseOrder";
 import NewPurchaseOrder from "../features/purchase/purchaseOrder/addPurchaseOrder/NewPurchaseOrder";
 import ViewPurchaseOrder from "../features/purchase/purchaseOrder/viewPurchaseOrder/ViewPurchaseOrder";
+import NewPaymentMade from "../features/purchase/paymentMade/addPaymentMade/NewPaymentMade";
 
 const PurchaseRoutes: RouteObject[] = [
   { path: "/purchase", element: <Purchase /> },
@@ -25,6 +26,8 @@ const PurchaseRoutes: RouteObject[] = [
   { path: "/purchase/purchase-order", element: <PurchaseOrder /> },
   { path: "/purchase/purchase-order/new", element: <NewPurchaseOrder /> },
   { path: "/purchase/viewpurchaseorder", element: <ViewPurchaseOrder /> },
+
+  { path: "/purchase/payment-made/new-payment-made", element: <NewPaymentMade /> },
 ];
 
 export default PurchaseRoutes;
