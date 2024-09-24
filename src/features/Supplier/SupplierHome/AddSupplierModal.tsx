@@ -14,6 +14,7 @@ import Trash2 from "../../../assets/icons/Trash2";
 import Globe from "../../../assets/icons/Globe";
 import Eye from "../../../assets/icons/Eye";
 import EyeOff from "../../../assets/icons/EyeOff";
+import Pen from "../../../assets/icons/Pen";
 
 type Props = { page?: string };
 type SupplierData = {
@@ -31,9 +32,10 @@ type SupplierData = {
   interestPercentage: string;
   pan: string;
   currency: string;
-  openingBalance: string;
   paymentTerms: string;
   tds: string;
+  debitOpeningBalance:string,
+  creditOpeningBalance:string,
   documents: string;
   websiteURL: string;
   department: string;
@@ -95,16 +97,12 @@ const AddSupplierModal = ({ page }: Props) => {
   const [activeTab, setActiveTab] = useState<string>("otherDetails");
   const [placeOfSupplyList, setPlaceOfSupplyList] = useState<any | []>([]);
   const [errors, setErrors] = useState({
-    firstName: false,
-    lastName: false,
-    companyName: false,
     supplierDisplayName: false,
-    supplierEmail: false,
-    workPhone: false,
-    mobile: false,
-    billingCity: false,
-    billingPhone: false,
+    companyName:false,
+    firstName:false,
+    lastName:false
   });
+  const [openingType,setOpeningType]=useState<string>('credit')
   const { request: getCountryData } = useApi("get", 5004);
   const { request: getCurrencyData } = useApi("put", 5004);
   const { request: CreateSupplier } = useApi("post", 5009);
@@ -139,10 +137,10 @@ const AddSupplierModal = ({ page }: Props) => {
 
   const [supplierdata, setSupplierData] = useState<SupplierData>({
     organizationId: "INDORG0001",
-    salutation: "",
-    firstName: "",
-    lastName: "",
-    companyName: "",
+    salutation:"",
+    firstName:"",
+    lastName:"",
+    companyName:"",
     supplierDisplayName: "",
     supplierEmail: "",
     workPhone: "",
@@ -151,8 +149,9 @@ const AddSupplierModal = ({ page }: Props) => {
     creditLimit: "",
     interestPercentage: "",
     pan: "",
-    currency: "",
-    openingBalance: "",
+    currency:"",
+    debitOpeningBalance:"",
+    creditOpeningBalance:"",
     paymentTerms: "",
     tds: "",
     documents: "",
@@ -349,7 +348,7 @@ const AddSupplierModal = ({ page }: Props) => {
   const getBorderClassName = (tabName: string) => {
     return activeTab === tabName ? "border-darkRed" : "border-neutral-300";
   };
-  // console.log(supplierdata);
+
 
   // handle phonenumber change
   const handleBillingPhoneChange = (value: string) => {
@@ -366,25 +365,77 @@ const AddSupplierModal = ({ page }: Props) => {
     }));
   };
 
-  // handle input chnage
+  // handle input change
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
+    
     const { name, type, value } = e.target;
-
+  
+    if (name === 'openingType') {
+      // Update openingType state first
+      setOpeningType(value);
+  
+      // Update supplierData state based on the new openingType value
+      if (value === 'debit') {
+        setSupplierData(prevData => ({
+          ...prevData,
+          debitOpeningBalance: prevData.creditOpeningBalance,
+          creditOpeningBalance: "" // Clear creditOpeningBalance
+        }));
+      } else if (value === 'credit') {
+        setSupplierData(prevData => ({
+          ...prevData,
+          creditOpeningBalance: prevData.debitOpeningBalance,
+          debitOpeningBalance: "" // Clear debitOpeningBalance
+        }));
+      }
+    }
+  
+    // Update openingBalance field
+    if (name === 'openingBalance') {
+      if (openingType === 'credit') {
+        setSupplierData(prevData => ({
+          ...prevData,
+          creditOpeningBalance: value
+        }));
+      } else if (openingType === 'debit') {
+        setSupplierData(prevData => ({
+          ...prevData,
+          debitOpeningBalance: value
+        }));
+      }
+    }
+  
+    // Update supplierDisplayName based on companyName
+    if (name === 'companyName') {
+      setSupplierData(prevData => ({
+        ...prevData,
+        supplierDisplayName: value
+      }));
+      if(supplierdata.supplierDisplayName){
+        setErrors({...errors,supplierDisplayName:false})
+      }
+    }
+  
+    // Handle checkbox updates
     if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
-      setSupplierData((prevData) => ({
+      setSupplierData(prevData => ({
         ...prevData,
-        [name]: checked,
+        [name]: checked
       }));
     } else {
-      setSupplierData((prevData) => ({
+      // Default case for other inputs
+     if(name!=='openingBalance'){
+      setSupplierData(prevData => ({
         ...prevData,
-        [name]: value,
+        [name]: value
       }));
+      }
     }
   };
+  
 
   // get additional data
   const getAdditionalData = async () => {
@@ -394,27 +445,24 @@ const AddSupplierModal = ({ page }: Props) => {
       const { response, error } = await getCurrencyData(Currencyurl, {
         organizationId: "INDORG0001",
       });
-
+  
       if (!error && response) {
         setcurrencyData(response?.data);
-        // console.log(response.data, "currencyData");
       }
-
+  
       const paymentTermsUrl = `${endponits.GET_PAYMENT_TERMS}`;
       const { response: paymentTermResponse, error: paymentTermError } =
         await getPaymentTerms(paymentTermsUrl);
-
+  
       if (!paymentTermError && paymentTermResponse) {
         setPaymentTerms(paymentTermResponse.data);
-        // console.log(paymentTermResponse.data, "paymet terms");
       }
-
+  
       const CountryUrl = `${endponits.GET_COUNTRY_DATA}`;
       const { response: countryResponse, error: countryError } =
         await getCountryData(CountryUrl, { organizationId: "INDORG0001" });
+  
       if (!countryError && countryResponse) {
-        // console.log(countryResponse.data[0].countries, "country");
-
         setcountryData(countryResponse?.data[0].countries);
       } else {
         console.log(countryError, "country");
@@ -423,73 +471,89 @@ const AddSupplierModal = ({ page }: Props) => {
       console.log("Error in fetching currency data or payment terms", error);
     }
   };
-
+  
   const getAdditionalInfo = async () => {
     try {
       const taxUrl = `${endponits.GET_TAX_SUPPLIER}`;
       const { response: taxResponse, error: taxError } = await getTax(taxUrl, {
         organizationId: "INDORG0001",
       });
-
+  
       if (!taxError && taxResponse) {
         if (taxResponse) {
-          // console.log(taxResponse.data.taxType,"tax");
-
           setgstOrVat(taxResponse.data);
+  
+          // Using functional update for supplier data
+          setSupplierData((prevSupplierData) => ({
+            ...prevSupplierData,
+            gstTreatment: taxResponse.data.gstTreatment[0],
+          }));
         }
       } else {
         console.log(taxError, "tax");
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching tax data", error);
+    }
   };
+  
   const getOneOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
       const { response, error } = await getOrganization(url, {
         organizationId: "INDORG0001",
       });
-
+  
       if (!error && response?.data) {
-        setOneOrganization(response.data);
-        // console.log(response.data,"org");
+        const result = response.data;
+        setOneOrganization(result);
+  
+        // Update supplier data with the organization information
+        setSupplierData((prevSupplierData) => ({
+          ...prevSupplierData,
+          currency: result.baseCurrency,
+          billingCountry: result.organizationCountry,
+          shippingCountry: result.organizationCountry,
+          billingState: result.state,
+          shippingState: result.state,
+          sourceOfSupply: result.state,
+        }));
       }
     } catch (error) {
       console.error("Error fetching organization:", error);
     }
   };
+  
+
 
   //api call for add supplier
   const handleSubmit = async () => {
     // Validation logic before API call
     const newErrors = { ...errors };
-    if (supplierdata.firstName === "") newErrors.firstName = true;
-    if (supplierdata.lastName === "") newErrors.lastName = true;
-    if (supplierdata.supplierEmail === "") newErrors.supplierEmail = true;
-    if (supplierdata.mobile === "") newErrors.mobile = true;
     if (supplierdata.supplierDisplayName === "")
-      newErrors.supplierDisplayName = true;
-    if (supplierdata.companyName === "") newErrors.companyName = true;
-    if (supplierdata.workPhone === "") newErrors.workPhone = true;
-    if (supplierdata.billingCity === "") newErrors.billingCity = true;
-    if (supplierdata.billingPhone === "") newErrors.billingPhone = true;
-
+      newErrors.supplierDisplayName = true
+    if (supplierdata.companyName === "")
+      newErrors.companyName = true
+    if (supplierdata.firstName === "")
+      newErrors.firstName = true
+    if (supplierdata.lastName === "")
+      newErrors.lastName = true
     if (Object.values(newErrors).some((error) => error)) {
       setErrors(newErrors);
       return;
     }
-
     try {
       const url = `${endponits.ADD_SUPPLIER}`;
       const { response, error } = await CreateSupplier(url, supplierdata);
-
+      console.log("res",response);
+      console.log("err",error);
       if (response && !error) {
-        toast.success(response.data.message);
-
+        toast.success(response.data.message); 
         setModalOpen(false);
-        setsupplierResponse((prevSupplierResponse: any) => ({
-          ...prevSupplierResponse,
-          supplierdata,
-        }));
+        setsupplierResponse(response.data)
+        getAdditionalData();
+       getAdditionalInfo();
+       getOneOrganization();
 
         setSupplierData({
           organizationId: "INDORG0001",
@@ -506,8 +570,9 @@ const AddSupplierModal = ({ page }: Props) => {
           interestPercentage: "",
           pan: "",
           currency: "",
-          openingBalance: "",
           paymentTerms: "",
+          debitOpeningBalance:"",
+          creditOpeningBalance:"",
           tds: "",
           documents: "",
           websiteURL: "",
@@ -597,7 +662,6 @@ const AddSupplierModal = ({ page }: Props) => {
       if (country) {
         const states = country.states;
         // console.log("States:", states);
-
         setPlaceOfSupplyList(states);
       } else {
         console.log("Country not found");
@@ -607,7 +671,6 @@ const AddSupplierModal = ({ page }: Props) => {
     }
   };
 
-  // console.log(placeOfSupplyList,"place");
 
   // handle country and state
   useEffect(() => {
@@ -631,12 +694,15 @@ const AddSupplierModal = ({ page }: Props) => {
     }
   }, [supplierdata.shippingCountry, supplierdata.billingCountry, countryData]);
 
-  useEffect(() => {
-    getAdditionalData();
-    getAdditionalInfo();
-    getOneOrganization();
-  }, []);
 
+   useEffect(()=>{
+    getOneOrganization();
+    getAdditionalData()
+    getAdditionalInfo()
+   },[])
+
+      
+  
   return (
     <div>
       {page && page == "purchase" ? (
@@ -648,7 +714,7 @@ const AddSupplierModal = ({ page }: Props) => {
             <CirclePlus color="darkRed" size="18" />
 
             <p className="text-[#820000] text-sm">
-              <b>Add new Supplier</b>
+              <b>Add ne<Button onClick={openModal} variant="secondary" className="pl-6 pr-6"  size="sm"><Pen size={18} color="#565148" /> <p className="text-sm font-medium">Edit</p></Button>w Supplier</b>
             </p>
           </div>
           <div className=" col-span-2 text-end text-2xl cursor-pointer relative ">
@@ -702,17 +768,17 @@ const AddSupplierModal = ({ page }: Props) => {
                       onChange={handleChange}
                       className="block appearance-none text-[#818894] w-full h-9 mt-1  bg-white border border-inputBorder text-sm pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     >
-                      <option value="Mr" className="text-gray">
-                        Mr
+                      <option value="Mr." className="text-gray">
+                        Mr.
                       </option>
-                      <option value="Mrs" className="text-gray">
-                        Mrs
+                      <option value="Mrs." className="text-gray">
+                        Mrs.
                       </option>
-                      <option value="Ms" className="text-gray">
-                        Ms
+                      <option value="Ms." className="text-gray">
+                        Ms.
                       </option>
-                      <option value="Dr" className="text-gray">
-                        Dr
+                      <option value="Dr." className="text-gray">
+                        Dr.
                       </option>
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -734,7 +800,9 @@ const AddSupplierModal = ({ page }: Props) => {
                       placeholder="Enter First Name"
                       value={supplierdata.firstName}
                       onChange={handleChange}
-                      onFocus={() => setErrors({ ...errors, firstName: false })}
+                      onFocus={() =>
+                        setErrors({ ...errors,firstName: false })
+                      }
                       onBlur={() => {
                         if (supplierdata.firstName === "") {
                           setErrors({ ...errors, firstName: true });
@@ -742,10 +810,10 @@ const AddSupplierModal = ({ page }: Props) => {
                       }}
                     />
                     {errors.firstName && (
-                      <div className="text-red-800 text-xs ms-2 mt-1">
-                        Enter First Name
-                      </div>
-                    )}
+                    <div className="text-red-800 text-xs ms-2 mt-1">
+                      Enter first Name
+                    </div>
+                  )}
                   </div>
 
                   <div>
@@ -760,7 +828,9 @@ const AddSupplierModal = ({ page }: Props) => {
                       placeholder="Enter Last Name"
                       value={supplierdata.lastName}
                       onChange={handleChange}
-                      onFocus={() => setErrors({ ...errors, lastName: false })}
+                      onFocus={() =>
+                        setErrors({ ...errors, lastName: false })
+                      }
                       onBlur={() => {
                         if (supplierdata.lastName === "") {
                           setErrors({ ...errors, lastName: true });
@@ -768,10 +838,10 @@ const AddSupplierModal = ({ page }: Props) => {
                       }}
                     />
                     {errors.lastName && (
-                      <div className="text-red-800 text-xs ms-2 mt-1">
-                        Enter Last Name
-                      </div>
-                    )}
+                    <div className="text-red-800 text-xs ms-2 mt-1">
+                      Enter Last Name
+                    </div>
+                  )}
                   </div>
                 </div>
               </div>
@@ -787,7 +857,9 @@ const AddSupplierModal = ({ page }: Props) => {
                     placeholder="Enter Company Name"
                     value={supplierdata.companyName}
                     onChange={handleChange}
-                    onFocus={() => setErrors({ ...errors, companyName: false })}
+                    onFocus={() =>
+                      setErrors({ ...errors, companyName: false })
+                    }
                     onBlur={() => {
                       if (supplierdata.companyName === "") {
                         setErrors({ ...errors, companyName: true });
@@ -828,103 +900,96 @@ const AddSupplierModal = ({ page }: Props) => {
                 <div>
                   <label htmlFor="">Supplier Email</label>
                   <input
-                    required
                     type="email"
                     name="supplierEmail"
                     className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
                     placeholder="Enter Email"
                     value={supplierdata.supplierEmail}
                     onChange={handleChange}
-                    onFocus={() =>
-                      setErrors({ ...errors, supplierEmail: false })
-                    }
-                    onBlur={() => {
-                      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                      if (
-                        supplierdata.supplierEmail === "" ||
-                        !emailPattern.test(supplierdata.supplierEmail)
-                      ) {
-                        setErrors({ ...errors, supplierEmail: true });
-                      }
-                    }}
                   />
-                  {errors.supplierEmail && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter a valid Email
-                    </div>
-                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4 mt-4">
-                <div>
-                  <label htmlFor="">Work Phone</label>
-                  <input
-                    required
-                    type="tel"
-                    name="workPhone"
-                    className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
-                    placeholder="Enter Work Phone "
-                    value={supplierdata.workPhone}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^\d*$/.test(value)) {
-                        handleChange(e);
-                      }
-                    }}
-                    onFocus={() => setErrors({ ...errors, workPhone: false })}
-                    onBlur={() => {
-                      if (supplierdata.workPhone === "") {
-                        setErrors({ ...errors, workPhone: true });
-                      }
-                    }}
-                  />
-                  {errors.workPhone && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter Work Phone
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <label htmlFor="">Mobile</label>
-                  <input
-                    required
-                    type="tel"
-                    name="mobile"
-                    className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
-                    placeholder="Enter Mobile Number"
-                    value={supplierdata.mobile}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^\d*$/.test(value)) {
-                        handleChange(e);
-                      }
-                    }}
-                    onFocus={() => setErrors({ ...errors, mobile: false })}
-                    onBlur={() => {
-                      if (supplierdata.mobile === "") {
-                        setErrors({ ...errors, mobile: true });
-                      }
-                    }}
-                  />
-                  {errors.mobile && (
-                    <div className="text-red-800 text-xs ms-2 mt-1">
-                      Enter Mobile
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <label htmlFor="">Opening Balance</label>
-                  <input
-                    required
-                    className="pl-3 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
-                    placeholder="Enter opening balance"
-                              type="number"
-                              name="openingBalance"
-                              value={supplierdata.openingBalance}
-                              onChange={handleChange}
-                    />
-                    </div>
+              <div>
+                            <label
+                              className="text-slate-600 "
+                              htmlFor="organizationAddress"
+                            >
+                              Work Phone
+                            </label>
+                            <div className="w-full border-0 mt-1">
+                              <PhoneInput
+                                inputClass="appearance-none text-[#818894] bg-white border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                                inputStyle={{ height: "35px", width: "100%" }}
+                                containerStyle={{ width: "100%" }}
+                                country={
+                                 "in"
+                                }
+                                value={supplierdata.workPhone}
+                                onChange={(value) =>
+                                  setSupplierData({...supplierdata,workPhone:value})
+                                }
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label
+                              className="text-slate-600 "
+                              htmlFor="organizationAddress"
+                            >
+                              Mobile
+                            </label>
+                            <div className="w-full border-0 mt-1">
+                              <PhoneInput
+                                inputClass="appearance-none text-[#818894] bg-white border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                                inputStyle={{ height: "35px", width: "100%" }}
+                                containerStyle={{ width: "100%" }}
+                                country={
+                                 "in"
+                                }
+                                value={supplierdata.mobile}
+                                onChange={(value) =>
+                                  setSupplierData({...supplierdata,mobile:value})
+                                }
+                              />
+                            </div>
+                          </div>
+               
+                          <div>
+  <label className="block mb-1">Opening Balance</label>
+  <div className="flex">
+    <div className="relative w-20 ">
+      <select
+        className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder
+          text-sm pl-2 pr-2 rounded-l-md leading-tight
+          focus:outline-none focus:bg-white focus:border-gray-500"
+        name="openingType"
+        value={openingType}
+        onChange={handleChange}
+      >
+        <option value="credit">Cr</option>
+        <option value="debit">Dr</option>
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <CehvronDown color="gray" />
+      </div>
+    </div>
+    <input
+      type="text"
+      className="text-sm w-[100%] rounded-r-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+      placeholder="Enter Opening Balance"
+      name="openingBalance"
+      value={
+        openingType === 'debit'
+          ? supplierdata.debitOpeningBalance
+          : supplierdata.creditOpeningBalance
+      }
+      onChange={handleChange}
+    />
+  </div>
+                         </div>
+
 
               </div>
 
@@ -1199,9 +1264,9 @@ const AddSupplierModal = ({ page }: Props) => {
                                   value={supplierdata.gstTreatment}
                                   onChange={handleChange}
                                 >
-                                  <option value="" className="text-gray">
+                                  <option  className="text-gray">
                                     {" "}
-                                    Select a GST treatment
+                                    {supplierdata.gstTreatment?supplierdata.gstTreatment:'Select a GST treatment'}
                                   </option>
                                   {gstOrVat?.gstTreatment?.map(
                                     (item: any, index: number) => (
@@ -1223,9 +1288,9 @@ const AddSupplierModal = ({ page }: Props) => {
 
                               <div className="relative w-full">
                                 <select className="block appearance-none w-full h-9  text-[#818894] bg-white border border-inputBorder text-sm  pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                                  <option value="" className="text-gray">
+                                  <option value={supplierdata.sourceOfSupply?supplierdata.sourceOfSupply:'Select Source of Supply'} className="text-gray">
                                     {" "}
-                                    slecet
+                                    {supplierdata.sourceOfSupply?supplierdata.sourceOfSupply:'Select Source of Supply'}
                                   </option>
                                   {placeOfSupplyList.length > 0 &&
                                     placeOfSupplyList.map(
@@ -1442,20 +1507,7 @@ const AddSupplierModal = ({ page }: Props) => {
                               name="billingCity"
                               value={supplierdata.billingCity}
                               onChange={handleChange}
-                              onFocus={() =>
-                                setErrors({ ...errors, billingCity: false })
-                              }
-                              onBlur={() => {
-                                if (supplierdata.billingCity === "") {
-                                  setErrors({ ...errors, billingCity: true });
-                                }
-                              }}
                             />
-                            {errors.billingCity && (
-                              <div className="text-red-800 text-xs ms-2 mt-1">
-                                Enter Billing City
-                              </div>
-                            )}
                           </div>
 
                           <div className="relative ">
@@ -1525,36 +1577,13 @@ const AddSupplierModal = ({ page }: Props) => {
                                 inputStyle={{ height: "38px", width: "100%" }}
                                 containerStyle={{ width: "100%" }}
                                 country={
-                                  supplierdata.billingCountry
-                                    ? supplierdata.billingCountry.toLowerCase()
-                                    : "in"
+                                 "in"
                                 }
                                 value={supplierdata.billingPhone}
                                 onChange={(value) =>
                                   handleBillingPhoneChange(value)
                                 }
-                                onBlur={() => {
-                                  if (
-                                    !supplierdata.billingPhone ||
-                                    supplierdata.billingPhone.length < 10
-                                  ) {
-                                    setErrors({
-                                      ...errors,
-                                      billingPhone: true,
-                                    });
-                                  } else {
-                                    setErrors({
-                                      ...errors,
-                                      billingPhone: false,
-                                    });
-                                  }
-                                }}
                               />
-                              {errors.billingPhone && (
-                                <div className="text-red-800 text-xs ms-2 mt-1">
-                                  Enter a valid phone number
-                                </div>
-                              )}
                             </div>
                           </div>
                           <div className="relative w-full">
@@ -1567,7 +1596,7 @@ const AddSupplierModal = ({ page }: Props) => {
                             </label>
                             <input
                               className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2 mt-2 leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                              placeholder="Enter Pin / Zip / Post code"
+                              placeholder="Enter Fax Number"
                               type="number"
                               name="billingFaxNum"
                               value={supplierdata.billingFaxNum}
@@ -1744,9 +1773,7 @@ const AddSupplierModal = ({ page }: Props) => {
                                 inputStyle={{ height: "38px", width: "100%" }}
                                 containerStyle={{ width: "100%" }}
                                 country={
-                                  supplierdata.shippingCountry
-                                    ? supplierdata.shippingCountry.toLowerCase()
-                                    : "in"
+                                   "in"
                                 }
                                 value={supplierdata.shippingPhone}
                                 onChange={handleShippingPhoneChange}
@@ -1763,7 +1790,7 @@ const AddSupplierModal = ({ page }: Props) => {
                             </label>
                             <input
                               className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2 mt-2 leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                              placeholder="Enter Pin / Zip / Post code"
+                              placeholder="Enter Fax Number"
                               type="number"
                               name="shippingFaxNum"
                               value={supplierdata.shippingFaxNum}

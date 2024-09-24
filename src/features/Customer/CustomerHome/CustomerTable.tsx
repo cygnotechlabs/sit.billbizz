@@ -17,7 +17,7 @@ interface Column {
 
 const Table = () => {
   const initialColumns: Column[] = [
-    { id: "billingAttention", label: "Name", visible: true },
+    { id: "customerDisplayName", label: "Name", visible: true },
     { id: "companyName", label: "Company Name", visible: true },
     { id: "mobile", label: "Contact", visible: true },
     { id: "customerEmail", label: "Email", visible: true },
@@ -98,7 +98,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
           <Print />
         </div>
       </div>
-      <div className="overflow-x-auto mt-3">
+      <div className="overflow-x-auto mt-3 h-96 hide-scrollbar">
         <table className="min-w-full bg-white mb-5">
           <thead className="text-[12px] text-center text-dropdownText">
             <tr style={{ backgroundColor: "#F9F7F0" }}>

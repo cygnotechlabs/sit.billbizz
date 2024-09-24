@@ -14,7 +14,8 @@ export  type SupplierData = {
     interestPercentage: string;
     pan: string;
     currency: string;
-    openingBalance: string;
+    debitOpeningBalance?:string,
+    creditOpeningBalance?:string,
     paymentTerms: string;
     tds: string;
     documents: string;

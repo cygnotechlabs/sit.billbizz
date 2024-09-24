@@ -8,10 +8,11 @@ import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
 import SearchBar from "../../../Components/SearchBar";
 import { BankResponseContext } from "../../../context/ContextShare";
+import { Link } from "react-router-dom";
 
 
 interface Account {
-  id: string;
+  _id: string;
   accountName: string;
   accountCode: string;
   accountSubhead: string;
@@ -98,13 +99,15 @@ const Table = () => {
           </thead>
           <tbody className="text-dropdownText text-center text-[13px]">
             {filteredAccounts?.reverse().map((item) => (
-              <tr key={item.id} className="relative">
+              <tr key={item._id} className="relative">
   
                 <td className="py-2.5 px-4  border-y border-tableBorder">
                   <input type="checkbox" className="form-checkbox w-4 h-4" />
                 </td>
-                <td className="py-2.5 px-4  border-y border-tableBorder">
-                  {item.accountName}
+                <td className="py-2.5 px-4 border-y border-tableBorder">
+                  <Link to={`/accountant/view/${item._id}?fromBank=true`}>
+                    {item.accountName}
+                  </Link>
                 </td>
                 <td className="py-2.5 px-4  border-y border-tableBorder">
                   {item.accountCode}

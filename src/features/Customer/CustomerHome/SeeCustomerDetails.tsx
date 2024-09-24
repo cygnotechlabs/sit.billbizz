@@ -9,7 +9,6 @@ import cardBackground from "../../../assets/Images/Frame 629314.png";
 import MailIcon from "../../../assets/icons/MailIcon";
 import PhoneIcon from "../../../assets/icons/PhoneIcon";
 import Button from "../../../Components/Button";
-import Pen from "../../../assets/icons/Pen";
 import Vector from "../../../assets/icons/Vector";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
@@ -82,6 +81,7 @@ function SeeCustomerDetails({}: Props) {
   ];
 
   
+console.log(customerData);
 
 
   const handleStatusSubmit = async (e: ChangeEvent<HTMLSelectElement>) => {
@@ -97,7 +97,7 @@ function SeeCustomerDetails({}: Props) {
     try {
       const { response, error } = await updateCustomerStatus(url, {
         ...statusData,
-        status: value, // Pass the updated status value here
+        status: value,
       });
       if (!error && response) {
         toast.success(response.data.message);
@@ -143,7 +143,7 @@ function SeeCustomerDetails({}: Props) {
               </p>
               <div className="flex items-center mt-3">
                 <img
-                  src="https://s3-alpha-sig.figma.com/img/a028/8907/fef415dd8f2188e586883af38bed1558?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=nZ7oGkkq0tHpxEYBFp5mdRE0FOSRzXGZOjngXWn03e1-rHgmwZLnHVfd1dWC0Tk45bsST2Pl5d5km9D7h~MOHw6-S~GQJISN7JD78tTHB-FZXEvDQpLLXQj5E1ME4VMiHgtjv4VzoB6WAw2PbN1loPE6eXA9ACX76Qy6-NCAa3Xdm2i2~TjaRAAdDAhJN1htZYRZs-RUPjKD5DjUnzVYUwuc-MoSOBLn4Xj9X1To792JpsZW1zetVmexKz0ck2ZlFsXNmwKXWCSzEFUNXjC~fZfgWUUpZBxUHkkE5rq~jboBM1iCK1Dz-o81Ph7SFjzB36q2QjRLuUxdIjBi1TUJWg__"
+                src="https://i.postimg.cc/05XQMpkS/Ellipse-2.png"
                   alt="Profile"
                   className="w-8 h-8 object-cover rounded-full mr-3"
                 />
@@ -231,9 +231,12 @@ function SeeCustomerDetails({}: Props) {
               <p className="font-bold text-textColor border-e pe-5 border-e-textColor">
               <span className="font-medium"> Customer Name : </span>{customerData?.customerDisplayName}
               </p>
-              <p className="font-bold text-textColor  px-5 ">
+              <p className="font-bold text-textColor  px-5 border-e pe-5 border-e-textColor ">
               <span className="font-medium"> Company Name : </span> {customerData.companyName}
               </p>
+              {/* <p className="font-bold text-textColor  px-5 ">
+              <span className="font-medium"> Opening Balance : </span> 
+              </p> */}
 
               {
                <div className=" w-[33.6%] ml-auto">
@@ -283,7 +286,7 @@ function SeeCustomerDetails({}: Props) {
                 <div className="flex w-full p-2">
                   <p className="font-bold">Billing Address</p>
                   <div className="ml-auto">
-                    <Pen color={"#303F58"} />
+                  <EditCustomerModal addressEdit="billingAddressEdit" customerDataPorps={customerData}/>
                   </div>
                 </div>
                 <div className=" text-xs p-2">
@@ -302,7 +305,8 @@ function SeeCustomerDetails({}: Props) {
                 <div className="flex w-full p-2 ">
                   <p className="font-bold">Shipping Address</p>
                   <div className="ml-auto">
-                    <Pen color={"#303F58"} />
+                    <EditCustomerModal addressEdit="shippingAddressEdit" customerDataPorps={customerData}/>
+                    {/* <Pen color={"#303F58"} /> */}
                   </div>
                 </div>
                 <div className=" text-xs  p-2">

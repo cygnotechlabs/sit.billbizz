@@ -1,17 +1,16 @@
 import { useParams } from "react-router-dom"
 import ArrowRight from "../../../../assets/icons/ArrowRight"
 
-import { ChangeEvent, useEffect } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import MailIcon from "../../../../assets/icons/MailIcon"
-import NewspaperIcon from "../../../../assets/icons/NewspaperIcon"
 import Pen from "../../../../assets/icons/Pen"
 import PhoneIcon from "../../../../assets/icons/PhoneIcon"
-import ShoppingCart from "../../../../assets/icons/ShoppingCart"
 import UserRound from "../../../../assets/icons/UserRound"
 import Button from "../../../../Components/Button"
 import useApi from "../../../../Hooks/useApi"
 import { endponits } from "../../../../Services/apiEndpoints"
+import EditSupplier from "../EditSupplier"
 import ExpensesGraph from "./ExpensesGraph"
 
 interface Status {
@@ -30,40 +29,56 @@ interface OverviewProps {
 const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData }) => {
   const { id } = useParams<{ id: string }>();
   const {request:updateSupplierStatus}=useApi("put",5009)
+  const [addressEdit, setAddressEdit] = useState<string>();
+  const [isModalOpen, setModalOpen] = useState(false);
+  const openModal = (billing?:string,shipping?:string) => {
+    setModalOpen((prev)=>!prev);
+    if (billing === 'billing') {
+      setAddressEdit('billingAddressEdit')
+    }else if(shipping === 'shipping'){
+      setAddressEdit('shippingAddressEdit')
+    }else{
+      setAddressEdit("")
+    }
+  };
+
+  const closeModal = () => {
+    setModalOpen((prev)=>!prev);
+  };
   
   const historyData = [
-    {
-      initials: <ShoppingCart size="16" color="white"/>,
-      date: '30/5/2020',
-      time: '2:30 pm',
-      title: "Purchase Order",
-      description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate harum tempora at!',
-      author: 'By Info'
-    },
-    {
-      initials: <ShoppingCart size="16" color="white" />,
-      date: '30/5/2020',
-      time: '2:30 pm',
-      title: "Sales Order Added",
-      description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate harum tempora at!',
-      author: 'By Info'
-    },
+    // {
+    //   initials: <ShoppingCart size="16" color="white"/>,
+    //   date: '30/5/2020',
+    //   time: '2:30 pm',
+    //   title: "Purchase Order",
+    //   description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate harum tempora at!',
+    //   author: 'By Info'
+    // },
+    // {
+    //   initials: <ShoppingCart size="16" color="white" />,
+    //   date: '30/5/2020',
+    //   time: '2:30 pm',
+    //   title: "Sales Order Added",
+    //   description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate harum tempora at!',
+    //   author: 'By Info'
+    // },
     {
       initials: <UserRound size="16" color="white"/>,
-      date: '30/5/2020',
-      time: '2:30 pm',
+      date: '20/9/2024',
+      time: '4:40 pm',
       title: "Contact Added",
-      description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate harum tempora at!',
+      description: 'Parvathy Contact added successfully',
       author: 'By Info'
     },
-    {
-      initials: <NewspaperIcon size="16"/>,
-      date: '30/5/2020',
-      time: '2:30 pm',
-      title: "Invoice Created",
-      description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate harum tempora at!',
-      author: 'By Info'
-    },
+    // {
+    //   initials: <NewspaperIcon size="16"/>,
+    //   date: '30/5/2020',
+    //   time: '2:30 pm',
+    //   title: "Invoice Created",
+    //   description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate harum tempora at!',
+    //   author: 'By Info'
+    // },
   ];
   const getCircleStyle = (title: string) => {
     switch (title) {
@@ -131,8 +146,15 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
                   </div>
                 <p className="text-[14px] ps-3  flex items-center gap-1"><PhoneIcon color="#565148" size={16}/> {supplier?.mobile}</p>
               </div>
-              <div className="flex gap-3 items-center">
-              <Button  variant="secondary" className="h-[26px] w-[68px] text-[12px]  items-center justify-center" ><Pen size={14} color="#565148" /> <p className="text-sm font-medium">Edit</p></Button>
+              <div className="flex gap-1 items-center">
+              <Button onClick={()=>openModal()} variant="secondary" className="h-[26px] w-[68px] text-[12px]  items-center justify-center" ><Pen size={14} color="#565148" /> <p className="text-sm font-medium">Edit</p></Button>
+              <EditSupplier 
+        isModalOpen={isModalOpen} 
+        openModal={openModal} 
+        closeModal={closeModal} 
+        supplier={supplier} 
+        addressEdit={addressEdit}
+      />
               <select
                   id=""
                   className=" h-[26px] w-[78px] text-[13px] font-medium text-[#565148] ps-2 bg-[#FEFDFA] border-[#565148] rounded-md border "
@@ -150,29 +172,29 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
          <div className="w-[98%] h-[200px]  space-y-3 p-[10px] rounded-lg bg-[#FDF8F0]">
             <div className="flex justify-between items-center">
             <h3 className="font-bold text-[14px]">Billing Addresss</h3>
-            <p><Pen color="#303F58"/></p>
+            <div className="cursor-pointer" onClick={()=>openModal('billing')}><Pen color="#303F58"/></div>
             </div>
             <div className="flex flex-col space-y-2 text-[12px]">
               <p>{supplier?.billingCity}</p>
               <p>{supplier?.billingAddressStreet1}</p>
               <p>{supplier?.billingAddressStreet2}</p>
               <p>pin {supplier?.billingPinCode}</p>
-              <p>{supplier?.billingState},{supplier?.billingCountry}</p>
               <p>Phone:{supplier?.billingPhone}</p>
+              <p>{supplier?.billingState} {supplier?.billingCountry}</p>
             </div>
          </div>
          <div className="w-[98%] h-[200px]  space-y-3 p-[10px] rounded-lg bg-[#FCFFED]">
             <div className="flex justify-between items-center">
             <h3 className="font-bold text-[14px]">Shipping Addresss</h3>
-            <p><Pen color="#303F58"/></p>
+            <p className="cursor-pointer" onClick={()=>openModal("",'shipping')}><Pen color="#303F58"/></p>
             </div>
             <div className="flex flex-col space-y-2 text-[12px]">
-              <p>abc</p>
-              <p>Kalyanath house,puthanathaaani</p>
-              <p>Po alavil</p>
-              <p>pin 670008</p>
-              <p>India</p>
-              <p>Phone:96337968756</p>
+            <p>{supplier?.shippingCity}</p>
+              <p>{supplier?.shippingAddressStreet1}</p>
+              <p>{supplier?.shippingAddressStreet2}</p>
+              <p>pin {supplier?.shippingPinCode}</p>
+              <p>Phone:{supplier?.shippingPhone}</p>
+              <p>{supplier?.shippingState} {supplier?.shippingCountry}</p>
             </div>
          </div>
          <div className="w-[100%] h-[200px]  space-y-3 p-[10px] rounded-lg bg-[#F6F6F6]">
@@ -181,14 +203,14 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
           
             <div className="grid grid-cols-2  text-[12px]">
               <div className="space-y-2">
-              <p>Customer Type</p>
+              <p>Supplier Type</p>
               <p>Default Currency</p>
               <p>Payment Terms</p>
               <p>Portal Languages</p>
               </div>
               <div className="text-end font-bold space-y-2">
               <p>Business</p>
-              <p>INR</p>
+              <p>{supplier?.currency}</p>
               <p>Due On Receipt</p>
               <p>English</p>
               </div>

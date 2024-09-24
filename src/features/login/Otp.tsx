@@ -2,13 +2,12 @@ import React, { useState, useRef } from 'react';
 import Button from "../../Components/Button";
 import bgImage from "../../assets/Images/Group 2506.png";
 import { useNavigate } from 'react-router-dom';
-
 type Props = {}
-
+ 
 function Otp({}: Props) {
+  const navigate = useNavigate()
   // State to hold OTP values
   const [otp, setOtp] = useState(['', '', '','','','']);
-  const navigate = useNavigate(); // Initialize the navigate hook
   
   const inputRefs = [
     useRef<HTMLInputElement>(null),
@@ -18,7 +17,7 @@ function Otp({}: Props) {
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
   ];
-
+ 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
@@ -38,7 +37,7 @@ function Otp({}: Props) {
       setOtp(newOtp);
     }
   };
-
+ 
   // Handle key down events for backspace
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === 'Backspace') {
@@ -53,7 +52,7 @@ function Otp({}: Props) {
       }
     }
   };
-
+ 
   // Handle pasting OTP
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     const pasteData = e.clipboardData.getData('text').trim();
@@ -90,7 +89,7 @@ function Otp({}: Props) {
         <div className="w-[60%] ">
           <p className="text-textColor font-bold text-4xl">Get Started now</p>
           <p className="text-dropdownText mt-2 text-sm font-normal">Enter your OTP to access your account</p>
-          
+         
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             {/* OTP Input Section */}
             <div className="mt-4 space-y-2">
@@ -127,7 +126,7 @@ function Otp({}: Props) {
           </form>
         </div>
       </div>
-      
+     
       {/* Right Side with Background Image */}
       <div className="w-[50%] flex justify-center items-center bg-[#CACCBE]">
         <div className="flex flex-col items-start justify-center w-[82%] h-full p-8">
@@ -141,5 +140,5 @@ function Otp({}: Props) {
     </div>
   )
 }
-
+ 
 export default Otp;
