@@ -4,7 +4,6 @@ export const endponits = {
   CREATE_ORGANIZATION: `setup-organization`,
   GET_ONE_ORGANIZATION: `get-one-organization`,
   GET_COUNTRY_DATA: `get-countries-data`,
-
   GET_CURRENCY_LIST: `get-currency`,
 
   //Sales
@@ -15,6 +14,7 @@ export const endponits = {
   ADD_PREFIX:"add-prefix",
   EDIT_PREFIX:'edit-prefix',
   STATUS_PREFIX:'status-prefix',
+
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_SETTINGS: "get-settings",
@@ -39,6 +39,7 @@ GET_ALL_ITEM:"get-all-item",
   Add_NEW_Journel: "add-journal-entry",
   GET_ALL_JOURNALS: "get-all-journal",
   Add_NEW_ACCOUNT: "add-account",
+  GET_ONE_TRIAL_BALANCE:"get-one-trial-balance",
 
   // Customer
   GET_ALL_CUSTOMER: "get-all-customer",
@@ -46,6 +47,7 @@ GET_ALL_ITEM:"get-all-item",
   GET_TAX:`customer-additional-data`,
   GET_ONE_CUSTOMER:`/get-one-customer`,
   EDIT_CUSTOMER:`edit-customer`,
+  UPDATE_CUSTOMER_STATUS:`update-customer-status`,
 
   // Supplier
   ADD_SUPPLIER:"add-suppliers", 
@@ -53,6 +55,7 @@ GET_ALL_ITEM:"get-all-item",
   GET_ONE_SUPPLIER:"get-supplier",
   EDIT_SUPPLIER:"update-supplier",
   GET_TAX_SUPPLIER:`supplier-additional-data`,
+  UPDATE_SUPPLIER_STATUS:`update-supplier-status`,
 
   //Currency
   GET_CURRENCIES: "get-currency",

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import ChevronRight from "../../../../assets/icons/ChevronRight";
 import CirclePlus from "../../../../assets/icons/circleplus";
@@ -15,16 +15,17 @@ import Modal from "../../../../Components/model/Modal";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import Banner from "../../banner/Banner";
+import { settingsdataResponseContext } from "../../../../context/ContextShare";
 type Props = {};
 
 function InvoiceSettings({}: Props) {
   const { request: AddInvoiceSettings } = useApi("put", 5004);
-  const { request: GetInvoiceSettings } = useApi("put", 5004);
   const [isAddPlaceHolderOpen, setAddPlaceHolderOpen] = useState(false);
   const [isSeePreviewOpen, setSeePreviewOpen] = useState(false);
   const [showQROpenLocation, setShowQROpenLocation] = useState(false);
   const [showQROpenPayment, setShowQROpenPayment] = useState(false);
   const [showSignOpen, setShowSignOpen] = useState(false);
+  const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
   const [isOrganisationAddressOpen, setOrganisationAddressOpen] =
     useState(false);
   const organizationDetails = [
@@ -110,27 +111,20 @@ function InvoiceSettings({}: Props) {
     });
   };
 
-  const getInvoiceSettings = async () => {
-    try {
-      const url = `${endponits.GET_SETTINGS}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await GetInvoiceSettings(url, body);
-      if (!error && response) {
-        const data = response.data[0];
-        console.log(data);
-        
-        setInvoiceSettings({ ...invoiceSettings, ...data });
-      } else {
-        toast.error(`API Error: ${error}`);
-      }
-    } catch (error) {
-      toast.error(`Error fetching invoice settings:${error}`);
-    }
-  };
-
+ 
   useEffect(() => {
-    getInvoiceSettings();
-  }, []);
+    getSettingsData();
+  }, []); 
+  
+  useEffect(() => {
+    if (settingsResponse) {
+      setInvoiceSettings((prevData) => ({
+        ...prevData,
+        ...settingsResponse?.data?.invoice,
+      }));
+    }
+  }, [settingsResponse]);
+
 
   const openModal = (
     placeholder = false,

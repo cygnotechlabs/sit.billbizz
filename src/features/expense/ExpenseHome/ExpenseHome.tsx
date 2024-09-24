@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Category from "../../inventory/Category/Category";
+import Category from "../../inventory/Category/CategoryModal";
 import AddExpenseModal from "./AddExpenseModal";
 import ExpenseTable from "./ExpenseTable";
 import Button from "../../../Components/Button";

@@ -10,6 +10,7 @@ import Print from "../../../Components/PrintButton";
 import Table from "./Table";
 import SearchBar from "../../../Components/SearchBar";
 import PaymentsType from "./PaymentsType";
+import { Link } from "react-router-dom";
 
 type Props = {};
 
@@ -79,10 +80,11 @@ const PaymentMade = ({}: Props) => {
           </p>
         </div>
         <div className="ml-auto gap-3 flex items-center">
+        <Link to={"/purchase/payment-made/new-payment-made"}>
           <Button variant="primary" size="sm">
             <PlusCircle color="white" />
             <p className="text-sm font-medium">New Payment</p>
-          </Button>
+          </Button></Link>
 
           <div onClick={toggleDropdown} className="cursor-pointer">
             <Ellipsis />

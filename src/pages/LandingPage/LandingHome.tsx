@@ -31,21 +31,21 @@ const LandingHome: React.FC = () => {
       {/* Main Content */}
       <div className="grid grid-cols-12 relative"> 
         
-      <button className={`absolute z-60 right-1/2 ${mode?'bg-white':'bg-[#1A282F]'} rounded-full -bottom-2 h-[52px] w-[143px] flex items-center rotate-border shadow-xl`}>
+      <button className={`absolute z-60 right-1/2 ${mode?'bg-white':'bg-[#1A282F]'} rounded-full -bottom-2 h-[52px] w-[10.2%] flex items-center rotate-border shadow-xl`}>
       
       </button>
-      <button className={`absolute z-70 right-[722px] ${mode?'bg-white':'bg-[#1A282F]'} rounded-full -bottom-[6px] px-4 py-3 ${mode&&'text-[#C2A270]'} flex items-center`}>
+      <button className={`absolute z-70 right-[50.1%] ${mode?'bg-white':'bg-[#1A282F]'} rounded-full -bottom-[1.1%] px-4 py-3 ${mode&&'text-[#C2A270]'} flex items-center`}>
       More Apps <CehvronDown color={mode?'#C2A270':"white"} />
       </button>
         <div className="col-span-9 ">
           <div className="grid grid-cols-12 gap-3">
           <div className="col-span-5">
-         <div className={`w-[440px] h-[260px] rounded-2xl ${mode?'bg-[#DED0B9]':'bg-[#565148]'}   relative overflow-hidden p-6 flex flex-col`}>
+         <div onClick={()=>navigate('/sales/salesorder')} className={`w-[100%]  h-[260px] rounded-2xl ${mode?'bg-[#DED0B9]':'bg-[#565148]'} cursor-pointer  relative overflow-hidden p-6 flex flex-col`}>
         <img className="absolute right-0 bottom-0" src={salesVector} alt="" />
         {/* Header Buttons */}
         <div className="flex  justify-between items-center">
           <div className="flex space-x-3 items-center">
-          <button className={` ${mode?'bg-[#948B7C]':'bg-[#C4B8A3]'} text-white text-sm w-[62px] h-[35px] rounded-lg`}>
+          <button  className={` ${mode?'bg-[#948B7C]':'bg-[#C4B8A3]'} text-white text-sm w-[62px] h-[35px] rounded-lg`}>
             Sales
           </button>
           <button className={`${mode?'bg-[#948B7C]':'bg-[#726e66]'} text-white space-x-2  text-sm w-[160px] h-[28px] rounded-md flex items-center justify-center`}>
@@ -56,7 +56,7 @@ const LandingHome: React.FC = () => {
           {/* Arrow Button */}
         
         <div  className="flex justify-end cursor-pointer">
-          <div onClick={()=>navigate('/sales/salesorder')} className={`${mode?'bg-[#948B7C]':'bg-[#90887A]'} text-white h-[52px] w-[52px] flex items-center justify-center rounded-full `}>
+          <div  className={`${mode?'bg-[#948B7C]':'bg-[#90887A]'} text-white h-[52px] w-[52px] flex items-center justify-center rounded-full `}>
             <ArrowrightUp size={30} stroke={1}/>
           </div>
         </div>
@@ -73,7 +73,8 @@ const LandingHome: React.FC = () => {
     </div>
     <div className="relative col-span-7">
     <div
-        className="w-[605px] h-[260px] relative overflow-hidden  rounded-2xl"
+        onClick={()=>navigate('/inventory')}
+        className="w-[97%] h-[260px]  cursor-pointer relative overflow-hidden  rounded-2xl"
       >
         <img src={inventoryVector} className="absolute overflow-hidden right-20 top-[2px] z-9999" alt="" />
         {/* Image section */}
@@ -84,7 +85,7 @@ const LandingHome: React.FC = () => {
           style={{ clipPath: 'inset(0 0 0 0)' }}
         />
         {/* Arrow icon in the top right corner inside a circle   */}
-        <div onClick={()=>navigate('/inventory')}  className={`${mode?'bg-white':'bg-[#1A2023]'} cursor-pointer z-100 w-[98px] h-[63px] absolute top-[2px] right-[7px] flex items-center justify-center rounded-bl-2xl`}>
+        <div   className={`${mode?'bg-white':'bg-[#1A2023]'} cursor-pointer z-100 w-[98px] h-[63px] absolute top-[2px] right-[7px] flex items-center justify-center rounded-bl-2xl`}>
         <div onClick={()=>navigate('/inventory')} className={`flex items-center justify-center  w-[52px] h-[52px]  ${mode?'bg-[#97998E]':'bg-[#2C353B]'} rounded-full`}>
           <ArrowrightUp size={30} stroke={1}/>
         </div>
@@ -103,7 +104,7 @@ const LandingHome: React.FC = () => {
   </div>
     </div>
         <div className="col-span-3">
-          <div className={`w-[250px] rounded-2xl ${mode?'bg-[#C9CCBA]':'bg-[#3A3E40]'}  h-[304px] px-4 py-6 relative z-50`}>
+          <div className={`w-[98%] rounded-2xl ${mode?'bg-[#C9CCBA]':'bg-[#3A3E40]'}  h-[304px] px-4 py-6 relative z-50`}>
             <img src={customerVector} className="absolute bottom-[2px] -z-10 right-3" alt="" />
           <div className="flex justify-between items-center">
            <button className={` ${mode?'bg-[#71736B]':'bg-[#495053]'} text-white text-sm px-[10px] py-[8px] h-[35px] rounded-lg`}>
@@ -119,7 +120,7 @@ const LandingHome: React.FC = () => {
           </div>
         </div>
         <div className="col-span-3">
-          <div className={`w-[250px] rounded-2xl ${mode?'bg-[#DFE1E2]':'bg-[#585953]'}  h-[304px] z-50  relative px-4 py-6`}>
+          <div className={`w-[98%] rounded-2xl ${mode?'bg-[#DFE1E2]':'bg-[#585953]'}  h-[304px] z-50  relative px-4 py-6`}>
             <img src={purchaseVector} className={`absolute top-0 right-0 -z-10 ${mode&&'opacity-35'}`} alt="" />
           <div className="flex justify-between items-center">
            <button className={`${mode?'bg-white':'bg-[#71736B]'} ${mode?'text-[#303F58]':'text-white'} text-sm px-[10px] py-[8px] font-medium h-[35px] rounded-lg`}>
@@ -135,7 +136,7 @@ const LandingHome: React.FC = () => {
           </div>
         </div>
         <div className="col-span-3">
-          <div className={`w-[250px] rounded-2xl relative  ${mode?'bg-[#DFE1E2]':'bg-[#283035]'} h-[304px] px-4 py-6 z-50`}>
+          <div className={`w-[98%] rounded-2xl relative  ${mode?'bg-[#DFE1E2]':'bg-[#283035]'} h-[304px] px-4 py-6 z-50`}>
           <img src={expenseVector} className={`absolute right-0 top-0 -z-10 ${mode&&'opacity-35'}`} alt="" />
           <div className="flex justify-between items-center">
            <button className={`${mode?'bg-white':'bg-[#14181B]'} font-medium ${mode?'text-[#303F58]':'text-white'} text-sm px-[10px] py-[8px] h-[35px] rounded-lg`}>
@@ -151,7 +152,7 @@ const LandingHome: React.FC = () => {
           </div>
         </div>
         <div className="col-span-3">
-          <div className={`w-[240px] rounded-2xl  ${mode?'bg-[#F7E7CE]':'bg-[#626552]'} relative h-[304px] px-4 py-6 z-50`}>
+          <div className={`w-[95%] rounded-2xl  ${mode?'bg-[#F7E7CE]':'bg-[#626552]'} relative h-[304px] px-4 py-6 z-50`}>
             <img src={supplierVector} className="absolute top-0 right-10" alt="" />
           <div className="flex justify-between items-center">
            <button className={`${mode?'bg-[#DED0B9]':'bg-[#97998E]'} font-medium ${mode?'text-[#303F58]':'text-white'} text-sm px-[10px] py-[8px] h-[35px] rounded-lg`}>
@@ -169,7 +170,7 @@ const LandingHome: React.FC = () => {
         </div>
         </div>
         <div className="col-span-3 space-y-4">
-          <div className={`w-[360px] h-[437px] rounded-2xl relative ${mode?'bg-[#CFAE7D]':'bg-[#948B7C]'} px-4 py-6 z-50`}>
+          <div className={`w-[100%] h-[437px] rounded-2xl relative ${mode?'bg-[#CFAE7D]':'bg-[#948B7C]'} px-4 py-6 z-50`}>
             <img src={accVector1} className="absolute -right-10 top-20 -z-10" alt="" />
             <img src={accVector2} className="absolute -bottom-[85px] left-0 -z-10" alt="" />
            <div className="flex justify-between items-center">
@@ -184,7 +185,7 @@ const LandingHome: React.FC = () => {
              <p className={`w-[272px] text-[32px] ${mode?'text-[#303F58]':'text-white'}`}>Manage <span className="font-bold">Finance</span> and Generate Reports</p>
            </div>
           </div>
-          <div className="h-[120px] w-[360px] rounded-2xl relative p-4 flex justify-between items-center z-50 overflow-hidden" 
+          <div className="h-[120px] w-[100%] rounded-2xl relative p-4 flex justify-between items-center z-50 overflow-hidden" 
      style={{ 
        background: mode?  'linear-gradient(to right, #F7E7CE, #FEFFF9, #CACCBE)'  : 'linear-gradient(to right, #2C2F34, #4C4F55, #8A8C91, #B4B6BA)'
      }}>
@@ -201,9 +202,6 @@ const LandingHome: React.FC = () => {
     />
   </button>
 </div>
-
-
-         
         </div>
       </div>
     </div>

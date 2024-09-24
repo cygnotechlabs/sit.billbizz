@@ -3,14 +3,15 @@ import Button from "../../../../Components/Button";
 import useApi from "../../../../Hooks/useApi";
 import { endponits } from "../../../../Services/apiEndpoints";
 import Banner from "../../banner/Banner";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { settingsdataResponseContext } from "../../../../context/ContextShare";
 
 type Props = {};
 
 function SalesOrder({}: Props) {
   const { request: AddSalesOrderSettings } = useApi("put",5007);
-  const { request: GetSalesOrderSettings  } =useApi("put",5004)
   // Define the state with default values
+  const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
   const [salesOrderState, setSalesOrderState] = useState({
     organizationId: "INDORG0001",
     salesOrderAddress: false,
@@ -47,25 +48,21 @@ function SalesOrder({}: Props) {
     }
   };
 
-  const getSalesOrderSettings = async () => {
-    try {
-      const url = `${endponits.GET_SETTINGS}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await GetSalesOrderSettings(url, body);
-      if (!error && response) {
-        const data = response.data[0];
-        setSalesOrderState({ ...salesOrderState, ...data });
-      } else {
-        toast.error(`API Error: ${error}`);
-      }
-    } catch (error) {
-      toast.error(`Error fetching invoice settings:${error}`);
-    }
-  };
-
+  
   useEffect(() => {
-    getSalesOrderSettings();
-  }, []);
+    getSettingsData();
+  }, []); 
+  
+  useEffect(() => {
+    if (settingsResponse) {
+      setSalesOrderState((prevData) => ({
+        ...prevData,
+        ...settingsResponse?.data?.salesOrderSettings,
+      }));
+    }
+  }, [settingsResponse]);
+  console.log(settingsResponse?.data);
+  
 
   return (
     <div className="p-5">

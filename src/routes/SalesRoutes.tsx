@@ -14,6 +14,7 @@ import ReceiptView from "../features/sales/Receipt/ReceiptView";
 import NewSalesOrder from "../features/sales/salesOrder/NewSalesOrder";
 import SalesOrder from "../features/sales/salesOrder/SalesOrder";
 import ViewSalesOrder from "../features/sales/salesOrder/viewSalesQuote/ViewSalesQuote";
+import SalesInfo from "../features/sales/SalesInfo";
 
 const SalesRoutes: RouteObject[] = [
   { path: "/sales/salesorder", element: <SalesOrder /> },
@@ -31,6 +32,7 @@ const SalesRoutes: RouteObject[] = [
   { path: "/sales/receipt", element: <ReceiptHome /> },
   { path: "/sales/receipt/view", element: <ReceiptView /> },
   { path: "/sales/receipt/new", element: <AddReceiptForm /> },
+  { path: "slaes/info", element: <SalesInfo /> },
 ];
 
 export default SalesRoutes;

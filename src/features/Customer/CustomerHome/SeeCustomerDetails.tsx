@@ -9,22 +9,32 @@ import cardBackground from "../../../assets/Images/Frame 629314.png";
 import MailIcon from "../../../assets/icons/MailIcon";
 import PhoneIcon from "../../../assets/icons/PhoneIcon";
 import Button from "../../../Components/Button";
-import Pen from "../../../assets/icons/Pen";
 import Vector from "../../../assets/icons/Vector";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import EditCustomerModal from "./EditCustomerModal";
 import { CustomerEditResponseContext } from "../../../context/ContextShare";
+import toast, { Toaster } from "react-hot-toast";
 type Props = {};
+
+interface Status {
+  organizationId: string;
+  status: string;
+}
 
 function SeeCustomerDetails({}: Props) {
   const param = useParams();
   const [selectedTab, setSelectedTab] = useState("Overview");
   const [customerData, setCustomerData] = useState<any | []>([]);
   const { request: getOneCustomer } = useApi("put", 5002);
-  const {customerEditResponse}=useContext(CustomerEditResponseContext)!;
+  const { request: updateCustomerStatus } = useApi("put", 5002);
 
+  const { customerEditResponse } = useContext(CustomerEditResponseContext)!;
+  const [statusData, setStatusData] = useState<Status>({
+    organizationId: "INDORG0001",
+    status: "",
+  });
 
   const { id } = param;
 
@@ -34,17 +44,26 @@ function SeeCustomerDetails({}: Props) {
       const apiResponse = await getOneCustomer(url, {
         organizationId: "INDORG0001",
       });
+      
       const { response, error } = apiResponse;
       if (!error && response) {
         setCustomerData(response.data);
-        // console.log(response.data);
+        console.log(response.data,"get status");
         
+        console.log(response.data, "get");
+        setStatusData((prevData) => ({
+          ...prevData,
+          status: response.data.status
+        }));
+      
       }
     } catch (error) {}
   };
   useEffect(() => {
     getCustomer();
   }, [customerEditResponse]);
+
+
   const sideBarHead = [
     { title: "Overview", onclick: () => setSelectedTab("Overview") },
     { title: "Sales History", onclick: () => setSelectedTab("Sales History") },
@@ -58,6 +77,41 @@ function SeeCustomerDetails({}: Props) {
     },
     { title: "View Payment", onclick: () => setSelectedTab("View Payment") },
   ];
+
+  
+console.log(customerData);
+
+
+  const handleStatusSubmit = async (e: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+  
+    setStatusData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  
+   
+    const url = `${endponits.UPDATE_CUSTOMER_STATUS}/${id}`;
+    try {
+      const { response, error } = await updateCustomerStatus(url, {
+        ...statusData,
+        status: value,
+      });
+      if (!error && response) {
+        toast.success(response.data.message);
+        console.log(response,"status submit");
+      } else {
+        console.log(error,"error in status");
+        
+        toast.error(error.response.data.message);
+      }
+    } catch (error) {}
+  };
+
+
+  
+
+
 
   return (
     <div className="px-6">
@@ -87,7 +141,7 @@ function SeeCustomerDetails({}: Props) {
               </p>
               <div className="flex items-center mt-3">
                 <img
-                  src="https://s3-alpha-sig.figma.com/img/a028/8907/fef415dd8f2188e586883af38bed1558?Expires=1722211200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=nZ7oGkkq0tHpxEYBFp5mdRE0FOSRzXGZOjngXWn03e1-rHgmwZLnHVfd1dWC0Tk45bsST2Pl5d5km9D7h~MOHw6-S~GQJISN7JD78tTHB-FZXEvDQpLLXQj5E1ME4VMiHgtjv4VzoB6WAw2PbN1loPE6eXA9ACX76Qy6-NCAa3Xdm2i2~TjaRAAdDAhJN1htZYRZs-RUPjKD5DjUnzVYUwuc-MoSOBLn4Xj9X1To792JpsZW1zetVmexKz0ck2ZlFsXNmwKXWCSzEFUNXjC~fZfgWUUpZBxUHkkE5rq~jboBM1iCK1Dz-o81Ph7SFjzB36q2QjRLuUxdIjBi1TUJWg__"
+                src="https://i.postimg.cc/05XQMpkS/Ellipse-2.png"
                   alt="Profile"
                   className="w-8 h-8 object-cover rounded-full mr-3"
                 />
@@ -165,19 +219,36 @@ function SeeCustomerDetails({}: Props) {
         </div>
 
         <div className="col-span-9">
-          <div className="space-y-2 w-[100%] text-sm border-[1px]  border-[#DADBDD] rounded-md p-2">
+          <div className="space-y-3  w-[100%] text-sm border-[1px]  border-[#DADBDD] rounded-md p-4 ">
             <div className="flex items-center ">
-              <img
+              {/* <img
                 className="rounded-full"
                 src="https://i.postimg.cc/c4hsrPvM/Ellipse-44.png"
                 alt=""
-              />
-              <p className="font-bold text-textColor border-e px-5 border-e-textColor">
-                {customerData.customerDisplayName}
+              /> */}
+              <p className="font-bold text-textColor border-e pe-5 border-e-textColor">
+              <span className="font-medium"> Customer Name : </span>{customerData?.customerDisplayName}
               </p>
-              <p className="font-bold text-textColor  px-5 ">
-                {customerData.companyName}
+              <p className="font-bold text-textColor  px-5 border-e pe-5 border-e-textColor ">
+              <span className="font-medium"> Company Name : </span> {customerData.companyName}
               </p>
+              {/* <p className="font-bold text-textColor  px-5 ">
+              <span className="font-medium"> Opening Balance : </span> 
+              </p> */}
+
+              {
+               <div className=" w-[33.6%] ml-auto">
+                  <div
+                    className={`w-fit  px-2 flex justify-center  rounded-md  text-xs text-white p-0.5 -ms-2 ${
+                      statusData.status == "Active"
+                        ? "bg-[#78AA86]"
+                        : "bg-zinc-400"
+                    }`}
+                  >
+                    {statusData.status}
+                  </div>
+               </div>
+              }
             </div>
 
             <div className="flex items-center ">
@@ -189,8 +260,20 @@ function SeeCustomerDetails({}: Props) {
                 <PhoneIcon color={"#303F58"} size={18} />
                 <p> {customerData.mobile}</p>
               </div>
-              <div className="ml-auto w-[60%]">
-               <EditCustomerModal customerDataPorps={customerData}/>
+              <div className="ml-auto w-[40%] gap-2 flex">
+                <EditCustomerModal customerDataPorps={customerData} />
+
+                <select
+                  id=""
+                  className="text-[10px] h-6 ps-2 bg-white border-blk rounded-md border text-textColor border-textColor"
+                  value={statusData.status}
+                  name="status"
+                  onChange={handleStatusSubmit}
+                >
+                  <option value="" className="disabled hidden"></option>
+                  <option value="Active">Active </option>
+                  <option value="Inactive"><div>Inactive <div className="h-12 w-14 bg-black"></div></div></option>
+                </select>
               </div>
             </div>
           </div>
@@ -201,12 +284,15 @@ function SeeCustomerDetails({}: Props) {
                 <div className="flex w-full p-2">
                   <p className="font-bold">Billing Address</p>
                   <div className="ml-auto">
-                    <Pen color={"#303F58"} />
+                  <EditCustomerModal addressEdit="billingAddressEdit" customerDataPorps={customerData}/>
                   </div>
                 </div>
                 <div className=" text-xs p-2">
                   <p>{customerData.billingAttention}</p>
-                  <p>{customerData.billingAddressLine1}, {customerData.billingAddressLine2}</p>
+                  <p>
+                    {customerData.billingAddressLine1},{" "}
+                    {customerData.billingAddressLine2}
+                  </p>
                   <p>{customerData.billingCity}</p>
                   <p>pin {customerData.billingPinCode} </p>
                   <p>{customerData.billingCountry}</p>
@@ -217,12 +303,16 @@ function SeeCustomerDetails({}: Props) {
                 <div className="flex w-full p-2 ">
                   <p className="font-bold">Shipping Address</p>
                   <div className="ml-auto">
-                    <Pen color={"#303F58"} />
+                    <EditCustomerModal addressEdit="shippingAddressEdit" customerDataPorps={customerData}/>
+                    {/* <Pen color={"#303F58"} /> */}
                   </div>
                 </div>
                 <div className=" text-xs  p-2">
                   <p>{customerData.shippingAttention}</p>
-                  <p>{customerData.shippingAddress1}, {customerData.shippingAddress2}</p>
+                  <p>
+                    {customerData.shippingAddress1},{" "}
+                    {customerData.shippingAddress2}
+                  </p>
                   <p>{customerData.shippingCity}</p>
                   <p>pin {customerData.shippingPinCode}</p>
                   <p>{customerData.shippingCountry}</p>
@@ -236,15 +326,21 @@ function SeeCustomerDetails({}: Props) {
                 <div className="space-y-2 text-xs p-2">
                   <div className="flex text-textColor">
                     <p>Customet Type</p>{" "}
-                    <p className="ml-auto font-semibold">{customerData.customerType}</p>
+                    <p className="ml-auto font-semibold">
+                      {customerData.customerType}
+                    </p>
                   </div>
                   <div className="flex text-textColor ">
                     <p>Default Currency</p>{" "}
-                    <p className="ml-auto  font-semibold">{customerData.currency}</p>
+                    <p className="ml-auto  font-semibold">
+                      {customerData.currency}
+                    </p>
                   </div>
                   <div className="flex text-textColor ">
                     <p>Payment Terms</p>{" "}
-                    <p className="ml-auto font-semibold">{customerData.paymentTerms}</p>
+                    <p className="ml-auto font-semibold">
+                      {customerData.paymentTerms}
+                    </p>
                   </div>
                   <div className="flex text-textColor ">
                     <p>Portal Language</p>{" "}
@@ -263,6 +359,7 @@ function SeeCustomerDetails({}: Props) {
           </div>
         </div>
       </div>
+      <Toaster position="top-center" reverseOrder={true} />
     </div>
   );
 }

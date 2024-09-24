@@ -1,12 +1,14 @@
+// CashAccountsTable.tsx
+
 import { useEffect, useState, useContext } from "react";
+import { Link } from "react-router-dom";
 import SearchBar from "../../../Components/SearchBar";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
-import { useNavigate } from "react-router-dom";
 import { cashResponseContext } from "../../../context/ContextShare";
 
 interface Account {
-  id: string;
+  _id: string;
   accountName: string;
   accountCode: string;
   accountSubhead: string;
@@ -22,11 +24,7 @@ const CashAccountsTable = () => {
 
   useEffect(() => {
     fetchAllAccounts();
-  }, []);
-
-  useEffect(() => {
-    fetchAllAccounts();
-  }, [cashResponse]);
+  }, [cashResponse]); // Fetch data when cashResponse changes
 
   const fetchAllAccounts = async () => {
     try {
@@ -34,7 +32,9 @@ const CashAccountsTable = () => {
       const body = { organizationId: "INDORG0001" };
       const { response, error } = await AllAccounts(url, body);
       if (!error && response) {
-        const cashAccounts = response.data.filter((account: Account) => account.accountSubhead === "Cash");
+        const cashAccounts = response.data.filter(
+          (account: Account) => account.accountSubhead === "Cash"
+        );
         setAccountData(cashAccounts);
       }
     } catch (error) {
@@ -60,12 +60,6 @@ const CashAccountsTable = () => {
     "Documents",
     "Parent Account Type",
   ];
-  
-  const navigate = useNavigate();
-  
-  const handleNavigate = () => {
-    navigate("/accountant/cashView");
-  };
 
   return (
     <div>
@@ -74,7 +68,7 @@ const CashAccountsTable = () => {
         searchValue={searchValue}
         onSearchChange={setSearchValue}
       />
-            <div className="max-h-[25rem] overflow-y-auto mt-3">
+      <div className="max-h-[25rem] overflow-y-auto mt-3">
         <table className="min-w-full bg-white mb-5">
           <thead className="text-[12px] text-center text-dropdownText sticky top-0 z-10">
             <tr style={{ backgroundColor: "#F9F7F0" }}>
@@ -90,12 +84,16 @@ const CashAccountsTable = () => {
           </thead>
           <tbody className="text-dropdownText text-center text-[13px]">
             {filteredAccounts.map((item: Account) => (
-              <tr key={item.id} className="relative">
+              <tr key={item._id} className="relative">
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input type="checkbox" className="form-checkbox w-4 h-4" />
                 </td>
-                <td onClick={handleNavigate} className="py-2.5 px-4 border-y border-tableBorder">
-                  {item.accountName}
+                <td className="py-2.5 px-4 border-y border-tableBorder">
+                  <Link
+                    to={`/accountant/view/${item._id}?fromCash=true`}
+                  >
+                    {item.accountName}
+                  </Link>
                 </td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   {item.accountCode}

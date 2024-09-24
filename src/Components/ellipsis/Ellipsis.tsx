@@ -5,9 +5,13 @@ import EyeIcon from "../../assets/icons/EyeIcon";
 import HandShakeIcon from "../../assets/icons/HandShakeIcon";
 import PackageIcon from "../../assets/icons/PackageIcon";
 import BrandModal from "../../features/inventory/Brand/BrandModal";
-import Category from "../../features/inventory/Category/Category";
-import NewManufacture from "../../features/inventory/Manufature/NewManufacture";
+
+
+import Category from "../../features/inventory/Category/CategoryModal";
+
+
 import RackModal from "../../features/inventory/Rack/RackModal";
+import NewManufacture from "../../features/inventory/Manufature/NewManufacture";
 
 const ItemEllipsis = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

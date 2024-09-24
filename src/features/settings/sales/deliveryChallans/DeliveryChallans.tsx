@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import Button from "../../../../Components/Button";
 import bgimage from "../../../../assets/Images/Organization-banner.png";
 import useApi from "../../../../Hooks/useApi";
 import toast, { Toaster } from "react-hot-toast";
 import { endponits } from "../../../../Services/apiEndpoints";
+import { settingsdataResponseContext } from "../../../../context/ContextShare";
 
 type Props = {};
 
@@ -15,7 +16,7 @@ interface DeliveryChallan {
 
 function DeliveryChallans({}: Props) {
   const { request: addDeliveryChallan } = useApi("put", 5007);
-
+  const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
   const [inputData, setInputData] = useState<DeliveryChallan>({
     organizationId: "INDORG0001",
     deliveryChellanTC: "",
@@ -46,6 +47,20 @@ function DeliveryChallans({}: Props) {
       toast.error("An unexpected error occurred.");
     }
   };
+
+  useEffect(() => {
+    getSettingsData();
+  }, []); 
+  
+  useEffect(() => {
+    if (settingsResponse) {
+      setInputData((prevData) => ({
+        ...prevData,
+        ...settingsResponse?.data?.deliveryChellans,
+      }));
+    }
+  }, [settingsResponse]);
+  console.log(settingsResponse?.data);
 
   return (
     <div className="p-5">

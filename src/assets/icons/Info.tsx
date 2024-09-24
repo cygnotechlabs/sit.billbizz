@@ -1,6 +1,6 @@
 type Props = {
-  size: number;
-  color: string;
+  size?: number;
+  color?: string;
   stroke?:number;
 };
 
