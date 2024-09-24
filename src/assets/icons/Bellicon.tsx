@@ -1,6 +1,6 @@
-type Props = {};
 
-const BellIcon = ({}: Props) => {
+
+const BellIcon = () => {
   return (
     <div>
       <svg

@@ -1,13 +1,15 @@
 import React, { useState, useRef } from 'react';
 import Button from "../../Components/Button";
 import bgImage from "../../assets/Images/Group 2506.png";
+import { useNavigate } from 'react-router-dom';
 
 type Props = {}
 
 function Otp({}: Props) {
   // State to hold OTP values
   const [otp, setOtp] = useState(['', '', '','','','']);
-
+  const navigate = useNavigate(); // Initialize the navigate hook
+  
   const inputRefs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -69,12 +71,17 @@ function Otp({}: Props) {
     e.preventDefault();
   };
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const enteredOtp = otp.join('');
-    console.log('Entered OTP:', enteredOtp);
-  };
+  
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const enteredOtp = otp.join('');
+      console.log('Entered OTP:', enteredOtp);
+      
+      // Perform OTP validation here, if needed
+  
+      // Navigate to the home page ("/") after successful submission
+      navigate('/');
+    };
 
   return (
     <div className="h-[100vh] flex">

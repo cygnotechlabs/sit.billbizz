@@ -1,6 +1,5 @@
-type Props = {};
 
-const facebookLogo = ({}: Props) => {
+const facebookLogo = () => {
   return (
     <div>
       <svg

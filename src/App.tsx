@@ -1,4 +1,5 @@
-import { useRoutes } from "react-router-dom";
+import { useRoutes, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Layout from "./layout/Layout";
 import SettingsLayout from "./layout/SettingsLayout";
@@ -17,12 +18,28 @@ import Login from "./features/login/Login";
 import Otp from "./features/login/Otp";
 import Chatboat from "./pages/Chatboat/Chatboat";
 
+// Simulated auth check (can be replaced by real auth logic)
+const useAuth = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Simulate a check for authentication (e.g., token check)
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  return { isAuthenticated };
+};
 
 function App() {
+  const { isAuthenticated } = useAuth();
+
   const routes = [
     {
       path: "/",
-      element: <Layout children />,
+      element: isAuthenticated ? <Layout children={undefined} /> : <Navigate to="/login" />,
       children: [
         { path: "dashboard", element: <Dashboard /> },
         ...AccountantRoutes,
@@ -36,25 +53,25 @@ function App() {
       ],
     },
     {
-      path: "/",
-      element: <SettingsLayout children />,
-      children: [{ path: "" }, ...SettingsRoutes],
+      path: "/settings",
+      element: isAuthenticated ? <SettingsLayout children={undefined} /> : <Navigate to="/login" />,
+      children: [{ path: "", element: <Dashboard /> }, ...SettingsRoutes],
     },
     {
       path: "/landing",
-      element: <LandingHome/>,
+      element: <LandingHome />,
     },
     {
       path: "/chatboat",
-      element: <Chatboat/>,
+      element: <Chatboat />,
     },
     {
       path: "/login",
-      element: <Login/>,
+      element: <Login />,
     },
     {
       path: "/otp",
-      element: <Otp/>,
+      element: <Otp />,
     },
   ];
 
