@@ -37,6 +37,8 @@ async function getParameter() {
         throw error;
     }
 }
+
+
  
 async function connectToDatabase() {
     try {
