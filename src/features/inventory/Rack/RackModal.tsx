@@ -1,4 +1,4 @@
-import { forwardRef, useState, useEffect } from "react";
+import { forwardRef, useState, useEffect, ChangeEvent } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import PencilEdit from "../../../assets/icons/PencilEdit";
 import PlusCircle from "../../../assets/icons/PlusCircle";
@@ -11,10 +11,10 @@ import { endponits } from "../../../Services/apiEndpoints";
 
 type Rack = {
   _id?: string;
-  rackName: string;
+  name: string;
   description: string;
-  organizationId?: string;
-  rackStatus?: string;
+  organizationId: string;
+  type?: string;
   createdDate?: string;
 };
 
@@ -24,105 +24,117 @@ type Props = {
 
 const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const { request: fetchAllRacks } = useApi("put", 5003);
-  const { request: deleteRackRequest } = useApi("delete", 5003);
+  const { request: deleteRackRequest } = useApi("pdelete", 5003);
   const { request: updateRackRequest } = useApi("put", 5003);
   const { request: addRackRequest } = useApi("post", 5003);
-
-  const [racks, setRacks] = useState<Rack[]>([]);
+  const [rackData, setRackData] = useState<Rack>({
+    organizationId: "INDORG0001",
+    name: "",
+    description: "",
+    type: "rack",
+  });
+  const [Allracks, setallRacks] = useState<Rack[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [editableRack, setEditableRack] = useState<Rack | null>(null);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const closeModal = () => {
     setModalOpen(false);
-    setEditableRack(null);
+  };
+  const loadRacks = async () => {
+    try {
+      const url = `${endponits.GET_ALL_BRMC}`;
+      const body = { type: "rack", organizationId: "INDORG0001" };
+
+      const { response, error } = await fetchAllRacks(url, body
+
+      );
+      if (!error && response) {
+        setallRacks(response.data);
+      } else {
+        toast.error("Failed to fetch racks data.");
+      }
+    } catch (error) {
+      toast.error("Error fetching racks data.");
+      console.error("Error fetching racks data", error);
+    }
   };
   useEffect(() => {
-    const loadRacks = async () => {
-      try {
-        const url = `${endponits.GET_ALL_RACK}`;
-        const organizationId = { organizationId: "INDORG0001" };
-        const { response, error } = await fetchAllRacks(url, organizationId);
-        if (!error && response) {
-          setRacks(response.data);
-        } else {
-          toast.error("Failed to fetch racks data.");
-        }
-      } catch (error) {
-        toast.error("Error fetching racks data.");
-        console.error("Error fetching racks data", error);
-      }
-    };
 
     loadRacks();
-  }, [racks]);
+  }, []);
 
-  const openModal = (rack?: Rack) => {
+  const openModal = (rack?:any) => {
     if (rack) {
-      setEditableRack(rack);
+      setIsEdit(true);
+      setRackData({
+        _id: rack.id,
+        name: rack.rackName,
+        description: rack.description,
+        organizationId: rack.organizationId || "INDORG0001",
+        type: rack.type || "rack",
+      });
     } else {
-      setEditableRack({ rackName: "", description: "" });
+      setIsEdit(false);
+      setRackData({
+        organizationId: "INDORG0001",
+        name: "",
+        description: "",
+        type: "rack",
+      });
     }
     setModalOpen(true);
   };
 
   const handleSave = async () => {
     try {
-      const isEditing = Boolean(editableRack?._id);
-      const rack: Partial<Rack> = {
-        organizationId: "INDORG0001",
-        rackName: editableRack?.rackName || "",
-        description: editableRack?.description || "",
-        rackStatus: editableRack?.rackStatus || "Active",
-        ...(isEditing && { _id: editableRack?._id }),
-      };
+      const url = isEdit ? `${endponits.UPDATE_BRMC}` : `${endponits.ADD_BRMC}`;
+      const apiCall = isEdit ? updateRackRequest : addRackRequest;
 
-      const url = isEditing
-        ? `${endponits.UPDATE_RACK}`
-        : `${endponits.ADD_RACK}`;
-      const apiCall = isEditing ? updateRackRequest : addRackRequest;
-      const { response, error } = await apiCall(url, rack);
+      const { response, error } = await apiCall(url, rackData);
 
       if (!error && response) {
-        setRacks((prevData) =>
-          isEditing
-            ? prevData.map((r) =>
-                r._id === editableRack!._id ? { ...r, ...rack } : r
-              )
-            : [...prevData, response.data]
-        );
+if(isEdit){
+  toast.success(response.data.message);
 
-        toast.success(`Rack ${isEditing ? "updated" : "added"} successfully!`);
+}    
+else{
+  toast.success(response.data);
+
+}    
+        loadRacks();
         closeModal();
       } else {
-        toast.error(`Error saving rack: ${error?.message}`);
-        console.error(`Error saving rack: ${error?.message}`);
+        toast.error(error.response.data.message);
       }
     } catch (error) {
       toast.error("Error in save operation.");
-      console.error("Error in save operation", error);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (rack: any) => {
+
     try {
-      const url = `${endponits.DELETE_RACK(id)}`;
-      const { response, error } = await deleteRackRequest(url);
+      const body={ organizationId: "INDORG0001"}
+      console.log(body);
+      
+      const url = `${endponits.DELETE_BRMC}/${rack.id}`;
+      const { response, error } = await deleteRackRequest(url,body);
       if (!error && response) {
-        setRacks(racks.filter((rack) => rack._id !== id));
         toast.success("Rack deleted successfully!");
+        loadRacks();
       } else {
-        toast.error(`Error deleting rack: ${error?.message}`);
-        console.error(`Error deleting rack: ${error?.message}`);
+        toast.error(error.response.data.message);
       }
     } catch (error) {
-      toast.error("Error in delete operation.");
-      console.error("Error in delete operation", error);
+      toast.error("Error occurred while deleting rack.");
     }
   };
 
-  const handleEditChange = (field: keyof Rack, value: string) => {
-    if (editableRack) {
-      setEditableRack({ ...editableRack, [field]: value });
-    }
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setRackData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   return (
@@ -163,7 +175,7 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
           </div>
 
           <div className="grid grid-cols-3 gap-5">
-            {racks.map((item) => (
+            {Allracks.map((item:any) => (
               <div key={item._id} className="flex p-2">
                 <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
                   <div>
@@ -179,7 +191,7 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
                     </p>
                     <p
                       className="cursor-pointer"
-                      onClick={() => handleDelete(item._id!)}
+                      onClick={() => handleDelete(item)}
                     >
                       <TrashCan color="currentColor" />
                     </p>
@@ -200,7 +212,7 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
         <div className="p-5 mt-3">
           <div className="flex p-4 rounded-xl relative overflow-hidden">
             <h3 className="text-xl font-bold text-textColor">
-              {editableRack?._id ? "Edit Rack" : "Add Rack"}
+              {isEdit? "Edit Rack" : "Add Rack"}
             </h3>
             <div
               className="ms-auto text-3xl cursor-pointer relative z-10"
@@ -224,8 +236,9 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
                 <input
                   placeholder="Rack A1"
                   type="text"
-                  value={editableRack?.rackName || ""}
-                  onChange={(e) => handleEditChange("rackName", e.target.value)}
+                  name="name"
+                  value={rackData.name}
+                  onChange={handleInputChange}
                   className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10 "
                 />
               </div>
@@ -237,9 +250,9 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
                 <textarea
                   rows={4}
                   placeholder="Description"
-                  value={editableRack?.description || ""}
-                  onChange={(e) =>
-                    handleEditChange("description", e.target.value)
+                  name="description"
+                  value={rackData.description}
+                  onChange={handleInputChange
                   }
                   className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 "
                 />

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Button from "../../../Components/Button";
 import Modal from "../../../Components/model/Modal";
@@ -11,11 +11,12 @@ import CehvronDown from "../../../assets/icons/CehvronDown";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
 
-type Category = {
+type CategoryData = {
   _id?: string;
   name: string;
   description: string;
-  organizationId?: string;
+  organizationId: string;
+  type?: string;
   createdDate?: string;
 };
 
@@ -27,131 +28,87 @@ type Props = {
 
 function Category({ isOpen, onClose, page }: Props) {
   const { request: fetchAllCategories } = useApi("put", 5003);
-  const { request: getCategoryRequest } = useApi("get", 5003);
+  // const { request: getCategoryRequest } = useApi("get", 5003);
   const { request: deleteCategoryRequest } = useApi("delete", 5003);
   const { request: updateCategoryRequest } = useApi("put", 5003);
   const { request: addCategoryRequest } = useApi("post", 5003);
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [editableCategory, setEditableCategory] = useState<Category | null>(
-    null
-  );
-  const [newCategory, setNewCategory] = useState<Category>({
+  const [categories, setCategories] = useState<CategoryData>({
+    organizationId: "INDORG0001",
     name: "",
     description: "",
-    organizationId: "INDORG0001",
+    type: "category",
   });
+
+  const [allCategoryData, setAllcategoryData] = useState<CategoryData[]>([]);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  console.log(isEdit);
+
   const [searchValue, setSearchValue] = useState<string>("");
 
   const closeModal = () => {
     setModalOpen(false);
-    setEditableCategory(null);
-    setNewCategory({
-      name: "",
-      description: "",
-      organizationId: "INDORG0001",
-    });
+  };
+  console.log(categories);
+
+  const loadCategories = async () => {
+    try {
+      const url = `${endponits.GET_ALL_BRMC}`;
+      const body = { type: "category", organizationId: "INDORG0001" };
+      const { response, error } = await fetchAllCategories(url, body);
+      if (!error && response) {
+        setAllcategoryData(response.data);
+      } else {
+        toast.error("Failed to fetch Category data.");
+      }
+    } catch (error) {
+      toast.error("Error in fetching Category data.");
+      console.error("Error in fetching Category data", error);
+    }
   };
 
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const url = `${endponits.GET_ALL_CATEGORIES}`;
-        const organizationId = { organizationId: "INDORG0001" };
-        const { response, error } = await fetchAllCategories(
-          url,
-          organizationId
-        );
-        if (error) {
-          toast.error("Error in fetching categories data.");
-          console.error("Error in fetching categories data", error);
-        } else if (response) {
-          setCategories(response.data);
-        }
-      } catch (error) {
-        toast.error("Error in fetching categories data.");
-        console.error("Error in fetching categories data", error);
-      }
-    };
-
     loadCategories();
   }, []);
 
-  const getCategory = async (id: string) => {
-    try {
-      const url = `${endponits.GET_CATEGORY(id)}`;
-      const { response, error } = await getCategoryRequest(url);
-      if (error) {
-        toast.error(`Error fetching category: ${error.message}`);
-        console.error(`Error fetching category: ${error.message}`);
-      } else if (response) {
-        setEditableCategory(response.data);
-        setModalOpen(true);
-      }
-    } catch (error) {
-      toast.error("Error in fetching category data.");
-      console.error("Error in fetching category data", error);
-    }
-  };
+  const openModal = (category?: any) => {
+    console.log(category, "item");
 
-  const openAddModal = () => {
-    setEditableCategory(null);
-    setNewCategory({
-      name: "",
-      description: "",
-      organizationId: "INDORG0001",
-    });
+    if (category) {
+      setIsEdit(true);
+      setCategories({
+        _id: category.id,
+        name: category.categoriesName,
+        description: category.description,
+        organizationId: category.organizationId || "INDORG0001",
+        type: category.type || "category",
+      });
+    } else {
+      setIsEdit(false);
+      setCategories({
+        organizationId: "INDORG0001",
+        name: "",
+        description: "",
+        type: "category",
+      });
+    }
     setModalOpen(true);
-  };
-
-  const openEditModal = (category: Category) => {
-    getCategory(category._id!);
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      const url = `${endponits.DELETE_CATEGORY(id)}`;
-      const { response, error } = await deleteCategoryRequest(url);
-      if (error) {
-        toast.error(`Error deleting category: ${error.message}`);
-        console.error(`Error deleting category: ${error.message}`);
-      } else if (response) {
-        setCategories(categories.filter((category) => category._id !== id));
-        toast.success(`Category with id ${id} deleted successfully.`);
-      }
-    } catch (error) {
-      toast.error("Error in delete operation.");
-      console.error("Error in delete operation", error);
-    }
   };
 
   const handleSave = async () => {
     try {
-      const isEditing = Boolean(editableCategory);
-      const category = isEditing ? editableCategory : newCategory;
-
-      const url = isEditing
-        ? `${endponits.UPDATE_CATEGORY}`
-        : `${endponits.ADD_CATEGORY}`;
-      const apiCall = isEditing ? updateCategoryRequest : addCategoryRequest;
-      const { response, error } = await apiCall(url, category);
+      const url = isEdit ? `${endponits.UPDATE_BRMC}` : `${endponits.ADD_BRMC}`;
+      const apiCall = isEdit ? updateCategoryRequest : addCategoryRequest;
+      const { response, error } = await apiCall(url, categories);
 
       if (error) {
-        toast.error(`Error saving category: ${error.message}`);
+        toast.error(error.response.data.message);
         console.error(`Error saving category: ${error.message}`);
       } else if (response) {
-        setCategories((prevData) =>
-          isEditing
-            ? prevData.map((c) =>
-                c._id === editableCategory!._id ? { ...c, ...category } : c
-              )
-            : [...prevData, response.data]
-        );
-        toast.success(
-          `Category ${isEditing ? "updated" : "added"} successfully.`
-        );
+        toast.success(`Category ${isEdit ? "updated" : "added"} successfully.`);
         closeModal();
+        loadCategories();
       }
     } catch (error) {
       toast.error("Error in save operation.");
@@ -159,12 +116,30 @@ function Category({ isOpen, onClose, page }: Props) {
     }
   };
 
-  const handleEditChange = (field: keyof Category, value: string) => {
-    if (editableCategory) {
-      setEditableCategory({ ...editableCategory, [field]: value });
-    } else {
-      setNewCategory({ ...newCategory, [field]: value });
+  const handleDelete = async (item: any) => {
+    try {
+      const body = { organizationId: "INDORG0001" };
+      const url = `${endponits.DELETE_BRMC}/${item.id}`;
+      const { response, error } = await deleteCategoryRequest(url, body);
+      if (!error && response) {
+        toast.success("Category deleted successfully!");
+        loadCategories();
+      } else {
+        toast.error(error.response.data.message);
+      }
+    } catch (error) {
+      toast.error("Error occurred while deleting Category.");
     }
+  };
+
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setCategories((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   return (
@@ -205,7 +180,7 @@ function Category({ isOpen, onClose, page }: Props) {
               </div>
               <div>
                 <div className="relative w-full items-center justify-center flex">
-                  <select className="block appearance-none w-full h-10  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <select className="block appearance-none w-full h-10 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                     <option value="" className="text-gray">
                       All Category
                     </option>
@@ -218,7 +193,7 @@ function Category({ isOpen, onClose, page }: Props) {
             </div>
           )}
           <div className="flex ml-auto me-2 my-4">
-            <Button variant="primary" size="xl" onClick={openAddModal}>
+            <Button variant="primary" size="xl" onClick={() => openModal()}>
               <PlusCircle color="white" />
               <p className="text-sm">Add Category</p>
             </Button>
@@ -226,23 +201,27 @@ function Category({ isOpen, onClose, page }: Props) {
         </div>
 
         <div className="grid grid-cols-3 gap-5">
-          {categories.map((item) => (
-            <div key={item._id} className="flex p-2">
+          {allCategoryData.map((category: any) => (
+            <div key={category.id} className="flex p-2">
               <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
                 <div>
-                  <h3 className="text-sm font-bold">{item.name}</h3>
-                  <p className="text-xs text-textColor">{item.description}</p>
+                  <h3 className="text-sm font-bold">
+                    {category.categoriesName}
+                  </h3>
+                  <p className="text-xs text-textColor">
+                    {category.description}
+                  </p>
                 </div>
                 <div className="flex space-x-2">
                   <p
                     className="cursor-pointer"
-                    onClick={() => openEditModal(item)}
+                    onClick={() => openModal(category)}
                   >
                     <PencilEdit color="currentColor" />
                   </p>
                   <p
                     className="cursor-pointer"
-                    onClick={() => handleDelete(item._id!)}
+                    onClick={() => handleDelete(category)}
                   >
                     <TrashCan color="currentColor" />
                   </p>
@@ -254,23 +233,24 @@ function Category({ isOpen, onClose, page }: Props) {
 
         {page !== "expense" && (
           <div className="flex justify-end gap-2 my-3">
-            <Button className="flex justify-center" variant="primary" size="sm">
+            <Button
+              className="flex justify-center px-8"
+              variant="primary"
+              size="sm"
+            >
               Save
             </Button>
           </div>
         )}
 
-        {/* Add/Edit Category Modal */}
-        <Modal
-          open={isModalOpen}
-          onClose={closeModal}
-          style={{ width: "40.5%" }}
-        >
-          <div className="p-6 space-y-8">
-            <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-textColor">
-                {editableCategory ? "Edit Category" : "Add Category"}
-              </h3>
+        <Modal open={isModalOpen} onClose={closeModal} style={{ width: "35%" }}>
+          <div className="p-5">
+            <div className="flex p-4 rounded-xlrelative overflow-hidden h-24">
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold text-textColor">
+                  {isEdit ? "Edit" : "Add"} Category
+                </h3>
+              </div>
               <div
                 className="ms-auto text-3xl cursor-pointer relative z-10"
                 onClick={closeModal}
@@ -278,57 +258,41 @@ function Category({ isOpen, onClose, page }: Props) {
                 &times;
               </div>
             </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSave();
-              }}
-            >
-              <div className="mb-4">
+
+            <form className="grid gap-5">
+              <div className="w-full">
                 <label className="block text-sm mb-1 text-labelColor">
                   Name
                 </label>
                 <input
                   type="text"
-                  onChange={(e) => handleEditChange("name", e.target.value)}
-                  value={editableCategory?.name || newCategory.name || ""}
-                  placeholder="Category Name"
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10"
+                  placeholder="Enter category name"
+                  name="name"
+                  value={categories.name}
+                  onChange={handleInputChange}
+                  className="w-full h-10 px-3 mt-1 text-sm bg-white border border-inputBorder rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
                 />
               </div>
-              <div className="mb-4">
+
+              <div className="w-full">
                 <label className="block text-sm mb-1 text-labelColor">
                   Description
                 </label>
                 <textarea
-                  value={
-                    editableCategory?.description ||
-                    newCategory.description ||
-                    ""
-                  }
-                  onChange={(e) =>
-                    handleEditChange("description", e.target.value)
-                  }
-                  placeholder="Description"
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
                   rows={4}
+                  placeholder="Enter description"
+                  name="description"
+                  value={categories.description}
+                  onChange={handleInputChange}
+                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 "
                 />
               </div>
-              <div className="flex justify-end gap-2 mb-3">
-                <Button
-                  className="flex justify-center"
-                  onClick={closeModal}
-                  variant="tertiary"
-                  size="lg"
-                >
+
+              <div className="flex justify-end gap-2">
+                <Button variant="secondary" size="sm" onClick={closeModal}>
                   Cancel
-                </Button>
-                <Button
-                  className="flex justify-center"
-                  variant="primary"
-                  size="lg"
-                  type="submit"
-                >
+                </Button>{" "}
+                <Button variant="primary" size="sm" onClick={handleSave}>
                   Save
                 </Button>
               </div>
