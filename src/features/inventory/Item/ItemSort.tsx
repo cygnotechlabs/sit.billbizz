@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ListIcon from "../../../assets/icons/ListIcon";
 
-type Props = React.HTMLAttributes<HTMLButtonElement> & {};
-
-const ItemSort = ({}: Props) => {
+const ItemSort = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

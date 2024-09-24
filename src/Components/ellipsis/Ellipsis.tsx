@@ -6,17 +6,15 @@ import HandShakeIcon from "../../assets/icons/HandShakeIcon";
 import PackageIcon from "../../assets/icons/PackageIcon";
 import BrandModal from "../../features/inventory/Brand/BrandModal";
 import Category from "../../features/inventory/Category/Category";
-import NewManufature from "../../features/inventory/Manufature/NewManufacture";
+import NewManufacture from "../../features/inventory/Manufature/NewManufacture";
 import RackModal from "../../features/inventory/Rack/RackModal";
 
-type Props = {};
-
-const ItemEllipsis = ({}: Props) => {
+const ItemEllipsis = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
   const [isRackModalOpen, setIsRackModalOpen] = useState(false);
   const [openCategoryModal, setOpenCategoryModal] = useState(false);
-  const [isManufatureModalOpen, setIsManudfatureModalOpen] = useState(false);
+  const [isManufactureModalOpen, setIsManufactureModalOpen] = useState(false);
 
   const toggleCategoryModal = () => {
     setOpenCategoryModal(!openCategoryModal);
@@ -51,7 +49,7 @@ const ItemEllipsis = ({}: Props) => {
       icon: <HandShakeIcon color="#4B5C79" />,
       text: "View Manufacture",
       onClick: () => {
-        setIsManudfatureModalOpen(true);
+        setIsManufactureModalOpen(true);
       },
     },
     {
@@ -80,7 +78,19 @@ const ItemEllipsis = ({}: Props) => {
   return (
     <>
       <div className="flex justify-end">
-        <div onClick={toggleDropdown} className="cursor-pointer">
+        <div 
+          onClick={toggleDropdown} 
+          className="cursor-pointer" 
+          role="button" 
+          aria-haspopup="true" 
+          aria-expanded={isDropdownOpen} 
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              toggleDropdown();
+            }
+          }}
+        >
           <Ellipsis />
         </div>
 
@@ -89,6 +99,7 @@ const ItemEllipsis = ({}: Props) => {
             ref={dropdownRef}
             className="absolute top-44 right-16 mt-2 w-[15.8%] bg-white shadow-xl z-10"
             style={{ borderRadius: "4px", padding: "8px" }}
+            role="menu"
           >
             <ul className="text-dropdownText">
               {dropdownItems.map((item, index) => (
@@ -97,6 +108,13 @@ const ItemEllipsis = ({}: Props) => {
                     onClick={item.onClick}
                     className="px-4 py-2 flex items-center 
                       gap-2 hover:bg-orange-100 rounded-md text-sm cursor-pointer"
+                    role="menuitem"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        item.onClick();
+                      }
+                    }}
                   >
                     {item.icon}
                     {item.text}
@@ -117,10 +135,10 @@ const ItemEllipsis = ({}: Props) => {
       {isRackModalOpen && (
         <RackModal ref={modalRef} onClose={() => setIsRackModalOpen(false)} />
       )}
-      {isManufatureModalOpen && (
-        <NewManufature
+      {isManufactureModalOpen && (
+        <NewManufacture
           ref={modalRef}
-          onClose={() => setIsManudfatureModalOpen(false)}
+          onClose={() => setIsManufactureModalOpen(false)}
         />
       )}
       <Category isOpen={openCategoryModal} onClose={toggleCategoryModal} />

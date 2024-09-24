@@ -1,6 +1,6 @@
 type Props = {};
 
-export default function ArrowDownIcon({}: Props) {
+export default function ArrowDownIcon(props: Props) {
   return (
     <svg
       width="18"
