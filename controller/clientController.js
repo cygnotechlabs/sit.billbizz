@@ -35,11 +35,41 @@ const createRolesForOrganization = async (organizationId) => {
         description: 'Admin',
         roleName: 'Admin',
         permissions: [
+          // Basic
+          { action: "Basic", note: "Viewed Basic details" },
+          
           // Organization
-          { action: "OrganizationView", note: "Viewed organization details" },
-          { action: "OrganizationCreate", note: "Created a new organization" },
-          { action: "OrganizationEdit", note: "Edited organization information" },
-          { action: "OrganizationDelete", note: "Deleted a organization" },
+          { action: "OrganizationView", note: "Viewed Organization Details" },
+          { action: "OrganizationSetup", note: "Setup/Modified Organization Details" },
+
+          // Currency
+          { action: "CurrencyView", note: "Viewed Currency Details" },
+          { action: "CurrencyAdd", note: "Added a new Currency" },
+          { action: "CurrencyEdit", note: "Edited Currency Information" },
+          { action: "CurrencyDelete", note: "Deleted a Currency" },
+          
+          // Setting
+          { action: "SettingView", note: "Viewed Setting details" },
+          
+          { action: "InvoiceAdd", note: "Added Invoice" },
+          
+          { action: "PaymentTermAdd", note: "Added Payment Term" },
+          { action: "PaymentTermDelete", note: "Deleted Payment Term" },
+          { action: "PaymentTermView", note: "Viewed Payment Term" },
+
+          { action: "TaxAdd", note: "Added Tax Information" },
+          { action: "TaxEdit", note: "Edited Tax Information" },
+          { action: "TaxView", note: "Viewed Tax Information" },
+
+          { action: "PrefixAdd", note: "Added Prefix" },
+          { action: "PrefixView", note: "Viewed Prefix" },
+          { action: "PrefixEdit", note: "Edited Prefix" },
+          { action: "PrefixDelete", note: "Deleted Prefix" },
+          { action: "PrefixStatus", note: "Modified Prefix Status" },
+          
+
+
+
 
           // Customers
           { action: "CustomersView", note: "Viewed customer details" },
