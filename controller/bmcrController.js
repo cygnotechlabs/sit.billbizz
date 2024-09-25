@@ -333,7 +333,8 @@ exports.updateBmcr = async (req, res) => {
 
 // delete bmcr
 exports.deleteBmcr = async (req, res) => {
-    const { organizationId } = req.body;
+    // const { organizationId } = req.body;
+    const organizationId = "INDORG0001";    // Hardcoded organizationId
     const { id } = req.params;
 
     

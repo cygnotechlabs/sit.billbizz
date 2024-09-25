@@ -27,8 +27,8 @@ exports.getItemDropdowm = async (req, res) => {
         }
 
         // Fetch bmcr data
-        const bmcr = await Bmcr.findOne({ organizationId });
-        if (!bmcr) {
+        const bmcr = await Bmcr.find({ organizationId });
+        if (!bmcr || bmcr.length === 0) {
             return res.status(404).json({
                 message: "No bmcr found for the organization.",
             });
@@ -53,18 +53,10 @@ exports.getItemDropdowm = async (req, res) => {
         // Prepare the response object
         const response = {
             bmcrData: {
-                brands: bmcr.brands.map(b => ({
-                    brandName: b.brandName
-                })),
-                manufacturers: bmcr.manufacturers.map(m => ({
-                    manufacturerName: m.manufacturerName
-                })),
-                categories: bmcr.categories.map(c => ({
-                    categoryName: c.categoriesName
-                })),
-                racks: bmcr.racks.map(r => ({
-                    rackName: r.rackName
-                }))
+                brandNames: bmcr.map(b => b.brandName).filter(Boolean),   
+                manufacturers: bmcr.map(m => m.manufacturerName).filter(Boolean),
+                categories: bmcr.map(c => c.categoriesName).filter(Boolean),
+                racks: bmcr.map(r => r.rackName).filter(Boolean)
             },
             unitName: unit.map(u => u.unitName),
             itemSettings: {
