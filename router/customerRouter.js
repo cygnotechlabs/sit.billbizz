@@ -3,11 +3,16 @@ const express = require("express")
 const router = new express.Router()
 
 // const customerController = require("../controller/customerController")
-
 const importController = require("../controller/importCustomer")
-
 const customerController = require("../controller/customerCont")
 
+const checkPermission = require('../controller/permission');
+const { verifyToken } = require('../controller/middleware');
+
+
+//Basic
+
+router.put('/customer-additional-data', verifyToken,checkPermission('Basic'),customerController.getCustomerAdditionalData);
 
 
 
@@ -15,25 +20,25 @@ const customerController = require("../controller/customerCont")
 
 // router.post('/add-customer',customerController.addCustomer)
 
-router.post('/add-customer',customerController.addCustomer)
+router.post('/add-customer',verifyToken,checkPermission('Basic'),customerController.addCustomer)
 
-router.put('/get-all-customer',customerController.getAllCustomer)
+router.get('/get-all-customer',verifyToken,checkPermission('CustomerView'),customerController.getAllCustomer)
 
-router.put('/get-one-customer/:customerId',customerController.getOneCustomer)
+router.get('/get-one-customer/:customerId',verifyToken,checkPermission('CustomerView'),customerController.getOneCustomer)
 
-router.put('/edit-customer/:customerId', customerController.editCustomer);
+router.put('/edit-customer/:customerId', verifyToken,checkPermission('CustomerEdit'),customerController.editCustomer);
 
-router.put('/update-customer-status/:customerId', customerController.updateCustomerStatus);
+router.put('/update-customer-status/:customerId', verifyToken,checkPermission('CustomerEdit'),customerController.updateCustomerStatus);
 
-router.put('/customer-additional-data', customerController.getCustomerAdditionalData);
+
 
 
 //Import
-router.post('/import-customer', importController.importCustomer);
+router.post('/import-customer',verifyToken,checkPermission('CustomerImport'), importController.importCustomer);
 
 
 //Customer History
-router.put('/get-one-customer-history/:customerId',customerController.getOneCustomerHistory)
+router.get('/get-one-customer-history/:customerId',verifyToken,checkPermission('CustomerView'),customerController.getOneCustomerHistory)
 
 module.exports = router
 

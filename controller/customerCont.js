@@ -26,9 +26,11 @@ const dataExist = async (organizationId) => {
   exports.addCustomer = async (req, res) => {
     console.log("Add Customer:", req.body);
     try {
+      const { organizationId, id: userId, userName } = req.user;
+
       const sanitizedData = sanitizeCustomerData(req.body);
 
-      const { organizationId, customerEmail, debitOpeningBalance, creditOpeningBalance, customerDisplayName } = sanitizedData;
+      const { customerEmail, debitOpeningBalance, creditOpeningBalance, customerDisplayName } = sanitizedData;
   
       const { organizationExists, taxExists, currencyExists } = await dataExist(organizationId);
   
@@ -45,7 +47,7 @@ const dataExist = async (organizationId) => {
       
       const savedAccount = await createNewAccount(customerDisplayName, openingDate, organizationId, savedCustomer._id);
   
-      await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, sanitizedData, openingDate);
+      await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, sanitizedData, openingDate ,userId,userName );
   
       console.log("Customer & Account created successfully");
       res.status(201).json({ message: "Customer created successfully." });
@@ -59,11 +61,13 @@ const dataExist = async (organizationId) => {
 exports.editCustomer = async (req, res) => {
     console.log("Edit Customer:", req.body);
     try {
+      const { organizationId, id: userId, userName } = req.user;
+
       const sanitizedData = sanitizeCustomerData(req.body);
 
       const { customerId } = req.params;
   
-      const { organizationId, customerDisplayName } = sanitizedData;
+      const { customerDisplayName } = sanitizedData;
   
       const { organizationExists, taxExists, currencyExists } = await dataExist(organizationId);
   
@@ -114,8 +118,8 @@ exports.editCustomer = async (req, res) => {
         date: openingDate,
         title: "Customer Data Modified",
         description: `${savedCustomer.customerDisplayName} Account Modified by ${req.userName}`,
-        userId: req.userId,
-        userName: req.userName,
+        userId: userId,
+        userName: userName,
       });
   
       await accountCustomerHistoryEntry.save();
@@ -133,7 +137,7 @@ exports.editCustomer = async (req, res) => {
   // Get All Customer for a given organizationId
 exports.getAllCustomer = async (req, res) => {
   try {
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
 
     const { organizationExists, allCustomer } = await dataExist(organizationId);
 
@@ -160,7 +164,7 @@ exports.getAllCustomer = async (req, res) => {
 exports.getOneCustomer = async (req, res) => {
   try {
     const { customerId } = req.params;
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
 
     const {organizationExists} = await dataExist(organizationId);
 
@@ -194,7 +198,8 @@ exports.updateCustomerStatus = async (req, res) => {
   console.log("Update Customer Status:", req.body);
   try {
     const { customerId } = req.params;
-    const { organizationId, status } = req.body; // Status is now taken from the request body
+    const organizationId = req.user.organizationId;
+    const { status } = req.body; // Status is now taken from the request body
 
     // Validate organizationId
     const organizationExists = await Organization.findOne({
@@ -236,8 +241,7 @@ exports.updateCustomerStatus = async (req, res) => {
 
 // Customer Additional data
 exports.getCustomerAdditionalData = async (req, res) => {
-  const { organizationId } = req.body;
-
+  const organizationId = req.user.organizationId;
   try {
     // Check if an Organization already exists
     const organization = await Organization.findOne({ organizationId });
@@ -283,8 +287,7 @@ exports.getCustomerAdditionalData = async (req, res) => {
 exports.getOneCustomerHistory = async (req, res) => {
   try {
     const { customerId } = req.params;
-    const { organizationId } = req.body;
-
+    const organizationId = req.user.organizationId;
     const {organizationExists} = await dataExist(organizationId);
 
     if (!organizationExists) {
@@ -465,7 +468,7 @@ exports.getOneCustomerHistory = async (req, res) => {
     return newAccount.save();
   }
   
-  async function saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, data, openingDate) {
+  async function saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, data, openingDate,userId,userName) {
     const trialEntry = new TrialBalance({
       organizationId: savedCustomer.organizationId,
       operationId: savedCustomer._id,
@@ -479,11 +482,11 @@ exports.getOneCustomerHistory = async (req, res) => {
     });
     await trialEntry.save();
   
-    const customerHistory = createCustomerHistory(savedCustomer, savedAccount, data, openingDate);
+    const customerHistory = createCustomerHistory(savedCustomer, savedAccount, data, openingDate,userId,userName);
     await CustomerHistory.insertMany(customerHistory);
   }
   
-  function createCustomerHistory(savedCustomer, savedAccount, data, openingDate) {
+  function createCustomerHistory(savedCustomer, savedAccount, data, openingDate,userId,userName) {
     const description = getTaxDescription(data);
     const description1 = getOpeningBalanceDescription(data, savedAccount);
   
@@ -496,8 +499,8 @@ exports.getOneCustomerHistory = async (req, res) => {
         date: openingDate,
         title: "Customer Added",
         description,
-        userId: "6434bd73222",
-        userName: "Test User",
+        userId: userId,
+        userName: userName,
       },
       {
         organizationId: savedCustomer.organizationId,
@@ -507,8 +510,8 @@ exports.getOneCustomerHistory = async (req, res) => {
         date: openingDate,
         title: "Customer Account Created",
         description: description1,
-        userId: "6434bd73222",
-        userName: "Test User",
+        userId: userId,
+        userName: userName,
       },
     ];
   }
