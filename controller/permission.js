@@ -10,12 +10,14 @@ const checkPermission = (permissionAction) => {
       if (!user) {
         return res.status(401).json({ message: 'User not found' });
       }
+      
 
       // Fetch the role associated with the user
-      const role = await Role.findOne({ roleName: user.roleName });
+      const role = await Role.findOne({ roleName: user.role });
       if (!role) {
         return res.status(401).json({ message: 'Role not found' });
       }
+      
 
       // Find the permission in the role's permissions array
       const permission = role.permissions.find(p => p.action === permissionAction);
@@ -23,7 +25,7 @@ const checkPermission = (permissionAction) => {
       // If the permission exists, log the activity and grant access
       if (permission) {
         const activity = new ActivityLog({
-          username: user.username, // Assuming your User model has a username field
+          userName: user.userName, // Assuming your User model has a username field
           activity: `Accessed ${permission.note}`, // Log the note associated with the permission
           timestamp: new Date(),
         });
@@ -33,7 +35,7 @@ const checkPermission = (permissionAction) => {
       } else {
         // Log the unauthorized access attempt
         const unauthorizedActivity = new ActivityLog({
-          username: user.username,
+          userName: user.userName,
           activity: `Tried to access ${permissionAction} without proper permissions`,
           timestamp: new Date(),
         });

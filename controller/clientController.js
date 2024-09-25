@@ -35,6 +35,12 @@ const createRolesForOrganization = async (organizationId) => {
         description: 'Admin',
         roleName: 'Admin',
         permissions: [
+          // Organization
+          { action: "OrganizationView", note: "Viewed organization details" },
+          { action: "OrganizationCreate", note: "Created a new organization" },
+          { action: "OrganizationEdit", note: "Edited organization information" },
+          { action: "OrganizationDelete", note: "Deleted a organization" },
+
           // Customers
           { action: "CustomersView", note: "Viewed customer details" },
           { action: "CustomersCreate", note: "Created a new customer" },

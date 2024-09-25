@@ -12,7 +12,7 @@ const { verifyToken } = require('../controller/middleware');
 
 
 
-// router.put('/get-one-organization',verifyToken,checkPermission('OrganizationView'),organizationController.getOneOrganization)
+router.get('/get-one-organization',verifyToken,checkPermission('OrganizationView'),organizationController.getOneOrganization)
 
 
 
@@ -21,7 +21,7 @@ router.post('/setup-organization',organizationController.setupOrganization)
 
 router.get('/get-additional-data',organizationController.getAdditionalData)
 
-router.put('/get-one-organization',organizationController.getOneOrganization)
+// router.put('/get-one-organization',organizationController.getOneOrganization)
 
 router.delete('/delete-organization/:organizationId',organizationController.deleteOrganization)
 

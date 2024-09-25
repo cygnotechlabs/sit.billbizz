@@ -17,7 +17,7 @@ function verifyToken(req, res, next) {
                 
                 // Attach userId and organizationId to req object
                 req.user = { id: userId, organizationId };
-
+                
                 next();  // Pass control to the next middleware or route handler
             }
         });
