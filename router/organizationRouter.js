@@ -18,14 +18,19 @@ const { verifyToken } = require('../controller/middleware');
 
 //Production
 
-//Organization
-router.post('/setup-organization',verifyToken,checkPermission('OrganizationSetup'),organizationController.setupOrganization)
+//Basic
+router.get('/get-countries-data',verifyToken,checkPermission('Basic'),organizationController.getCountriesData)
 
 router.get('/get-additional-data',verifyToken,checkPermission('Basic'),organizationController.getAdditionalData)
 
+
+
+//Organization
+router.post('/setup-organization',verifyToken,checkPermission('OrganizationSetup'),organizationController.setupOrganization)
+
 router.get('/get-one-organization',verifyToken,checkPermission('OrganizationView'),organizationController.getOneOrganization)
 
-router.get('/get-countries-data',verifyToken,checkPermission('Basic'),organizationController.getCountriesData)
+
 
 
 
@@ -33,7 +38,10 @@ router.get('/get-countries-data',verifyToken,checkPermission('Basic'),organizati
 
 // Setting
 
+router.get('/get-settings',verifyToken,checkPermission('SettingView'),settingController.getSettings)
+
 // Currency
+
 router.get('/get-currency',verifyToken,checkPermission('CurrencyView'),settingController.getCurrency)
 
 router.get('/view-currency/:id',verifyToken,checkPermission('CurrencyView'),settingController.viewCurrency)
@@ -44,14 +52,12 @@ router.put('/edit-currency',verifyToken,checkPermission('CurrencyEdit'),settingC
 
 router.delete('/delete-currency/:currencyId',verifyToken,checkPermission('CurrencyDelete'),settingController.deleteCurrency)
 
+// Invoice 
 
-// Invoice settings
 router.put('/add-invoice-settings',verifyToken,checkPermission('InvoiceAdd'),settingController.updateInvoiceSettings)
 
-router.put('/get-settings',verifyToken,checkPermission('SettingView'),settingController.getSettings)
+// Payment Terms
 
-
-// Payment terms
 router.post('/add-payment-terms',verifyToken,checkPermission('PaymentTermAdd'),settingController.addPaymentTerm)
 
 router.put('/edit-payment-terms/:id',verifyToken,checkPermission('PaymentTermEdit'),settingController.editPaymentTerm)
@@ -60,16 +66,16 @@ router.delete('/delete-payment-terms',verifyToken,checkPermission('PaymentTermDe
 
 router.get('/get-all-payment-terms',verifyToken,checkPermission('PaymentTermView'),settingController.getAllPaymentTerms)
 
-
 //Tax
+
 router.post('/add-tax',verifyToken,checkPermission('TaxAdd'),settingController.addTax)
 
 router.put('/edit-tax',verifyToken,checkPermission('TaxEdit'),settingController.editTaxRate)
 
 router.get('/get-tax',verifyToken,checkPermission('TaxView'),settingController.getTax)
 
-
 //Prefix
+
 router.post('/add-prefix',verifyToken,checkPermission('PrefixAdd'),settingController.addPrefix)
 
 router.get('/get-prefix',verifyToken,checkPermission('PrefixView'),settingController.getPrefix)

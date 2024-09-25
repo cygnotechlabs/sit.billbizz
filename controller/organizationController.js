@@ -484,7 +484,7 @@ exports.getOneOrganization = async (req, res) => {
   }
 };
 
-// Delete Organization
+// Delete Organization - Internal
 exports.deleteOrganization = async (req, res) => {
   try {
     const { organizationId } = req.body;
@@ -590,8 +590,8 @@ exports.getCountriesData = (req, res) => {
 exports.setupOrganization = async (req, res) => {
   console.log("Setup Organization:", req.body);
   try {
+    const organizationId = req.user.organizationId;
     let {
-      organizationId,
       organizationLogo,
       organizationCountry,
       organizationIndustry,
@@ -632,13 +632,14 @@ exports.setupOrganization = async (req, res) => {
     dateSplit = cleanData(dateSplit);
 
     // Check if an Organization already exists
+    if(organizationId){
     const existingOrganization = await Organization.findOne({ organizationId });
 
     if (!existingOrganization) {
       return res.status(404).json({
         message: "No Organization Found.",
       });
-    }
+    }}
 
     const generatedDateTime = generateTimeAndDateForDB(
       timeZoneExp,
@@ -1048,12 +1049,6 @@ const validDateFormats = {
   "mmm/dd/yyyy": "MMMM/DD/YYYY",
   "yyyy/mmm/dd": "YYYY/MMMM/DD"
  };
-
-
-
-
-
-
 
 
 

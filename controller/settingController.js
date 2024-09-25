@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 // Get Currency 
 exports.getCurrency = async (req, res) => {
   try {
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
 
     // Log the ID being fetched
     // console.log("Fetching organization with ID:", organizationId);
@@ -33,7 +33,7 @@ exports.getCurrency = async (req, res) => {
 //get single currency
 exports.viewCurrency = async (req, res) => {
   try {
-    const { id } = req.params; // Assuming you're passing the _id as a route parameter
+    const { id } = req.params; 
 
     // Log the ID being fetched
     console.log("Fetching currency with ID:", id);
@@ -54,7 +54,8 @@ exports.viewCurrency = async (req, res) => {
 // Add currency
 exports.addCurrency = async (req, res) => {
   try {
-    const { organizationId, currencyCode, currencySymbol, currencyName, decimalPlaces, format  } = req.body;
+    const organizationId = req.user.organizationId;
+    const { currencyCode, currencySymbol, currencyName, decimalPlaces, format  } = req.body;
 
     const organization = await Organization.findOne({ organizationId });
     if (!organization) {
@@ -88,7 +89,8 @@ exports.addCurrency = async (req, res) => {
 // Edit currency
 exports.editCurrency = async (req, res) => {
   try {
-    const { currencyId, organizationId, currencyCode, currencySymbol, currencyName, decimalPlaces, format } = req.body;
+    const organizationId = req.user.organizationId;
+    const { currencyId, currencyCode, currencySymbol, currencyName, decimalPlaces, format } = req.body;
 
     const updatedCurrency = await Currency.findByIdAndUpdate(
       currencyId,
@@ -150,7 +152,7 @@ exports.deleteCurrency = async (req, res) => {
 // Setup Invoice settings
 exports.updateInvoiceSettings = async (req, res) => {
   try {
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
     console.log(req.body);
     
     const invoiceSettings = {
@@ -204,7 +206,7 @@ exports.updateInvoiceSettings = async (req, res) => {
 // Get settings
 exports.getSettings = async (req, res) => {
   try {
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
 
     // Find the settings document that matches the organizationId
     const settings = await Settings.findOne({ organizationId });
@@ -321,7 +323,8 @@ exports.getSettings = async (req, res) => {
 // Add payment terms
 exports.addPaymentTerm = async (req, res) => {
   try {
-    const { organizationId, name, days } = req.body;
+    const organizationId = req.user.organizationId;
+    const { name, days } = req.body;
 
     // Check if a payment term with the same name and organizationId already exists
     const existingPaymentTerm = await PaymentTerms.findOne({ organizationId, name });
@@ -349,8 +352,9 @@ exports.addPaymentTerm = async (req, res) => {
 // Edit payment terms
 exports.editPaymentTerm = async (req, res) => {
   try {
+    const organizationId = req.user.organizationId;
     const { id } = req.params;
-    const { organizationId, name, days } = req.body;
+    const { name, days } = req.body;
 
     const updatedPaymentTerm = await PaymentTerms.findByIdAndUpdate(
       id,
@@ -415,7 +419,8 @@ exports.getAllPaymentTerms = async (req, res) => {
 // Add Tax
 exports.addTax = async (req, res) => {
   try {
-    const { organizationId, taxType, gstIn, gstBusinesLegalName, gstBusinessTradeName, gstRegisteredDate, gstTaxRate, compositionSchema, compositionPercentage, vatNumber, vatBusinesLegalName, vatBusinessTradeName, vatRegisteredDate, tinNumber, vatTaxRate, msmeType, msmeRegistrationNumber } = req.body;
+    const organizationId = req.user.organizationId;
+    const { taxType, gstIn, gstBusinesLegalName, gstBusinessTradeName, gstRegisteredDate, gstTaxRate, compositionSchema, compositionPercentage, vatNumber, vatBusinesLegalName, vatBusinessTradeName, vatRegisteredDate, tinNumber, vatTaxRate, msmeType, msmeRegistrationNumber } = req.body;
     console.log("Add Tax :",req.body);
     
     // Find the tax record by organizationId and taxType
@@ -465,7 +470,8 @@ exports.addTax = async (req, res) => {
 //Edit Tax
 exports.editTaxRate = async (req, res) => {
   try {
-    const { organizationId, taxType, taxRateId, updatedRate } = req.body;
+    const organizationId = req.user.organizationId;
+    const { taxType, taxRateId, updatedRate } = req.body;
 
     // Validate the taxType
     if (taxType !== 'GST' && taxType !== 'VAT') {
@@ -517,7 +523,7 @@ exports.editTaxRate = async (req, res) => {
 // Get Tax 
 exports.getTax = async (req, res) => {
   try {
-    const { organizationId, } = req.body;
+    const organizationId = req.user.organizationId;
 
     const tax = await Tax.findOne({organizationId:organizationId});
 
@@ -542,11 +548,12 @@ exports.getTax = async (req, res) => {
 //Add Prefix 
 exports.addPrefix = async (req, res) => {
   try {
-    const { organizationId, seriesName, journal, journalNum, creditNote, creditNoteNum, customerPayment, customerPaymentNum, purchaseOrder, purchaseOrderNum, salesOrder, salesOrderNum, vendorPayment, vendorPaymentNum, retainerInvoice, retainerInvoiceNum, vendorCredits, vendorCreditsNum, billOfSupply, billOfSupplyNum, debitNote, debitNoteNum, invoice, invoiceNum, quote, quoteNum, deliveryChallan, deliveryChallanNum } = req.body;
+    const organizationId = req.user.organizationId;
+    const { seriesName, journal, journalNum, creditNote, creditNoteNum, customerPayment, customerPaymentNum, purchaseOrder, purchaseOrderNum, salesOrder, salesOrderNum, vendorPayment, vendorPaymentNum, retainerInvoice, retainerInvoiceNum, vendorCredits, vendorCreditsNum, billOfSupply, billOfSupplyNum, debitNote, debitNoteNum, invoice, invoiceNum, quote, quoteNum, deliveryChallan, deliveryChallanNum } = req.body;
 
     const newSeries = {
       seriesName,
-      status: false, // Set status to false
+      status: false, 
       journal,      journalNum,
       creditNote,      creditNoteNum,
       customerPayment,      customerPaymentNum,
@@ -611,7 +618,7 @@ exports.addPrefix = async (req, res) => {
 //Get Prefix 
 exports.getPrefix = async (req, res) => {
   try {
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
 
     const prefix = await Prefix.findOne({ organizationId });
 
@@ -629,7 +636,8 @@ exports.getPrefix = async (req, res) => {
 //Edit Prefix
 exports.updatePrefix = async (req, res) => {
   try {
-    const { organizationId, seriesId } = req.body;
+    const organizationId = req.user.organizationId;
+    const { seriesId } = req.body;
     const {
       seriesName, journal, journalNum, creditNote, creditNoteNum,
       customerPayment, customerPaymentNum, purchaseOrder, purchaseOrderNum,
@@ -729,7 +737,8 @@ exports.updatePrefix = async (req, res) => {
 //Delete One prefix
 exports.deletePrefix = async (req, res) => {
   try {
-    const { organizationId, seriesId } = req.body;
+    const organizationId = req.user.organizationId;
+    const { seriesId } = req.body;
 
     // Find the prefix collection by organizationId
     const prefix = await Prefix.findOne({ organizationId: organizationId });
@@ -756,7 +765,8 @@ exports.deletePrefix = async (req, res) => {
 //Status True 
 exports.setPrefixSeriesStatusTrue = async (req, res) => {
   try {
-    const { organizationId, seriesId } = req.body;
+    const organizationId = req.user.organizationId;
+    const { seriesId } = req.body;
 
     // Find the prefix collection by organizationId
     const prefix = await Prefix.findOne({ organizationId });
