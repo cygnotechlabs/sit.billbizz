@@ -20,7 +20,7 @@ router.put('/customer-additional-data', verifyToken,checkPermission('Basic'),cus
 
 // router.post('/add-customer',customerController.addCustomer)
 
-router.post('/add-customer',verifyToken,checkPermission('Basic'),customerController.addCustomer)
+router.post('/add-customer',verifyToken,checkPermission('CustomerAdd'),customerController.addCustomer)
 
 router.get('/get-all-customer',verifyToken,checkPermission('CustomerView'),customerController.getAllCustomer)
 
