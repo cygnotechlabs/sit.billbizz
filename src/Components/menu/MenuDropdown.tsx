@@ -108,7 +108,16 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
 
   return (
     <>
-      <div ref={triggerRef} onClick={toggleDropdown} className="cursor-pointer inline-block">
+      <div
+        ref={triggerRef}
+        onClick={toggleDropdown}
+        className="cursor-pointer inline-block"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && toggleDropdown()}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
+      >
         {trigger}
       </div>
       {isOpen &&
@@ -119,7 +128,8 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
               top: dropdownPosition.top,
               left: dropdownPosition.left,
             }}
-            className={`absolute mt-2 rounded-md shadow-lg ${textColor} ${backgroundColor} z-50`}
+            className={`absolute mt-2 rounded-md shadow-lg ${backgroundColor} z-50`}
+            role="menu"
           >
             <div className="py-1">
               {menuItems.map((item, index) => (
@@ -144,6 +154,9 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
                     color: textColor,
                     borderBottomColor: underlineColor, // Set the custom underline color
                   }}
+                  role="menuitem"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && item.onClick()}
                 >
                   {item.icon && <span className="mr-2">{item.icon}</span>}
                   {item.label}
