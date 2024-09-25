@@ -11,6 +11,7 @@ import Pen from "../../../assets/icons/Pen";
 import Trash2 from "../../../assets/icons/Trash2";
 import Ellipsis from "../../../assets/icons/Ellipsis";
 import FileSearchIcon from "../../../assets/icons/FileSearchIcon";
+import { useNavigate } from "react-router-dom";
 
 interface Column {
   id: string;
@@ -19,6 +20,7 @@ interface Column {
 }
 
 const ItemTable = () => {
+  
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
@@ -74,7 +76,11 @@ const ItemTable = () => {
     const searchValueLower = searchValue.toLowerCase();
     return item.itemName?.toLowerCase().includes(searchValueLower);
   });
+  const navigate = useNavigate();
 
+  const handleEdit = () => {
+    navigate("/inventory/Item/new", { state: { item: selectedItem } });
+  };
   const renderColumnContent = (colId: string, item: any) => {
     if (colId === "itemDetail") {
       return (
@@ -198,11 +204,12 @@ const ItemTable = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <Button
-                        variant="tertiary"
-                        className="text-xs font-medium h-[32px] pl-3 pr-5"
-                      >
-                        <Pen color="#585953" /> Edit
-                      </Button>
+      variant="tertiary"
+      className="text-xs font-medium h-[32px] pl-3 pr-5"
+      onClick={handleEdit} // Handle navigation to ItemAdd
+    >
+      <Pen color="#585953" /> Edit
+    </Button>
                       <Ellipsis />
                     </div>
                   </div>
