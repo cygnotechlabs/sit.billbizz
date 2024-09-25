@@ -70,6 +70,17 @@ const SupplierTable = () => {
     fetchAllSuppliers();
   }, [supplierResponse]);
  
+  // const filteredAccounts = supplierData.filter((account) => {
+  //   const searchValueLower = searchValue.toLowerCase();
+  //   return (
+  //     // account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
+  //     account.companyName.toLowerCase().startsWith(searchValueLower) ||
+  //     account.mobile.toLowerCase().startsWith(searchValueLower) ||
+  //     account.supplierEmail.toLowerCase().startsWith(searchValueLower) ||
+  //     (account.skypeNameNumber &&
+  //       account.skypeNameNumber.toLowerCase().startsWith(searchValueLower))
+  //   );
+  // });
   const filteredAccounts = supplierData.filter((account) => {
     const searchValueLower = searchValue.toLowerCase();
     return (
@@ -81,7 +92,6 @@ const SupplierTable = () => {
         account?.skypeNameNumber?.toLowerCase().startsWith(searchValueLower))
     );
   });
- 
   const renderColumnContent = (colId: string, item: Supplier) => {
     if (colId === "supplierDetails") {
       return (
