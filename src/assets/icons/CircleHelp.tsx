@@ -1,7 +1,4 @@
-
-type Props = {};
-
-function CircleHelp({}: Props) {
+function CircleHelp() {
   return (
     <svg
       width="13"

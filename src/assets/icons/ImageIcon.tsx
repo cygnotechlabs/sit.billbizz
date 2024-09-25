@@ -1,6 +1,5 @@
-type Props = {};
 
-function ImageIcon({}: Props) {
+function ImageIcon() {
   return (
     <svg
       width="18"

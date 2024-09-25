@@ -1,6 +1,5 @@
-type Props = {};
 
-function EyeOff({}: Props) {
+function EyeOff() {
   return (
     <svg
       width="22"

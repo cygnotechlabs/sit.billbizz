@@ -16,6 +16,8 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import EditCustomerModal from "./EditCustomerModal";
 import { CustomerEditResponseContext } from "../../../context/ContextShare";
 import toast, { Toaster } from "react-hot-toast";
+import CustomerHistory from "./CustomerHistory";
+
 type Props = {};
 
 interface Status {
@@ -37,7 +39,7 @@ function SeeCustomerDetails({}: Props) {
   });
 
   const { id } = param;
-
+  const customerId = id
   const getCustomer = async () => {
     const url = `${endponits.GET_ONE_CUSTOMER}/${id}`;
     try {
@@ -353,7 +355,7 @@ console.log(customerData);
               {" "}
               <Button variant="secondary" className="h-3 text-xs">
                 <Vector />
-                View Status History
+                <CustomerHistory id={customerId}/>
               </Button>
             </div>
           </div>

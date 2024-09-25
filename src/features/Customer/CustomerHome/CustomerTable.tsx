@@ -50,16 +50,16 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
     fetchAllCustomers();
   }, [customerResponse]);
 
-  const filteredAccounts = customerData.filter((account) => {
-    const searchValueLower = searchValue.toLowerCase();
-    return (
-      account?.billingAttention?.toLowerCase().startsWith(searchValueLower) ||
-      account?.companyName?.toLowerCase().startsWith(searchValueLower) ||
-      account?.mobile?.toLowerCase().startsWith(searchValueLower) ||
-      account?.customerEmail?.toLowerCase().startsWith(searchValueLower) ||
-      account?.customerDisplayName?.toLowerCase().startsWith(searchValueLower)
-    );
-  });
+  // const filteredAccounts = customerData.filter((account) => {
+  //   const searchValueLower = searchValue.toLowerCase();
+  //   return (
+  //     // account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
+  //     // account.companyName.toLowerCase().startsWith(searchValueLower) ||
+  //     // account.mobile.toLowerCase().startsWith(searchValueLower) ||
+  //     // account.customerEmail.toLowerCase().startsWith(searchValueLower) ||
+  //     // account.placeOfSupply.toLowerCase().startsWith(searchValueLower)
+  //   );
+  // });
 
   const renderColumnContent = (colId: string, item: any) => {
     if (colId === "supplierDetails") {
@@ -122,7 +122,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
             </tr>
           </thead>
           <tbody className="text-dropdownText text-center text-[13px]">
-            {filteredAccounts.reverse().map((item) => (
+            {customerData.map((item) => (
               <tr key={item._id} className="relative">
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input type="checkbox" className="form-checkbox w-4 h-4" />

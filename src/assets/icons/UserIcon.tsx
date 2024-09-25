@@ -1,6 +1,4 @@
-type Props = {};
-
-function UserIcon({}: Props) {
+function UserIcon() {
   return (
     <div>
       <svg

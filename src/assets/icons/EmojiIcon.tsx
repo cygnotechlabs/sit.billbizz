@@ -1,6 +1,4 @@
-type Props = {};
-
-function EmojiIcon({}: Props) {
+function EmojiIcon() {
   return (
     <svg
       width="18"

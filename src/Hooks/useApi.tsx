@@ -3,6 +3,7 @@ import { AxiosRequestConfig, AxiosResponse } from "axios";
 import axiosInstance from "../Services/axiosInstance";
 
 interface ApiResponse {
+  success: any;
   response: AxiosResponse | null;
   error: any;
 }

@@ -1,6 +1,4 @@
-type Props = {};
-
-const Vector = ({}: Props) => {
+const Vector = () => {
   return (
     <div>
       <svg
