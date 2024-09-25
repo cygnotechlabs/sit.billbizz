@@ -32,6 +32,7 @@ GET_SETTINGS_DATA:`get-settings`,
 //Add Item Inventory
 ADD_ITEM:"add-item",
 GET_ALL_ITEM:"get-all-item",
+UPDATE_ITEM:"edit-item",
 
   // Accountant
   Get_ALL_Acounts: "get-all-account",
@@ -48,7 +49,6 @@ GET_ALL_ITEM:"get-all-item",
   GET_ONE_CUSTOMER:`/get-one-customer`,
   EDIT_CUSTOMER:`edit-customer`,
   UPDATE_CUSTOMER_STATUS:`update-customer-status`,
-  GET_CUSTOMER_HISTORY : (id: string) => `/get-one-customer-history/:${id}`,
 
   // Supplier
   ADD_SUPPLIER:"add-suppliers", 
@@ -75,24 +75,41 @@ GET_ALL_ITEM:"get-all-item",
   //Purchase Order Settings
   ADD_PURCHASE_ORDER_SETTINGS:"add-purchase-settings",
 
-  //Get All Items
-  GET_ALL_ITEMS: "get-itemDropdown",
+  //Get All Items dropdown
+  GET_ALL_ITEMS_Dropdown: "get-itemDropdown",
 
   // settings > slaes > creditNote
 
   ADD_CREDIT_NOTE_SETTINGS: `add-creditNote-settings`,
 
   // Inventory
-GET_ALL_BRMC:`get-all-bmcr`,
-ADD_BRMC:`add-bmcr`,
-UPDATE_BRMC:`update-bmcr`,
-DELETE_BRMC:`delete-bmcr`,
-GET_ONE_BRMC:`get-a-bmcr`,
+  // Brand
+  GET_ALL_BRAND: "get-all-brands",
+  GET_BRAND: (id: string) => `get-one-brand/${id}`,
+  UPDATE_BRAND: `update-brand`,
+  DELETE_BRAND: (id: string) => `delete-brand/${id}`,
+  ADD_BRAND: "add-brand",
 
+  // Category
+  GET_ALL_CATEGORIES: "get-all-category",
+  ADD_CATEGORY: "add-category",
+  DELETE_CATEGORY: (id: string) => `delete-category/${id}`,
+  UPDATE_CATEGORY: `update-category`,
+  GET_CATEGORY: (id: string) => `get-one-category/${id}`,
 
-  // Login
-  LOGIN : "/login",
-  GET_OTP :"/verify-otp"
+  // Manufacturer
+  GET_ALL_MANUFACTURER: "get-all-manufacturer",
+  ADD_MANUFACTURER: "add-manufacturer",
+  DELETE_MANUFACTURER: (id: string) => `delete-manufacturer/${id}`,
+  UPDATE_MANUFACTURER: `update-manufacturer`,
+
+  // Rack
+  GET_ALL_RACK: "get-all-rack",
+  ADD_RACK: "add-rack",
+  UPDATE_RACK: "update-rack",
+  GET_RACK: (id: string) => `get-one-rack/${id}`,
+  DELETE_RACK: (id: string) => `delete-rack/${id}`,
+
 
   
 };
