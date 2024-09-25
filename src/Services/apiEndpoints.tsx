@@ -23,9 +23,10 @@ export const endponits = {
   DELETE_PAYMENT_TERMS: `delete-payment-terms`,
   GET_PAYMENT_TERMS: `get-all-payment-terms`,
  
- // items
+ // items settings
 
- GET_ALL_ITEMS_Dropdown: `add-item-settings`,
+ ADD_ITEMS: `add-item-settings`,
+
 
  // get settingsData
 GET_SETTINGS_DATA:`get-settings`,
@@ -33,6 +34,8 @@ GET_SETTINGS_DATA:`get-settings`,
 ADD_ITEM:"add-item",
 GET_ALL_ITEM:"get-all-item",
 UPDATE_ITEM:"edit-item",
+GET_ALL_ITEMS_Dropdown: `get-itemDropdown`,
+
  
   // Accountant
   Get_ALL_Acounts: "get-all-account",
@@ -50,6 +53,7 @@ UPDATE_ITEM:"edit-item",
   EDIT_CUSTOMER:`edit-customer`,
   UPDATE_CUSTOMER_STATUS:`update-customer-status`,
   GET_CUSTOMER_HISTORY:`get-one-customer-history`,
+
  
   // Supplier
   ADD_SUPPLIER:"add-suppliers",

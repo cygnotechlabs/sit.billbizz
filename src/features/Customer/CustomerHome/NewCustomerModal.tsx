@@ -344,6 +344,7 @@ const NewCustomerModal = ({ page }: Props) => {
       const { response: countryResponse, error: countryError } =
         await getCountryData(CountryUrl, { organizationId: "INDORG0001" });
       if (!countryError && countryResponse) {
+        // console.log(countryResponse,"country response")
         setcountryData(countryResponse?.data[0].countries);
       } else {
         console.log(countryError, "country");
@@ -362,7 +363,7 @@ const NewCustomerModal = ({ page }: Props) => {
   
       if (!error && response?.data) {
         setOneOrganization(response.data);
-        console.log(response.data.organizationCountry, "org");
+        // console.log(response.data.organizationCountry, "org");
         setCustomerData((preData) => ({
           ...preData,
           billingCountry: response.data.organizationCountry,
@@ -388,8 +389,8 @@ const NewCustomerModal = ({ page }: Props) => {
       );
       if (country) {
         const states = country.states;
-        console.log("States:", states);
-        console.log(country);
+        // console.log("States:", states);
+        // console.log(country);
         
 
         setPlaceOfSupplyList(states);
@@ -420,7 +421,6 @@ const NewCustomerModal = ({ page }: Props) => {
 
   // add customer api call---------------------------------------
   const handleSubmit = async () => {
-    console.log("add working");
 
    
 
@@ -504,7 +504,6 @@ const NewCustomerModal = ({ page }: Props) => {
           ],
           remark: "",
         });
-        console.log(response);
       } else {
         console.log(error);
 
@@ -528,7 +527,6 @@ const NewCustomerModal = ({ page }: Props) => {
     }
   }, [taxPreference]);
   
-console.log(customerdata);
 
   useEffect(() => {
     if (customerdata.billingCountry) {
@@ -558,7 +556,6 @@ console.log(customerdata);
   useEffect(() => {
     handleplaceofSupply();
   }, [getOneOrganization]);
-  // console.log(customerdata);
 
   return (
     <div>

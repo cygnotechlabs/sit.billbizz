@@ -50,16 +50,17 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
     fetchAllCustomers();
   }, [customerResponse]);
 
-  // const filteredAccounts = customerData.filter((account) => {
-  //   const searchValueLower = searchValue.toLowerCase();
-  //   return (
-  //     // account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
-  //     // account.companyName.toLowerCase().startsWith(searchValueLower) ||
-  //     // account.mobile.toLowerCase().startsWith(searchValueLower) ||
-  //     // account.customerEmail.toLowerCase().startsWith(searchValueLower) ||
-  //     // account.placeOfSupply.toLowerCase().startsWith(searchValueLower)
-  //   );
-  // });
+  const filteredAccounts = customerData.filter((account) => {
+    const searchValueLower = searchValue.toLowerCase();
+    return (
+      account?.billingAttention?.toLowerCase().startsWith(searchValueLower) ||
+      account?.customerDisplayName?.toLowerCase().startsWith(searchValueLower) ||
+      account?.companyName?.toLowerCase().startsWith(searchValueLower) ||
+      account?.mobile?.toLowerCase().startsWith(searchValueLower) ||
+      account?.customerEmail?.toLowerCase().startsWith(searchValueLower) ||
+      account?.placeOfSupply?.toLowerCase().startsWith(searchValueLower)
+    );
+  });
 
   const renderColumnContent = (colId: string, item: any) => {
     if (colId === "supplierDetails") {
@@ -78,7 +79,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
     }
     else if(colId=="status"){
       return (
-        <p className={`${item.status=='Active'?"bg-[#78AA86]": "bg-zinc-400"} text-[13px] rounded items-center ms-auto text-white  h-[18px] flex justify-center`}>{item.status}</p>
+        <p className={`${item.status=='Active'?"bg-[#78AA86]": "bg-zinc-400"} py-1 text-[13px] rounded items-center ms-auto text-white  h-[18px] flex justify-center`}>{item.status}</p>
       );
     }
     return item[colId as keyof typeof item];
@@ -122,7 +123,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
             </tr>
           </thead>
           <tbody className="text-dropdownText text-center text-[13px]">
-            {customerData.map((item) => (
+            {filteredAccounts.map((item) => (
               <tr key={item._id} className="relative">
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input type="checkbox" className="form-checkbox w-4 h-4" />
