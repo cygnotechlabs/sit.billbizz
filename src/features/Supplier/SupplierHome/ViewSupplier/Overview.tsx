@@ -234,10 +234,15 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
           console.log(circleStyle.bgColor);
           
           return (
-            <div key={index} className="space-x-4 flex pb-8">
+ 
+            <div key={index} className="space-y-4 pb-8">
+
+
+            {/* First item */}
+            <div className="space-x-4 flex pb-8">
               <div className="flex flex-col items-center">
                 <div className={`w-8 h-8 z-10 ${circleStyle.bgColor} flex items-center justify-center rounded-full text-white`}>
-                  <p>{ item.initials}</p>
+                  <p>{item.initials}</p>
                 </div>
               </div>
               <div className="space-y-2">
@@ -253,6 +258,75 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
                 </div>
               </div>
             </div>
+          
+            {/* Second item */}
+            <div className="space-x-4 flex pb-8">
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 z-10 ${circleStyle.bgColor} flex items-center justify-center rounded-full text-white`}>
+                  <p>{item.initials}</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex space-x-3 text-[14px]">
+                  <p>{item.date}</p>
+                  <p>{item.time}</p>
+                </div>
+                <p className="font-bold">{item.title}</p>
+                <p>{item.description}</p>
+                <div className="flex space-x-4 font-bold text-[14px]">
+                  <p>{item.author}</p>
+                  <p><u>View Details</u></p>
+                </div>
+              </div>
+            </div>
+
+            {/*Third item*/}
+          
+            <div className="space-x-4 flex pb-8">
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 z-10 ${circleStyle.bgColor} flex items-center justify-center rounded-full text-white`}>
+                  <p>{item.initials}</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex space-x-3 text-[14px]">
+                  <p>{item.date}</p>
+                  <p>{item.time}</p>
+                </div>
+                <p className="font-bold">{item.title}</p>
+                <p>{item.description}</p>
+                <div className="flex space-x-4 font-bold text-[14px]">
+                  <p>{item.author}</p>
+                  <p><u>View Details</u></p>
+                </div>
+              </div>
+            </div>
+            {/*Fourth Item */}
+            
+            <div className="space-x-4 flex pb-8">
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 z-10 ${circleStyle.bgColor} flex items-center justify-center rounded-full text-white`}>
+                  <p>{item.initials}</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex space-x-3 text-[14px]">
+                  <p>{item.date}</p>
+                  <p>{item.time}</p>
+                </div>
+                <p className="font-bold">{item.title}</p>
+                <p>{item.description}</p>
+                <div className="flex space-x-4 font-bold text-[14px]">
+                  <p>{item.author}</p>
+                  <p><u>View Details</u></p>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+          
+            
           );
         })}
       </div>
