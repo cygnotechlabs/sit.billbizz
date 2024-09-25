@@ -1138,7 +1138,7 @@ const [itemsData, setItemsData] = useState<ItemsData>({
             </label>
             <div className="flex">
               <div className="w-16 text-sm mt-1.5 rounded-l-md text-start bg-white text-zinc-400 border border-inputBorder h-[39px] items-center justify-center flex">
-                {/* {itemsData.organization.baseCurrency.toUpperCase() || "INR"} */}
+                {itemsData.organization.baseCurrency.toUpperCase() || "INR"}
               </div>
               <input
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-r-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
@@ -1229,7 +1229,7 @@ const [itemsData, setItemsData] = useState<ItemsData>({
             </label>
             <div className="flex">
               <div className="w-16 text-sm mt-1.5 rounded-l-md text-start bg-white text-zinc-400 border border-inputBorder h-[39px] items-center justify-center flex">
-                {/* {itemsData.organization.baseCurrency.toUpperCase() || "INR"} */}
+                {itemsData.organization.baseCurrency.toUpperCase() || "INR"}
               </div>
               <input
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-r-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
