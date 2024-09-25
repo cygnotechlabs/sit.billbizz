@@ -466,8 +466,7 @@ exports.getOneOrganization = async (req, res) => {
     // const { organizationId } = req.body;
     const organization = req.user.organizationId;
 
-    // Log the ID being fetched
-    console.log("Fetching organization with ID:", organization);
+    console.log("Fetching organization with ID:", req.user);
 
     const existingOrganization = await Organization.findOne({ organizationId : organization });
 
@@ -612,7 +611,6 @@ exports.setupOrganization = async (req, res) => {
     } = req.body;
 
     //Data Cleaning
-    organizationId = cleanData(organizationId);
     organizationLogo = cleanData(organizationLogo);
     organizationCountry = cleanData(organizationCountry);
     organizationIndustry = cleanData(organizationIndustry);
@@ -631,15 +629,14 @@ exports.setupOrganization = async (req, res) => {
     dateFormatExp = cleanData(dateFormatExp);
     dateSplit = cleanData(dateSplit);
 
-    // Check if an Organization already exists
-    if(organizationId){
+
     const existingOrganization = await Organization.findOne({ organizationId });
 
     if (!existingOrganization) {
       return res.status(404).json({
         message: "No Organization Found.",
       });
-    }}
+    }
 
     const generatedDateTime = generateTimeAndDateForDB(
       timeZoneExp,
