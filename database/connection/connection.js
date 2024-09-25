@@ -68,11 +68,21 @@ async function connectToDatabase() {
     const dbUri = await getDbCredentials();
     console.log(`Fetched MongoDB URI: ${dbUri}`);
 
+
+    mongoose.connect(dbUri)
+.then(()=>{
+    console.log("📡...BillBizz Database Connected Succesfully...📡");
+}).catch((error)=>{
+    console.log(`Database error ${error}`);
+})
+
+
+
     // Now use dbUri to connect to your MongoDB database
-    await mongoose.connect(dbUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    // await mongoose.connect(dbUri, {
+    //   useNewUrlParser: true,
+    //   useUnifiedTopology: true,
+    // });
 
     console.log("📡...BillBizz Database Connected Successfully...📡");
   } catch (error) {
