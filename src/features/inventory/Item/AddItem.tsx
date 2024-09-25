@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import CheveronLeftIcon from "../../../assets/icons/CheveronLeftIcon";
 import Plus from "../../../assets/icons/Plus";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
@@ -20,30 +20,28 @@ interface Account {
   accountName: string;
   accountSubhead: string;
 }
+
 interface ItemSettings {
   itemDuplicateName: boolean;
   hsnSac: boolean;
-  hsnDigits:string
+  hsnDigits: string; 
 }
 
 interface ItemsData {
   bmcrData: {
-    brands: Brand[];
-    manufacturers: Manufacturer[];
-    categories: Category[];
-    racks: Rack[];
+    brandNames: string[]; 
+    manufacturers: Manufacturer[]; 
+    categories: Category[]; 
+    racks: Rack[]; 
   };
   taxRate: TaxRate[];
-  unitName: string[];
-  organization: baseCurrency;
-  itemSettings?: ItemSettings;
-}
-interface Brand {
-  brandName: string;
+  unitName: string[]; 
+  organization: Organization; 
+  itemSettings?: ItemSettings; 
 }
 
 interface Manufacturer {
-  manufacturerName: string;
+  manufacturerName: string; 
 }
 
 interface Category {
@@ -51,16 +49,21 @@ interface Category {
 }
 
 interface Rack {
-  rackName: string;
+  rackName: string; 
 }
+
 interface TaxRate {
-  taxName: string;
+  taxName: string; 
 }
-interface baseCurrency {
+
+interface Organization {
   baseCurrency: string;
+  timeZoneExp?: string; 
+  dateFormatExp?: string; 
 }
 
 const initialItemDataState = {
+  _id:"",
   organizationId: "INDORG0001",
   itemType: "",
   itemName: "",
@@ -138,23 +141,23 @@ const AddItem = ({}: Props) => {
       console.error("Error fetching accounts:", error);
     }
   };
+const [itemsData, setItemsData] = useState<ItemsData>({
+  bmcrData: {
+    brandNames: [],  
+    manufacturers: [], 
+    categories: [],
+    racks: []
+  },
+  taxRate: [],
+  unitName: [],
+  organization: { baseCurrency: "" },
+});
 
-  const [itemsData, setItemsData] = useState<ItemsData>({
-    bmcrData: {
-      brands: [{ brandName: "" }],
-      manufacturers: [{ manufacturerName: "" }],
-      categories: [{ categoryName: "" }],
-      racks: [{ rackName: "" }]
-    },
-    taxRate: [],
-    unitName: [],
-    organization: { baseCurrency: "" },
-  });
-
+  
   const { request: AllItems } = useApi("put", 5003);
   const fetchAllItems = async () => {
     try {
-      const url = `${endponits.GET_ALL_ITEMS}`;
+      const url = `${endponits.GET_ALL_ITEMS_Dropdown}`;
       const body = { organizationId: "INDORG0001" };
       const { response, error } = await AllItems(url, body);
       if (!error && response) {
@@ -255,23 +258,32 @@ const AddItem = ({}: Props) => {
     }));
     setOpenDropdownIndex(null);
   };
+  const navigate=useNavigate();
 
   const { request: CreateItem } = useApi("post", 5003);
+  const { request: UpdateItem } = useApi("put", 5003); // For editing
+
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
-    if (itemsData?.itemSettings?.itemDuplicateName === false) {
+  
+    // Check for duplicate item names if adding a new item
+    if (!selectedItem && itemsData?.itemSettings?.itemDuplicateName === false) {
       if (itemsDataName.includes(initialItemData.itemName)) {
-        toast.error("Item with this name already exists.")
-        return; 
+        toast.error("Item with this name already exists.");
+        return;
       }
     }
     try {
-      const url = `${endponits.ADD_ITEM}`;
+      const url = selectedItem ? `${endponits.UPDATE_ITEM}` : `${endponits.ADD_ITEM}`;
       const body = initialItemData;
-      const { response, error } = await CreateItem(url, body);
+      const apiRequest = selectedItem ? UpdateItem : CreateItem;
+      const { response, error } = await apiRequest(url, body);
       if (!error && response) {
         toast.success(response.data.message);
-        setInitialItemData(initialItemDataState);
+        setTimeout(() => {
+          navigate("/inventory/Item");
+          setInitialItemData(initialItemDataState); 
+        }, 500); 
       } else {
         toast.error(error.response.data.message);
       }
@@ -280,6 +292,60 @@ const AddItem = ({}: Props) => {
     }
   };
   
+
+  const location = useLocation();
+  const selectedItem = location.state?.item;
+  useEffect(() => {
+    if (selectedItem) {
+      setInitialItemData({
+        _id: selectedItem._id,
+        organizationId: selectedItem.organizationId || "INDORG0001",
+        itemType: selectedItem.itemType || "",
+        itemName: selectedItem.itemName || "",
+        itemImage: selectedItem.itemImage || "",
+        sku: selectedItem.sku || "",
+        unit: selectedItem.unit || "",
+        returnableItem: selectedItem.returnableItem || false,
+        hsnCode: selectedItem.hsnCode || "",
+        sac: selectedItem.sac || "",
+        taxPreference: selectedItem.taxPreference || "",
+        productUsage: selectedItem.productUsage || "",
+        length: selectedItem.length || "",
+        width: selectedItem.width || "",
+        height: selectedItem.height || "",
+        dimensionUnit: selectedItem.dimensionUnit || "",
+        warranty: selectedItem.warranty || "",
+        weight: selectedItem.weight || "",
+        weightUnit: selectedItem.weightUnit || "",
+        manufacturer: selectedItem.manufacturer || "",
+        brand: selectedItem.brand || "",
+        categories: selectedItem.categories || "",
+        rack: selectedItem.rack || "",
+        upc: selectedItem.upc || "",
+        mpn: selectedItem.mpn || "",
+        ean: selectedItem.ean || "",
+        isbn: selectedItem.isbn || "",
+        baseCurrency: selectedItem.baseCurrency || "",
+        sellingPrice: selectedItem.sellingPrice || "",
+        saleMrp: selectedItem.saleMrp || "",
+        salesAccount: selectedItem.salesAccount || "",
+        salesDescription: selectedItem.salesDescription || "",
+        costPrice: selectedItem.costPrice || "",
+        purchaseAccount: selectedItem.purchaseAccount || "",
+        purchaseDescription: selectedItem.purchaseDescription || "",
+        preferredVendor: selectedItem.preferredVendor || "",
+        taxRate: selectedItem.taxRate || "",
+        trackInventory: selectedItem.trackInventory || false,
+        inventoryAccount: selectedItem.inventoryAccount || "",
+        openingStock: selectedItem.openingStock || "",
+        openingStockRatePerUnit: selectedItem.openingStockRatePerUnit || "",
+        reorderPoint: selectedItem.reorderPoint || "",
+        currentStock: selectedItem.currentStock || "",
+        status: selectedItem.status || "",
+      });
+    }
+  }, [selectedItem]);
+    
   return (
     <>
       <div className="bg-white mx-5 p-6 rounded-lg h-[80vh] overflow-scroll hide-scrollbar">
@@ -811,7 +877,7 @@ const AddItem = ({}: Props) => {
                       placeholder="Select Brand"
                       />
                       </div>
-                    {itemsData.bmcrData.brands.map(item=>item.brandName)
+                    {itemsData.bmcrData.brandNames
                       .filter((brand: string) =>
                         brand.toLowerCase().includes(searchValueBrand.toLowerCase())
                       )
@@ -1072,7 +1138,7 @@ const AddItem = ({}: Props) => {
             </label>
             <div className="flex">
               <div className="w-16 text-sm mt-1.5 rounded-l-md text-start bg-white text-zinc-400 border border-inputBorder h-[39px] items-center justify-center flex">
-                {itemsData.organization.baseCurrency.toUpperCase() || "INR"}
+                {/* {itemsData.organization.baseCurrency.toUpperCase() || "INR"} */}
               </div>
               <input
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-r-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
@@ -1163,7 +1229,7 @@ const AddItem = ({}: Props) => {
             </label>
             <div className="flex">
               <div className="w-16 text-sm mt-1.5 rounded-l-md text-start bg-white text-zinc-400 border border-inputBorder h-[39px] items-center justify-center flex">
-                {itemsData.organization.baseCurrency.toUpperCase() || "INR"}
+                {/* {itemsData.organization.baseCurrency.toUpperCase() || "INR"} */}
               </div>
               <input
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-r-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"

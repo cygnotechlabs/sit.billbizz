@@ -5,7 +5,7 @@ export const endponits = {
   GET_ONE_ORGANIZATION: `get-one-organization`,
   GET_COUNTRY_DATA: `get-countries-data`,
   GET_CURRENCY_LIST: `get-currency`,
-
+ 
   //Sales
   ADD_SALES_SETTINGS:`add-sales-settings`,
   ADD_SALES_INVOICE_SETTINGS:"add-salesInvoice-settings",
@@ -14,7 +14,7 @@ export const endponits = {
   ADD_PREFIX:"add-prefix",
   EDIT_PREFIX:'edit-prefix',
   STATUS_PREFIX:'status-prefix',
-
+ 
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
   GET_SETTINGS: "get-settings",
@@ -22,17 +22,18 @@ export const endponits = {
   EDIT_PAYMENT_TERMS: `edit-payment-terms/:id`,
   DELETE_PAYMENT_TERMS: `delete-payment-terms`,
   GET_PAYMENT_TERMS: `get-all-payment-terms`,
+ 
+ // items
 
-  // items
+ GET_ALL_ITEMS_Dropdown: `get-itemDropdown`,
 
-  ADD_ITEMS: `add-item-settings`,
-
-  // get settingsData
+ // get settingsData
 GET_SETTINGS_DATA:`get-settings`,
 //Add Item Inventory
 ADD_ITEM:"add-item",
 GET_ALL_ITEM:"get-all-item",
-
+UPDATE_ITEM:"edit-item",
+ 
   // Accountant
   Get_ALL_Acounts: "get-all-account",
   Get_LAST_Journel_Prefix: "get-last-journal-prefix",
@@ -40,7 +41,7 @@ GET_ALL_ITEM:"get-all-item",
   GET_ALL_JOURNALS: "get-all-journal",
   Add_NEW_ACCOUNT: "add-account",
   GET_ONE_TRIAL_BALANCE:"get-one-trial-balance",
-
+ 
   // Customer
   GET_ALL_CUSTOMER: "get-all-customer",
   ADD_CUSTOMER: "add-customer",
@@ -50,49 +51,50 @@ GET_ALL_ITEM:"get-all-item",
   UPDATE_CUSTOMER_STATUS:`update-customer-status`,
   GET_CUSTOMER_HISTORY:`get-one-customer-history`,
 
+ 
   // Supplier
-  ADD_SUPPLIER:"add-suppliers", 
+  ADD_SUPPLIER:"add-suppliers",
   GET_ALL_SUPPLIER:"get-all-supplier",
   GET_ONE_SUPPLIER:"get-supplier",
   EDIT_SUPPLIER:"update-supplier",
   GET_TAX_SUPPLIER:`supplier-additional-data`,
   UPDATE_SUPPLIER_STATUS:`update-supplier-status`,
-
+ 
   //Currency
   GET_CURRENCIES: "get-currency",
   ADD_CURRENCIES: "add-currency",
   DELETE_CURRENCIES: (id: string) => `delete-currency/${id}`,
   EDIT_CURRENCIES: `edit-currency`,
   GET_ONE_CURRENCY: (id: string) => `/view-currency/${id}`,
-
+ 
   // Inventory
   // Settings/Taxes
   // Gst
   GET_ALL_TAX: "get-tax",
   ADD_NEW_TAX: "add-tax",
   UPDATE_TAX_VAT: `edit-tax`,
-
+ 
   //Purchase Order Settings
   ADD_PURCHASE_ORDER_SETTINGS:"add-purchase-settings",
-
+ 
   //Get All Items
   GET_ALL_ITEMS: "get-itemDropdown",
-
+ 
   // settings > slaes > creditNote
-
+ 
   ADD_CREDIT_NOTE_SETTINGS: `add-creditNote-settings`,
-
+ 
   // Inventory
 GET_ALL_BRMC:`get-all-bmcr`,
 ADD_BRMC:`add-bmcr`,
 UPDATE_BRMC:`update-bmcr`,
 DELETE_BRMC:`delete-bmcr`,
 GET_ONE_BRMC:`get-a-bmcr`,
-
-
+ 
+ 
   // Login
   LOGIN : "/login",
   GET_OTP :"/verify-otp"
-
+ 
   
 };

@@ -114,7 +114,7 @@ const CustomerHistory = ({ id }: Props) => {
             <p>No history available.</p>
           )}
 
-          <div className="flex flex-col relative pb-8 px-6 my-8">
+          <div className="flex flex-col relative pb-8 px-2 my-8">
             {historyData.map((item: any, index: number) => {
               const circleStyle = getCircleStyle(item.title);
               const { formattedDate, formattedTime } = formatDate(
@@ -122,7 +122,7 @@ const CustomerHistory = ({ id }: Props) => {
               );
 
               return (
-                <div key={index} className=" flex pb-8">
+                <div key={index} className=" flex ">
                   <div className="flex gap-3">
                     <div className="items-center">
                       <div
@@ -136,13 +136,13 @@ const CustomerHistory = ({ id }: Props) => {
                       </div>
                     </div>
 
-                    <div className="space-y-2 text-start">
+                    <div className="space-y-2 text-start mt-2">
                       <div className="flex space-x-3 text-[14px] ">
                         <p>{formattedDate}</p>
                         <p>{formattedTime}</p>
                       </div>
-                      <p className="font-bold text-[14px]">{item.title}</p>
-                      <p>{item.description}</p>
+                      <p className="font-bold text-[14px] py-1">{item.title}</p>
+                      <p className="text-[12px]">{item.description}</p>
                       <div className="flex space-x-4 font-bold text-[14px]">
                         <p>{item.author}</p>
                         {/* <p><u>View Details</u></p> */}
