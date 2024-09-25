@@ -28,7 +28,7 @@ router.get('/get-additional-data',verifyToken,checkPermission('Basic'),organizat
 //Organization
 router.post('/setup-organization',verifyToken,checkPermission('OrganizationSetup'),organizationController.setupOrganization)
 
-router.get('/get-one-organization',verifyToken,checkPermission('OrganizationView'),organizationController.getOneOrganization)
+router.get('/get-one-organization',verifyToken,checkPermission('OrganizationViews'),organizationController.getOneOrganization)
 
 
 
