@@ -1,6 +1,6 @@
-type Props = {};
 
-function CheveronLeftIcon({}: Props) {
+
+function CheveronLeftIcon() {
   return (
     <svg
       width="20"

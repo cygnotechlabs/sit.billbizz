@@ -1,7 +1,5 @@
 
-type Props = {};
-
-const Files = ({}: Props) => {
+const Files = () => {
   return (
     <div>
       <svg

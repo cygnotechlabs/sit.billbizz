@@ -88,4 +88,11 @@ ADD_BRMC:`add-bmcr`,
 UPDATE_BRMC:`update-bmcr`,
 DELETE_BRMC:`delete-bmcr`,
 GET_ONE_BRMC:`get-a-bmcr`,
+
+
+  // Login
+  LOGIN : "/login",
+  GET_OTP :"/verify-otp"
+
+  
 };

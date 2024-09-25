@@ -1,5 +1,5 @@
-import { useRoutes } from "react-router-dom";
-import "./App.css";
+import { useRoutes, Navigate } from "react-router-dom";
+import { useAuth } from './context/AuthContext'; 
 import Layout from "./layout/Layout";
 import SettingsLayout from "./layout/SettingsLayout";
 import Dashboard from "./pages/Dashboard";
@@ -17,12 +17,13 @@ import Login from "./features/login/Login";
 import Otp from "./features/login/Otp";
 import Chatboat from "./pages/Chatboat/Chatboat";
 
-
 function App() {
+  const { isAuthenticated } = useAuth();
+
   const routes = [
     {
       path: "/",
-      element: <Layout children />,
+      element: isAuthenticated ? <Layout children/> : <Navigate to="/login" replace />,
       children: [
         { path: "dashboard", element: <Dashboard /> },
         ...AccountantRoutes,
@@ -36,25 +37,25 @@ function App() {
       ],
     },
     {
-      path: "/",
-      element: <SettingsLayout children />,
-      children: [{ path: "" }, ...SettingsRoutes],
+      path: "/settings",
+      element: isAuthenticated ? <SettingsLayout children /> : <Navigate to="/login" replace />,
+      children: [{ path: "", element: <Dashboard /> }, ...SettingsRoutes],
     },
     {
       path: "/landing",
-      element: <LandingHome/>,
+      element: <LandingHome />,
     },
     {
       path: "/chatboat",
-      element: <Chatboat/>,
+      element: <Chatboat />,
     },
     {
       path: "/login",
-      element: <Login/>,
+      element: <Login />,
     },
     {
       path: "/otp",
-      element: <Otp/>,
+      element: <Otp />,
     },
   ];
 

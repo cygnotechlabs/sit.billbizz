@@ -74,11 +74,11 @@ const SupplierTable = () => {
     const searchValueLower = searchValue.toLowerCase();
     return (
       // account.billingAttention.toLowerCase().startsWith(searchValueLower) ||
-      account.companyName.toLowerCase().startsWith(searchValueLower) ||
-      account.mobile.toLowerCase().startsWith(searchValueLower) ||
-      account.supplierEmail.toLowerCase().startsWith(searchValueLower) ||
-      (account.skypeNameNumber &&
-        account.skypeNameNumber.toLowerCase().startsWith(searchValueLower))
+      account?.companyName?.toLowerCase().startsWith(searchValueLower) ||
+      account?.mobile?.toLowerCase().startsWith(searchValueLower) ||
+      account?.supplierEmail?.toLowerCase().startsWith(searchValueLower) ||
+      (account?.skypeNameNumber &&
+        account?.skypeNameNumber?.toLowerCase().startsWith(searchValueLower))
     );
   });
  
