@@ -1,6 +1,5 @@
 import { useRoutes, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import "./App.css";
+import { useAuth } from './context/AuthContext'; 
 import Layout from "./layout/Layout";
 import SettingsLayout from "./layout/SettingsLayout";
 import Dashboard from "./pages/Dashboard";
@@ -18,28 +17,13 @@ import Login from "./features/login/Login";
 import Otp from "./features/login/Otp";
 import Chatboat from "./pages/Chatboat/Chatboat";
 
-// Simulated auth check (can be replaced by real auth logic)
-const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    // Simulate a check for authentication (e.g., token check)
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  return { isAuthenticated };
-};
-
 function App() {
   const { isAuthenticated } = useAuth();
 
   const routes = [
     {
       path: "/",
-      element: isAuthenticated ? <Layout children={undefined} /> : <Navigate to="/login" />,
+      element: isAuthenticated ? <Layout children/> : <Navigate to="/login" replace />,
       children: [
         { path: "dashboard", element: <Dashboard /> },
         ...AccountantRoutes,
@@ -54,7 +38,7 @@ function App() {
     },
     {
       path: "/settings",
-      element: isAuthenticated ? <SettingsLayout children={undefined} /> : <Navigate to="/login" />,
+      element: isAuthenticated ? <SettingsLayout children /> : <Navigate to="/login" replace />,
       children: [{ path: "", element: <Dashboard /> }, ...SettingsRoutes],
     },
     {

@@ -1,44 +1,48 @@
 import React, { useState, useRef } from 'react';
 import Button from "../../Components/Button";
 import bgImage from "../../assets/Images/Group 2506.png";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Toaster, toast } from 'react-hot-toast';
+import axios from 'axios';
+import useApi from '../../Hooks/useApi';
+import { endponits } from '../../Services/apiEndpoints';
+import { useAuth } from '../../context/AuthContext'; // Import the authentication context
+
 type Props = {}
- 
+
 function Otp({}: Props) {
-  const navigate = useNavigate()
-  // State to hold OTP values
-  const [otp, setOtp] = useState(['', '', '','','','']);
-  
-  const inputRefs = [
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-  ];
- 
-  // Handle input change
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { request: verifyOtp } = useApi("post", 5004);
+  const { setIsAuthenticated } = useAuth(); // Get the setIsAuthenticated function from context
+
+  // Extract email from location state or set a default for testing purposes
+  const email = location.state?.email || '';
+
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const inputRefs = Array.from({ length: 6 }, () => useRef<HTMLInputElement>(null));
+
+  // Handle OTP change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
-    // Allow only single digit
     if (/^[0-9]$/.test(value)) {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
-      // Move focus to next input if not the last
       if (index < inputRefs.length - 1) {
         inputRefs[index + 1].current?.focus();
       }
     } else if (value === '') {
-      // If input is cleared, update state
       const newOtp = [...otp];
       newOtp[index] = '';
       setOtp(newOtp);
     }
   };
- 
-  // Handle key down events for backspace
+
+  // Handle backspace key for OTP inputs
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === 'Backspace') {
       if (otp[index] === '') {
@@ -52,11 +56,11 @@ function Otp({}: Props) {
       }
     }
   };
- 
-  // Handle pasting OTP
+
+  // Handle OTP paste
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     const pasteData = e.clipboardData.getData('text').trim();
-    if (/^\d{6}$/.test(pasteData)) {  // Adjusted to handle 6 digits
+    if (/^\d{6}$/.test(pasteData)) {
       const pasteOtp = pasteData.split('');
       setOtp(pasteOtp);
       pasteOtp.forEach((digit, index) => {
@@ -64,23 +68,47 @@ function Otp({}: Props) {
           inputRefs[index].current!.value = digit;
         }
       });
-      // Move focus to the last input
       inputRefs[5].current?.focus();
     }
     e.preventDefault();
   };
 
-  
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const enteredOtp = otp.join('');
-      console.log('Entered OTP:', enteredOtp);
-      
-      // Perform OTP validation here, if needed
-  
-      // Navigate to the home page ("/") after successful submission
-      navigate('/');
-    };
+  // Handle OTP submission
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    const enteredOtp = otp.join('');
+    try {
+      // Send the OTP verification request
+      const response = await verifyOtp(endponits.GET_OTP, { email, otp: enteredOtp });
+      console.log('OTP Verification Response:', response);
+
+      if (response.response?.data.success) {
+        toast.success(response.response?.data.message || 'OTP verified successfully!');
+        // Save the token and update the authentication state
+        localStorage.setItem('authToken', response.response.data.token);
+        setIsAuthenticated(true); // Set authentication state
+        navigate('/'); // Redirect to the home/dashboard
+      } else {
+        const errorMessage = response.response?.data.message || 'OTP verification failed.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'OTP verification failed. Please try again.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } else {
+        setError('OTP verification failed. Please try again.');
+        toast.error('OTP verification failed. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="h-[100vh] flex">
@@ -89,7 +117,6 @@ function Otp({}: Props) {
         <div className="w-[60%] ">
           <p className="text-textColor font-bold text-4xl">Get Started now</p>
           <p className="text-dropdownText mt-2 text-sm font-normal">Enter your OTP to access your account</p>
-         
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             {/* OTP Input Section */}
             <div className="mt-4 space-y-2">
@@ -112,33 +139,35 @@ function Otp({}: Props) {
                     inputMode="numeric"
                     pattern="[0-9]*"
                     autoComplete="one-time-code"
-                  className="text-sm w-[60px]  rounded-md text-center mt-1.5 bg-white border border-inputBorder h-[47px]  focus:outline-none focus:bg-white focus:border-darkRed"
+                    className="text-sm w-[60px] rounded-md text-center mt-1.5 bg-white border border-inputBorder h-[47px] focus:outline-none focus:bg-white focus:border-darkRed"
                   />
                 ))}
               </div>
+              {error && <p className="text-red-500 text-sm">{error}</p>}
               {/* Submit Button */}
               <div className="flex justify-center">
                 <Button type="submit" className="px-[45%] mt-7">
-                  Submit
+                  {isLoading ? 'Verifying...' : 'Submit'}
                 </Button>
               </div>
             </div>
           </form>
         </div>
       </div>
-     
+
       {/* Right Side with Background Image */}
       <div className="w-[50%] flex justify-center items-center bg-[#CACCBE]">
         <div className="flex flex-col items-start justify-center w-[82%] h-full p-8">
-            <div className='ms-[14%]'>
-          <h2 className="text-textColor font-semibold text-3xl leading-tight mt-6">Transform Your Financial <br /> Management</h2>
-          <p className="text-textColor mt-3 text-sm">Unlock powerful tools to keep your finances on track</p>
-            </div>
-          <img src={bgImage} alt="Dashboard preview" className=" w-full"/>
+          <div className='ms-[14%]'>
+            <h2 className="text-textColor font-semibold text-3xl leading-tight mt-6">Transform Your Financial <br /> Management</h2>
+            <p className="text-textColor mt-3 text-sm">Unlock powerful tools to keep your finances on track</p>
+          </div>
+          <img src={bgImage} alt="Dashboard preview" className="w-full" />
         </div>
       </div>
+      <Toaster />
     </div>
-  )
+  );
 }
- 
+
 export default Otp;

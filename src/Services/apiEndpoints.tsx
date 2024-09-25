@@ -110,6 +110,9 @@ GET_ALL_ITEM:"get-all-item",
   GET_RACK: (id: string) => `get-one-rack/${id}`,
   DELETE_RACK: (id: string) => `delete-rack/${id}`,
 
+  // Login
+  LOGIN : "/login",
+  GET_OTP :"/verify-otp"
 
   
 };
