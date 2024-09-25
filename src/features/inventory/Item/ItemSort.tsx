@@ -48,10 +48,10 @@ const ItemSort = ({}: Props) => {
     <div>
       <button
         onClick={toggleDropdown}
-        className="text-sm py-2 px-3 w-24 flex items-center justify-between border border-gray-400 rounded-lg text-gray-400"
+        className="text-sm py-2 px-3 w-24 flex items-center justify-between border border-[#565148] rounded-lg text-gray-400"
       >
         <ListIcon color="#565148" />
-        <p className="font-medium">Sort By</p>
+        <p className="font-medium text-[#565148] ">Sort By</p>
       </button>
       {isDropdownOpen && (
         <div
