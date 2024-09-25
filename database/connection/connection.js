@@ -110,10 +110,14 @@ async function getParameter() {
 async function connectToDatabase() {
     try {
         const param = await getParameter(); // Get the secure string parameter
+        console.log("param:",param);
+        
  
         // Parse the string as JSON to extract the connection string
         const parsedParam = JSON.parse(param);
         const dbUri = parsedParam.dbUri;  // Ensure this matches how your URI is stored in SSM
+        console.log("dbUri:",dbUri);
+        
  
         console.log(`Fetched MongoDB URI: ${dbUri}`); // Log to confirm
  
