@@ -48,6 +48,7 @@ GET_ALL_ITEM:"get-all-item",
   GET_ONE_CUSTOMER:`/get-one-customer`,
   EDIT_CUSTOMER:`edit-customer`,
   UPDATE_CUSTOMER_STATUS:`update-customer-status`,
+  GET_CUSTOMER_HISTORY:`get-one-customer-history`,
 
   // Supplier
   ADD_SUPPLIER:"add-suppliers", 
@@ -87,8 +88,4 @@ ADD_BRMC:`add-bmcr`,
 UPDATE_BRMC:`update-bmcr`,
 DELETE_BRMC:`delete-bmcr`,
 GET_ONE_BRMC:`get-a-bmcr`,
-
-
-
-  
 };

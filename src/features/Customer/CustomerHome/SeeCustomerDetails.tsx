@@ -16,6 +16,7 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import EditCustomerModal from "./EditCustomerModal";
 import { CustomerEditResponseContext } from "../../../context/ContextShare";
 import toast, { Toaster } from "react-hot-toast";
+import CustomerHistory from "./CustomerHistory";
 type Props = {};
 
 interface Status {
@@ -37,6 +38,7 @@ function SeeCustomerDetails({}: Props) {
   });
 
   const { id } = param;
+  const customerId = id;
 
   const getCustomer = async () => {
     const url = `${endponits.GET_ONE_CUSTOMER}/${id}`;
@@ -48,10 +50,8 @@ function SeeCustomerDetails({}: Props) {
       const { response, error } = apiResponse;
       if (!error && response) {
         setCustomerData(response.data);
-        console.log(response.data,"get status");
-        
-        console.log(response.data, "get");
-        setStatusData((prevData) => ({
+        // console.log(response.data,"get status");
+                setStatusData((prevData) => ({
           ...prevData,
           status: response.data.status
         }));
@@ -79,7 +79,7 @@ function SeeCustomerDetails({}: Props) {
   ];
 
   
-console.log(customerData);
+// console.log(customerData);
 
 
   const handleStatusSubmit = async (e: ChangeEvent<HTMLSelectElement>) => {
@@ -99,7 +99,7 @@ console.log(customerData);
       });
       if (!error && response) {
         toast.success(response.data.message);
-        console.log(response,"status submit");
+        // console.log(response,"status submit");
       } else {
         console.log(error,"error in status");
         
@@ -350,10 +350,10 @@ console.log(customerData);
               </div>
             </div>
             <div className=" flex items-end justify-end">
-              {" "}
-              <Button variant="secondary" className="h-3 text-xs">
+            {" "}
+            <Button variant="secondary" className="h-3 text-xs">
                 <Vector />
-                View Status History
+                <CustomerHistory id={customerId}/>
               </Button>
             </div>
           </div>
