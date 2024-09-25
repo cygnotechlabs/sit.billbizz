@@ -422,22 +422,16 @@ const NewCustomerModal = ({ page }: Props) => {
   const handleSubmit = async () => {
     console.log("add working");
 
-    const newErrors = { ...errors };
+   
 
-    if (
-      !customerdata.customerDisplayName ||
-      !/^[A-Za-z\s]+$/.test(customerdata.customerDisplayName)
-    ) {
-      newErrors.customerDisplayName = true;
-    } else {
-      newErrors.customerDisplayName = false;
-    }
-
-    if (Object.values(newErrors).some((error) => error)) {
-      console.log("Validation failed with errors:", newErrors);
-      setErrors(newErrors); 
-      return; 
-    }
+  const newErrors = { ...errors };
+  if (customerdata.customerDisplayName === ""){
+    newErrors.customerDisplayName = true
+  }
+  if (Object.values(newErrors).some((error) => error)) {
+    setErrors(newErrors);
+    return;
+  }
     try {
       const url = `${endponits.ADD_CUSTOMER}`;
       const { response, error } = await CreateCustomer(url, customerdata);
@@ -818,38 +812,40 @@ console.log(customerdata);
                     )}
                 </div>
                 <div>
-                  <label htmlFor="companyName">Customer Display Name </label>
-                  <input
-                    required
-                    type="text"
-                    name="customerDisplayName"
-                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-                    placeholder="Enter Display Name"
-                    value={customerdata.customerDisplayName}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      handleChange(e);
-                      if (!value || !/^[A-Za-z\s]+$/.test(value)) {
-                        setErrors((prevErrors) => ({
-                          ...prevErrors,
-                          customerDisplayName: true,
-                        }));
-                      } else {
-                        setErrors((prevErrors) => ({
-                          ...prevErrors,
-                          customerDisplayName: false,
-                        }));
-                      }
-                    }}
-                  />
+  <label htmlFor="companyName">Customer Display Name </label>
+  <input
+    required
+    type="text"
+    name="customerDisplayName"
+    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+    placeholder="Enter Display Name"
+    value={customerdata.customerDisplayName}
+    onChange={(e) => {
+      const value = e.target.value;
+      handleChange(e);
 
-                  {errors.customerDisplayName &&
-                    customerdata.customerDisplayName.length > 0 && (
-                      <div className="text-red-800 text-xs ms-2 mt-1">
-                        Please enter a valid Company Name (letters only).
-                      </div>
-                    )}
-                </div>
+      if (!value || !/^[A-Za-z\s]+$/.test(value)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          customerDisplayName: true,
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          customerDisplayName: false,
+        }));
+      }
+    }}
+   
+  />
+
+  {errors.customerDisplayName && (
+    <div className="text-red-800 text-xs ms-2 mt-1">
+      Please enter a valid Customer Display Name (letters only).
+    </div>
+  )}
+</div> 
+
                 <div>
                   <label htmlFor="">Customer Email</label>
                   <input

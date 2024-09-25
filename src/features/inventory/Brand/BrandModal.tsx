@@ -1,4 +1,4 @@
-import { forwardRef, useState, useEffect } from "react";
+import { forwardRef, useState, useEffect, ChangeEvent } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import bgImage from "../../../assets/Images/Frame 6.png";
 import Button from "../../../Components/Button";
@@ -13,7 +13,8 @@ type BrandData = {
   _id?: string;
   name: string;
   description: string;
-  organizationId?: string;
+  organizationId: string;
+  type?: string;
   createdDate?: string;
   updatedDate?: string;
   __v?: number;
@@ -29,101 +30,108 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const { request: updateBrandRequest } = useApi("put", 5003);
   const { request: addBrandRequest } = useApi("post", 5003);
 
-  const [brandData, setBrandData] = useState<BrandData[]>([]);
+  const [brandData, setBrandData] = useState<BrandData>({
+    organizationId: "INDORG0001",
+    name: "",
+    description: "",
+    type: "brand",
+  });
+
+  const [allBrandData, setAllBrandData] = useState<BrandData[]>([]);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [editableBrand, setEditableBrand] = useState<BrandData | null>(null);
 
   const closeModal = () => {
     setModalOpen(false);
-    setEditableBrand(null);
+    setIsEdit(false);
   };
 
-  useEffect(() => {
-    const loadBrands = async () => {
-      try {
-        const url = `${endponits.GET_ALL_BRAND}`;
-        const body = { organizationId: "INDORG0001" };
-        const { response, error } = await fetchAllBrands(url, body);
-        if (!error && response) {
-          setBrandData(response.data);
-        } else {
-          toast.error("Failed to fetch brand data.");
-        }
-      } catch (error) {
-        toast.error("Error in fetching brand data.");
-        console.error("Error in fetching brand data", error);
-      }
-    };
-
-    loadBrands();
-  }, [brandData]);
-
-  const openModal = (brand?: BrandData) => {
+  const openModal = (brand?:any) => {
     if (brand) {
-      setEditableBrand(brand);
+      setIsEdit(true);
+      setBrandData({
+        _id: brand.id,
+        name: brand.brandName,
+        description: brand.description,
+        organizationId: brand.organizationId || "INDORG0001",
+        type: brand.type || "brand",
+      });
     } else {
-      setEditableBrand({ name: "", description: "" });
+      setIsEdit(false);
+      setBrandData({
+        organizationId: "INDORG0001",
+        name: "",
+        description: "",
+        type: "brand",
+      });
     }
     setModalOpen(true);
   };
 
+  useEffect(() => {
+    loadBrands();
+  }, []);
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setBrandData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const loadBrands = async () => {
+    try {
+      const url = `${endponits.GET_ALL_BRMC}`;
+      const body = { type: "brand", organizationId: "INDORG0001" };
+      const { response, error } = await fetchAllBrands(url, body);
+      if (!error && response) {
+        setAllBrandData(response.data);
+      } else {
+        toast.error("Failed to fetch brand data.");
+      }
+    } catch (error) {
+      toast.error("Error in fetching brand data.");
+      console.error("Error in fetching brand data", error);
+    }
+  };
+
+
+  
+
+  const handleDelete = async (brand: any) => {
+
+    try {
+      const body={ organizationId: "INDORG0001"}
+      const url = `${endponits.DELETE_BRMC}/${brand.id}`;
+      const { response, error } = await deleteBrandRequest(url,body);
+      if (!error && response) {
+        toast.success("Brand deleted successfully!");
+        loadBrands();
+      } else {
+        toast.error(error.response.data.message);
+      }
+    } catch (error) {
+      toast.error("Error occurred while deleting brand.");
+    }
+  };
+
   const handleSave = async () => {
     try {
-      const isEditing = Boolean(editableBrand?._id);
-      const brand: Partial<BrandData> = {
-        organizationId: "INDORG0001",
-        name: editableBrand?.name || "",
-        description: editableBrand?.description || "",
-        ...(isEditing && { _id: editableBrand?._id }),
-      };
+      const url = isEdit ? `${endponits.UPDATE_BRMC}` : `${endponits.ADD_BRMC}`;
+      const apiCall = isEdit ? updateBrandRequest : addBrandRequest;
 
-      const url = isEditing
-        ? `${endponits.UPDATE_BRAND}`
-        : `${endponits.ADD_BRAND}`;
-      const apiCall = isEditing ? updateBrandRequest : addBrandRequest;
-      const { response, error } = await apiCall(url, brand);
+      const { response, error } = await apiCall(url, brandData);
 
       if (!error && response) {
-        setBrandData((prevData) =>
-          isEditing
-            ? prevData.map((b) =>
-                b._id === editableBrand!._id ? { ...b, ...brand } : b
-              )
-            : [...prevData, response.data]
-        );
-
-        toast.success(`Brand ${isEditing ? "updated" : "added"} successfully!`);
+        toast.success(`Brand ${isEdit ? "updated" : "added"} successfully!`);
+        loadBrands();
         closeModal();
       } else {
-        toast.error(`Error saving brand: ${error?.message}`);
-        console.error(`Error saving brand: ${error?.message}`);
+        toast.error(error.response.data.message);
       }
     } catch (error) {
       toast.error("Error in save operation.");
-      console.error("Error in save operation", error);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      const url = `${endponits.DELETE_BRAND(id)}`;
-      const { response, error } = await deleteBrandRequest(url);
-      if (!error && response) {
-        setBrandData(brandData.filter((brand) => brand._id !== id));
-        toast.success("Brand deleted successfully!");
-      } else {
-        toast.error(`Error deleting brand: ${error?.message}`);
-        console.error(`Error deleting brand: ${error?.message}`);
-      }
-    } catch (error) {
-      toast.error("Error in delete operation.");
-      console.error("Error in delete operation", error);
-    }
-  };
-
-  const handleEditChange = (field: keyof BrandData, value: string) => {
-    if (editableBrand) {
-      setEditableBrand({ ...editableBrand, [field]: value });
     }
   };
 
@@ -140,51 +148,34 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
             <div className="relative z-10">
               <h3 className="text-xl font-bold text-textColor">Manage Brand</h3>
               <p className="text-dropdownText font-semibold text-sm mt-2">
-                Have an insight on the profit or loss incurred due to the change
-                in exchange rates
+                Have an insight on the profit or loss incurred due to the change in exchange rates
               </p>
             </div>
-            <div
-              className="ms-auto text-3xl cursor-pointer relative z-10"
-              onClick={onClose}
-            >
+            <div className="ms-auto text-3xl cursor-pointer relative z-10" onClick={onClose}>
               &times;
             </div>
           </div>
 
           <div className="flex justify-end me-2 my-4">
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => openModal()}
-              className="text-sm"
-            >
+            <Button variant="primary" size="sm" onClick={() => openModal()} className="text-sm">
               <PlusCircle color="white" />
               Add Brand
             </Button>
           </div>
 
           <div className="grid grid-cols-3 gap-5">
-            {brandData.map((brand) => (
+            {allBrandData.map((brand:any) => (
               <div key={brand._id} className="flex p-2">
                 <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
                   <div>
-                    <h3 className="text-sm font-bold">{brand.name}</h3>
-                    <p className="text-xs text-textColor">
-                      {brand.description}
-                    </p>
+                    <h3 className="text-sm font-bold">{brand.brandName}</h3>
+                    <p className="text-xs text-textColor">{brand.description}</p>
                   </div>
                   <div className="flex space-x-2">
-                    <p
-                      className="cursor-pointer"
-                      onClick={() => openModal(brand)}
-                    >
+                    <p className="cursor-pointer" onClick={() => openModal(brand)}>
                       <PencilIcon color="currentColor" />
                     </p>
-                    <p
-                      className="cursor-pointer"
-                      onClick={() => handleDelete(brand._id!)}
-                    >
+                    <p className="cursor-pointer" onClick={() => handleDelete(brand)}>
                       <OutlineTrashIcon color="currentColor" />
                     </p>
                   </div>
@@ -192,66 +183,54 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               </div>
             ))}
           </div>
+           <div className="flex justify-end gap-2 my-3">
+            <Button className="flex justify-center px-8" variant="primary" size="sm" >
+              Save
+            </Button>
+            </div>
         </div>
       </Modal>
 
       <Modal open={isModalOpen} onClose={closeModal} style={{ width: "35%" }}>
         <div className="p-5 mt-3">
           <div className="flex p-4 rounded-xl relative overflow-hidden">
-            <h3 className="text-xl font-bold text-textColor">
-              {editableBrand?._id ? "Edit Brand" : "Add Brand"}
-            </h3>
-            <div
-              className="ms-auto text-3xl cursor-pointer relative z-10"
-              onClick={closeModal}
-            >
+            <h3 className="text-xl font-bold text-textColor">{isEdit ? "Edit Brand" : "Add Brand"}</h3>
+            <div className="ms-auto text-3xl cursor-pointer relative z-10" onClick={closeModal}>
               &times;
             </div>
           </div>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSave();
-            }}
-          >
+          <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
             <div className="">
               <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">
-                  Name
-                </label>
+                <label className="block text-sm mb-1 text-labelColor">Name</label>
                 <input
                   placeholder="Brand Name"
                   type="text"
-                  value={editableBrand?.name || ""}
-                  onChange={(e) => handleEditChange("name", e.target.value)}
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10 "
+                  name="name"
+                  value={brandData.name}
+                  onChange={handleInputChange}
+                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700 h-10"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm mb-1 text-labelColor">
-                  Description
-                </label>
+                <label className="block text-sm mb-1 text-labelColor">Description</label>
                 <textarea
                   rows={4}
                   placeholder="Description"
-                  value={editableBrand?.description || ""}
-                  onChange={(e) =>
-                    handleEditChange("description", e.target.value)
-                  }
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 "
+                  name="description"
+                  value={brandData.description}
+                  onChange={handleInputChange}
+                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 text-zinc-700"
                 />
               </div>
+            </div>
 
-              <div className="flex justify-end gap-2 mb-3">
-                <Button type="submit" variant="primary" size="sm">
-                  Save
-                </Button>
-                <Button onClick={closeModal} variant="tertiary" size="sm">
-                  Cancel
-                </Button>
-              </div>
+            <div className="flex justify-end">
+              <Button size="sm" variant="primary" className="text-sm" type="submit">
+               Save
+              </Button>
             </div>
           </form>
         </div>
