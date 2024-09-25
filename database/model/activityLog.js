@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const activityLogSchema = new mongoose.Schema({
-  username: { type: String},
+  userName: { type: String},
   activity: { type: String },
   timestamp: { type: String },
 });
