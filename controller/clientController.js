@@ -35,24 +35,25 @@ const createRolesForOrganization = async (organizationId) => {
         description: 'Admin',
         roleName: 'Admin',
         permissions: [
-          // Basic
-          { action: "Basic", note: "Viewed Basic details" },
           
-          // Organization
+          
+          // Organization Module
           { action: "OrganizationView", note: "Viewed Organization Details" },
           { action: "OrganizationSetup", note: "Setup/Modified Organization Details" },
 
-          // Currency
+          // Organization Module - Setting
+          { action: "SettingView", note: "Viewed Setting details" },
+          
+          // Organization Module - Currency
           { action: "CurrencyView", note: "Viewed Currency Details" },
           { action: "CurrencyAdd", note: "Added a new Currency" },
           { action: "CurrencyEdit", note: "Edited Currency Information" },
           { action: "CurrencyDelete", note: "Deleted a Currency" },
-          
-          // Setting
-          { action: "SettingView", note: "Viewed Setting details" },
-          
-          { action: "InvoiceAdd", note: "Added Invoice" },
-          
+
+          // Organization Module - Invoice          
+          { action: "InvoiceAdd", note: "Setup/Modified Invoice Setting" },
+
+          // Organization Module - Payment Terms        
           { action: "PaymentTermAdd", note: "Added Payment Term" },
           { action: "PaymentTermDelete", note: "Deleted Payment Term" },
           { action: "PaymentTermView", note: "Viewed Payment Term" },
