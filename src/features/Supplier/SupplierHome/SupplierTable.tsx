@@ -44,14 +44,13 @@ const SupplierTable = () => {
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [supplierData, setSupplierData] = useState<Supplier[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
-  const { request: AllSuppliers } = useApi("put", 5009);
+  const { request: AllSuppliers } = useApi("get", 5009);
   const {supplierResponse}=useContext(SupplierResponseContext)!;
 
   const fetchAllSuppliers = async () => {
     try {
       const url = `${endponits.GET_ALL_SUPPLIER}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await AllSuppliers(url, body);
+      const { response, error } = await AllSuppliers(url);
       if (!error && response) {
         console.log(response.data);
         

@@ -52,7 +52,6 @@ interface Organization {
 
 const initialItemDataState = {
   _id: "",
-  organizationId: "INDORG0001",
   itemType: "",
   itemName: "",
   itemImage: "",
@@ -99,7 +98,6 @@ const initialItemDataState = {
 
 const AddItem = ({ }: Props) => {
   const [initialItemData, setInitialItemData] = useState(initialItemDataState);
-
   const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
   const [isService, setIsService] = useState<boolean>(false);
   const [isRackModalOpen, setIsRackModalOpen] = useState(false);
@@ -115,13 +113,12 @@ const AddItem = ({ }: Props) => {
   const [isManufatureModalOpen, setIsManufatureModalOpen] = useState(false);
 
   const [accountData, setAccountData] = useState<Account[]>([]);
-  const { request: AllAccounts } = useApi("put", 5001);
+  const { request: AllAccounts } = useApi("get", 5001);
 
   const fetchAllAccounts = async () => {
     try {
       const url = `${endponits.Get_ALL_Acounts}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await AllAccounts(url, body);
+      const { response, error } = await AllAccounts(url);
       if (!error && response) {
         setAccountData(response.data);
       }
@@ -142,12 +139,11 @@ const AddItem = ({ }: Props) => {
   });
 
 
-  const { request: AllItems } = useApi("put", 5003);
+  const { request: AllItems } = useApi("get", 5003);
   const fetchAllItems = async () => {
     try {
       const url = `${endponits.GET_ALL_ITEMS_Dropdown}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await AllItems(url, body);
+      const { response, error } = await AllItems(url);
       if (!error && response) {
         setItemsData(response.data);
         console.log(response.data, "As");
@@ -162,13 +158,12 @@ const AddItem = ({ }: Props) => {
     fetchAllAccounts();
   }, []);
   const [itemsDataName, setItemsDataName] = useState<string[]>([]);
-  const { request: GetAllItemsName } = useApi("put", 5003);
+  const { request: GetAllItemsName } = useApi("get", 5003);
 
   const fetchAllItemName = async () => {
     try {
       const url = `${endponits.GET_ALL_ITEM}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await GetAllItemsName(url, body);
+      const { response, error } = await GetAllItemsName(url);
       if (!error && response) {
         const itemNames = response.data.map((item: any) => item.itemName).filter(Boolean);
         setItemsDataName(itemNames);
@@ -262,7 +257,7 @@ const AddItem = ({ }: Props) => {
       }
     }
     try {
-      const url = selectedItem ? `${endponits.UPDATE_ITEM}` : `${endponits.ADD_ITEM}`;
+      const url = selectedItem ? `${endponits.UPDATE_ITEM}/${selectedItem._id}` : `${endponits.ADD_ITEM}`;
       const body = initialItemData;
       const apiRequest = selectedItem ? UpdateItem : CreateItem;
       const { response, error } = await apiRequest(url, body);
@@ -287,7 +282,6 @@ const AddItem = ({ }: Props) => {
     if (selectedItem) {
       setInitialItemData({
         _id: selectedItem._id,
-        organizationId: selectedItem.organizationId || "INDORG0001",
         itemType: selectedItem.itemType || "",
         itemName: selectedItem.itemName || "",
         itemImage: selectedItem.itemImage || "",
