@@ -5,7 +5,8 @@ const Tax = require("../database/model/tax");
 const moment = require('moment-timezone');
 const Currency = require("../database/model/currency");
 const SupplierHistory = require("../database/model/supplierHistory")
-const TrialBalance = require("../database/model/trialBalance")
+const TrialBalance = require("../database/model/trialBalance");
+const { login } = require("../../../Organization/BillBizz/controller/userController");
 
 
 
@@ -21,11 +22,13 @@ const dataExist = async (organizationId) => {
 };
 
 exports.addSupplier = async (req, res) => {
-  console.log("Add supplier:", req.body);
+  // console.log("Add supplier:", req.body);
   try {
+    const organizationId = req.user.organizationId
+  
   let {
     // Basic
-    organizationId,
+    // organizationId,
     salutation,
     firstName,
     lastName,
@@ -96,10 +99,11 @@ exports.addSupplier = async (req, res) => {
     remarks,
   } = req.body;
 
-  const userId = "6434bd73222";
-  const userName = "Test User";
+  const userId = req.user.id;
+  const userName = req.user.userName;
+console.log(userName);
 
-    organizationId= cleanData(organizationId);
+    // organizationId= cleanData(organizationId);
     salutation= cleanData(salutation);
     firstName= cleanData(firstName);
     lastName= cleanData(lastName);
@@ -109,6 +113,7 @@ exports.addSupplier = async (req, res) => {
     supplierEmail= cleanData(supplierEmail);
     workPhone= cleanData(workPhone);
     mobile= cleanData(mobile);
+    
 
     //Other Details
     pan= cleanData(pan);
@@ -296,15 +301,15 @@ exports.addSupplier = async (req, res) => {
       }
     }
 
-    if (sourceOfSupply !== undefined && 
-      !validCountries[organizationExists.organizationCountry].includes(
-        sourceOfSupply
-      )
-    ) {
-      return res
-        .status(400)
-        .json({ message: `Invalid Source of Supply: ${sourceOfSupply}` });
-    }
+    // if (sourceOfSupply !== undefined && 
+    //   !validCountries[organizationExists.organizationCountry].includes(
+    //     sourceOfSupply
+    //   )
+    // ) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: `Invalid Source of Supply: ${sourceOfSupply}` });
+    // }
 
     const validationErrors = validateCustomerData({
       salutation,      
@@ -313,7 +318,6 @@ exports.addSupplier = async (req, res) => {
       supplierEmail,
       workPhone,
       mobile,
-      cardNumber,
       pan,
       debitOpeningBalance,
       creditOpeningBalance,
@@ -340,13 +344,71 @@ exports.addSupplier = async (req, res) => {
 
 // const existingSupplier = await Supplier.findOne({
 //   supplierEmail,
+//   supplierDisplayName,
+//   workPhone,
 //    organizationId,
 // });
-// if (existingSupplier) {
+// if (existingSupplier && existingSupplier.supplierEmail && existingSupplier.supplierEmail.trim() !== "") {
 //   return res.status(409).json({
 //     message: "Supplier with the provided email already exists.",
 //   });
 // }
+// if (existingSupplier && existingSupplier.supplierDisplayName && existingSupplier.supplierDisplayName.trim() !== "") {
+//   return res.status(409).json({
+//     message: "Supplier with the provided DisplayName already exists.",
+//   });
+// }
+// if (existingSupplier && existingSupplier.workPhone && existingSupplier.workPhone.trim() !== "") {
+//   return res.status(409).json({
+//     message: "Supplier with the provided workPhone already exists.",
+//   });
+// }
+
+
+
+// Initialize an array to track existing fields
+let existingFields = [];
+
+// Check for existing supplier by email
+const emailSupplier = await Supplier.findOne({
+  organizationId,
+  supplierEmail,
+});
+
+if (emailSupplier && emailSupplier.supplierEmail && emailSupplier.supplierEmail.trim() !== "") {
+  existingFields.push("Email");
+}
+
+// Check for existing supplier by display name
+const displayNameSupplier = await Supplier.findOne({
+  organizationId,
+  supplierDisplayName,
+});
+
+if (displayNameSupplier && displayNameSupplier.supplierDisplayName && displayNameSupplier.supplierDisplayName.trim() !== "") {
+  existingFields.push("Supply Display Name");
+}
+
+// Check for existing supplier by work phone
+const phoneSupplier = await Supplier.findOne({
+  organizationId,
+  workPhone,
+});
+
+if (phoneSupplier && phoneSupplier.workPhone && phoneSupplier.workPhone.trim() !== "") {
+  existingFields.push("Work Phone");
+}
+
+// If any existing fields were found, respond with a message
+if (existingFields.length > 0) {
+  return res.status(409).json({
+    message: `Supplier with the provided ${existingFields.join(", ")} already exists.`,
+  });
+}
+
+
+
+
 
 // Create a new supplier
 const newSupplier = new Supplier({
@@ -550,9 +612,13 @@ await accountsupplierHistoryEntry.save();
 
 exports.getAllSuppliers = async (req, res) => {
   try {
-    const { organizationId } = req.body;
-    console.log(organizationId);
-
+    // const { organizationId } = req.body;
+    // const organizationId  = req.user.organizationId
+    // console.log(`get all supplier ${organizationId}`);
+    const organizationId  = req.user.organizationId
+    const userId = req.user.id;
+  const userName = req.user.userName;
+  console.log(organizationId,userId,userName);
     const suppliers = await Supplier.find({ organizationId: organizationId });
     // console.log(suppliers);
 
@@ -572,7 +638,7 @@ exports.getAllSuppliers = async (req, res) => {
 exports.getASupplier = async (req, res) => {
   try {
     const supplierId = req.params.id;
-    const { organizationId } = req.body;
+    const  organizationId  = req.user.organizationId;
 
     // Find the supplier by supplierId and organizationId
     const supplier = await Supplier.findById({
@@ -601,9 +667,11 @@ exports.updateSupplier = async (req, res) => {
 
   try {
     const supplierId = req.params.id;
+    const  organizationId  = req.user.organizationId;
+
     let {
       // Basic
-      organizationId,
+      // organizationId,
       salutation,
       firstName,
       lastName,
@@ -613,10 +681,12 @@ exports.updateSupplier = async (req, res) => {
       supplierEmail,
       workPhone,
       mobile,
-
+      businessLegalName,
+      businessTradeName,
       pan,
       currency,
-      openingBalance,
+      creditOpeningBalance,
+      debitOpeningBalance,
       paymentTerms,
       tds,
       creditDays,
@@ -633,6 +703,7 @@ exports.updateSupplier = async (req, res) => {
       sourceOfSupply,
       msmeType,
       msmeNumber,
+      msmeRegistered,
       vatNumber,
 
       billingAttention,
@@ -662,10 +733,10 @@ exports.updateSupplier = async (req, res) => {
       remarks
     } = req.body;
 
-    const userId = "6434bd73222";
-    const userName = "Test User";
+    const userId = req.user.id;
+  const userName = req.user.userName;
 
-    organizationId= cleanData(organizationId);
+    // organizationId= cleanData(organizationId);
     salutation= cleanData(salutation);
     firstName= cleanData(firstName);
     lastName= cleanData(lastName);
@@ -899,15 +970,26 @@ exports.updateSupplier = async (req, res) => {
       }
     }
 
-    if (sourceOfSupply !== undefined && 
-      !validCountries[organizationExists.organizationCountry].includes(
-        sourceOfSupply
-      )
-    ) {
-      return res
-        .status(400)
-        .json({ message: `Invalid Source of Supply: ${sourceOfSupply}` });
-    }
+    // if (sourceOfSupply !== undefined && 
+    //   !validCountries[organizationExists.organizationCountry].includes(
+    //     sourceOfSupply
+    //   )
+    // ) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: `Invalid Source of Supply: ${sourceOfSupply}` });
+    // }
+    // if (
+    //   sourceOfSupply !== undefined &&
+    //   organizationExists && 
+    //   organizationExists.organizationCountry &&
+    //   validCountries[organizationExists.organizationCountry] && // Ensure this exists
+    //   !validCountries[organizationExists.organizationCountry].includes(sourceOfSupply)
+    // ) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: `Invalid Source of Supply: ${sourceOfSupply}` });
+    // }
 
     const validationErrors = validateCustomerData({
       salutation,      
@@ -916,7 +998,6 @@ exports.updateSupplier = async (req, res) => {
       supplierEmail,
       workPhone,
       mobile,
-      cardNumber,
       pan,
       debitOpeningBalance,
       creditOpeningBalance,
@@ -956,7 +1037,8 @@ exports.updateSupplier = async (req, res) => {
 
       pan,
       currency,
-      openingBalance,
+      debitOpeningBalance,
+      creditOpeningBalance,
       paymentTerms,
       tds,
       creditDays,
@@ -1034,6 +1116,21 @@ exports.updateSupplier = async (req, res) => {
       );
     }
 
+    if (supplierDisplayName && supplierDisplayName !== oldSupplierDisplayName) {
+      const updatedTrail = await TrialBalance.updateMany(
+        {
+          accountName: oldSupplierDisplayName, // Match the old supplierDisplayName
+          organizationId: organizationId, // Match the organizationId from the request
+        },
+        { $set: { accountName: supplierDisplayName } } // Update with the new supplierDisplayName
+      );
+      console.log(
+        `${updatedTrail.modifiedCount} trial associated with the accountName have been updated with the new supplierDisplayName.`
+      );
+    }
+
+    
+
     // // Update the supplierDisplayName in associated Account documents if it has changed
     // if (
     //   supplierDisplayName &&
@@ -1073,7 +1170,7 @@ const accountsupplierHistoryEntry = new SupplierHistory({
   organizationId,
   operationId:updatedSupplier._id,
   supplierId:supplierId,
-  supplierDisplayName:savedCustomer.supplierDisplayName,
+  supplierDisplayName:updatedSupplier.supplierDisplayName,
   date: openingDate,
   title: "Supplier Data Modified",
   description: ` ${updatedSupplier.supplierDisplayName} Account Modified by ${userName}`,
@@ -1081,7 +1178,7 @@ const accountsupplierHistoryEntry = new SupplierHistory({
   userName: userName,
 });
 
-await accountcustomerHistoryEntry.save();
+await accountsupplierHistoryEntry.save();
 
     res
       .status(200)
@@ -1133,7 +1230,8 @@ exports.updateSupplierStatus = async (req, res) => {
   console.log("Update Supplier Status:", req.body);
   try {
     const { supplierId } = req.params;
-    const { organizationId, status } = req.body; // Status is now taken from the request body
+    const { status } = req.body; // Status is now taken from the request body
+    const  organizationId  = req.user.organizationId;
 
     // Validate organizationId
     const organizationExists = await Organization.findOne({
@@ -1225,8 +1323,8 @@ exports.updateSupplierStatus = async (req, res) => {
 
 // Supplier Additional Data
 exports.getSupplierAdditionalData = async (req, res) => {
-  const { organizationId } = req.body;
-
+  // const { organizationId } = req.body;
+  const  organizationId  = req.user.organizationId;
   try {
     // Check if an Organization already exists
     const organization = await Organization.findOne({ organizationId });
@@ -1297,7 +1395,8 @@ exports.getSupplierAdditionalData = async (req, res) => {
 exports.getOneSupplierHistory = async (req, res) => {
   try {
     const { supplierId } = req.params;
-    const { organizationId } = req.body;
+    // const { organizationId } = req.body;
+    const  organizationId  = req.user.organizationId;
 
     const {organizationExists} = await dataExist(organizationId);
 
@@ -1467,9 +1566,7 @@ function validateCustomerData(data) {
   if (data.workPhone !== undefined && !isInteger(data.workPhone))
     errors.push(`Work Phone should contain only digits: ${data.workPhone}`);
   if (data.mobile !== undefined && !isInteger(data.mobile))
-    errors.push(`Mobile should contain only digits: ${data.mobile}`);
-  if (data.cardNumber !== undefined && !isInteger(data.cardNumber))
-    errors.push(`Invalid card number: ${data.cardNumber}`);
+    errors.push(`Mobile should contain only digits: ${data.mobile}`);  
 
   if (data.pan !== undefined && !isAlphanumeric(data.pan)) 
      errors.push(`Invalid PAN: ${data.pan}`);
