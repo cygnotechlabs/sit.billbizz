@@ -19,16 +19,16 @@ const { verifyToken } = require('../controller/middleware');
 //Production
 
 //Basic
-router.get('/get-countries-data',verifyToken,checkPermission('Basic'),organizationController.getCountriesData)
+router.get('/get-countries-data',verifyToken,organizationController.getCountriesData)
 
-router.get('/get-additional-data',verifyToken,checkPermission('Basic'),organizationController.getAdditionalData)
+router.get('/get-additional-data',verifyToken,organizationController.getAdditionalData)
 
 
 
 //Organization
-router.post('/setup-organization',verifyToken,checkPermission('OrganizationSetup'),organizationController.setupOrganization)
+router.post('/setup-organization',verifyToken,checkPermission('Setup/Modified Organization Details'),organizationController.setupOrganization)
 
-router.get('/get-one-organization',verifyToken,checkPermission('OrganizationView'),organizationController.getOneOrganization)
+router.get('/get-one-organization',verifyToken,checkPermission('Viewed Organization Details'),organizationController.getOneOrganization)
 
 
 
@@ -38,23 +38,23 @@ router.get('/get-one-organization',verifyToken,checkPermission('OrganizationView
 
 // Setting
 
-router.get('/get-settings',verifyToken,checkPermission('SettingView'),settingController.getSettings)
+router.get('/get-settings',verifyToken,checkPermission('Viewed Setting details'),settingController.getSettings)
 
 // Currency
 
-router.get('/get-currency',verifyToken,checkPermission('CurrencyView'),settingController.getCurrency)
+router.get('/get-currency',verifyToken,checkPermission('Viewed Currency Details'),settingController.getCurrency)
 
-router.get('/view-currency/:id',verifyToken,checkPermission('CurrencyView'),settingController.viewCurrency)
+router.get('/view-currency/:id',verifyToken,checkPermission('Viewed Currency Details'),settingController.viewCurrency)
 
-router.post('/add-currency',verifyToken,checkPermission('CurrencyAdd'),settingController.addCurrency)
+router.post('/add-currency',verifyToken,checkPermission('Added a new Currency'),settingController.addCurrency)
 
-router.put('/edit-currency',verifyToken,checkPermission('CurrencyEdit'),settingController.editCurrency)
+router.put('/edit-currency',verifyToken,checkPermission('Edited Currency Information'),settingController.editCurrency)
 
-router.delete('/delete-currency/:currencyId',verifyToken,checkPermission('CurrencyDelete'),settingController.deleteCurrency)
+router.delete('/delete-currency/:currencyId',verifyToken,checkPermission('Deleted a Currency'),settingController.deleteCurrency)
 
 // Invoice 
 
-router.put('/add-invoice-settings',verifyToken,checkPermission('InvoiceAdd'),settingController.updateInvoiceSettings)
+router.put('/add-invoice-settings',verifyToken,checkPermission('Setup/Modified Invoice Setting'),settingController.updateInvoiceSettings)
 
 // Payment Terms
 

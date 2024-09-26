@@ -466,8 +466,6 @@ exports.getOneOrganization = async (req, res) => {
     // const { organizationId } = req.body;
     const organization = req.user.organizationId;
 
-    console.log("Fetching organization with ID:", req.user);
-
     const existingOrganization = await Organization.findOne({ organizationId : organization });
 
     if (existingOrganization) {

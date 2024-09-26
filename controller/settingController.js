@@ -394,10 +394,13 @@ exports.deletePaymentTerm = async (req, res) => {
 // Get all payment terms
 exports.getAllPaymentTerms = async (req, res) => {
   try {
-    const paymentTerms = await PaymentTerms.find();
+    const organizationId = req.user.organizationId;
+
+    // Fetch payment terms only for the specified organizationId
+    const paymentTerms = await PaymentTerms.find({ organizationId });
 
     if (!paymentTerms || paymentTerms.length === 0) {
-      return res.status(404).json({ message: "No Payment Terms found" });
+      return res.status(404).json({ message: "No Payment Terms found for this organization" });
     }
 
     res.status(200).json(paymentTerms);
@@ -406,6 +409,7 @@ exports.getAllPaymentTerms = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 
