@@ -13,10 +13,10 @@ function verifyToken(req, res, next) {
                 return res.sendStatus(403);  // Forbidden if token is invalid
             } else {
                 // Extract userId and organizationId from authData
-                const { id: userId, organizationId } = authData;
+                const { id: userId, organizationId, userName } = authData;
                 
                 // Attach userId and organizationId to req object
-                req.user = { id: userId, organizationId };
+                req.user = { id: userId, organizationId, userName };
                 
                 next();  // Pass control to the next middleware or route handler
             }
