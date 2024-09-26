@@ -78,7 +78,8 @@ exports.verifyOtp = async (req, res) => {
       const token = jwt.sign(
         {
           id: user._id,
-          organizationId: user.organizationId, // Include organizationId in the token
+          organizationId: user.organizationId,
+          userName : user.userName // Include organizationId in the token
         },
         process.env.JWT_SECRET, // JWT secret from environment variables
         { expiresIn: '12h' }

@@ -78,6 +78,7 @@ const createRolesForOrganization = async (organizationId) => {
           { action: "CustomersDelete", note: "Deleted a customer" },
     
           // Vendors
+          { action: "Suppliersview", note: "Viewed all Suppliers" },
           { action: "VendorsView", note: "Viewed vendor details" },
           { action: "VendorsCreate", note: "Created a new vendor" },
           { action: "VendorsEdit", note: "Edited vendor information" },
