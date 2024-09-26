@@ -24,46 +24,34 @@ interface Account {
 interface ItemSettings {
   itemDuplicateName: boolean;
   hsnSac: boolean;
-  hsnDigits: string; 
+  hsnDigits: string;
 }
 
 interface ItemsData {
   bmcrData: {
-    brandNames: string[]; 
-    manufacturers: Manufacturer[]; 
-    categories: Category[]; 
-    racks: Rack[]; 
+    brandNames: string[];
+    manufacturers: string[];
+    categories: string[];
+    racks: string[];
   };
   taxRate: TaxRate[];
-  unitName: string[]; 
-  organization: Organization; 
-  itemSettings?: ItemSettings; 
-}
-
-interface Manufacturer {
-  manufacturerName: string; 
-}
-
-interface Category {
-  categoryName: string;
-}
-
-interface Rack {
-  rackName: string; 
+  unitName: string[];
+  organization: Organization;
+  itemSettings?: ItemSettings;
 }
 
 interface TaxRate {
-  taxName: string; 
+  taxName: string;
 }
 
 interface Organization {
   baseCurrency: string;
-  timeZoneExp?: string; 
-  dateFormatExp?: string; 
+  timeZoneExp?: string;
+  dateFormatExp?: string;
 }
 
 const initialItemDataState = {
-  _id:"",
+  _id: "",
   organizationId: "INDORG0001",
   itemType: "",
   itemName: "",
@@ -109,7 +97,7 @@ const initialItemDataState = {
   status: "",
 };
 
-const AddItem = ({}: Props) => {
+const AddItem = ({ }: Props) => {
   const [initialItemData, setInitialItemData] = useState(initialItemDataState);
 
   const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
@@ -141,19 +129,19 @@ const AddItem = ({}: Props) => {
       console.error("Error fetching accounts:", error);
     }
   };
-const [itemsData, setItemsData] = useState<ItemsData>({
-  bmcrData: {
-    brandNames: [],  
-    manufacturers: [], 
-    categories: [],
-    racks: []
-  },
-  taxRate: [],
-  unitName: [],
-  organization: { baseCurrency: "" },
-});
+  const [itemsData, setItemsData] = useState<ItemsData>({
+    bmcrData: {
+      brandNames: [],
+      manufacturers: [],
+      categories: [],
+      racks: []
+    },
+    taxRate: [],
+    unitName: [],
+    organization: { baseCurrency: "" },
+  });
 
-  
+
   const { request: AllItems } = useApi("put", 5003);
   const fetchAllItems = async () => {
     try {
@@ -162,7 +150,7 @@ const [itemsData, setItemsData] = useState<ItemsData>({
       const { response, error } = await AllItems(url, body);
       if (!error && response) {
         setItemsData(response.data);
-        console.log(response.data,"As");
+        console.log(response.data, "As");
       }
     } catch (error) {
       console.error("Error fetching items:", error);
@@ -175,7 +163,7 @@ const [itemsData, setItemsData] = useState<ItemsData>({
   }, []);
   const [itemsDataName, setItemsDataName] = useState<string[]>([]);
   const { request: GetAllItemsName } = useApi("put", 5003);
-  
+
   const fetchAllItemName = async () => {
     try {
       const url = `${endponits.GET_ALL_ITEM}`;
@@ -183,7 +171,7 @@ const [itemsData, setItemsData] = useState<ItemsData>({
       const { response, error } = await GetAllItemsName(url, body);
       if (!error && response) {
         const itemNames = response.data.map((item: any) => item.itemName).filter(Boolean);
-        setItemsDataName(itemNames); 
+        setItemsDataName(itemNames);
       } else {
         console.error("Error in response:", error);
       }
@@ -194,7 +182,7 @@ const [itemsData, setItemsData] = useState<ItemsData>({
   useEffect(() => {
     fetchAllItemName();
   }, []);
-  
+
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -238,19 +226,19 @@ const [itemsData, setItemsData] = useState<ItemsData>({
       setSearchValueTaxRate("");
     }
   };
-  
+
   useEffect(() => {
     if (openDropdownIndex !== null) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-  
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [openDropdownIndex]);
-  
+
   const handleDropdownSelect = (key: string, value: string) => {
     setInitialItemData((prev) => ({
       ...prev,
@@ -258,14 +246,14 @@ const [itemsData, setItemsData] = useState<ItemsData>({
     }));
     setOpenDropdownIndex(null);
   };
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const { request: CreateItem } = useApi("post", 5003);
   const { request: UpdateItem } = useApi("put", 5003); // For editing
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
-  
+
     // Check for duplicate item names if adding a new item
     if (!selectedItem && itemsData?.itemSettings?.itemDuplicateName === false) {
       if (itemsDataName.includes(initialItemData.itemName)) {
@@ -282,8 +270,8 @@ const [itemsData, setItemsData] = useState<ItemsData>({
         toast.success(response.data.message);
         setTimeout(() => {
           navigate("/inventory/Item");
-          setInitialItemData(initialItemDataState); 
-        }, 500); 
+          setInitialItemData(initialItemDataState);
+        }, 500);
       } else {
         toast.error(error.response.data.message);
       }
@@ -291,7 +279,7 @@ const [itemsData, setItemsData] = useState<ItemsData>({
       console.error(error);
     }
   };
-  
+
 
   const location = useLocation();
   const selectedItem = location.state?.item;
@@ -345,7 +333,7 @@ const [itemsData, setItemsData] = useState<ItemsData>({
       });
     }
   }, [selectedItem]);
-    
+
   return (
     <>
       <div className="bg-white mx-5 p-6 rounded-lg h-[80vh] overflow-scroll hide-scrollbar">
@@ -366,9 +354,8 @@ const [itemsData, setItemsData] = useState<ItemsData>({
             <div>
               <label htmlFor="image">
                 <div
-                  className={`bg-lightPink flex items-center justify-center h-24 w-44 rounded-lg ${
-                    initialItemData.itemImage ? "h-[90px] rounded-b-none" : ""
-                  }`}
+                  className={`bg-lightPink flex items-center justify-center h-24 w-44 rounded-lg ${initialItemData.itemImage ? "h-[90px] rounded-b-none" : ""
+                    }`}
                 >
                   {initialItemData.itemImage ? (
                     <img
@@ -425,20 +412,18 @@ const [itemsData, setItemsData] = useState<ItemsData>({
                       type="radio"
                       name="itemType"
                       value="goods"
-                      className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${
-                        initialItemData.itemType === "goods"
+                      className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${initialItemData.itemType === "goods"
                           ? "border-8 border-[#97998E]"
                           : "border-1 border-[#97998E]"
-                      }`}
+                        }`}
                       checked={initialItemData.itemType === "goods"}
                       onChange={handleInputChange}
                     />
                     <div
-                      className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
-                        initialItemData.itemType === "goods"
+                      className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${initialItemData.itemType === "goods"
                           ? "bg-neutral-50"
                           : "bg-transparent"
-                      }`}
+                        }`}
                     />
                   </div>
                   <label htmlFor="goods" className="text-start font-medium">
@@ -461,20 +446,18 @@ const [itemsData, setItemsData] = useState<ItemsData>({
                       type="radio"
                       name="itemType"
                       value="service"
-                      className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${
-                        initialItemData.itemType === "service"
+                      className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${initialItemData.itemType === "service"
                           ? "border-8 border-[#97998E]"
                           : "border-1 border-[#97998E]"
-                      }`}
+                        }`}
                       checked={initialItemData.itemType === "service"}
                       onChange={handleInputChange}
                     />
                     <div
-                      className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${
-                        initialItemData.itemType === "service"
+                      className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${initialItemData.itemType === "service"
                           ? "bg-neutral-50"
                           : "bg-transparent"
-                      }`}
+                        }`}
                     />
                   </div>
                   <label htmlFor="service" className="text-start font-medium">
@@ -589,43 +572,43 @@ const [itemsData, setItemsData] = useState<ItemsData>({
             )}
 
             <div className="grid grid-cols-2 gap-4  mt-3">
-            {itemsData?.itemSettings?.hsnSac && (
-  isService ? (
-    <div>
-      <label
-        className="text-slate-600 flex text-sm items-center gap-2"
-        htmlFor="sac"
-      >
-        SAC
-      </label>
-      <input
-        className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-        placeholder="SAC"
-        name="sac"
-        value={initialItemData.sac}
-        onChange={handleInputChange}
-        maxLength={Number(itemsData?.itemSettings?.hsnDigits) || 6} 
-      />
-    </div>
-  ) : (
-    <div>
-      <label
-        className="text-slate-600 flex text-sm items-center gap-2"
-        htmlFor="hsnCode"
-      >
-        HSN Code
-      </label>
-      <input
-        className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-        placeholder="Enter HSN code"
-        name="hsnCode"
-        value={initialItemData.hsnCode}
-        onChange={handleInputChange}
-        maxLength={Number(itemsData?.itemSettings?.hsnDigits) || 6}  
-      />
-    </div>
-  )
-)}
+              {itemsData?.itemSettings?.hsnSac && (
+                isService ? (
+                  <div>
+                    <label
+                      className="text-slate-600 flex text-sm items-center gap-2"
+                      htmlFor="sac"
+                    >
+                      SAC
+                    </label>
+                    <input
+                      className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                      placeholder="SAC"
+                      name="sac"
+                      value={initialItemData.sac}
+                      onChange={handleInputChange}
+                      maxLength={Number(itemsData?.itemSettings?.hsnDigits) || 6}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label
+                      className="text-slate-600 flex text-sm items-center gap-2"
+                      htmlFor="hsnCode"
+                    >
+                      HSN Code
+                    </label>
+                    <input
+                      className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                      placeholder="Enter HSN code"
+                      name="hsnCode"
+                      value={initialItemData.hsnCode}
+                      onChange={handleInputChange}
+                      maxLength={Number(itemsData?.itemSettings?.hsnDigits) || 6}
+                    />
+                  </div>
+                )
+              )}
 
 
 
@@ -808,13 +791,13 @@ const [itemsData, setItemsData] = useState<ItemsData>({
                     className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
                   >
                     <div className="mb-2.5">
-                    <SearchBar
-                      searchValue={searchValueManufacturer}
-                      onSearchChange={setSearchValueManufacturer}
-                      placeholder="Select Manufacturer"
+                      <SearchBar
+                        searchValue={searchValueManufacturer}
+                        onSearchChange={setSearchValueManufacturer}
+                        placeholder="Select Manufacturer"
                       />
-                      </div>
-                    {itemsData.bmcrData.manufacturers.map(item=>item.manufacturerName)
+                    </div>
+                    {itemsData.bmcrData.manufacturers
                       .filter((manufacturer: string) =>
                         manufacturer.toLowerCase().includes(searchValueManufacturer.toLowerCase())
                       )
@@ -871,12 +854,12 @@ const [itemsData, setItemsData] = useState<ItemsData>({
                     className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
                   >
                     <div className="mb-2.5">
-                    <SearchBar
-                      searchValue={searchValueBrand}
-                      onSearchChange={setSearchValueBrand}
-                      placeholder="Select Brand"
+                      <SearchBar
+                        searchValue={searchValueBrand}
+                        onSearchChange={setSearchValueBrand}
+                        placeholder="Select Brand"
                       />
-                      </div>
+                    </div>
                     {itemsData.bmcrData.brandNames
                       .filter((brand: string) =>
                         brand.toLowerCase().includes(searchValueBrand.toLowerCase())
@@ -934,13 +917,13 @@ const [itemsData, setItemsData] = useState<ItemsData>({
                 className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
               >
                 <div className="mb-2.5">
-                <SearchBar
-                  searchValue={searchValueCategory}
-                  onSearchChange={setSearchValueCategory}
-                  placeholder="Select Category"
+                  <SearchBar
+                    searchValue={searchValueCategory}
+                    onSearchChange={setSearchValueCategory}
+                    placeholder="Select Category"
                   />
-                  </div>
-                {itemsData.bmcrData.categories.map(item=>item.categoryName)
+                </div>
+                {itemsData.bmcrData.categories
                   .filter((category: string) =>
                     category.toLowerCase().includes(searchValueCategory.toLowerCase())
                   )
@@ -996,13 +979,13 @@ const [itemsData, setItemsData] = useState<ItemsData>({
                   className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
                 >
                   <div className="mb-2.5">
-                  <SearchBar
-                    searchValue={searchValueRack}
-                    onSearchChange={setSearchValueRack}
-                    placeholder="Select Rack"
+                    <SearchBar
+                      searchValue={searchValueRack}
+                      onSearchChange={setSearchValueRack}
+                      placeholder="Select Rack"
                     />
-                    </div>
-                  {itemsData.bmcrData.racks.map(item=>item.rackName)
+                  </div>
+                  {itemsData.bmcrData.racks
                     .filter((rack: string) =>
                       rack.toLowerCase().includes(searchValueRack.toLowerCase())
                     )
@@ -1012,7 +995,7 @@ const [itemsData, setItemsData] = useState<ItemsData>({
                         onClick={() => handleDropdownSelect("rack", rack)}
                         className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
                       >
-                        
+
                         <div className="col-span-10 flex">
                           <div>
                             <p className="font-bold text-sm">{rack}</p>
@@ -1343,12 +1326,12 @@ const [itemsData, setItemsData] = useState<ItemsData>({
                 className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
               >
                 <div className="mb-2.5">
-                <SearchBar
-                  searchValue={searchValueTaxRate}
-                  onSearchChange={setSearchValueTaxRate}
-                  placeholder="Select Tax Rate"
+                  <SearchBar
+                    searchValue={searchValueTaxRate}
+                    onSearchChange={setSearchValueTaxRate}
+                    placeholder="Select Tax Rate"
                   />
-                  </div>
+                </div>
                 {itemsData.taxRate
                   .filter((tax: TaxRate) =>
                     tax.taxName.toLowerCase().includes(searchValueTaxRate.toLowerCase())
@@ -1483,10 +1466,10 @@ const [itemsData, setItemsData] = useState<ItemsData>({
         </>
       </div>
       <div className="justify-end m-5 flex gap-4">
-        <Link to="/inventory/Item"> 
-        <Button variant="secondary" size="sm" className="text-sm">
-          Cancel
-        </Button>
+        <Link to="/inventory/Item">
+          <Button variant="secondary" size="sm" className="text-sm">
+            Cancel
+          </Button>
         </Link>
         <Button onClick={handleSave} variant="primary" size="sm" className="text-sm">
           Save
@@ -1496,7 +1479,7 @@ const [itemsData, setItemsData] = useState<ItemsData>({
       {isBrandModalOpen && (
         <BrandModal ref={modalRef} onClose={() => setIsBrandModalOpen(false)} />
       )}
-     {isCategoryModalOpen && (
+      {isCategoryModalOpen && (
         <CategoryModal
           isOpen={isCategoryModalOpen}
           onClose={() => setIsCategoryModalOpen(false)}
