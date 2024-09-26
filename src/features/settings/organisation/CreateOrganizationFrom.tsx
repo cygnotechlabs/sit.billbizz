@@ -45,8 +45,8 @@ const CreateOrganizationForm = () => {
   const [stateList, setStateList] = useState<any | []>([]);
   const { request: getAdditionalData } = useApi("get", 5004);
   const { request: createOrganization } = useApi("post", 5004);
-  const { request: getOneOrganization } = useApi("put", 5004);
-  const { request: getCurrencyData } = useApi("put", 5004);
+  const { request: getOneOrganization } = useApi("get", 5004);
+  const { request: getCurrencyData } = useApi("get", 5004);
   const [tooltipState, setTooltipState] = useState<{ [key: string]: boolean }>({
     industry: false,
     address: false,
@@ -76,7 +76,6 @@ const CreateOrganizationForm = () => {
     phoneNumberCode: "",
   });
 
-  console.log(inputData.organizationPhNum);
 
   const getDropdownList = async () => {
     try {
@@ -107,9 +106,7 @@ const CreateOrganizationForm = () => {
   const getcurrencyData = async () => {
     try {
       const url = `${endponits.GET_CURRENCY_LIST}`;
-      const { response, error } = await getCurrencyData(url, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await getCurrencyData(url);
       if (!error && response) {
         setcurrencyData(response.data);
         // console.log(response.data, "currencyData");
@@ -118,13 +115,12 @@ const CreateOrganizationForm = () => {
       console.log("Error in fetching currency data", error);
     }
   };
+console.log(inputData.organizationPhNum,"in");
 
   const getOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
-      const apiResponse = await getOneOrganization(url, {
-        organizationId: "INDORG0001",
-      });
+      const apiResponse = await getOneOrganization(url);
       // console.log(apiResponse);
       const { response, error } = apiResponse;
       if (!error && response?.data) {
@@ -551,46 +547,8 @@ const CreateOrganizationForm = () => {
               </div>
               <div className="flex">
                 <div className="relative w-24  mt-2 ">
-                  {/* <select
-                    value={inputData.phoneNumberCode}
-                    onChange={handleInputChange}
-                    name="phoneNumberCode"
-                    id="phoneNumberCode"
-                    className="block appearance-none w-full text-[#495160] bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-l-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  >
-                    <option value="">
-                      {inputData.phoneNumberCode
-                        ? inputData.phoneNumberCode
-                        : phoneCodeList.length > 0
-                        ? phoneCodeList
-                        : "+91"}
-                    </option>
- 
-                    {countryData
-                      .filter(
-                        (item: any) =>
-                          item.phoneNumberCode !==
-                          (inputData.phoneNumberCode || phoneCodeList)
-                      )
-                      .map((item: any, index: number) => (
-                        <option key={index} value={item.phoneNumberCode}>
-                          {item.phoneNumberCode}
-                        </option>
-                      ))}
-                  </select> */}
-
-                  {/* <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <CehvronDown color="gray" height={15} width={15} />
-                  </div> */}
+                
                 </div>
-                {/* <input
-                  className="pl-3 text-sm w-[100%] placeholder-[#495160] rounded-r-md text-start bg-white border border-inputBorder  h-[39px] p-2 mt-2  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  placeholder="Phone"
-                  type="tel"
-                  value={inputData.organizationPhNum}
-                  name="organizationPhNum"
-                  onChange={handleInputChange}
-                />{" "} */}
               </div>
               <div className="w-full border-0">
                 <PhoneInput
@@ -602,10 +560,10 @@ const CreateOrganizationForm = () => {
                   containerStyle={{ width: "100%" }}
                   country={
                     inputData.organizationCountry
-                      ? inputData.organizationCountry.toLowerCase()
+                      ? inputData.organizationCountry
                       : "in"
                   }
-                  value={inputData.organizationPhNum}
+                  value={inputData?.organizationPhNum}
                   onChange={handlePhoneChange}
                 />
               </div>

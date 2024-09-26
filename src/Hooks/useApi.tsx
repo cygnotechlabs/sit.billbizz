@@ -12,7 +12,7 @@ const useApi = (type: string, port: number) => {
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const authToken = localStorage.getItem("token");
+  const authToken = localStorage.getItem("authToken");
 
   const request = async (
     url: string,

@@ -35,11 +35,14 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
   const fetchAllCustomers = async () => {
     try {
       const url = `${endponits.GET_ALL_CUSTOMER}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await AllCustomers(url, body);
+      const { response, error } = await AllCustomers(url);
       if (!error && response) {
         setCustomerData(response.data);
-        console.log(response.data,"all sutomers");
+        console.log(response,"all customers");
+      }
+      else{
+      console.log(error,"all customers error");
+      
       }
     } catch (error) {
       console.error("Error fetching accounts:", error);

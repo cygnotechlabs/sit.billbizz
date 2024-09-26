@@ -11,7 +11,7 @@ const BASE_URLS: Record<number, string> = {
   5008: import.meta.env.VITE_REACT_APP_STAFF,
   5009: import.meta.env.VITE_REACT_APP_SUPPLIER,
 };
-console.log(import.meta.env.VITE_REACT_APP_ORGANIZATION,"api");
+// console.log(import.meta.env.VITE_REACT_APP_ORGANIZATION,"api");
 
 const createInstance = (
   port: number,
@@ -25,11 +25,12 @@ const createInstance = (
   };
 
   if (useAuth) {
-    const authToken: string | null = localStorage.getItem("token");
+    const authToken: string | null = localStorage.getItem("authToken");
     if (authToken) {
-      headers = { ...headers, Authorization: `Token ${authToken}` };
+      headers = { ...headers, Authorization: `${authToken}`};
     }
   }
+// console.log(headers,"headers");
 
   return axios.create({
     baseURL,

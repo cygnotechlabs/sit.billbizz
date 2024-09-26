@@ -12,15 +12,14 @@ const CustomerHistory = ({ id }: Props) => {
   const [historyData, setHistoryData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { request: GetAllHistory } = useApi("put", 5002);
+  const { request: GetAllHistory } = useApi("get", 5002);
 
   const fetchAllAccounts = async () => {
     setIsLoading(true);
     setError(null);
     try {
       const url = `${endponits.GET_CUSTOMER_HISTORY}/${id}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await GetAllHistory(url, body);
+      const { response, error } = await GetAllHistory(url);
       if (!error && response) {
         setHistoryData(response.data);
       } else {
