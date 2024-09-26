@@ -2,6 +2,8 @@ import { useState } from "react";
 import OrganizationIcon from "../../../assets/icons/OrganizationIcon";
 import SettingsIcons from "../../../assets/icons/SettingsIcon";
 import Drawer from "../../../Components/drawer/drawer";
+import Button from "../../../Components/Button";
+import { useNavigate } from "react-router-dom";
 
 type Props = {};
 
@@ -11,6 +13,17 @@ function Organization({}: Props) {
   const toggleDrawer = () => {
     setDrawerOpen(!isDrawerOpen);
   };
+
+  const navigate =useNavigate()
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+  
+    if (confirmed) {
+      localStorage.clear();
+      navigate("/login");
+    }
+  };
+  
 
   return (
     <>
@@ -62,6 +75,9 @@ function Organization({}: Props) {
               </div>
             )
           )}
+          <div className="flex justify-center items-center">
+            <Button className="pl-10 pr-10 h-[34px] text-sm" onClick={handleLogout}>Logout</Button>
+          </div>
         </div>
       </Drawer>
     </>
