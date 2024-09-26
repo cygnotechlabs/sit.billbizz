@@ -27,27 +27,43 @@ const dataExist = async (organizationId) => {
     console.log("Add Customer:", req.body);
     try {
       const { organizationId, id: userId, userName } = req.user;
+      // const organizationId ="INDORG0001";
+      // const userId ="INDORG001";
+      // const userName ="INDORG001";
 
-      const sanitizedData = sanitizeCustomerData(req.body);
+      const duplicateCustomerDisplayName = true;
+      const duplicateCustomerEmail = true;
+      const duplicateCustomerMobile = true;
 
-      const { customerEmail, debitOpeningBalance, creditOpeningBalance, customerDisplayName } = sanitizedData;
+      //Clean Data
+      const cleanedData = cleanCustomerData(req.body);
+      //console.log(cleanedData);            
+
+      const { customerEmail, debitOpeningBalance, creditOpeningBalance, customerDisplayName, mobile } = cleanedData;
   
       const { organizationExists, taxExists, currencyExists } = await dataExist(organizationId);
   
-      if (!validateOrganizationAndTax(organizationExists, taxExists, currencyExists, res)) return;
+      //Data Exist Validation
+      if (!validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res)) return;     
   
+      //Date & Time
       const openingDate = generateOpeningDate(organizationExists);
-  
-      if (!validateInputs(sanitizedData, currencyExists, taxExists, organizationExists, res)) return;
-  
-      if (customerEmail) {const existingCustomer = await Customer.findOne({ customerEmail, organizationId });
-      if (existingCustomer) return res.status(409).json({ message: "Customer with the provided email already exists.",existingCustomer });}
-  
-      const savedCustomer = await createNewCustomer(sanitizedData, openingDate);
+
+      //Validate Inputs  
+      if (!validateInputs(cleanedData, currencyExists, taxExists, organizationExists, res)) return;
+
+      //Duplication Check
+      const errors = [];
+      await checkDuplicateCustomerFields( duplicateCustomerDisplayName, duplicateCustomerEmail, duplicateCustomerMobile, customerDisplayName, customerEmail, mobile, organizationId, errors);  
+      if (errors.length) {
+      return res.status(200).json({ message: errors });
+          }
+
+      const savedCustomer = await createNewCustomer(cleanedData, openingDate);
       
       const savedAccount = await createNewAccount(customerDisplayName, openingDate, organizationId, savedCustomer._id);
   
-      await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, sanitizedData, openingDate ,userId,userName );
+      await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, cleanedData, openingDate ,userId,userName );
   
       console.log("Customer & Account created successfully");
       res.status(201).json({ message: "Customer created successfully." });
@@ -63,15 +79,15 @@ exports.editCustomer = async (req, res) => {
     try {
       const { organizationId, id: userId, userName } = req.user;
 
-      const sanitizedData = sanitizeCustomerData(req.body);
+      const cleanedData = cleanCustomerData(req.body);
 
       const { customerId } = req.params;
   
-      const { customerDisplayName } = sanitizedData;
+      const { customerDisplayName } = cleanedData;
   
       const { organizationExists, taxExists, currencyExists } = await dataExist(organizationId);
   
-      if (!validateOrganizationAndTax(organizationExists, taxExists, currencyExists, res)) return;
+      if (!validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res)) return;
       
       const openingDate = generateOpeningDate(organizationExists);
   
@@ -83,11 +99,11 @@ exports.editCustomer = async (req, res) => {
   
       const oldCustomerDisplayName = existingCustomer.customerDisplayName;
 
-      if (!validateInputs(sanitizedData, currencyExists, taxExists, organizationExists, res)) return;
+      if (!validateInputs(cleanedData, currencyExists, taxExists, organizationExists, res)) return;
 
   
       // Update customer fields
-      Object.assign(existingCustomer, sanitizedData);
+      Object.assign(existingCustomer, cleanedData);
       const savedCustomer = await existingCustomer.save();
   
       if (!savedCustomer) {
@@ -404,7 +420,8 @@ exports.getOneCustomerHistory = async (req, res) => {
   ];
   
   
-  function sanitizeCustomerData(data) {
+  //Clean Data 
+  function cleanCustomerData(data) {
     const cleanData = (value) => (value === null || value === undefined || value === "" || value === 0 ? undefined : value);
     return Object.keys(data).reduce((acc, key) => {
       acc[key] = cleanData(data[key]);
@@ -412,7 +429,8 @@ exports.getOneCustomerHistory = async (req, res) => {
     }, {});
   }
   
-  function validateOrganizationAndTax(organizationExists, taxExists, currencyExists, res) {
+  // Validate Organization Tax Currency
+  function validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res) {
     if (!organizationExists) {
       res.status(404).json({ message: "Organization not found" });
       return false;
@@ -428,6 +446,8 @@ exports.getOneCustomerHistory = async (req, res) => {
     return true;
   }
   
+
+  //Return Date and Time 
   function generateOpeningDate(organizationExists) {
     const date = generateTimeAndDateForDB(
         organizationExists.timeZoneExp,
@@ -436,7 +456,43 @@ exports.getOneCustomerHistory = async (req, res) => {
       )
     return date.dateTime;
   }
-  
+ 
+
+
+  async function checkDuplicateCustomerFields( duplicateCustomerDisplayName, duplicateCustomerEmail, duplicateCustomerPhoneNumber, customerDisplayName, customerEmail, mobile, organizationId, errors ) {
+          const checks = [
+            {
+              condition: duplicateCustomerDisplayName && customerDisplayName !== undefined,
+              field: 'customerDisplayName',
+              value: customerDisplayName,
+              errorMessage: `Customer with the provided display name already exists: ${customerDisplayName}`,
+            },
+            {
+              condition: duplicateCustomerEmail && customerEmail !== undefined,
+              field: 'customerEmail',
+              value: customerEmail,
+              errorMessage: `Customer with the provided email already exists: ${customerEmail}`,
+            },
+            {
+              condition: duplicateCustomerPhoneNumber && mobile !== undefined,
+              field: 'mobile',
+              value: mobile,
+              errorMessage: `Customer with the provided phone number already exists: ${mobile}`,
+            },
+          ];
+
+          for (const { condition, field, value, errorMessage } of checks) {
+            if (condition) {
+              const existingRecord = await Customer.findOne({ [field]: value, organizationId });
+              if (existingRecord) {
+                errors.push(errorMessage);
+              }
+            }
+          }
+
+          
+        }
+
   function validateInputs(data, currencyExists, taxExists, organizationExists, res) {
     const validCurrencies = currencyExists.map((currency) => currency.currencyCode);
     const validTaxTypes = ["None", taxExists.taxType];
@@ -548,173 +604,7 @@ exports.getOneCustomerHistory = async (req, res) => {
     return description + "Created by Test User";
   }
   
-  function validateCustomerData(data, validCurrencies, validTaxTypes, organization) {
-    const errors = [];
   
-    validateBasicInfo(data, errors);
-    validateOtherDetails(data, errors);
-    validateTaxDetails(data, validTaxTypes, organization, errors);
-    validateCurrency(data.currency, validCurrencies, errors);
-    validateAddresses(data, organization, errors);
-  
-    return errors;
-  }
-
-  function validateField(condition, errorMsg, errors) {
-    if (condition) errors.push(errorMsg);
-  }
-
-
-  function validateBasicInfo(data, errors) {
-    validateField(
-      data.customerType && !validCustomerTypes.includes(data.customerType),
-      "Invalid customer type: " + data.customerType,
-      errors
-    );
-    validateField(
-      data.salutation && !validSalutations.includes(data.salutation),
-      "Invalid salutation: " + data.salutation,
-      errors
-    );
-    ['firstName', 'lastName'].forEach((name) => {
-      validateField(
-        data[name] && !isAlphabets(data[name]),
-        name.charAt(0).toUpperCase() + name.slice(1) + " should contain only alphabets.",
-        errors
-      );
-    });
-    validateField(
-      data.customerEmail && !isValidEmail(data.customerEmail),
-      "Invalid email: " + data.customerEmail,
-      errors
-    );
-    ['workPhone', 'mobile', 'cardNumber'].forEach((phone) => {
-      validateField(
-        data[phone] && !isInteger(data[phone]),
-        phone.charAt(0).toUpperCase() + phone.slice(1) + " should contain only digits: " + data[phone],
-        errors
-      );
-    });
-  }
-  
-  function validateOtherDetails(data, errors) {
-    ['pan', 'creditDays', 'creditLimits', 'interestPercentage'].forEach((field) => {
-      validateField(
-        data[field] && !isAlphanumeric(data[field]),
-        "Invalid " + field + ": " + data[field],
-        errors
-      );
-    });
-    ['debitOpeningBalance', 'creditOpeningBalance'].forEach((balance) => {
-      validateField(
-        data[balance] && !isFloat(data[balance]),
-        "Invalid " + balance.replace(/([A-Z])/g, " $1") + ": " + data[balance],
-        errors
-      );
-    });
-    ['department', 'designation'].forEach((field) => {
-      if (data[field] !== undefined) {
-        validateField(
-          !isAlphabets(data[field]),
-          field.charAt(0).toUpperCase() + field.slice(1) + " should contain only alphabets.",
-          errors
-        );
-      }
-    });
-  }
-  
-  function validateTaxDetails(data, validTaxTypes, organization, errors) {
-    validateField(
-      data.taxType && !validTaxTypes.includes(data.taxType),
-      "Invalid Tax Type: " + data.taxType,
-      errors
-    );
-  
-    if (data.placeOfSupply && !validCountries[organization.organizationCountry]?.includes(data.placeOfSupply)) {
-      errors.push("Invalid Place of Supply: " + data.placeOfSupply);
-    }
-  
-    if (data.taxType === "GST") {
-      validateField(
-        data.gstTreatment && !validGSTTreatments.includes(data.gstTreatment),
-        "Invalid GST treatment: " + data.gstTreatment,
-        errors
-      );
-      validateField(
-        data.gstin_uin && !isAlphanumeric(data.gstin_uin),
-        "Invalid GSTIN/UIN: " + data.gstin_uin,
-        errors
-      );
-    } else if (data.taxType === "VAT") {
-      validateField(
-        data.vatNumber && !isAlphanumeric(data.vatNumber),
-        "Invalid VAT number: " + data.vatNumber,
-        errors
-      );
-    } else if (data.taxType === "None") {
-      ['gstTreatment', 'gstin_uin', 'vatNumber', 'placeOfSupply'].forEach((field) => (data[field] = undefined));
-    }
-  }
-  
-  function validateCurrency(currency, validCurrencies, errors) {
-    validateField(currency && !validCurrencies.includes(currency), "Invalid Currency: " + currency, errors);
-  }
-  
-  function validateAddresses(data, organization, errors) {
-    const fields = ['billing', 'shipping'];
-    
-    fields.forEach((type) => {
-      const country = data[`${type}Country`];
-      const state = data[`${type}State`];
-      
-      if (country && state && !validCountries[country]?.includes(state)) {
-        const errorMessage = "Invalid " + capitalize(type) + " Country or State: " + country + ", " + state;
-        errors.push(errorMessage);
-      }
-  
-      ['PinCode', 'Phone', 'FaxNumber'].forEach((field) => {
-        const fieldValue = data[`${type}${field}`];
-        if (fieldValue && !isInteger(fieldValue)) {
-          const errorFieldMessage = "Invalid " + capitalize(type) + " " + formatCamelCase(field);
-          errors.push(errorFieldMessage + ": " + fieldValue);
-        }
-      });
-    });
-  }
-  
-  // Helper functions to handle formatting
-  function capitalize(word) {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  }
-  
-  function formatCamelCase(word) {
-    return word.replace(/([A-Z])/g, " $1");
-  }
-
-
-
-
-
-
-  function isAlphabets(value) {
-    return /^[A-Za-z\s]+$/.test(value);
-  }
-  
-  function isFloat(value) {
-    return /^-?\d+(\.\d+)?$/.test(value);
-  }
-  
-  function isInteger(value) {
-    return /^\d+$/.test(value);
-  }
-  
-  function isAlphanumeric(value) {
-    return /^[A-Za-z0-9]+$/.test(value);
-  }
-  
-  function isValidEmail(value) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  }
 
 
 
@@ -759,3 +649,231 @@ function generateTimeAndDateForDB(
 
 
   
+
+
+
+
+
+  
+
+
+
+
+
+
+  function validateCustomerData(data, validCurrencies, validTaxTypes, organization) {
+    const errors = [];
+
+    //Basic Info
+    validateCustomerType(data.customerType, errors);
+    validateSalutation(data.salutation, errors);
+    validateNames(['firstName', 'lastName'], data, errors);
+    validateEmail(data.customerEmail, errors);
+    validatePhones(['workPhone', 'mobile', 'cardNumber'], data, errors);
+
+    //OtherDetails
+    validateAlphanumericFields(['pan'], data, errors);
+    validateIntegerFields(['creditDays', 'creditLimits', 'interestPercentage'], data, errors);
+    validateFloatFields(['debitOpeningBalance', 'creditOpeningBalance'], data, errors);
+    validateAlphabetsFields(['department', 'designation'], data, errors);
+
+    //Tax Details
+    validateTaxType(data.taxType, validTaxTypes, errors);
+    validatePlaceOfSupply(data.placeOfSupply, organization, errors);
+    validateGSTorVAT(data, errors);
+
+    //Currency
+    validateCurrency(data.currency, validCurrencies, errors);
+
+    //Address
+    validateBillingAddress(data, errors);
+    validateShippingAddress(data, errors);  
+    return errors;
+  }
+  
+  // Field validation utility
+  function validateField(condition, errorMsg, errors) {
+    if (condition) errors.push(errorMsg);
+  }
+
+//Valid Customer Type
+  function validateCustomerType(customerType, errors) {
+    validateField(customerType && !validCustomerTypes.includes(customerType),
+      "Invalid Customer type: " + customerType, errors);
+  }
+//Validate Salutation
+  function validateSalutation(salutation, errors) {
+    validateField(salutation && !validSalutations.includes(salutation),
+      "Invalid Salutation: " + salutation, errors);
+  }
+//Validate Names 
+  function validateNames(fields, data, errors) {
+    fields.forEach((name) => {
+      validateField(data[name] && !isAlphabets(data[name]),
+        name.charAt(0).toUpperCase() + name.slice(1) + " should contain only alphabets.", errors);
+    });
+  }
+//Validate Email
+  function validateEmail(email, errors) {
+    validateField(email && !isValidEmail(email), "Invalid email: " + email, errors);
+  }
+//Validate Phones
+  function validatePhones(fields, data, errors) {
+    fields.forEach((phone) => {
+      validateField(data[phone] && !isInteger(data[phone]),
+        phone.charAt(0).toUpperCase() + phone.slice(1) + " should contain only digits: " + data[phone], errors);
+    });
+  }
+//Valid Alphanumeric Fields
+  function validateAlphanumericFields(fields, data, errors) {
+    fields.forEach((field) => {
+      validateField(data[field] && !isAlphanumeric(data[field]), "Invalid " + field + ": " + data[field], errors);
+    });
+  }
+// Validate Integer Fields
+function validateIntegerFields(fields, data, errors) {
+  fields.forEach(field => {
+    validateField(data[field] && !isInteger(data[field]), `Invalid ${field}: ${data[field]}`, errors);
+  });
+}
+//Valid Float Fields  
+  function validateFloatFields(fields, data, errors) {
+    fields.forEach((balance) => {
+      validateField(data[balance] && !isFloat(data[balance]),
+        "Invalid " + balance.replace(/([A-Z])/g, " $1") + ": " + data[balance], errors);
+    });
+  }
+//Valid Alphabets Fields 
+  function validateAlphabetsFields(fields, data, errors) {
+    fields.forEach((field) => {
+      if (data[field] !== undefined) {
+        validateField(!isAlphabets(data[field]),
+          field.charAt(0).toUpperCase() + field.slice(1) + " should contain only alphabets.", errors);
+      }
+    });
+  }
+
+//Validate Tax Type
+  function validateTaxType(taxType, validTaxTypes, errors) {
+    validateField(taxType && !validTaxTypes.includes(taxType),
+      "Invalid Tax Type: " + taxType, errors);
+  }
+// Validate Place Of Supply
+  function validatePlaceOfSupply(placeOfSupply, organization, errors) {
+    if (placeOfSupply && !validCountries[organization.organizationCountry]?.includes(placeOfSupply)) {
+      errors.push("Invalid Place of Supply: " + placeOfSupply);
+    }
+  }
+// Validate GST or VAT details
+function validateGSTorVAT(data, errors) {
+  switch (data.taxType) {
+    case "GST":
+      validateGSTDetails(data, errors);
+      break;
+    case "VAT":
+      validateVATDetails(data, errors);
+      break;
+    case "None":
+      clearTaxFields(data);
+      break;
+  }
+}
+
+// Validate GST details
+function validateGSTDetails(data, errors) {
+  validateField(
+    data.gstTreatment && !validGSTTreatments.includes(data.gstTreatment),
+    `Invalid GST treatment: ${data.gstTreatment}`, 
+    errors
+  );
+  validateField(
+    data.gstin_uin && !isAlphanumeric(data.gstin_uin),
+    `Invalid GSTIN/UIN: ${data.gstin_uin}`, 
+    errors
+  );
+}
+
+// Validate VAT details
+function validateVATDetails(data, errors) {
+  validateField(
+    data.vatNumber && !isAlphanumeric(data.vatNumber),
+    `Invalid VAT number: ${data.vatNumber}`, 
+    errors
+  );
+}
+
+// Clear tax fields when no tax is applied
+function clearTaxFields(data) {
+  ['gstTreatment', 'gstin_uin', 'vatNumber', 'placeOfSupply'].forEach(field => {
+    data[field] = undefined;
+  });
+}
+//Validate Currency
+function validateCurrency(currency, validCurrencies, errors) {
+  validateField(currency && !validCurrencies.includes(currency), "Invalid Currency: " + currency, errors);
+}
+// Validate billing address
+function validateBillingAddress(data, errors) {
+  const country = data.billingCountry, state = data.billingState;
+
+  validateField(country && state && !validCountries[country]?.includes(state),
+    `Invalid Billing Country or State: ${country}, ${state}`, errors);
+
+  validateAddressFields('billing', data, errors);
+}
+
+// Validate shipping address
+function validateShippingAddress(data, errors) {
+  const country = data.shippingCountry, state = data.shippingState;
+
+  validateField(country && state && !validCountries[country]?.includes(state),
+    `Invalid Shipping Country or State: ${country}, ${state}`, errors);
+
+  validateAddressFields('shipping', data, errors);
+}
+
+// Validate common address fields
+function validateAddressFields(type, data, errors) {
+  ['PinCode', 'Phone', 'FaxNumber'].forEach(field => {
+    const value = data[`${type}${field}`];
+    validateField(value && !isInteger(value),
+      `Invalid ${capitalize(type)} ${formatCamelCase(field)}: ${value}`, errors);
+  });
+}
+
+
+
+
+
+
+
+
+// Helper functions to handle formatting
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+function formatCamelCase(word) {
+  return word.replace(/([A-Z])/g, " $1");
+}
+
+// Validation helpers
+function isAlphabets(value) {
+  return /^[A-Za-z\s]+$/.test(value);
+}
+
+function isFloat(value) {
+  return /^-?\d+(\.\d+)?$/.test(value);
+}
+
+function isInteger(value) {
+  return /^\d+$/.test(value);
+}
+
+function isAlphanumeric(value) {
+  return /^[A-Za-z0-9]+$/.test(value);
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
