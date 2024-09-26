@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-
+import React, { useEffect, useMemo } from "react";
+ 
 type Props = {
   onClose: () => void;
   open: boolean;
@@ -7,40 +7,27 @@ type Props = {
   className?: string;
   style?: React.CSSProperties;
   align?: 'top' | 'center' | 'left' | 'right';
-  labelledBy?: string;
-  describedBy?: string;
 };
-
-const Modal = ({ onClose, open, children, className, style, align = 'center', labelledBy, describedBy }: Props) => {
-  const modalRef = useRef<HTMLDivElement>(null);
-  const previouslyFocusedElement = useRef<HTMLElement | null>(null);
-
+ 
+const Modal = ({ onClose, open, children, className, style, align = 'center' }: Props) => {
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
       }
     };
-
-    if (open) {
-      previouslyFocusedElement.current = document.activeElement as HTMLElement;
-      modalRef.current?.focus();
-      document.addEventListener("keydown", handleEscape);
-    } else {
-      document.removeEventListener("keydown", handleEscape);
-      previouslyFocusedElement.current?.focus();
-    }
-
+ 
+    document.addEventListener("keydown", handleEscape);
     return () => {
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [open, onClose]);
-
+  }, [onClose]);
+ 
   const handleModalClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
   };
-
-  const getPositionStyles = () => {
+ 
+  const getPositionStyles = useMemo(() => {
     switch (align) {
       case 'top':
         return 'justify-center items-start';
@@ -53,32 +40,28 @@ const Modal = ({ onClose, open, children, className, style, align = 'center', la
       default:
         return 'justify-center items-center';
     }
-  };
-
+  }, [align]);
+ 
   return (
-    <>
+<>
       {open && (
-        <div
-          className={`fixed inset-0 z-20 flex ${getPositionStyles()} bg-black/20`}
+<div
+          className={`fixed inset-0 z-20 flex ${getPositionStyles} bg-black/20 transition-opacity duration-300`}
           onClick={onClose}
-          role="dialog"
           aria-modal="true"
-          aria-labelledby={labelledBy}
-          aria-describedby={describedBy}
-        >
-          <div
-            ref={modalRef}
-            className={`bg-white rounded-lg h-auto ${className || 'w-[60%]'}`}
+          role="dialog"
+>
+<div
+            className={`bg-white rounded-lg h-auto ${className || 'w-[60%]'} transition-transform duration-300`}
             onClick={handleModalClick}
             style={style}
-            tabIndex={-1}
-          >
+>
             {children}
-          </div>
-        </div>
+</div>
+</div>
       )}
-    </>
+</>
   );
 };
-
+ 
 export default Modal;

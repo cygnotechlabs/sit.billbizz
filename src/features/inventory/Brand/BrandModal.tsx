@@ -13,7 +13,6 @@ type BrandData = {
   _id?: string;
   name: string;
   description: string;
-  organizationId: string;
   type?: string;
   createdDate?: string;
   updatedDate?: string;
@@ -25,13 +24,12 @@ type Props = {
 };
 
 const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
-  const { request: fetchAllBrands } = useApi("put", 5003);
+  const { request: fetchAllBrands } = useApi("get", 5003);
   const { request: deleteBrandRequest } = useApi("delete", 5003);
   const { request: updateBrandRequest } = useApi("put", 5003);
   const { request: addBrandRequest } = useApi("post", 5003);
 
   const [brandData, setBrandData] = useState<BrandData>({
-    organizationId: "INDORG0001",
     name: "",
     description: "",
     type: "brand",
@@ -53,13 +51,11 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
         _id: brand.id,
         name: brand.brandName,
         description: brand.description,
-        organizationId: brand.organizationId || "INDORG0001",
         type: brand.type || "brand",
       });
     } else {
       setIsEdit(false);
       setBrandData({
-        organizationId: "INDORG0001",
         name: "",
         description: "",
         type: "brand",
@@ -83,7 +79,7 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const loadBrands = async () => {
     try {
       const url = `${endponits.GET_ALL_BRMC}`;
-      const body = { type: "brand", organizationId: "INDORG0001" };
+      const body = { type: "brand" };
       const { response, error } = await fetchAllBrands(url, body);
       if (!error && response) {
         setAllBrandData(response.data);
@@ -102,9 +98,8 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const handleDelete = async (brand: any) => {
 
     try {
-      const body={ organizationId: "INDORG0001"}
       const url = `${endponits.DELETE_BRMC}/${brand.id}`;
-      const { response, error } = await deleteBrandRequest(url,body);
+      const { response, error } = await deleteBrandRequest(url);
       if (!error && response) {
         toast.success("Brand deleted successfully!");
         loadBrands();
