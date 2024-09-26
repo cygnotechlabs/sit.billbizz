@@ -11,8 +11,8 @@ const moment = require('moment-timezone');
 exports.addJournalEntry = async (req, res) => {
     console.log("Add journal Entry:", req.body);
     try {
+        const organizationId = req.user.organizationId;
         const { 
-            organizationId,
             date,
             reference,
             note,
@@ -165,7 +165,7 @@ exports.addJournalEntry = async (req, res) => {
 // Get all Journal for a given organizationId
 exports.getAllJournal = async (req, res) => {
     try {
-        const { organizationId } = req.body;
+        const organizationId = req.user.organizationId;
 
         // Find all accounts where organizationId matches
         const journal = await Journal.find({ organizationId:organizationId });
@@ -187,7 +187,7 @@ exports.getAllJournal = async (req, res) => {
 // Get Last Journal Prefix
 exports.getLastJournalPrefix = async (req, res) => {
     try {
-        const { organizationId } = req.body;
+        const organizationId = req.user.organizationId;
 
         // Find all accounts where organizationId matches
         const prefix = await Prefix.findOne({ organizationId:organizationId,'series.status': true });

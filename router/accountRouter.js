@@ -1,41 +1,49 @@
 const express = require("express")
-
 const router = new express.Router()
 
 const accountController = require("../controller/accountController")
-
 const journalController = require("../controller/journalController")
+
+const checkPermission = require('../controller/permission');
+const { verifyToken } = require('../controller/middleware');
+
+
+
+//Sensitive
+
+router.put('/get-bank-account-number/:accountId',verifyToken,checkPermission('AccountNumber'),accountController.getBankAccNum)
 
 
 
 //Accounts
 
-router.post('/add-account',accountController.addAccount)
+router.post('/add-account',verifyToken,checkPermission('AccountAdd'),accountController.addAccount)
 
-router.put('/get-all-account',accountController.getAllAccount)
+router.get('/get-all-account',verifyToken,checkPermission('AccountView'),accountController.getAllAccount)
 
-router.put('/get-one-account/:accountId',accountController.getOneAccount)
+router.get('/get-one-account/:accountId',verifyToken,checkPermission('AccountView'),accountController.getOneAccount)
 
-router.put('/get-bank-account-number/:accountId',accountController.getBankAccNum)
+router.put('/edit-account/:accountId',verifyToken,checkPermission('AccountEdit'),accountController.editAccount)
 
-router.put('/edit-account/:accountId',accountController.editAccount)
-
-router.put('/delete-account/:accountId',accountController.deleteAccount)
+router.delete('/delete-account/:accountId',verifyToken,checkPermission('AccountDelete'),accountController.deleteAccount)
 
 
 
 
 //Journal
 
-router.post('/add-journal-entry',journalController.addJournalEntry)
+router.post('/add-journal-entry',verifyToken,checkPermission('JournalAdd'),journalController.addJournalEntry)
 
-router.put('/get-all-journal',journalController.getAllJournal)
+router.get('/get-all-journal',verifyToken,checkPermission('JournalView'),journalController.getAllJournal)
 
-router.put('/get-last-journal-prefix',journalController.getLastJournalPrefix)
+router.get('/get-last-journal-prefix',verifyToken,checkPermission('JournalAdd'),journalController.getLastJournalPrefix)
+
+
+
 
 //Trial Balance
 
-router.put('/get-one-trial-balance/:accountId',accountController.getOneTrailBalance)
+router.get('/get-one-trial-balance/:accountId',verifyToken,checkPermission('TrailBalanceView'),accountController.getOneTrailBalance)
 
 
 module.exports = router

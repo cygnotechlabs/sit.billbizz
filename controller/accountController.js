@@ -51,8 +51,8 @@ exports.addAccount = async (req, res) => {
     console.log("Add Account:", req.body);
 
     try {
-      const {       
-        organizationId,
+      const organizationId = req.user.organizationId;
+      const {        
         accountName,
         accountCode,
 
@@ -189,7 +189,7 @@ if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
 // Get all accounts for a given organizationId
 exports.getAllAccount = async (req, res) => {
     try {
-        const { organizationId } = req.body;
+      const organizationId = req.user.organizationId;
 
         // Find all accounts where organizationId matches
         const accounts = await Account.find(
@@ -213,7 +213,8 @@ exports.getAllAccount = async (req, res) => {
 exports.getOneAccount = async (req, res) => {
   try {
     const { accountId } = req.params;
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
+
 
     // Find the account by accountId and organizationId
     const account = await Account.findOne({
@@ -240,7 +241,7 @@ exports.getOneAccount = async (req, res) => {
 exports.getBankAccNum = async (req, res) => {
   try {
       const { accountId } = req.params;
-      const { organizationId } = req.body;
+      const organizationId = req.user.organizationId;
 
       const account = await Account.findOne({
           _id: accountId,
@@ -273,9 +274,9 @@ exports.editAccount = async (req, res) => {
   console.log("Edit Account:", req.body);
   try {
     const { accountId } = req.params;
+    const organizationId = req.user.organizationId;
 
     const {
-      organizationId,
       accountName,
       accountCode,
 
@@ -396,7 +397,7 @@ if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
 exports.deleteAccount = async (req, res) => {
   try {
     const { accountId } = req.params;
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
 
     // Check if an account with the given organizationId and accountId exists
     const account = await Account.findOne({
@@ -430,7 +431,7 @@ exports.deleteAccount = async (req, res) => {
 exports.getOneTrailBalance = async (req, res) => {
   try {
       const { accountId } = req.params;
-      const { organizationId } = req.body;
+      const organizationId = req.user.organizationId;
 
       // Find the TrialBalance by accountId and organizationId
       const trialBalance = await TrialBalance.find({
