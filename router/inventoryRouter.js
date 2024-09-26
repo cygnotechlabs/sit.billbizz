@@ -8,22 +8,24 @@ const bmcrController = require('../controller/bmcrController');
 const itemDropdownController = require("../controller/itemDropdownController")
 const itemSettingsController = require("../controller/itemSettingsController")
 
+const checkPermission = require('../controller/permission');
+const { verifyToken } = require('../controller/middleware');
 
 
 // Item
-router.post('/add-item', itemController.addItem);
-router.put('/get-all-item', itemController.getAllItem);
-router.get('/get-one-item/:id', itemController.getAItem)
-router.put('/edit-item',itemController.updateItem)
-router.delete('/delete-item/:id',itemController.deleteItem)
+router.post('/add-item',verifyToken,checkPermission('Created a New Item'), itemController.addItem);
+router.get('/get-all-item',verifyToken,checkPermission('Viewed Item Information'), itemController.getAllItem);
+router.get('/get-one-item/:itemId',verifyToken,checkPermission('Viewed Item Information'), itemController.getAItem)
+router.put('/edit-item/:itemId',verifyToken,checkPermission('Edited Item Information'), itemController.updateItem)
+router.delete('/delete-item/:itemId',verifyToken,checkPermission('Deleted an Item'), itemController.deleteItem)
 
 
 // Unit
-router.post('/add-unit', unitController.addUnit);
-router.put('/get-all-unit', unitController.getAllUnit);
-router.get('/get-one-unit/:_id', unitController.getOneUnit);
-router.put('/edit-unit', unitController.updateUnit);
-router.delete('/delete-unit/:id', unitController.deleteUnit);
+router.post('/add-unit',verifyToken,checkPermission('Created a New Unit'), unitController.addUnit);
+router.get('/get-all-unit',verifyToken,checkPermission('Viewed Unit Information'), unitController.getAllUnit);
+router.get('/get-one-unit/:_id',verifyToken,checkPermission('Viewed Unit Information'), unitController.getOneUnit);
+router.put('/edit-unit/:_id',verifyToken,checkPermission('Edited Unit Information'), unitController.updateUnit);
+router.delete('/delete-unit/:id',verifyToken,checkPermission('Deleted a Unit'), unitController.deleteUnit);
 
 // Unit Conversion
 // router.post('/add-unitConversion', unitController.addUnitConversion);
@@ -35,19 +37,74 @@ router.delete('/delete-unit/:id', unitController.deleteUnit);
 
 
 //BMCR - Brand Manufacturer Category Rack
-router.post('/add-bmcr', bmcrController.addBmcr);
-router.put('/get-all-bmcr', bmcrController.getAllBmcr);
-router.put('/get-a-bmcr/:id', bmcrController.getABmcr);
-router.put('/update-bmcr', bmcrController.updateBmcr);
-router.delete('/delete-bmcr/:id',bmcrController.deleteBmcr)
+router.post('/add-bmcr',verifyToken,checkPermission('Created a New BMCR'), bmcrController.addBmcr);
+router.get('/get-all-bmcr',verifyToken,checkPermission('Viewed BMCR Information'), bmcrController.getAllBmcr);
+router.get('/get-a-bmcr/:id',verifyToken,checkPermission('Viewed BMCR Information'), bmcrController.getABmcr);
+router.put('/update-bmcr',verifyToken,checkPermission('Edited BMCR Information'), bmcrController.updateBmcr);
+router.delete('/delete-bmcr/:id',verifyToken,checkPermission('Deleted a BMCR'), bmcrController.deleteBmcr)
 
 //item dropdowm
-router.put('/get-itemDropdown', itemDropdownController.getItemDropdowm);
+router.get('/get-itemDropdown',verifyToken,checkPermission('Basic'), itemDropdownController.getItemDropdowm);
 
  
 //items settings
-router.put('/add-item-settings',itemSettingsController.addItemSettings);
+router.put('/add-item-settings',verifyToken,checkPermission('Setup/Modified Item Setting'), itemSettingsController.addItemSettings);
 // router.post('/get-item-settings',itemSettings.getItemSettings);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // Item
+// router.post('/add-item', itemController.addItem);
+// router.put('/get-all-item', itemController.getAllItem);
+// router.get('/get-one-item/:id', itemController.getAItem)
+// router.put('/edit-item',itemController.updateItem)
+// router.delete('/delete-item/:id',itemController.deleteItem)
+
+
+// // Unit
+// router.post('/add-unit', unitController.addUnit);
+// router.put('/get-all-unit', unitController.getAllUnit);
+// router.get('/get-one-unit/:_id', unitController.getOneUnit);
+// router.put('/edit-unit', unitController.updateUnit);
+// router.delete('/delete-unit/:id', unitController.deleteUnit);
+
+// // Unit Conversion
+// // router.post('/add-unitConversion', unitController.addUnitConversion);
+// // router.put('/get-all-unitConversion', unitController.getAllUnitConversion);
+// // router.get('/get-one-unitConversion/:_id', unitController.getOneUnitConversion);
+// // router.put('/edit-unitConversion', unitController.updateUnitConversion);
+// // router.delete('/delete-unitConversion/:id', unitController.deleteUnitConversion);
+
+
+
+// //BMCR - Brand Manufacturer Category Rack
+// router.post('/add-bmcr', bmcrController.addBmcr);
+// router.put('/get-all-bmcr', bmcrController.getAllBmcr);
+// router.put('/get-a-bmcr/:id', bmcrController.getABmcr);
+// router.put('/update-bmcr', bmcrController.updateBmcr);
+// router.delete('/delete-bmcr/:id',bmcrController.deleteBmcr)
+
+// //item dropdowm
+// router.put('/get-itemDropdown', itemDropdownController.getItemDropdowm);
+
+ 
+// //items settings
+// router.put('/add-item-settings',itemSettingsController.addItemSettings);
+// // router.post('/get-item-settings',itemSettings.getItemSettings);
 
 
 module.exports = router

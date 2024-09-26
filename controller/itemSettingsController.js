@@ -5,7 +5,7 @@ const Settings = require("../database/model/settings")
 
 exports.addItemSettings = async (req, res) => {
     try {
-      const { organizationId } = req.body;
+      const organizationId = req.user.organizationId;
       console.log("Item setting:",req.body);
   
       const itemSettings = {

@@ -6,10 +6,9 @@ const { log } = require('console');
 
 exports.addBmcr = async (req, res) => {
     console.log("Add BMCR:", req.body);
-
+    const organizationId = req.user.organizationId;
     const {
         type, // This indicates whether it's a brand, manufacturer, category, or rack
-        organizationId,
         name,
         description,
     } = req.body;
@@ -80,7 +79,8 @@ exports.addBmcr = async (req, res) => {
 
 // Get all BMCR
 exports.getAllBmcr = async (req, res) => {
-    const { organizationId, type } = req.body;
+    const organizationId = req.user.organizationId;
+    const { type } = req.body;
 
     try {
         // Check if the Organization exists
@@ -134,7 +134,8 @@ exports.getAllBmcr = async (req, res) => {
 // Get a single BMCR entity (brand, manufacturer, category, rack) by ID and type
 exports.getABmcr = async (req, res) => {
     const { id } = req.params; // Get the BMCR document ID from the route parameters
-    const { type, organizationId } = req.body; // Get type and organizationId from the request body
+    const organizationId = req.user.organizationId;
+    const { type } = req.body; // Get type and organizationId from the request body
 
     if (!['brand', 'manufacturer', 'category', 'rack'].includes(type)) {
         return res.status(400).json({ message: "Invalid type provided." });
@@ -194,10 +195,12 @@ exports.getABmcr = async (req, res) => {
 
 // Update BMCR using findOneAndUpdate
 exports.updateBmcr = async (req, res) => {
-    console.log("Received request to update BMCR entity:", req.body);
+    console.log("Update BMCR:", req.body);
+    const organizationId = req.user.organizationId;
+
 
     try {
-        const { _id, organizationId, type, name, description } = req.body;
+        const { _id, type, name, description } = req.body;
 
         // Validate the type
         const validTypes = ['brand', 'manufacturer', 'category', 'rack'];
@@ -333,8 +336,7 @@ exports.updateBmcr = async (req, res) => {
 
 // delete bmcr
 exports.deleteBmcr = async (req, res) => {
-    // const { organizationId } = req.body;
-    const organizationId = "INDORG0001";    // Hardcoded organizationId
+    const organizationId = req.user.organizationId;
     const { id } = req.params;
 
     

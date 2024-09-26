@@ -10,9 +10,10 @@ const moment = require('moment-timezone');
 exports.addItem = async (req, res) => {
     console.log("Add Item:", req.body);
     try {
+     const organizationId = req.user.organizationId;
+
       const {    
-        //Basics
-        organizationId,   
+        //Basics           
         itemType,
         itemName,
         itemImage,
@@ -199,7 +200,8 @@ exports.addItem = async (req, res) => {
 // Get all items
 exports.getAllItem = async (req, res) => {
   try {
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
+
 
     // Check if an Organization already exists
     const existingOrganization = await Organization.findOne({ organizationId });
@@ -226,8 +228,8 @@ exports.getAllItem = async (req, res) => {
 
 // Get a particular item
 exports.getAItem = async (req, res) => {
-  const itemId = req.params.id;
-  const { organizationId } = req.body;
+    const itemId = req.params;
+    const organizationId = req.user.organizationId;
 
     // Check if an Organization already exists
     const existingOrganization = await Organization.findOne({ organizationId });
@@ -258,10 +260,11 @@ exports.updateItem = async (req, res) => {
   console.log("Received request to update item:", req.body);
  
   try {
+        const organizationId = req.user.organizationId;
+
+    const { itemId } = req.params;
       const {
-        _id,
-        //Basics
-        organizationId,   
+        //Basics           
         itemType,
         itemName,
         itemImage,
@@ -318,7 +321,7 @@ exports.updateItem = async (req, res) => {
       } = req.body;
 
       // Log the ID being updated
-      console.log("Updating organization with ID:", _id);
+      console.log("Updating organization with ID:", itemId);
 
       // Check if an Organization already exists
       const existingOrganization = await Organization.findOne({ organizationId });
@@ -332,7 +335,7 @@ exports.updateItem = async (req, res) => {
       
 
       const updatedItem = await Item.findByIdAndUpdate(
-        _id,
+        itemId,
           {
             //Basics
         organizationId,   
@@ -394,7 +397,7 @@ exports.updateItem = async (req, res) => {
       );
 
       if (!updatedItem) {
-          console.log("Item not found with ID:", _id);
+          console.log("Item not found with ID:", itemId);
           return res.status(404).json({ message: "Item not found" });
       }
 
@@ -411,8 +414,9 @@ exports.updateItem = async (req, res) => {
 // Delete an item
 exports.deleteItem = async (req, res) => {
   try {
-      const itemId = req.params.id;
-      const { organizationId } = req.body;
+      const itemId = req.params;
+          const organizationId = req.user.organizationId;
+
 
     // Check if an Organization already exists
     const existingOrganization = await Organization.findOne({ organizationId });

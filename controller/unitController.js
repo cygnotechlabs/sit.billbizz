@@ -6,9 +6,9 @@ const Item = require("../database/model/item");
 //1. Add unit
 exports.addUnit = async (req, res) => {
     console.log("Add Unit:", req.body);
+    const organizationId = req.user.organizationId;
     try {
-      const {  
-        organizationId,  
+      const {          
         unitName,
         symbol,
         quantityCode,
@@ -55,8 +55,7 @@ exports.addUnit = async (req, res) => {
 //2. Get all unit
 exports.getAllUnit = async (req, res) => {
     try {
-        const { organizationId } = req.body;
-        console.log(organizationId);
+      const organizationId = req.user.organizationId;
 
         // Check if an Organization already exists
         const existingOrganization = await Organization.findOne({ organizationId });
@@ -85,7 +84,7 @@ exports.getAllUnit = async (req, res) => {
 exports.getOneUnit = async (req, res) => {
   try {
     const { _id } = req.params;
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
 
     // Log the ID being fetched
     console.log("Fetching Unit with ID:", _id);
@@ -118,9 +117,9 @@ exports.updateUnit = async (req, res) => {
   console.log("Received request to update unit:", req.body);
 
   try {
-    const {
-      _id,
-      organizationId,
+    const organizationId = req.user.organizationId;
+    const { _id } = req.params;
+    const {      
       unitName,
       symbol,
       quantityCode,
@@ -184,6 +183,7 @@ exports.updateUnit = async (req, res) => {
 //5. delete Unit
 exports.deleteUnit = async (req, res) => {
     try {
+      const organizationId = req.user.organizationId;
       const { id } = req.params;
   
       // Check if the unit exists
@@ -198,7 +198,7 @@ exports.deleteUnit = async (req, res) => {
       // Check if there are any items inside the unit
       const itemsInUnit = await Item.find({ 
         unit: unit.unitName, 
-        organizationId: unit.organizationId 
+        organizationId: organizationId 
       });
 
       if (itemsInUnit.length > 0) {
@@ -229,8 +229,8 @@ exports.deleteUnit = async (req, res) => {
 exports.addUnitConversion = async (req, res) => {
   // console.log("Add Unit Conversion:", req.body);
   try {
-    const {  
-      organizationId,  
+    const organizationId = req.user.organizationId;
+    const {         
       unitName,
       unitConversion
     } = req.body;
@@ -272,8 +272,8 @@ exports.addUnitConversion = async (req, res) => {
 //1.2. Get all unit conversion
 exports.getAllUnitConversion = async (req, res) => {
   try {
-      const { organizationId, unitName } = req.body;
-      console.log(organizationId, unitName);
+      const organizationId = req.user.organizationId;
+      const { unitName } = req.body;
 
       // Find all unit conversion where organizationId matches
       const allUnit = await Unit.findOne({ organizationId, unitName })
@@ -294,7 +294,7 @@ exports.getAllUnitConversion = async (req, res) => {
 exports.getOneUnitConversion = async (req, res) => {
   try {
     const { _id } = req.params;
-    const { organizationId } = req.body;
+    const organizationId = req.user.organizationId;
 
     // Log the ID being fetched
     console.log("Fetching Unit with ID:", _id);
@@ -333,9 +333,10 @@ exports.updateUnitConversion = async (req, res) => {
   console.log("Received request to update unit conversion:", req.body);
 
   try {
+    const organizationId = req.user.organizationId;
+
     const {
       _id, // This should be the ID of the unit
-      organizationId,
       unitName,
       unitConversion: [
         { _id: conversionId, targetUnit, unitConversionRate }
@@ -387,6 +388,7 @@ exports.updateUnitConversion = async (req, res) => {
 //1.5. delete Unit conversion
 exports.deleteUnitConversion = async (req, res) => {
   try {
+    const organizationId = req.user.organizationId;
     const { id } = req.params;
 
     // Find the unit containing the unitConversion with the specified _id
