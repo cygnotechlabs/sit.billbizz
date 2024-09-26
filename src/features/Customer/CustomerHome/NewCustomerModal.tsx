@@ -33,8 +33,8 @@ type CustomerData = {
   creditDays: string;
   creditLimit: string;
   interestPercentage: string;
-  debitOpeningBalance:string,
-  creditOpeningBalance:string,
+  debitOpeningBalance: string;
+  creditOpeningBalance: string;
   enablePortal: boolean;
   documents: string;
   department: string;
@@ -91,11 +91,11 @@ const NewCustomerModal = ({ page }: Props) => {
   const [taxselected, setTaxSelected] = useState<string | null>("Taxable");
   const [openingType, setOpeningtype] = useState<any | null>("Debit");
   const { request: getCountryData } = useApi("get", 5004);
-  const { request: getCurrencyData } = useApi("put", 5004);
+  const { request: getCurrencyData } = useApi("get", 5004);
   const { request: CreateCustomer } = useApi("post", 5002);
   const { request: getPaymentTerms } = useApi("get", 5004);
-  const { request: getOrganization } = useApi("put", 5004);
-  const { request: getTax } = useApi("put", 5002);
+  const { request: getOrganization } = useApi("get", 5004);
+  const { request: getTax } = useApi("get", 5002);
   const { setcustomerResponse } = useContext(CustomerResponseContext)!;
   const [errors, setErrors] = useState({
     firstName: false,
@@ -129,7 +129,7 @@ const NewCustomerModal = ({ page }: Props) => {
     pan: "",
     currency: "",
     creditOpeningBalance: "",
-    debitOpeningBalance:"",
+    debitOpeningBalance: "",
     paymentTerms: "",
     enablePortal: false,
     creditDays: "",
@@ -232,11 +232,11 @@ const NewCustomerModal = ({ page }: Props) => {
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, type, value } = e.target;
-  
+
     if (name === "companyName") {
       setCustomerData({ ...customerdata, customerDisplayName: value });
     }
-  
+
     if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
       setCustomerData((prevData) => ({
@@ -244,60 +244,57 @@ const NewCustomerModal = ({ page }: Props) => {
         [name]: checked,
       }));
     } else {
-      if (name !== 'openingBalance') {
+      if (name !== "openingBalance") {
         setCustomerData((prevData) => ({
           ...prevData,
           [name]: value,
         }));
       }
     }
-  
-    if (name === 'openingType') {
+
+    if (name === "openingType") {
       setOpeningtype(value);
-  
-      if (value === 'Debit') {
-        setCustomerData(prevData => ({
+
+      if (value === "Debit") {
+        setCustomerData((prevData) => ({
           ...prevData,
           debitOpeningBalance: prevData.creditOpeningBalance,
-          creditOpeningBalance: "" // Clear creditOpeningBalance
+          creditOpeningBalance: "", // Clear creditOpeningBalance
         }));
-      } else if (value === 'Credit') {
-        setCustomerData(prevData => ({
+      } else if (value === "Credit") {
+        setCustomerData((prevData) => ({
           ...prevData,
           creditOpeningBalance: prevData.debitOpeningBalance,
-          debitOpeningBalance: ""
+          debitOpeningBalance: "",
         }));
       }
     }
-  
-    if (name === 'openingBalance') {
-      if (openingType === 'Credit') {
-        setCustomerData(prevData => ({
+
+    if (name === "openingBalance") {
+      if (openingType === "Credit") {
+        setCustomerData((prevData) => ({
           ...prevData,
-          creditOpeningBalance: value
+          creditOpeningBalance: value,
         }));
-      } else if (openingType === 'Debit') {
-        setCustomerData(prevData => ({
+      } else if (openingType === "Debit") {
+        setCustomerData((prevData) => ({
           ...prevData,
-          debitOpeningBalance: value
+          debitOpeningBalance: value,
         }));
       }
     }
-  
   };
-  
 
   // get-------------------------------------------------------
   const getAdditionalData = async () => {
     try {
       // Fetching currency data
       const Currencyurl = `${endponits.GET_CURRENCY_LIST}`;
-      const { response, error } = await getCurrencyData(Currencyurl, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await getCurrencyData(Currencyurl);
 
       if (!error && response) {
         setcurrencyData(response?.data);
+        // console.log(response,"currency");
       } else {
         console.log(error.response.data, "currency");
       }
@@ -306,18 +303,18 @@ const NewCustomerModal = ({ page }: Props) => {
       const paymentTermsUrl = `${endponits.GET_PAYMENT_TERMS}`;
       const { response: paymentTermResponse, error: paymentTermError } =
         await getPaymentTerms(paymentTermsUrl);
+      // console.log(paymentTermResponse,"payment terms response");
 
       if (!paymentTermError && paymentTermResponse) {
         setPaymentTerms(paymentTermResponse.data);
       } else {
-        console.log(paymentTermError.response.data, "payment Terms");
+        console.log(paymentTermError, "payment Terms");
       }
 
       // get tax data
       const taxUrl = `${endponits.GET_TAX}`;
-      const { response: taxResponse, error: taxError } = await getTax(taxUrl, {
-        organizationId: "INDORG0001",
-      });
+      console.log("additional data working");
+      const { response: taxResponse, error: taxError } = await getTax(taxUrl);
 
       if (!taxError && taxResponse) {
         if (!taxError && taxResponse) {
@@ -334,15 +331,16 @@ const NewCustomerModal = ({ page }: Props) => {
               }));
             }
           }
+          console.log(taxResponse, "tax");
         }
       } else {
-        console.log(taxError.response.data, "tax");
+        console.log(taxError, "tax");
       }
 
       // fetching country data
       const CountryUrl = `${endponits.GET_COUNTRY_DATA}`;
       const { response: countryResponse, error: countryError } =
-        await getCountryData(CountryUrl, { organizationId: "INDORG0001" });
+        await getCountryData(CountryUrl);
       if (!countryError && countryResponse) {
         // console.log(countryResponse,"country response")
         setcountryData(countryResponse?.data[0].countries);
@@ -357,28 +355,25 @@ const NewCustomerModal = ({ page }: Props) => {
   const getOneOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
-      const { response, error } = await getOrganization(url, {
-        organizationId: "INDORG0001",
-      });
-  
+      const { response, error } = await getOrganization(url);
+
       if (!error && response?.data) {
         setOneOrganization(response.data);
-        // console.log(response.data.organizationCountry, "org");
+        // console.log(response, "org");
         setCustomerData((preData) => ({
           ...preData,
           billingCountry: response.data.organizationCountry,
           billingState: response.data.state,
-          shippingCountry: response.data.organizationCountry, 
+          shippingCountry: response.data.organizationCountry,
           shippingState: response.data.state,
           currency: response.data.baseCurrency,
-          placeOfSupply:response.data.state
+          placeOfSupply: response.data.state,
         }));
       }
     } catch (error) {
       console.error("Error fetching organization:", error);
     }
   };
-  
 
   const handleplaceofSupply = () => {
     if (oneOrganization.organizationCountry) {
@@ -391,14 +386,13 @@ const NewCustomerModal = ({ page }: Props) => {
         const states = country.states;
         // console.log("States:", states);
         // console.log(country);
-        
 
         setPlaceOfSupplyList(states);
       } else {
         console.log("Country not found");
       }
     } else {
-      console.log("No country selected");
+      // console.log("No country selected");
     }
   };
 
@@ -421,17 +415,14 @@ const NewCustomerModal = ({ page }: Props) => {
 
   // add customer api call---------------------------------------
   const handleSubmit = async () => {
-
-   
-
-  const newErrors = { ...errors };
-  if (customerdata.customerDisplayName === ""){
-    newErrors.customerDisplayName = true
-  }
-  if (Object.values(newErrors).some((error) => error)) {
-    setErrors(newErrors);
-    return;
-  }
+    const newErrors = { ...errors };
+    if (customerdata.customerDisplayName === "") {
+      newErrors.customerDisplayName = true;
+    }
+    if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
+      return;
+    }
     try {
       const url = `${endponits.ADD_CUSTOMER}`;
       const { response, error } = await CreateCustomer(url, customerdata);
@@ -458,7 +449,7 @@ const NewCustomerModal = ({ page }: Props) => {
           pan: "",
           currency: "",
           creditOpeningBalance: "",
-          debitOpeningBalance:"",
+          debitOpeningBalance: "",
           paymentTerms: "",
           creditDays: "",
           creditLimit: "",
@@ -520,13 +511,12 @@ const NewCustomerModal = ({ page }: Props) => {
 
   useEffect(() => {
     if (taxPreference === "Tax Exempt") {
-      setCustomerData((prevData:any) => ({
+      setCustomerData((prevData: any) => ({
         ...prevData,
-        taxType: "none"
+        taxType: "none",
       }));
     }
   }, [taxPreference]);
-  
 
   useEffect(() => {
     if (customerdata.billingCountry) {
@@ -699,7 +689,9 @@ const NewCustomerModal = ({ page }: Props) => {
                       value={customerdata.salutation}
                       onChange={handleChange}
                     >
-                      <option defaultChecked value="Mr.">Mr.</option>
+                      <option defaultChecked value="Mr.">
+                        Mr.
+                      </option>
                       <option value="Mrs.">Mrs.</option>
                       <option value="Ms.">Ms.</option>
                       <option value="Dr.">Dr.</option>
@@ -809,39 +801,38 @@ const NewCustomerModal = ({ page }: Props) => {
                     )}
                 </div>
                 <div>
-  <label htmlFor="companyName">Customer Display Name </label>
-  <input
-    required
-    type="text"
-    name="customerDisplayName"
-    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-    placeholder="Enter Display Name"
-    value={customerdata.customerDisplayName}
-    onChange={(e) => {
-      const value = e.target.value;
-      handleChange(e);
+                  <label htmlFor="companyName">Customer Display Name </label>
+                  <input
+                    required
+                    type="text"
+                    name="customerDisplayName"
+                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                    placeholder="Enter Display Name"
+                    value={customerdata.customerDisplayName}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      handleChange(e);
 
-      if (!value || !/^[A-Za-z\s]+$/.test(value)) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          customerDisplayName: true,
-        }));
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          customerDisplayName: false,
-        }));
-      }
-    }}
-   
-  />
+                      if (!value || !/^[A-Za-z\s]+$/.test(value)) {
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          customerDisplayName: true,
+                        }));
+                      } else {
+                        setErrors((prevErrors) => ({
+                          ...prevErrors,
+                          customerDisplayName: false,
+                        }));
+                      }
+                    }}
+                  />
 
-  {errors.customerDisplayName && (
-    <div className="text-red-800 text-xs ms-2 mt-1">
-      Please enter a valid Customer Display Name (letters only).
-    </div>
-  )}
-</div> 
+                  {errors.customerDisplayName && (
+                    <div className="text-red-800 text-xs ms-2 mt-1">
+                      Please enter a valid Customer Display Name (letters only).
+                    </div>
+                  )}
+                </div>
 
                 <div>
                   <label htmlFor="">Customer Email</label>
@@ -958,9 +949,9 @@ const NewCustomerModal = ({ page }: Props) => {
                                 className="block appearance-none w-full h-9 text-[#818894] bg-white border border-inputBorder 
                                    text-sm pl-2 pr-2 rounded-l-md leading-tight 
                                    focus:outline-none focus:bg-white focus:border-gray-500"
-                                   name="openingType"
-                                   value={openingType}
-                                   onChange={handleChange}
+                                name="openingType"
+                                value={openingType}
+                                onChange={handleChange}
                               >
                                 <option value="Debit">Dr</option>
 
@@ -971,13 +962,17 @@ const NewCustomerModal = ({ page }: Props) => {
                               </div>
                             </div>
                             <input
-        type="text"
-        className="text-sm w-[100%] rounded-r-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
-        placeholder={`Enter ${openingType} Opening Balance`}
-        onChange={handleChange}
-        name="openingBalance"
-        value={openingType==="Debit"?customerdata.debitOpeningBalance:customerdata.creditOpeningBalance}
-      />
+                              type="text"
+                              className="text-sm w-[100%] rounded-r-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
+                              placeholder={`Enter ${openingType} Opening Balance`}
+                              onChange={handleChange}
+                              name="openingBalance"
+                              value={
+                                openingType === "Debit"
+                                  ? customerdata.debitOpeningBalance
+                                  : customerdata.creditOpeningBalance
+                              }
+                            />
                           </div>
                         </div>
                         <div>
@@ -1372,7 +1367,6 @@ const NewCustomerModal = ({ page }: Props) => {
                                     value={customerdata.placeOfSupply}
                                     onChange={handleChange}
                                   >
-                                   
                                     {placeOfSupplyList &&
                                       placeOfSupplyList.map(
                                         (item: any, index: number) => (

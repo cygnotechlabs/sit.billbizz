@@ -10,14 +10,12 @@ type Props = {
 function Banner({ seeOrgDetails }: Props) {
   const [oneOrganization, setOneOrganization] = useState<any | []>([]);
  
-  const { request: getOneOrganization } = useApi("put", 5004);
+  const { request: getOneOrganization } = useApi("get", 5004);
  
   const getOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
-      const { response, error } = await getOneOrganization(url, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await getOneOrganization(url);
  
       if (!error && response?.data) {
         setOneOrganization(response.data);
