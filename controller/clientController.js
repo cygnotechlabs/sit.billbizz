@@ -55,28 +55,46 @@ const createRolesForOrganization = async (organizationId) => {
 
           // Organization Module - Payment Terms        
           { action: "PaymentTermAdd", note: "Added Payment Term" },
+          { action: "PaymentTermEdit", note: "Edited Payment Term" },
           { action: "PaymentTermDelete", note: "Deleted Payment Term" },
           { action: "PaymentTermView", note: "Viewed Payment Term" },
 
+          // Organization Module - Tax 
           { action: "TaxAdd", note: "Added Tax Information" },
           { action: "TaxEdit", note: "Edited Tax Information" },
           { action: "TaxView", note: "Viewed Tax Information" },
 
+          // Organization Module - Prefix 
           { action: "PrefixAdd", note: "Added Prefix" },
           { action: "PrefixView", note: "Viewed Prefix" },
           { action: "PrefixEdit", note: "Edited Prefix" },
           { action: "PrefixDelete", note: "Deleted Prefix" },
           { action: "PrefixStatus", note: "Modified Prefix Status" },
+
+          // Customers Module
+          { action: "CustomersCreate", note: "Created a New Customer" },
+          { action: "CustomersView", note: "Viewed Customer details" },          
+          { action: "CustomersEdit", note: "Edited Customer information" },
+          { action: "CustomersStatus", note: "Modified Customer Status" },
+
+          { action: "CustomerImport", note: "Imported New Customers" },
+
+
+          // Accounts Module
+          { action: "AccountNumber", note: "Viewed Account Number" },
+          { action: "AccountAdd", note: "Created a New Account" },          
+          { action: "AccountView", note: "Viewed Account Information" },
+          { action: "AccountEdit", note: "Edited Account Information" },
+
+          { action: "AccountDelete", note: "Deleted an Account" },
           
+          { action: "JournalAdd", note: "Added a Journal Entry" },
+          { action: "JournalView", note: "Viewed Journal Entry" },
 
 
 
 
-          // Customers
-          { action: "CustomersView", note: "Viewed customer details" },
-          { action: "CustomersCreate", note: "Created a new customer" },
-          { action: "CustomersEdit", note: "Edited customer information" },
-          { action: "CustomersDelete", note: "Deleted a customer" },
+
     
           // Vendors
           { action: "VendorsView", note: "Viewed vendor details" },
