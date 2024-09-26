@@ -58,33 +58,33 @@ router.put('/add-invoice-settings',verifyToken,checkPermission('Setup/Modified I
 
 // Payment Terms
 
-router.post('/add-payment-terms',verifyToken,checkPermission('PaymentTermAdd'),settingController.addPaymentTerm)
+router.post('/add-payment-terms',verifyToken,checkPermission('Added Payment Term'),settingController.addPaymentTerm)
 
-router.put('/edit-payment-terms/:id',verifyToken,checkPermission('PaymentTermEdit'),settingController.editPaymentTerm)
+router.put('/edit-payment-terms/:id',verifyToken,checkPermission('Edited Payment Term'),settingController.editPaymentTerm)
 
-router.delete('/delete-payment-terms',verifyToken,checkPermission('PaymentTermDelete'),settingController.deletePaymentTerm)
+router.delete('/delete-payment-terms',verifyToken,checkPermission('Deleted Payment Term'),settingController.deletePaymentTerm)
 
-router.get('/get-all-payment-terms',verifyToken,checkPermission('PaymentTermView'),settingController.getAllPaymentTerms)
+router.get('/get-all-payment-terms',verifyToken,checkPermission('Viewed Payment Term'),settingController.getAllPaymentTerms)
 
 //Tax
 
-router.post('/add-tax',verifyToken,checkPermission('TaxAdd'),settingController.addTax)
+router.post('/add-tax',verifyToken,checkPermission('Added Tax Information'),settingController.addTax)
 
-router.put('/edit-tax',verifyToken,checkPermission('TaxEdit'),settingController.editTaxRate)
+router.put('/edit-tax',verifyToken,checkPermission('Edited Tax Information'),settingController.editTaxRate)
 
-router.get('/get-tax',verifyToken,checkPermission('TaxView'),settingController.getTax)
+router.get('/get-tax',verifyToken,checkPermission('Viewed Tax Information'),settingController.getTax)
 
 //Prefix
 
-router.post('/add-prefix',verifyToken,checkPermission('PrefixAdd'),settingController.addPrefix)
+router.post('/add-prefix',verifyToken,checkPermission('Added Prefix'),settingController.addPrefix)
 
-router.get('/get-prefix',verifyToken,checkPermission('PrefixView'),settingController.getPrefix)
+router.get('/get-prefix',verifyToken,checkPermission('Viewed Prefix'),settingController.getPrefix)
 
-router.put('/edit-prefix',verifyToken,checkPermission('PrefixEdit'),settingController.updatePrefix)
+router.put('/edit-prefix',verifyToken,checkPermission('Edited Prefix'),settingController.updatePrefix)
 
-router.delete('/delete-prefix',verifyToken,checkPermission('PrefixDelete'),settingController.deletePrefix)
+router.delete('/delete-prefix',verifyToken,checkPermission('Deleted Prefix'),settingController.deletePrefix)
 
-router.put('/status-prefix',verifyToken,checkPermission('PrefixStatus'),settingController.setPrefixSeriesStatusTrue)
+router.put('/status-prefix',verifyToken,checkPermission('Modified Prefix Status'),settingController.setPrefixSeriesStatusTrue)
 
 
 
