@@ -502,6 +502,8 @@ const NewCustomerModal = ({ page }: Props) => {
         );
       }
     } catch (error) {
+      toast.error("Something went wrong!");
+
       console.error("Unexpected error:");
     }
   };
@@ -1692,7 +1694,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <input
                               className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                               placeholder="Street 1"
-                              name="shippingAddressLine1"
+                              name="shippingAddress1"
                               value={customerdata.shippingAddress1}
                               onChange={handleChange}
                             />
@@ -1701,7 +1703,7 @@ const NewCustomerModal = ({ page }: Props) => {
                             <input
                               className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2 leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                               placeholder="Street 2"
-                              name="shippingAddressLine2"
+                              name="shippingAddress2"
                               value={customerdata.shippingAddress2}
                               onChange={handleChange}
                             />
