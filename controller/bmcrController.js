@@ -82,6 +82,7 @@ exports.addBmcr = async (req, res) => {
 // Get all BMCR
 exports.getAllBmcr = async (req, res) => {
     const organizationId = req.user.organizationId;
+    const { type } = req.body;
 
     try {
         // Check if the Organization exists
@@ -94,16 +95,33 @@ exports.getAllBmcr = async (req, res) => {
         }
 
         // Fetch all BMCR documents for the given organizationId and type
-        const bmcrData = await BMCR.find({ organizationId });
+        const bmcrData = await BMCR.find({ organizationId, type });
 
         if (!bmcrData || bmcrData.length === 0) {
             return res.status(404).json({
                 message: `No data found for the provided organizationId and type: ${type}.`,
             });
-        }        
+        } 
+        // Prepare the response object
+        let response = bmcrData.map((item) => {
+            switch (type) {
+                case 'brand':
+                    return { brandName: item.brandName, description: item.description, id: item._id };
+                case 'manufacturer':
+                    return { manufacturerName: item.manufacturerName, description: item.description, id: item._id };
+                case 'category':
+                    return { categoriesName: item.categoriesName, description: item.description, id: item._id };
+                case 'rack':
+                    return { rackName: item.rackName, description: item.description, id: item._id };
+                default:
+                    return null;
+            }
+        });
+        // Filter out null values from the response array
+        response = response.filter(item => item !== null);       
 
         // Send the response back to the client
-        res.status(200).json(bmcrData);
+        res.status(200).json(response);
     } catch (error) {
         console.error("Error fetching BMCR data:", error);
         res.status(500).json({ message: "Internal server error." });

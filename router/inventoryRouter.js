@@ -11,6 +11,8 @@ const itemSettingsController = require("../controller/itemSettingsController")
 const checkPermission = require('../controller/permission');
 const { verifyToken } = require('../controller/middleware');
 
+//item dropdowm
+router.get('/get-itemDropdown',verifyToken, itemDropdownController.getItemDropdowm);
 
 // Item
 router.post('/add-item',verifyToken,checkPermission('Created a New Item'), itemController.addItem);
@@ -38,13 +40,12 @@ router.delete('/delete-unit/:id',verifyToken,checkPermission('Deleted a Unit'), 
 
 //BMCR - Brand Manufacturer Category Rack
 router.post('/add-bmcr',verifyToken,checkPermission('Created a New BMCR'), bmcrController.addBmcr);
-router.get('/get-all-bmcr',verifyToken,checkPermission('Viewed BMCR Information'), bmcrController.getAllBmcr);
+router.put('/get-all-bmcr',verifyToken,checkPermission('Viewed BMCR Information'), bmcrController.getAllBmcr);
 router.get('/get-a-bmcr/:id',verifyToken,checkPermission('Viewed BMCR Information'), bmcrController.getABmcr);
 router.put('/update-bmcr',verifyToken,checkPermission('Edited BMCR Information'), bmcrController.updateBmcr);
 router.delete('/delete-bmcr/:id',verifyToken,checkPermission('Deleted a BMCR'), bmcrController.deleteBmcr)
 
-//item dropdowm
-router.get('/get-itemDropdown',verifyToken,checkPermission('Basic'), itemDropdownController.getItemDropdowm);
+
 
  
 //items settings
