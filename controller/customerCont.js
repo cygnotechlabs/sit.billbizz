@@ -26,7 +26,7 @@ const dataExist = async (organizationId) => {
   exports.addCustomer = async (req, res) => {
     console.log("Add Customer:", req.body);
     try {
-      //const { organizationId, id: userId, userName } = req.user;
+      const { organizationId, id: userId, userName } = req.user;
       // const organizationId ="INDORG0001";
       // const userId ="45454";
       // const userName ="Thaha";
