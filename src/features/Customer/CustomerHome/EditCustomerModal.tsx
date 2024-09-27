@@ -94,10 +94,10 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
   const [placeOfSupplyList, setPlaceOfSupplyList] = useState<any | []>([]);
   const { request: editCustomerDetails } = useApi("put", 5002);
   const { request: getCountryData } = useApi("get", 5004);
-  const { request: getCurrencyData } = useApi("put", 5004);
+  const { request: getCurrencyData } = useApi("get", 5004);
   const { request: getPaymentTerms } = useApi("get", 5004);
-  const { request: getOrganization } = useApi("put", 5004);
-  const { request: getTax } = useApi("put", 5002);
+  const { request: getOrganization } = useApi("get", 5004);
+  const { request: getTax } = useApi("get", 5002);
   const param = useParams();
 
   const { setcustomereditResponse } = useContext(CustomerEditResponseContext)!;
@@ -293,9 +293,7 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
     try {
       // Fetching currency data
       const Currencyurl = `${endponits.GET_CURRENCY_LIST}`;
-      const { response, error } = await getCurrencyData(Currencyurl, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await getCurrencyData(Currencyurl);
 
       if (!error && response) {
         setcurrencyData(response?.data);
@@ -312,9 +310,7 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
       }
 
       const taxUrl = `${endponits.GET_TAX}`;
-      const { response: taxResponse, error: taxError } = await getTax(taxUrl, {
-        organizationId: "INDORG0001",
-      });
+      const { response: taxResponse, error: taxError } = await getTax(taxUrl);
 
       if (!taxError && taxResponse) {
         if (taxResponse) {
@@ -328,7 +324,7 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
 
       const CountryUrl = `${endponits.GET_COUNTRY_DATA}`;
       const { response: countryResponse, error: countryError } =
-        await getCountryData(CountryUrl, { organizationId: "INDORG0001" });
+        await getCountryData(CountryUrl);
       if (!countryError && countryResponse) {
         // console.log(countryResponse.data[0].countries, "country");
         setcountryData(countryResponse?.data[0].countries);
@@ -440,9 +436,7 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
 
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
-      const apiResponse = await getOrganization(url, {
-        organizationId: "INDORG0001",
-      });
+      const apiResponse = await getOrganization(url);
 
       const { response, error } = apiResponse;
 

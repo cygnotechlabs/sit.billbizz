@@ -21,7 +21,7 @@ function Table({}: Props) {
   const navigate=useNavigate()
   const [journalData, setJournalData] = useState<Journal[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
-  const { request: AllJournals } = useApi("put", 5001);
+  const { request: AllJournals } = useApi("get", 5001);
 
   const tableHeaders = [
     "Date",
@@ -36,9 +36,8 @@ function Table({}: Props) {
   const getAllJournals = async () => {
     try {
       let apiResponse;
-      const body = { organizationId: "INDORG0001" };
       const url = `${endponits.GET_ALL_JOURNALS}`;
-      apiResponse = await AllJournals(url, body);
+      apiResponse = await AllJournals(url);
       const { response, error } = apiResponse;
       if (!error && response) {
         setJournalData(response.data);
