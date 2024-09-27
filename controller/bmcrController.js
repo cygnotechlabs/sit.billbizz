@@ -4,6 +4,7 @@ const Item = require("../database/model/item");
 const { log } = require('console');
 
 
+
 exports.addBmcr = async (req, res) => {
     console.log("Add BMCR:", req.body);
     const organizationId = req.user.organizationId;
@@ -77,6 +78,7 @@ exports.addBmcr = async (req, res) => {
 };
 
 
+
 // Get all BMCR
 exports.getAllBmcr = async (req, res) => {
     const organizationId = req.user.organizationId;
@@ -110,65 +112,41 @@ exports.getAllBmcr = async (req, res) => {
 
 
 
-// // Get a single BMCR entity (brand, manufacturer, category, rack) by ID and type
-// exports.getaABmcr = async (req, res) => {
-//     const { id } = req.params; // Get the BMCR document ID from the route parameters
-//     const organizationId = req.user.organizationId;
-//     const { type } = req.body; // Get type and organizationId from the request body
+//Get one bmcr
+exports.getABmcr = async (req, res) => {
+    const { id } = req.params; // Get the BMCR document ID from the route parameters
+    const organizationId = req.user.organizationId;
 
-//     if (!['brand', 'manufacturer', 'category', 'rack'].includes(type)) {
-//         return res.status(400).json({ message: "Invalid type provided." });
-//     }
+    try {
+        // Check if the Organization exists
+        const existingOrganization = await Organization.findOne({ organizationId });
 
-//     try {
-//         // Check if the Organization exists
-//         const existingOrganization = await Organization.findOne({ organizationId });
+        if (!existingOrganization) {
+            return res.status(404).json({
+                message: "No Organization Found.",
+            });
+        }
 
-//         if (!existingOrganization) {
-//             return res.status(404).json({
-//                 message: "No Organization Found.",
-//             });
-//         }
+        // Find the BMCR document by ID and validate the type and organizationId
+        const bmcrData = await BMCR.findOne({ 
+            _id: id, 
+            organizationId,             
+        });
 
-//         // Find the BMCR document by ID and validate the type and organizationId
-//         const bmcrData = await BMCR.findOne({ 
-//             _id: id, 
-//             organizationId, 
-//             type
-//         });
+        if (!bmcrData) {
+            return res.status(404).json({
+                message: `No ${type} found with the provided ID in the given organization.`,
+            });
+        }        
 
-//         if (!bmcrData) {
-//             return res.status(404).json({
-//                 message: `No ${type} found with the provided ID in the given organization.`,
-//             });
-//         }
+        // Send the response back to the client
+        res.status(200).json(bmcrData);
 
-//         // Prepare the response object
-//         let response = {};
-//         switch (type) {
-//             case 'brand':
-//                 response = { brandName: bmcrData.brandName, description: bmcrData.description};
-//                 break;
-//             case 'manufacturer':
-//                 response = { manufacturerName: bmcrData.manufacturerName, description: bmcrData.description};
-//                 break;
-//             case 'category':
-//                 response = { categoriesName: bmcrData.categoriesName, description: bmcrData.description};
-//                 break;
-//             case 'rack':
-//                 response = { rackName: bmcrData.rackName, description: bmcrData.description};
-//                 break;
-//         }
-
-//         // Send the response back to the client
-//         res.status(200).json(response);
-
-//     } catch (error) {
-//         console.error("Error fetching BMCR data:", error);
-//         res.status(500).json({ message: "Internal server error." });
-//     }
-// };
-
+    } catch (error) {
+        console.error("Error fetching BMCR data:", error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+};
 
 
 
@@ -312,7 +290,6 @@ exports.updateBmcr = async (req, res) => {
 
 
 
-
 // delete bmcr
 exports.deleteBmcr = async (req, res) => {
     const organizationId = req.user.organizationId;
@@ -387,38 +364,66 @@ exports.deleteBmcr = async (req, res) => {
 
 
 
+
+// // Get a single BMCR entity (brand, manufacturer, category, rack) by ID and type
+// exports.getaABmcr = async (req, res) => {
+//     const { id } = req.params; // Get the BMCR document ID from the route parameters
+//     const organizationId = req.user.organizationId;
+//     const { type } = req.body; // Get type and organizationId from the request body
+
+//     if (!['brand', 'manufacturer', 'category', 'rack'].includes(type)) {
+//         return res.status(400).json({ message: "Invalid type provided." });
+//     }
+
+//     try {
+//         // Check if the Organization exists
+//         const existingOrganization = await Organization.findOne({ organizationId });
+
+//         if (!existingOrganization) {
+//             return res.status(404).json({
+//                 message: "No Organization Found.",
+//             });
+//         }
+
+//         // Find the BMCR document by ID and validate the type and organizationId
+//         const bmcrData = await BMCR.findOne({ 
+//             _id: id, 
+//             organizationId, 
+//             type
+//         });
+
+//         if (!bmcrData) {
+//             return res.status(404).json({
+//                 message: `No ${type} found with the provided ID in the given organization.`,
+//             });
+//         }
+
+//         // Prepare the response object
+//         let response = {};
+//         switch (type) {
+//             case 'brand':
+//                 response = { brandName: bmcrData.brandName, description: bmcrData.description};
+//                 break;
+//             case 'manufacturer':
+//                 response = { manufacturerName: bmcrData.manufacturerName, description: bmcrData.description};
+//                 break;
+//             case 'category':
+//                 response = { categoriesName: bmcrData.categoriesName, description: bmcrData.description};
+//                 break;
+//             case 'rack':
+//                 response = { rackName: bmcrData.rackName, description: bmcrData.description};
+//                 break;
+//         }
+
+//         // Send the response back to the client
+//         res.status(200).json(response);
+
+//     } catch (error) {
+//         console.error("Error fetching BMCR data:", error);
+//         res.status(500).json({ message: "Internal server error." });
+//     }
+// };
+
+
 // Get a single BMCR entity (brand, manufacturer, category, rack) by ID and type
-exports.getABmcr = async (req, res) => {
-    const { id } = req.params; // Get the BMCR document ID from the route parameters
-    const organizationId = req.user.organizationId;
 
-    try {
-        // Check if the Organization exists
-        const existingOrganization = await Organization.findOne({ organizationId });
-
-        if (!existingOrganization) {
-            return res.status(404).json({
-                message: "No Organization Found.",
-            });
-        }
-
-        // Find the BMCR document by ID and validate the type and organizationId
-        const bmcrData = await BMCR.findOne({ 
-            _id: id, 
-            organizationId,             
-        });
-
-        if (!bmcrData) {
-            return res.status(404).json({
-                message: `No ${type} found with the provided ID in the given organization.`,
-            });
-        }        
-
-        // Send the response back to the client
-        res.status(200).json(bmcrData);
-
-    } catch (error) {
-        console.error("Error fetching BMCR data:", error);
-        res.status(500).json({ message: "Internal server error." });
-    }
-};
