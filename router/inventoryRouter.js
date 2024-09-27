@@ -38,7 +38,7 @@ router.delete('/delete-unit/:id',verifyToken,checkPermission('Deleted a Unit'), 
 
 //BMCR - Brand Manufacturer Category Rack
 router.post('/add-bmcr',verifyToken,checkPermission('Created a New BMCR'), bmcrController.addBmcr);
-router.get('/get-all-bmcr',verifyToken,checkPermission('Viewed BMCR Information'), bmcrController.getAllBmcr);
+router.put('/get-all-bmcr',verifyToken,checkPermission('Viewed BMCR Information'), bmcrController.getAllBmcr);
 router.get('/get-a-bmcr/:id',verifyToken,checkPermission('Viewed BMCR Information'), bmcrController.getABmcr);
 router.put('/update-bmcr',verifyToken,checkPermission('Edited BMCR Information'), bmcrController.updateBmcr);
 router.delete('/delete-bmcr/:id',verifyToken,checkPermission('Deleted a BMCR'), bmcrController.deleteBmcr)
