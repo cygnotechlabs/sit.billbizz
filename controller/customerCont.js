@@ -26,14 +26,14 @@ const dataExist = async (organizationId) => {
   exports.addCustomer = async (req, res) => {
     console.log("Add Customer:", req.body);
     try {
-      const { organizationId, id: userId, userName } = req.user;
-      // const organizationId ="INDORG0001";
-      // const userId ="45454";
-      // const userName ="Thaha";
+      // const { organizationId, id: userId, userName } = req.user;
+      const organizationId ="INDORG0001";
+      const userId ="45454";
+      const userName ="Thaha";
 
-      const duplicateCustomerDisplayName = true;
-      const duplicateCustomerEmail = true;
-      const duplicateCustomerMobile = true;
+      const duplicateCustomerDisplayName = false;
+      const duplicateCustomerEmail = false;
+      const duplicateCustomerMobile = false;
 
       //Clean Data
       const cleanedData = cleanCustomerData(req.body);
@@ -56,8 +56,7 @@ const dataExist = async (organizationId) => {
       const errors = [];
       await checkDuplicateCustomerFields( duplicateCustomerDisplayName, duplicateCustomerEmail, duplicateCustomerMobile, customerDisplayName, customerEmail, mobile, organizationId, errors);  
       if (errors.length) {
-      return res.status(200).json({ message: errors });
-          }
+      return res.status(200).json({ message: errors }); }
 
       const savedCustomer = await createNewCustomer(cleanedData, openingDate, organizationId);
       
@@ -458,8 +457,8 @@ exports.getOneCustomerHistory = async (req, res) => {
   }
  
 
-
-  async function checkDuplicateCustomerFields( duplicateCustomerDisplayName, duplicateCustomerEmail, duplicateCustomerPhoneNumber, customerDisplayName, customerEmail, mobile, organizationId, errors ) {
+//Duplication check
+async function checkDuplicateCustomerFields( duplicateCustomerDisplayName, duplicateCustomerEmail, duplicateCustomerPhoneNumber, customerDisplayName, customerEmail, mobile, organizationId, errors ) {
           const checks = [
             {
               condition: duplicateCustomerDisplayName && customerDisplayName !== undefined,
@@ -493,6 +492,8 @@ exports.getOneCustomerHistory = async (req, res) => {
           
         }
 
+
+//Validate inputs
   function validateInputs(data, currencyExists, taxExists, organizationExists, res) {
     const validCurrencies = currencyExists.map((currency) => currency.currencyCode);
     const validTaxTypes = ["None", taxExists.taxType];
@@ -504,12 +505,14 @@ exports.getOneCustomerHistory = async (req, res) => {
     }
     return true;
   }
-  
+
+// Create New Customer
   function createNewCustomer(data, openingDate,organizationId) {
     const newCustomer = new Customer({ ...data, organizationId, status: "Active", createdDate: openingDate, lastModifiedDate: openingDate });
     return newCustomer.save();
   }
   
+// Create New Account
   function createNewAccount(customerDisplayName, openingDate, organizationId, customerId) {
     const newAccount = new Account({
       organizationId,
@@ -524,7 +527,8 @@ exports.getOneCustomerHistory = async (req, res) => {
     return newAccount.save();
   }
   
-  async function saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, data, openingDate, userId, userName) {
+// TrialBalance And History
+async function saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, data, openingDate, userId, userName) {
     const trialEntry = new TrialBalance({
       organizationId: savedCustomer.organizationId,
       operationId: savedCustomer._id,
@@ -542,9 +546,11 @@ exports.getOneCustomerHistory = async (req, res) => {
     await CustomerHistory.insertMany(customerHistory);
   }
   
-  function createCustomerHistory(savedCustomer, savedAccount, data, openingDate,userId,userName) {
+  
+// Create Customer History
+function createCustomerHistory(savedCustomer, savedAccount, data, openingDate,userId,userName) {
     const description = getTaxDescription(data, userName);
-    const description1 = getOpeningBalanceDescription(data, savedAccount, userName);
+    const description1 = getOpeningBalanceDescription( data, userName);
   
     return [
       {
@@ -572,36 +578,52 @@ exports.getOneCustomerHistory = async (req, res) => {
     ];
   }
   
-  function getTaxDescription(data, userName) {
-    let description = `${data.customerDisplayName} Contact created with `;
+
+// Tax Description
+function getTaxDescription(data, userName) {
+    const descriptionBase = `${data.customerDisplayName} Contact created with `;
+    const taxDescriptionGenerators = {
+      GST: () => createGSTDescription(data),
+      VAT: () => createVATDescription(data),
+      None: () => createTaxExemptionDescription(),
+    };
   
-    if (data.taxType === "GST" && data.gstTreatment && data.gstin_uin && data.placeOfSupply) {
-      description += "GST Treatment '" + data.gstTreatment + "' & GSTIN '" + data.gstin_uin + "'. ";
-      description += "State updated to " + data.placeOfSupply + ". ";
-    } else if (data.taxType === "VAT" && data.vatNumber && data.placeOfSupply) {
-      description += "VAT Number '" + data.vatNumber + "'. ";
-      description += "State updated to " + data.placeOfSupply + ". ";
-    } else if (data.taxType === "None") {
-      description += "Tax Exemption. ";
-    } else {
-      return "";
-    }
-  
-    return description + `Created by ${userName}`;
+    return taxDescriptionGenerators[data.taxType]?.() 
+      ? descriptionBase + taxDescriptionGenerators[data.taxType]() + `
+Created by ${userName}` 
+      : "";
+  }
+  //GST Description
+  function createGSTDescription({ gstTreatment, gstin_uin, placeOfSupply }) {
+    return gstTreatment && gstin_uin && placeOfSupply
+      ? `
+GST Treatment '${gstTreatment}' & GSTIN '${gstin_uin}'. State updated to ${placeOfSupply}. `
+      : "";
+  }
+  //VAT Description
+  function createVATDescription({ vatNumber, placeOfSupply }) {
+    return vatNumber && placeOfSupply
+      ? `VAT Number '${vatNumber}'. State updated to ${placeOfSupply}. `
+      : "";
+  }
+  //Tax empt Description
+  function createTaxExemptionDescription() {
+    return "Tax Exemption. ";
   }
   
-  function getOpeningBalanceDescription(data, savedAccount, userName) {
-    let description = `${data.customerDisplayName} Account created with `;
+
+// Opening Balance Description
+function getOpeningBalanceDescription( data, userName) {
+    const { customerDisplayName } = data;
+    const balanceDescription = data.debitOpeningBalance 
+      ? `Opening Balance (Debit): '${data.debitOpeningBalance}'. `
+      : data.creditOpeningBalance 
+        ? `Opening Balance (Credit): '${data.creditOpeningBalance}'. `
+        : "";
   
-    if (data.debitOpeningBalance) {
-      description += "Opening Balance (Debit): '" + data.debitOpeningBalance + "'. ";
-    } else if (data.creditOpeningBalance) {
-      description += "Opening Balance (Credit): '" + data.creditOpeningBalance + "'. ";
-    } else {
-      return "";
-    }
-  
-    return description + `Created by ${userName}`;
+    return balanceDescription 
+      ? `${customerDisplayName} Account created with ${balanceDescription}Created by ${userName}` 
+      : "";
   }
   
   
@@ -610,7 +632,7 @@ exports.getOneCustomerHistory = async (req, res) => {
 
 
   
-  // Function to generate time and date for storing in the database
+// Function to generate time and date for storing in the database
 function generateTimeAndDateForDB(
     timeZone,
     dateFormat,
@@ -660,7 +682,7 @@ function generateTimeAndDateForDB(
 
 
 
-
+//Validate Data
   function validateCustomerData(data, validCurrencies, validTaxTypes, organization) {
     const errors = [];
 
