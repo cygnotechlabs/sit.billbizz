@@ -59,11 +59,11 @@ const dataExist = async (organizationId) => {
       return res.status(200).json({ message: errors });
           }
 
-      const savedCustomer = await createNewCustomer(cleanedData, openingDate);
+      const savedCustomer = await createNewCustomer(cleanedData, openingDate, organizationId);
       
       const savedAccount = await createNewAccount(customerDisplayName, openingDate, organizationId, savedCustomer._id);
   
-      await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, cleanedData, openingDate ,userId,userName );
+      await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, cleanedData, openingDate , userId, userName );
   
       console.log("Customer & Account created successfully");
       res.status(201).json({ message: "Customer created successfully." });
@@ -133,7 +133,8 @@ exports.editCustomer = async (req, res) => {
         customerDisplayName: savedCustomer.customerDisplayName,
         date: openingDate,
         title: "Customer Data Modified",
-        description: `${savedCustomer.customerDisplayName} Account Modified by ${req.userName}`,
+        description: `${savedCustomer.customerDisplayName} Account Modified by ${userName}`,
+
         userId: userId,
         userName: userName,
       });
@@ -543,8 +544,8 @@ exports.getOneCustomerHistory = async (req, res) => {
   }
   
   function createCustomerHistory(savedCustomer, savedAccount, data, openingDate,userId,userName) {
-    const description = getTaxDescription(data);
-    const description1 = getOpeningBalanceDescription(data, savedAccount);
+    const description = getTaxDescription(data, userName);
+    const description1 = getOpeningBalanceDescription(data, savedAccount, userName);
   
     return [
       {
@@ -572,7 +573,7 @@ exports.getOneCustomerHistory = async (req, res) => {
     ];
   }
   
-  function getTaxDescription(data) {
+  function getTaxDescription(data, userName) {
     let description = `${data.customerDisplayName} Contact created with `;
   
     if (data.taxType === "GST" && data.gstTreatment && data.gstin_uin && data.placeOfSupply) {
@@ -587,10 +588,10 @@ exports.getOneCustomerHistory = async (req, res) => {
       return "";
     }
   
-    return description + "Created by Test User";
+    return description + `Created by ${userName}`;
   }
   
-  function getOpeningBalanceDescription(data, savedAccount) {
+  function getOpeningBalanceDescription(data, savedAccount, userName) {
     let description = `${data.customerDisplayName} Account created with `;
   
     if (data.debitOpeningBalance) {
@@ -601,7 +602,7 @@ exports.getOneCustomerHistory = async (req, res) => {
       return "";
     }
   
-    return description + "Created by Test User";
+    return description + `Created by ${userName}`;
   }
   
   
