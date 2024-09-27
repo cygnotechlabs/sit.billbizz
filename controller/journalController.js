@@ -183,6 +183,28 @@ exports.getAllJournal = async (req, res) => {
     }
 };
 
+// Get one Journal by ID for a given organizationId
+exports.getOneJournal = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const organizationId = req.user.organizationId;
+
+        // Find the journal where id and organizationId matches
+        const journal = await Journal.findOne({ _id: id, organizationId: organizationId });
+
+        if (!journal) {
+            return res.status(404).json({
+                message: "Journal not found for the provided ID and organization ID.",
+            });
+        }
+
+        res.status(200).json(journal);
+    } catch (error) {
+        console.error("Error fetching journal:", error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+};
+
 
 // Get Last Journal Prefix
 exports.getLastJournalPrefix = async (req, res) => {

@@ -36,6 +36,8 @@ router.post('/add-journal-entry',verifyToken,checkPermission('Added a Journal En
 
 router.get('/get-all-journal',verifyToken,checkPermission('Viewed Journal Entry'),journalController.getAllJournal)
 
+router.get('/get-one-journal/:id',verifyToken,checkPermission('Viewed Journal Entry'),journalController.getAllJournal)
+
 router.get('/get-last-journal-prefix',verifyToken,checkPermission('Added a Journal Entry'),journalController.getLastJournalPrefix)
 
 
