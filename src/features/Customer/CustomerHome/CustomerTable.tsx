@@ -30,7 +30,7 @@ const Table = () => {
   const [customerData, setCustomerData] = useState<any[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
 const {customerResponse}=useContext(CustomerResponseContext)!;
-  const { request: AllCustomers } = useApi("put", 5002);
+  const { request: AllCustomers } = useApi("get", 5002);
 
   const fetchAllCustomers = async () => {
     try {

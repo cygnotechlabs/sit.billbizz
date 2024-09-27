@@ -28,7 +28,7 @@ function SeeCustomerDetails({}: Props) {
   const param = useParams();
   const [selectedTab, setSelectedTab] = useState("Overview");
   const [customerData, setCustomerData] = useState<any | []>([]);
-  const { request: getOneCustomer } = useApi("put", 5002);
+  const { request: getOneCustomer } = useApi("get", 5002);
   const { request: updateCustomerStatus } = useApi("put", 5002);
 
   const { customerEditResponse } = useContext(CustomerEditResponseContext)!;
@@ -43,9 +43,7 @@ function SeeCustomerDetails({}: Props) {
   const getCustomer = async () => {
     const url = `${endponits.GET_ONE_CUSTOMER}/${id}`;
     try {
-      const apiResponse = await getOneCustomer(url, {
-        organizationId: "INDORG0001",
-      });
+      const apiResponse = await getOneCustomer(url);
       
       const { response, error } = apiResponse;
       if (!error && response) {

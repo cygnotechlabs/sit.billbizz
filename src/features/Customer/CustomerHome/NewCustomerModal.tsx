@@ -15,7 +15,6 @@ import Pen from "../../../assets/icons/Pen";
 
 type Props = { page: string; customerDataProps?: CustomerData };
 type CustomerData = {
-  organizationId: string;
   customerType: string;
   salutation: string;
   firstName: string;
@@ -114,7 +113,6 @@ const NewCustomerModal = ({ page }: Props) => {
     ]);
   };
   const [customerdata, setCustomerData] = useState<CustomerData>({
-    organizationId: "INDORG0001",
     customerType: "",
     salutation: "Mr.",
     firstName: "",
@@ -434,7 +432,6 @@ const NewCustomerModal = ({ page }: Props) => {
           customerdata,
         }));
         setCustomerData({
-          organizationId: "INDORG0001",
           customerType: "",
           salutation: "",
           firstName: "",
