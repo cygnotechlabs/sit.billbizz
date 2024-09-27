@@ -14,7 +14,6 @@ import EditSupplier from "../EditSupplier"
 import ExpensesGraph from "./ExpensesGraph"
 
 interface Status {
-  organizationId: string;
   status: any;
 }
 
