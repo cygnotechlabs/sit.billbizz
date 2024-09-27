@@ -19,7 +19,7 @@ interface Account {
 const CashAccountsTable = () => {
   const [accountData, setAccountData] = useState<Account[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
-  const { request: AllAccounts } = useApi("put", 5001);
+  const { request: AllAccounts } = useApi("get", 5001);
   const { cashResponse } = useContext(cashResponseContext)!;
 
   useEffect(() => {
@@ -29,8 +29,7 @@ const CashAccountsTable = () => {
   const fetchAllAccounts = async () => {
     try {
       const url = `${endponits.Get_ALL_Acounts}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await AllAccounts(url, body);
+      const { response, error } = await AllAccounts(url);
       if (!error && response) {
         const cashAccounts = response.data.filter(
           (account: Account) => account.accountSubhead === "Cash"

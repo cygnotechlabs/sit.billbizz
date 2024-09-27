@@ -90,7 +90,7 @@ function Otp({}: Props) {
         // Save the token and update the authentication state
         localStorage.setItem('authToken', response.response.data.token);
         setIsAuthenticated(true); // Set authentication state
-        navigate('/'); // Redirect to the home/dashboard
+        navigate('/landing'); // Redirect to the home/dashboard
       } else {
         const errorMessage = response.response?.data.message || 'OTP verification failed.';
         setError(errorMessage);

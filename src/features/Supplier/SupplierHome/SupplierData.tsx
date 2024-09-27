@@ -1,6 +1,5 @@
 export  type SupplierData = {
     _id:string,   
-    organizationId: string;
     salutation: string;
     firstName: string;
     lastName: string;

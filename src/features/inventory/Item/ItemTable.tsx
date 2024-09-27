@@ -49,12 +49,11 @@ const ItemTable = () => {
   const [itemsData, setItemsData] = useState<any[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
 
-  const { request: GetAllItems } = useApi("put", 5003);
+  const { request: GetAllItems } = useApi("get", 5003);
   const fetchAllItems = async () => {
     try {
       const url = `${endponits.GET_ALL_ITEM}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await GetAllItems(url, body);
+      const { response, error } = await GetAllItems(url);
 
       if (!error && response) {
         setItemsData(response.data);

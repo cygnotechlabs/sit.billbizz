@@ -21,7 +21,7 @@ interface Account {
 }
 
 const Table = () => {
-  const { request: AllAccounts } = useApi("put", 5001);
+  const { request: AllAccounts } = useApi("get", 5001);
   const [searchValue, setSearchValue] = useState<string>("");
   const [accountData,setAccountData]=useState<Account[]>([])
  const {bankResponse} =useContext(BankResponseContext)!;
@@ -43,8 +43,7 @@ const Table = () => {
     try {
       let apiResponse;
       const url = `${endponits.Get_ALL_Acounts}`;
-      const body = { organizationId: "INDORG0001" };
-      apiResponse = await AllAccounts(url, body);
+      apiResponse = await AllAccounts(url);
       const {response , error}= apiResponse;
       if(!error && response){
         setAccountData(response.data.filter((account: Account) => account.accountSubhead === "Bank"))

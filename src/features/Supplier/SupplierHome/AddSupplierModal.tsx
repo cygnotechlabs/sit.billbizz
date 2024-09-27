@@ -18,7 +18,6 @@ import Pen from "../../../assets/icons/Pen";
 
 type Props = { page?: string };
 type SupplierData = {
-  organizationId: string;
   salutation: string;
   firstName: string;
   lastName: string;
@@ -104,11 +103,11 @@ const AddSupplierModal = ({ page }: Props) => {
   });
   const [openingType,setOpeningType]=useState<string>('credit')
   const { request: getCountryData } = useApi("get", 5004);
-  const { request: getCurrencyData } = useApi("put", 5004);
+  const { request: getCurrencyData } = useApi("get", 5004);
   const { request: CreateSupplier } = useApi("post", 5009);
   const { request: getPaymentTerms } = useApi("get", 5004);
-  const { request: getOrganization } = useApi("put", 5004);
-  const { request: getTax } = useApi("put", 5009);
+  const { request: getOrganization } = useApi("get", 5004);
+  const { request: getTax } = useApi("get", 5009);
   const { setsupplierResponse } = useContext(SupplierResponseContext)!;
   const [rows, setRows] = useState([
     {
@@ -136,7 +135,6 @@ const AddSupplierModal = ({ page }: Props) => {
   };
 
   const [supplierdata, setSupplierData] = useState<SupplierData>({
-    organizationId: "INDORG0001",
     salutation:"",
     firstName:"",
     lastName:"",
@@ -442,9 +440,7 @@ const AddSupplierModal = ({ page }: Props) => {
     try {
       // Fetching currency data
       const Currencyurl = `${endponits.GET_CURRENCY_LIST}`;
-      const { response, error } = await getCurrencyData(Currencyurl, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await getCurrencyData(Currencyurl);
   
       if (!error && response) {
         setcurrencyData(response?.data);
@@ -460,7 +456,7 @@ const AddSupplierModal = ({ page }: Props) => {
   
       const CountryUrl = `${endponits.GET_COUNTRY_DATA}`;
       const { response: countryResponse, error: countryError } =
-        await getCountryData(CountryUrl, { organizationId: "INDORG0001" });
+        await getCountryData(CountryUrl);
   
       if (!countryError && countryResponse) {
         setcountryData(countryResponse?.data[0].countries);
@@ -475,9 +471,7 @@ const AddSupplierModal = ({ page }: Props) => {
   const getAdditionalInfo = async () => {
     try {
       const taxUrl = `${endponits.GET_TAX_SUPPLIER}`;
-      const { response: taxResponse, error: taxError } = await getTax(taxUrl, {
-        organizationId: "INDORG0001",
-      });
+      const { response: taxResponse, error: taxError } = await getTax(taxUrl);
   
       if (!taxError && taxResponse) {
         if (taxResponse) {
@@ -500,9 +494,7 @@ const AddSupplierModal = ({ page }: Props) => {
   const getOneOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
-      const { response, error } = await getOrganization(url, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await getOrganization(url);
   
       if (!error && response?.data) {
         const result = response.data;
@@ -556,7 +548,6 @@ const AddSupplierModal = ({ page }: Props) => {
        getOneOrganization();
 
         setSupplierData({
-          organizationId: "INDORG0001",
           salutation: "",
           firstName: "",
           lastName: "",

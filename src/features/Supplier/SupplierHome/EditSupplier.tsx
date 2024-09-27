@@ -41,10 +41,10 @@ const EditSupplier: React.FC<Props> = ({ supplier, isModalOpen, closeModal,addre
     supplierDisplayName: false,
   });
   const { request: getCountryData } = useApi("get", 5004);
-  const { request: getCurrencyData } = useApi("put", 5004);
+  const { request: getCurrencyData } = useApi("get", 5004);
   const { request: getPaymentTerms } = useApi("get", 5004);
-  const {request:getOrganization}=useApi("put",5004)
-  const { request: getTax } = useApi("put", 5009);
+  const {request:getOrganization}=useApi("get",5004)
+  const { request: getTax } = useApi("get", 5009);
   const { setsupplierResponse } = useContext(SupplierResponseContext)!;
   const [rows, setRows] = useState([
     {
@@ -73,7 +73,6 @@ const EditSupplier: React.FC<Props> = ({ supplier, isModalOpen, closeModal,addre
   const [openingType,setOpeningType]=useState<string>('credit')
   const [supplierdata, setSupplierData] = useState<SupplierData>({
     _id:"",
-    organizationId: "INDORG0001",
     salutation: "",
     firstName: "",
     lastName: "",
@@ -407,9 +406,7 @@ const EditSupplier: React.FC<Props> = ({ supplier, isModalOpen, closeModal,addre
     try {
       // Fetching currency data
       const Currencyurl = `${endponits.GET_CURRENCY_LIST}`;
-      const { response, error } = await getCurrencyData(Currencyurl, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await getCurrencyData(Currencyurl);
 
       if (!error && response) {
         setcurrencyData(response?.data);
@@ -428,7 +425,7 @@ const EditSupplier: React.FC<Props> = ({ supplier, isModalOpen, closeModal,addre
       
       const CountryUrl = `${endponits.GET_COUNTRY_DATA}`;
       const { response: countryResponse, error: countryError } =
-        await getCountryData(CountryUrl, { organizationId: "INDORG0001" });
+        await getCountryData(CountryUrl);
       if (!countryError && countryResponse) {
         // console.log(countryResponse.data[0].countries, "country");
 
@@ -444,9 +441,7 @@ const EditSupplier: React.FC<Props> = ({ supplier, isModalOpen, closeModal,addre
   const getAdditionalInfo=async()=>{
     try {
       const taxUrl = `${endponits.GET_TAX_SUPPLIER}`;
-      const { response: taxResponse, error: taxError } = await getTax(taxUrl, {
-        organizationId: "INDORG0001",
-      });
+      const { response: taxResponse, error: taxError } = await getTax(taxUrl);
 
       if (!taxError && taxResponse) {
         if (taxResponse) {
@@ -465,9 +460,7 @@ const EditSupplier: React.FC<Props> = ({ supplier, isModalOpen, closeModal,addre
   const getOneOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
-      const { response, error } = await getOrganization(url, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await getOrganization(url);
  
       if (!error && response?.data) {
         setOneOrganization(response.data);
