@@ -10,27 +10,24 @@ type GstSettingsProps = {};
 function GstSettings({ }: GstSettingsProps) {
 
   const initialGstSettings = {
-    organizationId: "INDORG0001",
-    taxType: "GST",  
+    taxType: "GST",
     gstIn: "",
     gstBusinesLegalName: "",
     gstBusinessTradeName: "",
     gstRegisteredDate: "",
-    compositionSchema: "", 
+    compositionSchema: "",
     compositionPercentage: "",
   };
 
   const [gstSettings, setGstSettings] = useState(initialGstSettings);
   const { request: fetchGstSettings } = useApi("put", 5004);
-  const { request: createGstSettings } = useApi("post", 5004);
+  const { request: createGstSettings } = useApi("get", 5004);
 
   // Fetch GST settings
   const getGstSettings = async () => {
     try {
       const url = `${endponits.GET_ALL_TAX}`;
-      const { response, error } = await fetchGstSettings(url, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await fetchGstSettings(url);
 
       if (!error && response?.data) {
         setGstSettings((prevData) => ({
