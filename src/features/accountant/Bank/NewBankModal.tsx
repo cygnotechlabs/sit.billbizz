@@ -14,7 +14,6 @@ import { BankResponseContext } from "../../../context/ContextShare";
 type Props = {};
 
 const initialBankAccount = {
-  organizationId: "INDORG0001",
   accountName: "",
   accountCode: "",
   accountSubhead: "Bank",
@@ -210,7 +209,7 @@ const NewBankModal = ({}: Props) => {
                   Cancel
                 </Button>
 
-                <Button variant="primary" size="lg">
+                <Button type="submit" variant="primary" size="lg">
                   Save
                 </Button>
               </div>
