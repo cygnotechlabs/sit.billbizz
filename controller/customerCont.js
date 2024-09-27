@@ -28,8 +28,8 @@ const dataExist = async (organizationId) => {
     try {
       const { organizationId, id: userId, userName } = req.user;
       // const organizationId ="INDORG0001";
-      // const userId ="INDORG001";
-      // const userName ="INDORG001";
+      // const userId ="45454";
+      // const userName ="Thaha";
 
       const duplicateCustomerDisplayName = true;
       const duplicateCustomerEmail = true;
@@ -63,7 +63,7 @@ const dataExist = async (organizationId) => {
       
       const savedAccount = await createNewAccount(customerDisplayName, openingDate, organizationId, savedCustomer._id);
   
-      await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, cleanedData, openingDate , userId, userName );
+      await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, cleanedData, openingDate, userId, userName );
   
       console.log("Customer & Account created successfully");
       res.status(201).json({ message: "Customer created successfully." });
@@ -507,7 +507,7 @@ exports.getOneCustomerHistory = async (req, res) => {
   }
   
   function createNewCustomer(data, openingDate,organizationId) {
-    const newCustomer = new Customer({ ...data,organizationId, status: "Active", createdDate: openingDate, lastModifiedDate: openingDate });
+    const newCustomer = new Customer({ ...data, organizationId, status: "Active", createdDate: openingDate, lastModifiedDate: openingDate });
     return newCustomer.save();
   }
   
@@ -525,7 +525,7 @@ exports.getOneCustomerHistory = async (req, res) => {
     return newAccount.save();
   }
   
-  async function saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, data, openingDate,userId,userName) {
+  async function saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, data, openingDate, userId, userName) {
     const trialEntry = new TrialBalance({
       organizationId: savedCustomer.organizationId,
       operationId: savedCustomer._id,
