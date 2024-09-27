@@ -14,7 +14,6 @@ type Props = {};
 const CreateAccountModal = ({}: Props) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const initialAccounts = {
-    organizationId: "INDORG0001",
     accountName: "",
     accountCode: "",
     accountSubhead: "Cash",
@@ -159,7 +158,7 @@ const CreateAccountModal = ({}: Props) => {
                 <Button onClick={closeModal} className="pl-10 pr-10" variant="secondary" size="sm">
                   Cancel
                 </Button>
-                <Button  variant="primary" className="pl-10 pr-10" size="sm">
+                <Button type="submit" variant="primary" className="pl-10 pr-10" size="sm">
                   Save
                 </Button>
               </div>

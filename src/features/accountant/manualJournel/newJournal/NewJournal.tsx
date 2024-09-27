@@ -14,8 +14,8 @@ type Props = {};
 function NewJournal({}: Props) {
   const navigate = useNavigate();
   const { request: NewJournalAdd } = useApi("post", 5001);
-  const { request: GetLastJournelPrefix } = useApi("put", 5001);
-  const { request: GetAllAcounts } = useApi("put", 5001);
+  const { request: GetLastJournelPrefix } = useApi("get", 5001);
+  const { request: GetAllAcounts } = useApi("get", 5001);
   // Initialize with two non-deletable rows
   const initialTransactions = [
     {
@@ -46,7 +46,6 @@ function NewJournal({}: Props) {
     differencesLabel: "",
   });
   const [newJournalDatas, setNewJournelDatas] = useState({
-    organizationId: "INDORG0001",
     journel: "",
     date: "",
     reference: "",
@@ -229,7 +228,6 @@ function NewJournal({}: Props) {
 
   const handleAddNewJournel = async () => {
     const {
-      organizationId,
       journel,
       date,
       reference,
@@ -244,7 +242,6 @@ function NewJournal({}: Props) {
     let errors = [];
 
     // Validate required fields
-    if (!organizationId) errors.push("Organization ID");
     if (!journel) errors.push("Journal");
     if (!date) errors.push("Date");
     if (!reference) errors.push("Reference");
@@ -281,7 +278,6 @@ function NewJournal({}: Props) {
         if (!error && response) {
           toast.success(response.data.message);
           setNewJournelDatas({
-            organizationId: "INDORG0001",
             journel: "",
             date: "",
             reference: "",
