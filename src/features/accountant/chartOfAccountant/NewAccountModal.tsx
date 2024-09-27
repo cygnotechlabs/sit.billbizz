@@ -14,7 +14,6 @@ function NewAccountModal({}: Props) {
   const [isModalOpen, setModalOpen] = useState(false);
   const { request: NewAccount } = useApi("post", 5001);
   const [formValues, setFormValues] = useState({
-    organizationId: "INDORG0001",
     accountName: "",
     accountCode: "",
     accountSubhead: "",

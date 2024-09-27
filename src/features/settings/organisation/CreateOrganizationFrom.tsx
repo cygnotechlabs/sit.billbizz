@@ -13,7 +13,6 @@ import Info from "../../../assets/icons/Info";
 import Tooltip from "../../../Components/tooltip/Tooltip";
 
 interface InputData {
-  organizationId: string;
   organizationLogo: string;
   organizationName: string;
   organizationCountry: string;
@@ -54,7 +53,6 @@ const CreateOrganizationForm = () => {
   });
 
   const [inputData, setInputData] = useState<InputData>({
-    organizationId: "",
     organizationLogo: "", //image field
     organizationName: "",
     organizationCountry: "",
@@ -129,7 +127,6 @@ console.log(inputData.organizationPhNum,"in");
 
         setInputData((prevData) => ({
           ...prevData,
-          organizationId: response.data.organizationId,
           organizationName: response.data.organizationName,
         }));
       } else {
