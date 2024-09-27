@@ -26,10 +26,10 @@ const dataExist = async (organizationId) => {
   exports.addCustomer = async (req, res) => {
     console.log("Add Customer:", req.body);
     try {
-      const { organizationId, id: userId, userName } = req.user;
+      //const { organizationId, id: userId, userName } = req.user;
       // const organizationId ="INDORG0001";
-      // const userId ="INDORG001";
-      // const userName ="INDORG001";
+      // const userId ="45454";
+      // const userName ="Thaha";
 
       const duplicateCustomerDisplayName = true;
       const duplicateCustomerEmail = true;
@@ -59,11 +59,11 @@ const dataExist = async (organizationId) => {
       return res.status(200).json({ message: errors });
           }
 
-      const savedCustomer = await createNewCustomer(cleanedData, openingDate);
+      const savedCustomer = await createNewCustomer(cleanedData, openingDate, organizationId);
       
       const savedAccount = await createNewAccount(customerDisplayName, openingDate, organizationId, savedCustomer._id);
   
-      await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, cleanedData, openingDate ,userId,userName );
+      await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, cleanedData, openingDate, userId, userName );
   
       console.log("Customer & Account created successfully");
       res.status(201).json({ message: "Customer created successfully." });
@@ -505,8 +505,8 @@ exports.getOneCustomerHistory = async (req, res) => {
     return true;
   }
   
-  function createNewCustomer(data, openingDate) {
-    const newCustomer = new Customer({ ...data, status: "Active", createdDate: openingDate, lastModifiedDate: openingDate });
+  function createNewCustomer(data, openingDate,organizationId) {
+    const newCustomer = new Customer({ ...data, organizationId, status: "Active", createdDate: openingDate, lastModifiedDate: openingDate });
     return newCustomer.save();
   }
   
@@ -524,7 +524,7 @@ exports.getOneCustomerHistory = async (req, res) => {
     return newAccount.save();
   }
   
-  async function saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, data, openingDate,userId,userName) {
+  async function saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, data, openingDate, userId, userName) {
     const trialEntry = new TrialBalance({
       organizationId: savedCustomer.organizationId,
       operationId: savedCustomer._id,
@@ -543,8 +543,8 @@ exports.getOneCustomerHistory = async (req, res) => {
   }
   
   function createCustomerHistory(savedCustomer, savedAccount, data, openingDate,userId,userName) {
-    const description = getTaxDescription(data);
-    const description1 = getOpeningBalanceDescription(data, savedAccount);
+    const description = getTaxDescription(data, userName);
+    const description1 = getOpeningBalanceDescription(data, savedAccount, userName);
   
     return [
       {
@@ -572,7 +572,7 @@ exports.getOneCustomerHistory = async (req, res) => {
     ];
   }
   
-  function getTaxDescription(data) {
+  function getTaxDescription(data, userName) {
     let description = `${data.customerDisplayName} Contact created with `;
   
     if (data.taxType === "GST" && data.gstTreatment && data.gstin_uin && data.placeOfSupply) {
@@ -587,10 +587,10 @@ exports.getOneCustomerHistory = async (req, res) => {
       return "";
     }
   
-    return description + "Created by Test User";
+    return description + `Created by ${userName}`;
   }
   
-  function getOpeningBalanceDescription(data, savedAccount) {
+  function getOpeningBalanceDescription(data, savedAccount, userName) {
     let description = `${data.customerDisplayName} Account created with `;
   
     if (data.debitOpeningBalance) {
@@ -601,7 +601,7 @@ exports.getOneCustomerHistory = async (req, res) => {
       return "";
     }
   
-    return description + "Created by Test User";
+    return description + `Created by ${userName}`;
   }
   
   
