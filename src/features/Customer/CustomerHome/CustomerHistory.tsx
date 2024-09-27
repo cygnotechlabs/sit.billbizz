@@ -21,6 +21,8 @@ const CustomerHistory = ({ id }: Props) => {
       const url = `${endponits.GET_CUSTOMER_HISTORY}/${id}`;
       const { response, error } = await GetAllHistory(url);
       if (!error && response) {
+        console.log(response);
+        
         setHistoryData(response.data);
       } else {
         setError("Failed to fetch customer history.");
@@ -41,53 +43,6 @@ const CustomerHistory = ({ id }: Props) => {
     }
   }, [isDrawerOpen]);
 
-  const formatDate = (dateString: string) => {
-    try {
-      const [datePart, timePart] = dateString.split(" ");
-
-      const [day, monthStr, year] = datePart.split("/");
-
-      const monthMap: { [key: string]: number } = {
-        January: 0,
-        February: 1,
-        March: 2,
-        April: 3,
-        May: 4,
-        June: 5,
-        July: 6,
-        August: 7,
-        September: 8,
-        October: 9,
-        November: 10,
-        December: 11,
-      };
-
-      const month = monthMap[monthStr];
-
-      const [hourStr, minuteStr] = timePart.split(":");
-      const hour = parseInt(hourStr, 10);
-      const minute = parseInt(minuteStr, 10);
-
-      const dateObj = new Date(Number(year), month, Number(day), hour, minute);
-
-      if (isNaN(dateObj.getTime())) {
-        throw new Error("Invalid date");
-      }
-
-      const formattedDate = `${String(day).padStart(2, "0")}/${String(
-        month + 1
-      ).padStart(2, "0")}/${year}`;
-
-      const hours12 = hour % 12 || 12;
-      const ampm = hour >= 12 ? "PM" : "AM";
-      const formattedTime = `${hours12}:${minuteStr.padStart(2, "0")} ${ampm}`;
-
-      return { formattedDate, formattedTime };
-    } catch (error) {
-      return { formattedDate: "Invalid Date", formattedTime: "" };
-    }
-  };
-
   const getCircleStyle = (title: string) => {
     switch (title) {
       case "Contact Added":
@@ -99,12 +54,33 @@ const CustomerHistory = ({ id }: Props) => {
     }
   };
 
+  const formatDateTime = (dateString: string) => {
+    const [datePart, timePart] = dateString.split(" ");
+    const [hoursString, minutes] = timePart.split(":"); 
+    let period = "AM";
+    
+    let hours = parseInt(hoursString);
+  
+    if (hours >= 12) {
+      period = "PM";
+      hours = hours > 12 ? hours - 12 : hours; 
+    } else if (hours === 0) {
+      hours = 12; 
+    }
+  
+    const formattedTime = `${hours}:${minutes} ${period}`;
+    
+    return { date: datePart, time: formattedTime }; 
+  };
+  
+  
+
   return (
     <>
       <button onClick={toggleDrawer}>View Status History</button>
 
       <Drawer onClose={toggleDrawer} open={isDrawerOpen} position="right">
-        <div className="p-6">
+        <div className="p-6  ">
           <h1 className="text-start">Customer Status History</h1>
 
           {isLoading && <p>Loading...</p>}
@@ -113,15 +89,13 @@ const CustomerHistory = ({ id }: Props) => {
             <p>No history available.</p>
           )}
 
-          <div className="flex flex-col relative pb-8 px-2 my-8">
+          <div className="flex flex-col relative pb-8 px-2 my-8 h-96 overflow-x-scroll hide-scrollbar">
             {historyData.map((item: any, index: number) => {
               const circleStyle = getCircleStyle(item.title);
-              const { formattedDate, formattedTime } = formatDate(
-                item.date + " " + item.time
-              );
+              const { date, time } = formatDateTime(item.date);
 
               return (
-                <div key={index} className=" flex ">
+                <div key={index} className="flex">
                   <div className="flex gap-3">
                     <div className="items-center">
                       <div
@@ -130,21 +104,19 @@ const CustomerHistory = ({ id }: Props) => {
                         {item.initials}
                       </div>
                       <div className="flex items-center justify-center my-3">
-                        {" "}
-                        <div className="w-[2px]  left-4  bg-[#DADBDD] h-24"></div>
+                        <div className="w-[2px] left-4 bg-[#DADBDD] h-14"></div>
                       </div>
                     </div>
 
                     <div className="space-y-2 text-start mt-2">
-                      <div className="flex space-x-3 text-[14px] ">
-                        <p>{formattedDate}</p>
-                        <p>{formattedTime}</p>
+                      <div className="flex space-x-3 text-[14px]">
+                        <p>{date}</p>
+                        <p>{time}</p>
                       </div>
                       <p className="font-bold text-[14px] py-1">{item.title}</p>
                       <p className="text-[12px]">{item.description}</p>
                       <div className="flex space-x-4 font-bold text-[14px]">
                         <p>{item.author}</p>
-                        {/* <p><u>View Details</u></p> */}
                       </div>
                     </div>
                   </div>

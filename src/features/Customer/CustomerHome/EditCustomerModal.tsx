@@ -475,13 +475,10 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
 
 
 const addressscroll=()=>{
-  console.log("addressEdit changed:", addressEdit); 
   if (addressEdit === "shippingAddressEdit" && shippingAddressRef.current) {
-    console.log("Scrolling to shipping address..."); 
     shippingAddressRef.current.scrollIntoView({  behavior: 'smooth', block: 'start'});
   }
   if (addressEdit === "billingAddressEdit" && BillingAddressRef.current) {
-    console.log("Scrolling to shipping address..."); 
     BillingAddressRef.current.scrollIntoView({ behavior: 'smooth' });
   }
 }

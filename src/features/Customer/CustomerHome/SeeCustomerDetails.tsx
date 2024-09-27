@@ -20,7 +20,6 @@ import CustomerHistory from "./CustomerHistory";
 type Props = {};
 
 interface Status {
-  organizationId: string;
   status: string;
 }
 
@@ -33,7 +32,6 @@ function SeeCustomerDetails({}: Props) {
 
   const { customerEditResponse } = useContext(CustomerEditResponseContext)!;
   const [statusData, setStatusData] = useState<Status>({
-    organizationId: "INDORG0001",
     status: "",
   });
 

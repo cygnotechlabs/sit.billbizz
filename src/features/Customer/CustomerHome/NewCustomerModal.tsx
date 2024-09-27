@@ -502,6 +502,8 @@ const NewCustomerModal = ({ page }: Props) => {
         );
       }
     } catch (error) {
+      toast.error("Something went wrong!");
+
       console.error("Unexpected error:");
     }
   };
