@@ -27,6 +27,8 @@ const dataExist = async (organizationId) => {
     console.log("Add Customer:", req.body);
     try {
       const { organizationId, id: userId, userName } = req.user;
+      console.log(organizationId,userId,userName);
+      
 
       const sanitizedData = sanitizeCustomerData(req.body);
 
@@ -43,7 +45,7 @@ const dataExist = async (organizationId) => {
       if (customerEmail) {const existingCustomer = await Customer.findOne({ customerEmail, organizationId });
       if (existingCustomer) return res.status(409).json({ message: "Customer with the provided email already exists.",existingCustomer });}
   
-      const savedCustomer = await createNewCustomer(sanitizedData, openingDate);
+      const savedCustomer = await createNewCustomer(organizationId,sanitizedData, openingDate);
       
       const savedAccount = await createNewAccount(customerDisplayName, openingDate, organizationId, savedCustomer._id);
   
@@ -449,8 +451,8 @@ exports.getOneCustomerHistory = async (req, res) => {
     return true;
   }
   
-  function createNewCustomer(data, openingDate) {
-    const newCustomer = new Customer({ ...data, status: "Active", createdDate: openingDate, lastModifiedDate: openingDate });
+  function createNewCustomer(data, openingDate,organizationId) {
+    const newCustomer = new Customer({ ...data,organizationId, status: "Active", createdDate: openingDate, lastModifiedDate: openingDate });
     return newCustomer.save();
   }
   

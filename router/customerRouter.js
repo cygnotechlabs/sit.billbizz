@@ -12,7 +12,7 @@ const { verifyToken } = require('../controller/middleware');
 
 //Basic
 
-router.put('/customer-additional-data', verifyToken,customerController.getCustomerAdditionalData);
+router.get('/customer-additional-data', verifyToken,customerController.getCustomerAdditionalData);
 
 
 
