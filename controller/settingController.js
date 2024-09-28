@@ -1,3 +1,5 @@
+// v1.0
+
 const Currency = require("../database/model/currency")
 const Organization = require("../database/model/organization");
 const Settings = require('../database/model/settings')

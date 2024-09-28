@@ -1,3 +1,5 @@
+// v1.0
+
 const User = require('../database/model/user');
 const Role = require('../database/model/role');
 const ActivityLog = require('../database/model/activityLog');
@@ -29,7 +31,7 @@ const checkPermission = (permissionAction) => {
 
       // Find the permission in the role's permissions array
       const permission = role.permissions.find(p => p.note === permissionAction);
-      console.log(permissionAction);
+      // console.log(permissionAction);
       
       
 
