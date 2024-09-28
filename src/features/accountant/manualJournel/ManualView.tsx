@@ -7,15 +7,13 @@ import Button from "../../../Components/Button";
 import useApi from "../../../Hooks/useApi";
 import { useEffect, useState } from "react";
 import { endponits } from "../../../Services/apiEndpoints";
+
 type Props = {};
 
-
 function ManualView({}: Props) {
-  const { request: getOneJournal } = useApi('get', 5001);
+  const { request: getOneJournal } = useApi("get", 5001);
   const { id } = useParams<{ id: string }>(); 
-  const [oneJournal, setOneJournal] = useState<null>(null);
-  
-console.log(oneJournal);
+  const [oneJournal, setOneJournal] = useState<any>(null);
 
   const getOneJournalData = async () => {
     try {
@@ -23,10 +21,10 @@ console.log(oneJournal);
       const { response, error } = await getOneJournal(url);
       if (!error && response) {
         console.log("response", response.data);
-        setOneJournal(response.data)
+        setOneJournal(response.data);
       }
     } catch (error) {
-      console.error("Error fetching suppliers:", error);
+      console.error("Error fetching journal:", error);
     }
   };
 
@@ -35,6 +33,7 @@ console.log(oneJournal);
       getOneJournalData();
     }
   }, [id]);
+
   return (
     <>
       <div className="px-6">
@@ -48,16 +47,16 @@ console.log(oneJournal);
             </div>
           </Link>
           <p className="text-textColor text-xl font-bold">
-            View Manual Journel
+            View Manual Journal
           </p>
         </div>
+
         <div className="bg-white rounded-xl px-5 mb-32 mt-5">
           <br />
-
           <div className="flex justify-between">
             <div className="flex gap-3 items-center">
-              <p className="text-xl text-textColor font-bold pr-4  border-borderRight">
-                #001
+              <p className="text-xl text-textColor font-bold pr-4 border-borderRight">
+                {oneJournal ? `#${oneJournal[0]?.journalId}` : "#001"}
               </p>
             </div>
             <div className="flex gap-3 items-center">
@@ -78,76 +77,117 @@ console.log(oneJournal);
           </div>
           <hr className="border-t border-inputBorder mt-4" />
 
-
           {/* pdf view */}
           <div className="flex items-center justify-center text-sm text-textColor p-5">
-      <div
-        className="p-5 "
-        style={{ width: "595px", boxShadow: "-1px 1px 15px -8px black" }}
-      >
-        <div className=" bg-lightPink p-5 rounded-lg ">
-          <div className="flex mb-7">
-            <p className="font-bold text-2xl"> JOURNAL</p>
-            <p className="ml-auto">#0001</p>
+            <div
+              className="p-5"
+              style={{ width: "595px", boxShadow: "-1px 1px 15px -8px black" }}
+            >
+              <div className="bg-lightPink p-5 rounded-lg">
+                <div className="flex mb-7">
+                  <p className="font-bold text-2xl">JOURNAL</p>
+                  {/* journalId */}
+                  <p className="ml-auto">
+                    {oneJournal ? `#${oneJournal[0]?.journalId}` : "#0001"}
+                  </p>
+                </div>
+
+                <div className="space-y-2 mb-5">
+                  <p className="mt-5">
+                    {/* date */}
+                    Billed Date:
+                    <b className="ms-4">
+                      {oneJournal ? oneJournal[0]?.date : "*/*/*"}
+                    </b>
+                  </p>
+
+                  {/* totalCreditAmount */}
+                  <p>
+                    Amount:
+                    <b className="ms-4">
+                      {oneJournal
+                        ? oneJournal[0]?.totalCreditAmount.toFixed(2)
+                        : "0.00"}
+                    </b>
+                  </p>
+
+                  {/* reference */}
+                  <p>
+                    Reference Number:
+                    <b className="ms-4">
+                      {oneJournal ? oneJournal[0]?.reference : "#00"}
+                    </b>
+                  </p>
+                </div>
+              </div>
+
+              {/* Transaction Table */}
+              <table className="w-full table-auto border-collapse my-7">
+                <thead>
+                  <tr>
+                    <th className="text-left p-2">Account</th>
+                    <th className="text-left p-2 font-normal flex items-center justify-center">
+                      Contact
+                    </th>
+                    <th className="p-2 font-normal">Debits</th>
+                    <th className="p-2 font-normal">Credits</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {oneJournal?.[0]?.transaction?.map((txn: any) => (
+                    <tr
+                      className="border-b border-slate-400 mb-5"
+                      key={txn.accountId}
+                    >
+                      <td className="px-2 py-5">{txn.accountName}</td>
+                      <td className="px-2 py-5 flex items-center justify-center">
+                        {txn.contact}
+                      </td>
+                      <td className="text-center px-2 py-5">
+                        {txn.debitAmount.toFixed(2)}
+                      </td>
+                      <td className="text-center px-2 py-5">
+                        {txn.creditAmount.toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+
+                  <tr>
+                    <td className="px-2 py-5"></td>
+                    <td className="px-2 py-5 text-center">SubTotal</td>
+                    <td className="px-2 py-5 text-center">
+                      {oneJournal
+                        ? oneJournal[0]?.totalDebitAmount.toFixed(2)
+                        : "0.00"}
+                    </td>
+                    <td className="text-center px-2 py-5">
+                      {oneJournal
+                        ? oneJournal[0]?.totalCreditAmount.toFixed(2)
+                        : "0.00"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="bg-[#F3E6E6] ms-auto flex gap-5 rounded-lg p-3 text-end w-[55%] text-xs">
+                <b>Total</b>
+                <br />
+                <b>
+                  RS.
+                  {oneJournal
+                    ? oneJournal[0]?.totalDebitAmount.toFixed(2)
+                    : "0.00"}
+                </b>{" "}
+                <br />
+                <b>
+                  Rs.
+                  {oneJournal
+                    ? oneJournal[0]?.totalCreditAmount.toFixed(2)
+                    : "0.00"}
+                </b>
+              </div>
+            </div>
           </div>
-          <div className="space-y-2 mb-5">
-            <p className="mt-5">
-              Billed to :<b className="ms-4"> 25/05/2024</b>
-            </p>
-            <p>
-              Amount : <b className="ms-4">20000.00</b>
-            </p>
-
-            <p>
-              Reference Number: <b className="ms-4">500000</b>
-            </p>
-          </div>
-        </div>
-
-        <table className="w-full table-auto border-collapse my-7 ">
-          <thead>
-            <tr>
-              <th className="text-left p-2">Account</th>
-              <th className="text-left p-2 font-normal flex items-center justify-center">
-                Contact
-              </th>
-              <th className=" p-2 font-normal items-center ">Debits</th>
-              <th className=" p-2 font-normal">Credits</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b border-slate-400 mb-5 ">
-              <td className="px-2 py-5">Account Receivable</td>
-              <td className="px-2 py-5 flex items-center justify-center">
-                Dheeraj
-              </td>
-              <td className="text-center px-2 py-5">5,000.00</td>
-              <td className="px-2 py-5"></td>
-            </tr>
-            <tr>
-              <td className="px-2 py-5">Sales</td>
-              <td className="px-2 py-5 text-center"></td>
-              <td className="px-2 py-5 text-center"></td>
-              <td className=" px-2 py-5 text-center">5,000.00</td>
-            </tr>
-
-            <tr>
-              <td className="px-2 py-5"></td>
-              <td className="px-2 py-5 text-center">SubTotal</td>
-              <td className="px-2 py-5 text-center">5,000.00</td>
-              <td className="text-center px-2 py-5">5,000.00</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div className="bg-[#F3E6E6] ms-auto flex gap-5 rounded-lg p-3 text-end w-[55%] text-xs">
-          <b>Total</b>
-          <br />
-          <b>RS.50000.00</b> <br />
-          <b>Rs.50000.00</b>
-        </div>
-      </div>
-    </div>
         </div>
       </div>
     </>
