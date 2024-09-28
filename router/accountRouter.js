@@ -17,6 +17,8 @@ router.put('/get-bank-account-number/:accountId',verifyToken,checkPermission('Vi
 
 //Accounts
 
+// router.post('/add-account',accountController.addAccount)
+
 router.post('/add-account',verifyToken,checkPermission('Created a New Account'),accountController.addAccount)
 
 router.get('/get-all-account',verifyToken,checkPermission('Viewed Account Information'),accountController.getAllAccount)
