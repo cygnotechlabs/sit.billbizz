@@ -1,3 +1,5 @@
+// v1.0
+
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account");
 const Prefix = require("../database/model/prefix");
@@ -52,7 +54,7 @@ exports.addJournalEntry = async (req, res) => {
         const calculatedTotalDebitAmount = transaction.reduce((sum, trans) => sum + trans.debitAmount, 0);
         const calculatedTotalCreditAmount = transaction.reduce((sum, trans) => sum + trans.creditAmount, 0);
 
-        console.log(calculatedTotalDebitAmount,calculatedTotalCreditAmount);
+        // console.log(calculatedTotalDebitAmount,calculatedTotalCreditAmount);
 
         // Ensure the sum of debit and credit amounts are equal
         if (calculatedTotalDebitAmount !== calculatedTotalCreditAmount) {
@@ -123,6 +125,7 @@ exports.addJournalEntry = async (req, res) => {
         });
 
         await newJournalEntry.save();
+        
 
         // Insert data into TrialBalance collection and update account balances
         for (const trans of transaction) {
@@ -131,7 +134,7 @@ exports.addJournalEntry = async (req, res) => {
                 operationId:newJournalEntry._id,
                 transactionId: journalId,
                 date:entryDate,
-                account_id: trans.accountId,
+                accountId: trans.accountId,
                 accountName: trans.accountName,
                 action: "Journal",
                 debitAmount: trans.debitAmount,
@@ -139,15 +142,10 @@ exports.addJournalEntry = async (req, res) => {
                 remark: note
             });
 
-            await newTrialEntry.save();
+            const test = await newTrialEntry.save();
+            console.log("entry",test);
 
-            // Update account balance
-            const account = await Account.findOne({ _id: trans.accountId });
-            if (account) {
-                const updatedBalance = parseFloat(account.balance) + parseFloat(trans.debitAmount) - parseFloat(trans.creditAmount);
-                account.balance = updatedBalance.toString();
-                await account.save();
-            }
+            
         }
 
         res.status(201).json({
