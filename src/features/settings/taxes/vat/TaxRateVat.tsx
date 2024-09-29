@@ -39,7 +39,7 @@ function TaxRateVat({}: Props) {
 
   const { request: createVatRate } = useApi("post", 5004);
   const { request: updateVatRate } = useApi("put", 5004);
-  const { request: AllTaxVat } = useApi("put", 5004);
+  const { request: AllTaxVat } = useApi("get", 5004);
   const { vatResponse, setVatResponse } = useContext(VatResponseContext)!;
 
   const initialTaxVat = {
@@ -58,8 +58,7 @@ function TaxRateVat({}: Props) {
   const fetchAllVatRates = async () => {
     try {
       const url = `${endponits.GET_ALL_TAX}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await AllTaxVat(url, body);
+      const { response, error } = await AllTaxVat(url);
       if (!error && response) {
         const vatTaxRates = response.data.vatTaxRate;
         setVatData(vatTaxRates);
@@ -112,7 +111,6 @@ function TaxRateVat({}: Props) {
     if (isEditMode) {
       const url = `${endponits.UPDATE_TAX_VAT}`;
       const body = {
-        organizationId: "INDORG0001",
         taxType: "VAT",
         taxRateId: taxVat._id,
         updatedRate: {
@@ -135,7 +133,6 @@ function TaxRateVat({}: Props) {
     } else {
       const url = `${endponits.ADD_NEW_TAX}`;
       const body = {
-        organizationId: "INDORG0001",
         taxType: "VAT",
         vatTaxRate: {
           taxName: taxVat.taxName,

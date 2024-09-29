@@ -154,7 +154,6 @@ const AddItem = ({ }: Props) => {
   };
 
   useEffect(() => {
-    fetchAllItems();
     fetchAllAccounts();
   }, []);
   const [itemsDataName, setItemsDataName] = useState<string[]>([]);
@@ -209,6 +208,7 @@ const AddItem = ({ }: Props) => {
 
   const toggleDropdown = (key: string | null) => {
     setOpenDropdownIndex(key === openDropdownIndex ? null : key);
+    fetchAllItems();
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -1343,12 +1343,14 @@ const AddItem = ({ }: Props) => {
                       </div>
                     </div>
                   ))}
-                <div
+              <Link to={"/settings/taxes"}>
+              <div
                   className="hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold"
                 >
                   <SettingsIcons color="darkRed" bold={2} />
                   <p className="mt-0.5">Manage Tax Rates</p>
                 </div>
+              </Link>
               </div>
             )}
           </div>

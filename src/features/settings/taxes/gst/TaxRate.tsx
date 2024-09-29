@@ -82,7 +82,6 @@ function TaxRate({ }: Props) {
     if (taxGst._id) {  // Check if we're in edit mode based on the presence of `id`
       const url = `${endponits.UPDATE_TAX_VAT}`;  // Corrected endpoint for updating GST
       const body = {
-        organizationId: "INDORG0001",
         taxType: "GST",
         taxRateId: taxGst._id,  // Use `taxGst.id` for the GST rate ID
         updatedRate: {
@@ -109,7 +108,6 @@ function TaxRate({ }: Props) {
     } else {  // Adding new GST rate
       const url = `${endponits.ADD_NEW_TAX}`;
       const body = {
-        organizationId: "INDORG0001",
         taxType: "GST",
         gstTaxRate: {
           taxName: taxGst.taxName,
@@ -143,13 +141,12 @@ function TaxRate({ }: Props) {
   const [selectedTaxRate, setSelectedTaxRate] = useState<TaxGst | null>(null);
   const [search, setSearch] = useState<string>("");
 
-  const { request: AllTaxGst } = useApi("put", 5004);
+  const { request: AllTaxGst } = useApi("get", 5004);
 
   const fetchAllTaxGst = async () => {
     try {
       const url = `${endponits.GET_ALL_TAX}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await AllTaxGst(url, body);
+      const { response, error } = await AllTaxGst(url);
       if (!error && response) {
         const gstTaxRates = response.data.gstTaxRate;
         setTaxData(gstTaxRates);

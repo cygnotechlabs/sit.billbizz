@@ -147,7 +147,7 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               </p>
             </div>
             <div className="ms-auto text-3xl cursor-pointer relative z-10" onClick={onClose}>
-              &times;
+              &times; 
             </div>
           </div>
 
