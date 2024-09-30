@@ -188,76 +188,27 @@ exports.editAccount = async (req, res) => {
     const { accountId } = req.params;
     const organizationId = req.user.organizationId;
 
-    const {
-      accountName,
-      accountCode,
+    const cleanedData = cleanCustomerData(req.body);
 
-      accountSubhead,
-      accountHead,
-      accountGroup,    
-      
-      description,
-      bankAccNum,
-      bankIfsc,
-      bankCurrency,
-    } = req.body;
+    const { accountName, accountSubhead, accountHead, accountGroup } = cleanedData;
 
-    // Define valid groups, heads, and subheads
-    const validStructure = {
-      Asset: {
-        Asset: [
-          "Asset",
-          "Current asset",
-          "Cash",
-          "Bank",
-          "Fixed asset",
-          "Stock",
-          "Payment Clearing",
-          "Sundry Debtors",
-        ],
-        Equity: ["Equity"],
-        Income: ["Income", "Other Income"],
-      },
-      Liability: {
-        Liabilities: [
-          "Current Liability",
-          "Credit Card",
-          "Long Term Liability",
-          "Other Liability",
-          "Overseas Tax Payable",
-          "Sundry Creditors",
-        ],
-        Expenses: ["Expense", "Cost of Goods Sold", "Other Expense"],
-      },
-    };
+     // Validate account structure
+     const isValidAccountStructure = validateAccountStructure( accountGroup, accountHead, accountSubhead );
+     if (!isValidAccountStructure) {
+       console.log("Invalid account group, head, or subhead.");
+       return res.status(400).json({ message: "Invalid account group, head, or subhead.", });
+     }
+ 
+     const bankDetails = { bankAccNum: cleanedData.bankAccNum, bankIfsc: cleanedData.bankIfsc, bankCurrency: cleanedData.bankCurrency };
+ 
+     // Validate bank details if accountSubhead is "Bank"
+     const isValidBankDetails = validateBankDetails( accountSubhead, bankDetails );
+     if (!isValidBankDetails) {
+       return res.status(400).json({ message: "Bank Details (Account Number, IFSC, Currency) are required", });
+     }
+ 
+     const { bankAccNum, bankIfsc, bankCurrency } = bankDetails; 
 
-    // Validate accountGroup, accountHead, and accountSubhead
-    // if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
-    //   console.log("Invalid account group, head, or subhead.");
-    //   return res.status(400).json({
-    //     message: "Invalid account group, head, or subhead.",
-    //   });
-
-    // }
-if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
-  console.log("Invalid account group, head, or subhead.");
-  return res.status(400).json({
-    message: "Invalid account group, head, or subhead.",
-  });
-}
-
-    // Validate bank details if accountSubhead is "Bank"
-    if (
-      accountSubhead === "Bank" &&
-      (!bankAccNum || !bankIfsc || !bankCurrency)
-    ) {
-      return res.status(400).json({
-        message: "Bank Details (Account Number, IFSC, Currency) are required",
-      });
-    }
-
-
-    
 
     // Check if an account with the given organizationId and accountId exists
     const account = await Account.findOne({
@@ -266,9 +217,10 @@ if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
     });
 
     if (!account) {
+      console.log("Account not found for the provided Account ID");
       return res.status(404).json({
         message:
-          "Account not found for the provided Account ID.",
+          "Account not found for the provided Account ID",
       });
     }
     // Encrypt bankAccNum before storing it
@@ -279,18 +231,16 @@ if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
 
     // Update account fields
     account.accountName = accountName;
-    account.accountCode = accountCode;
+    account.accountCode = cleanedData.accountCode;
 
     account.accountSubhead = accountSubhead;
     account.accountHead = accountHead;
     account.accountGroup = accountGroup;
 
-
-
-      account.description = description;
-      account.bankAccNum = encryptedBankAccNum;
-      account.bankIfsc = bankIfsc;
-      account.bankCurrency = bankCurrency;
+    account.description = cleanedData.description;
+    account.bankAccNum = encryptedBankAccNum;
+    account.bankIfsc = bankIfsc;
+    account.bankCurrency = bankCurrency;
 
     // Save updated account
     await account.save();
