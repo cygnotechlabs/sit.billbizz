@@ -22,16 +22,15 @@ function AccountantView() {
   const searchParams = new URLSearchParams(location.search);
   const fromCash = searchParams.get("fromCash") === "true"; 
   const fromBank = searchParams.get("fromBank") === "true"; 
-  const { request: getOneTrialBalance } = useApi("put", 5001);
-  const { request: getOneOrganization } = useApi("put", 5004);
+  const { request: getOneTrialBalance } = useApi("get", 5001);
+  const { request: getOneOrganization } = useApi("get", 5004);
   const [trialBalance, setTrialBalance] = useState<TrialBalance[]>([]);
   const [oneOrganization, setOneOrganization] = useState<any | []>([]);
 
   const getOneTrialBalanceData = async () => {
     try {
       const url = `${endponits.GET_ONE_TRIAL_BALANCE}/${id}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await getOneTrialBalance(url, body);
+      const { response, error } = await getOneTrialBalance(url);
       if (!error && response) {
         setTrialBalance(response.data);
       }
@@ -43,9 +42,7 @@ function AccountantView() {
   const getOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
-      const { response, error } = await getOneOrganization(url, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await getOneOrganization(url);
 
       if (!error && response?.data) {
         setOneOrganization(response.data);

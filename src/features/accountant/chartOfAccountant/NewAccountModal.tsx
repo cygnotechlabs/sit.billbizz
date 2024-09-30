@@ -7,10 +7,13 @@ import chartOfAcc from "../../../assets/constants/chartOfAcc";
 import Modal from "../../../Components/model/Modal";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
+import toast from 'react-hot-toast'; // Import react-hot-toast
 
-type Props = {};
+interface NewAccountModalProps {
+  fetchAllAccounts: () => void;
+}
 
-function NewAccountModal({}: Props) {
+function NewAccountModal({ fetchAllAccounts }: NewAccountModalProps) {
   const [isModalOpen, setModalOpen] = useState(false);
   const { request: NewAccount } = useApi("post", 5001);
   const [formValues, setFormValues] = useState({
@@ -35,17 +38,30 @@ function NewAccountModal({}: Props) {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formValues);
+    if (!formValues.accountSubhead) {
+      toast.error("Please select an account type.");
+      return;
+    }
+
+    const toastId = toast.loading('Adding new account...'); // Show loading toast
+
     try {
       const url = `${endponits.Add_NEW_ACCOUNT}`;
       const body = formValues;
       const { response, error } = await NewAccount(url, body);
-      closeModal();
+
       if (!error && response) {
-        console.log(response);
+        toast.dismiss(toastId); // Dismiss the loading toast
+        closeModal();
+        fetchAllAccounts(); // Fetch updated data
+      } else {
+        throw new Error(response?.data?.message || 'Something went wrong');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      toast.dismiss(toastId); // Dismiss the loading toast
+      toast.error(
+        error.response?.data?.message || error.message || 'Failed to add account'
+      ); // Display error message
     }
   };
 
@@ -54,8 +70,6 @@ function NewAccountModal({}: Props) {
       Asset: [
         "Asset",
         "Current asset",
-        // "Cash",
-        // "Bank", // Bank category
         "Fixed asset",
         "Stock",
         "Payment Clearing",
@@ -160,8 +174,9 @@ function NewAccountModal({}: Props) {
                   value={formValues.accountSubhead}
                   onChange={handleChange}
                   className="w-full border border-inputBorder rounded p-1.5 pl-2 text-sm"
-                  onClick={() => headGroup(formValues.accountSubhead)}
                 >
+                  {/* Default option "Select type" */}
+                  <option value="">Select type</option>
                   {chartOfAcc.map((item, index) => (
                     <optgroup
                       className="text-maroon"
@@ -195,65 +210,7 @@ function NewAccountModal({}: Props) {
                   className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
                 />
               </div>
-                   {/* Conditionally render the Bank fields when "Bank" is selected */}
-                   {/* {formValues.accountSubhead === "Bank" && (
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div>
-                    <label className="block text-sm mb-1 text-labelColor">
-                      Account Number
-                    </label>
-                    <input
-                      type="text"
-                      name="bankAccNum"
-                      value={formValues.bankAccNum}
-                      onChange={handleChange}
-                      placeholder="Enter Account Number"
-                      className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm mb-1 text-labelColor">
-                      IFSC
-                    </label>
-                    <input
-                      type="text"
-                      name="bankIfsc"
-                      value={formValues.bankIfsc}
-                      onChange={handleChange}
-                      placeholder="Enter IFSC"
-                      className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2"
-                    />
-                  </div>
-                  <div>
-                  <label className="block text-sm mb-1 text-labelColor">
-                    Currency
-                  </label>
-                  <div className="relative">
-                    <div className="relative w-full">
-                      <select
-                        name="bankCurrency"
-                        value={formValues.bankCurrency}
-                        onChange={handleChange}
-                        className="block appearance-none w-full text-zinc-400 bg-white border border-slate-200 text-sm h-[39px] pl-9 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                      >
-                        <option value="" className="text-gray">
-                          Select currency
-                        </option>
-                        <option value="INR" className="text-slate-300">
-                          INR
-                        </option>
-                        <option value="INR" className="text-slate-300">
-                          USD
-                        </option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <CehvronDown color="gray" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                </div>
-              )} */}
+
               <div className="mb-4">
                 <label className="block text-sm mb-1 text-labelColor">
                   Description
