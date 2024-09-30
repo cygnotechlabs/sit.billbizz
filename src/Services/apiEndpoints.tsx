@@ -63,6 +63,8 @@ GET_ALL_ITEMS_Dropdown: `get-itemDropdown`,
   EDIT_SUPPLIER:"update-supplier",
   GET_TAX_SUPPLIER:`supplier-additional-data`,
   UPDATE_SUPPLIER_STATUS:`update-supplier-status`,
+  GET_ONE_SUPPLIER_HISTORY:`get-one-supplier-history`,
+ 
  
   //Currency
   GET_CURRENCIES: "get-currency",
