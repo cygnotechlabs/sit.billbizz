@@ -9,6 +9,8 @@ const Prefix = require('../database/model/prefix')
 const Account = require("../database/model/account")
 const TrialBalance = require("../database/model/trialBalance")
 const mongoose = require('mongoose');
+const moment = require("moment-timezone");
+
 
 
 const gstAccounts = [
@@ -564,9 +566,9 @@ exports.addTax = async (req, res) => {
     }
 
     const generatedDateTime = generateTimeAndDateForDB(
-      timeZoneExp,
-      dateFormatExp,
-      dateSplit
+      existingOrganization.timeZoneExp,
+      existingOrganization.dateFormatExp,
+      existingOrganization.dateSplit
     );
 
     const createdDateAndTime = generatedDateTime.dateTime;
@@ -948,3 +950,55 @@ exports.setPrefixSeriesStatusTrue = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Function to generate time and date for storing in the database
+function generateTimeAndDateForDB(
+  timeZone,
+  dateFormat,
+  dateSplit,
+  baseTime = new Date(),
+  timeFormat = "HH:mm:ss",
+  timeSplit = ":"
+) {
+  // Convert the base time to the desired time zone
+  const localDate = moment.tz(baseTime, timeZone);
+
+  // Format date and time according to the specified formats
+  let formattedDate = localDate.format(dateFormat);
+
+  // Handle date split if specified
+  if (dateSplit) {
+    // Replace default split characters with specified split characters
+    formattedDate = formattedDate.replace(/[-/]/g, dateSplit); // Adjust regex based on your date format separators
+  }
+
+  const formattedTime = localDate.format(timeFormat);
+  const timeZoneName = localDate.format("z"); // Get time zone abbreviation
+
+  // Combine the formatted date and time with the split characters and time zone
+  const dateTime = `${formattedDate} ${formattedTime
+    .split(":")
+    .join(timeSplit)} (${timeZoneName})`;
+
+  return {
+    date: formattedDate,
+    time: `${formattedTime} (${timeZoneName})`,
+    dateTime: dateTime,
+  };
+}
