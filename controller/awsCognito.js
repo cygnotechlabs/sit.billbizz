@@ -1,4 +1,4 @@
-// v1.0
+// v1.1
 
 const jwt = require('jsonwebtoken');
 const AWS = require('aws-sdk');
@@ -31,17 +31,21 @@ const authenticateJWT = (req,res,next)=>{
 
 //Sign up - post  (Add a New User)
 exports.signUp = async (req, res) => {
-    const{ userName, password, email } = req.body;
+    const{ contactName, contactNum, password, email } = req.body;
 
     const params = {
         ClientId: CLIENT_ID,
-        Username: userName,
-        Password: password,
+        Username: contactName,
+        Password: hashedPassword,
         UserAttributes:[
             {
                 Name: 'email',
                 Value: email,
             },
+            {
+              Name: 'phoneNumber', 
+              Value: contactNum,
+            }
         ],
     };
     try {
