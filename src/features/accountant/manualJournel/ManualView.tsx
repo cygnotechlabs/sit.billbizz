@@ -12,7 +12,7 @@ type Props = {};
 
 function ManualView({}: Props) {
   const { request: getOneJournal } = useApi("get", 5001);
-  const { id } = useParams<{ id: string }>(); 
+  const { id } = useParams<{ id: string }>();
   const [oneJournal, setOneJournal] = useState<any>(null);
 
   const getOneJournalData = async () => {
@@ -29,7 +29,7 @@ function ManualView({}: Props) {
   };
 
   useEffect(() => {
-    if (id) { // Ensure id is defined
+    if (id) {
       getOneJournalData();
     }
   }, [id]);
@@ -56,7 +56,7 @@ function ManualView({}: Props) {
           <div className="flex justify-between">
             <div className="flex gap-3 items-center">
               <p className="text-xl text-textColor font-bold pr-4 border-borderRight">
-                {oneJournal ? `#${oneJournal[0]?.journalId}` : "#001"}
+                {oneJournal ? `#${oneJournal?.journalId}` : "#001"}
               </p>
             </div>
             <div className="flex gap-3 items-center">
@@ -72,7 +72,6 @@ function ManualView({}: Props) {
                 <Trash2 color="#565148" />{" "}
                 <p className="text-sm font-medium">Delete</p>
               </Button>
-              {/* toggle button */}
             </div>
           </div>
           <hr className="border-t border-inputBorder mt-4" />
@@ -88,7 +87,7 @@ function ManualView({}: Props) {
                   <p className="font-bold text-2xl">JOURNAL</p>
                   {/* journalId */}
                   <p className="ml-auto">
-                    {oneJournal ? `#${oneJournal[0]?.journalId}` : "#0001"}
+                    {oneJournal ? `#${oneJournal?.journalId}` : "#0001"}
                   </p>
                 </div>
 
@@ -97,7 +96,7 @@ function ManualView({}: Props) {
                     {/* date */}
                     Billed Date:
                     <b className="ms-4">
-                      {oneJournal ? oneJournal[0]?.date : "*/*/*"}
+                      {oneJournal ? oneJournal?.date : "*/*/*"}
                     </b>
                   </p>
 
@@ -106,7 +105,7 @@ function ManualView({}: Props) {
                     Amount:
                     <b className="ms-4">
                       {oneJournal
-                        ? oneJournal[0]?.totalCreditAmount.toFixed(2)
+                        ? oneJournal?.totalCreditAmount.toFixed(2)
                         : "0.00"}
                     </b>
                   </p>
@@ -115,7 +114,7 @@ function ManualView({}: Props) {
                   <p>
                     Reference Number:
                     <b className="ms-4">
-                      {oneJournal ? oneJournal[0]?.reference : "#00"}
+                      {oneJournal ? oneJournal?.reference : "#00"}
                     </b>
                   </p>
                 </div>
@@ -134,7 +133,7 @@ function ManualView({}: Props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {oneJournal?.[0]?.transaction?.map((txn: any) => (
+                  {oneJournal?.transaction?.map((txn: any) => (
                     <tr
                       className="border-b border-slate-400 mb-5"
                       key={txn.accountId}
@@ -157,12 +156,12 @@ function ManualView({}: Props) {
                     <td className="px-2 py-5 text-center">SubTotal</td>
                     <td className="px-2 py-5 text-center">
                       {oneJournal
-                        ? oneJournal[0]?.totalDebitAmount.toFixed(2)
+                        ? oneJournal?.totalDebitAmount.toFixed(2)
                         : "0.00"}
                     </td>
                     <td className="text-center px-2 py-5">
                       {oneJournal
-                        ? oneJournal[0]?.totalCreditAmount.toFixed(2)
+                        ? oneJournal?.totalCreditAmount.toFixed(2)
                         : "0.00"}
                     </td>
                   </tr>
@@ -175,14 +174,14 @@ function ManualView({}: Props) {
                 <b>
                   RS.
                   {oneJournal
-                    ? oneJournal[0]?.totalDebitAmount.toFixed(2)
+                    ? oneJournal?.totalDebitAmount.toFixed(2)
                     : "0.00"}
                 </b>{" "}
                 <br />
                 <b>
                   Rs.
                   {oneJournal
-                    ? oneJournal[0]?.totalCreditAmount.toFixed(2)
+                    ? oneJournal?.totalCreditAmount.toFixed(2)
                     : "0.00"}
                 </b>
               </div>
