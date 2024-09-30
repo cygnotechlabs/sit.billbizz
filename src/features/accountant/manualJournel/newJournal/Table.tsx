@@ -6,7 +6,7 @@ import SearchBar from "../../../../Components/SearchBar";
 import { useNavigate } from "react-router-dom";
 
 interface Journal {
-  id: string;
+  _id: string;
   date: string;
   journalId: string;
   reference: string;
@@ -96,7 +96,7 @@ function Table({}: Props) {
         <tbody className="text-dropdownText text-center text-[13px]">
           {filteredJournals && filteredJournals.length > 0 ? (
             filteredJournals.reverse().map((item) => (
-              <tr onClick={()=>navigate("/accountant/manualjournal/view")} key={item.id} className="relative">
+              <tr onClick={()=>navigate(`/accountant/manualjournal/view/${item._id}`)} key={item._id} className="relative">
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input type="checkbox" className="form-checkbox w-4 h-4" />
                 </td>

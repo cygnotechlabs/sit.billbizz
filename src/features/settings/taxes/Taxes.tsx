@@ -16,13 +16,12 @@ function Taxes({}: Props) {
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
-  const { request: AllTaxGst } = useApi("put", 5004);
+  const { request: AllTaxGst } = useApi("get", 5004);
 
   const fetchAllTaxGst = async () => {
     try {
       const url = `${endponits.GET_ALL_TAX}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await AllTaxGst(url, body);
+      const { response, error } = await AllTaxGst(url);
       if (!error && response) {
         const gstTaxRates = response.data;
         const taxType = gstTaxRates?.taxType || ""; 

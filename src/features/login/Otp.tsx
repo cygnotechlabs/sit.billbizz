@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Button from "../../Components/Button";
 import bgImage from "../../assets/Images/Group 2506.png";
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -15,6 +15,9 @@ function Otp({}: Props) {
   const location = useLocation();
   const { request: verifyOtp } = useApi("post", 5004);
   const { setIsAuthenticated } = useAuth(); // Get the setIsAuthenticated function from context
+  useEffect(() => {
+    inputRefs[0].current?.focus();
+  }, []);
 
   // Extract email from location state or set a default for testing purposes
   const email = location.state?.email || '';

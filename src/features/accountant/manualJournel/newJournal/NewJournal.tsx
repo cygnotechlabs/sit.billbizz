@@ -145,8 +145,7 @@ function NewJournal({}: Props) {
   const getLastJournelsPrefix = async () => {
     try {
       const url = `${endponits.Get_LAST_Journel_Prefix}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await GetLastJournelPrefix(url, body);
+      const { response, error } = await GetLastJournelPrefix(url);
       if (!error && response) {
         console.log("response", response);
         setNewJournelDatas({ ...newJournalDatas, journel: response?.data });
@@ -159,8 +158,7 @@ function NewJournal({}: Props) {
   const getAllAccounts = async () => {
     try {
       const url = `${endponits.Get_ALL_Acounts}`;
-      const body = { organizationId: "INDORG0001" };
-      const { response, error } = await GetAllAcounts(url, body);
+      const { response, error } = await GetAllAcounts(url);
       if (!error && response) {
         setAccountOptions(response.data);
         console.log("All accounts", response);

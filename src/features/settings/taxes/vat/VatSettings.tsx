@@ -8,7 +8,6 @@ type Props = {};
  
 function VatSettings({}: Props) {
   const initialVatSettings = {
-    organizationId: "INDORG0001",
     taxType: "VAT",  
     vatNumber: "",
     vatBusinesLegalName: "",
@@ -18,16 +17,14 @@ function VatSettings({}: Props) {
   };
  
   const [vatSettings, setVatSettings] = useState(initialVatSettings);
-  const { request: fetchVatSettings } = useApi("put", 5004);
+  const { request: fetchVatSettings } = useApi("get", 5004);
   const { request: createVatSettings } = useApi("post", 5004);
 
   // Fetch VAT settings
   const getVatSettings = async () => {
     try {
       const url = `${endponits.GET_ALL_TAX}`;
-      const { response, error } = await fetchVatSettings(url, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await fetchVatSettings(url);
 
       if (!error && response?.data) {
         setVatSettings((prevData) => ({

@@ -16,7 +16,7 @@ const AccountantRoutes: RouteObject[] = [
   { path: "/accountant/cash", element: <Cash /> },
   { path: "/accountant/cashView", element: <CashTableView /> },
   { path: "/accountant/manualjournal", element: <ManualHome /> },
-  { path: "/accountant/manualjournal/view", element: <ManualView /> },
+  { path: "/accountant/manualjournal/view/:id", element: <ManualView /> },
   { path: "/accountant/newjournal", element: <NewJournal /> },
   { path: "/accountant/bank", element: <BankHome /> },
   { path: "/accountant/bank/account-view", element: <BankAccountView /> },

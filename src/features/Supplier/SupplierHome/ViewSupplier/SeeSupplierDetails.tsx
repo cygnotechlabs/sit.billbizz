@@ -20,7 +20,6 @@ import Pen from "../../../../assets/icons/Pen";
 
 type Props = {};
 interface Status {
-  organizationId: string;
   status: any;
 }
 
@@ -32,7 +31,6 @@ function SeeSupplierDetails({}: Props) {
   const {request:updateSupplierStatus}=useApi("put",5009)
   const {supplierResponse}=useContext(SupplierResponseContext)!;
   const [statusData, setStatusData] = useState<Status>({
-    organizationId: "INDORG0001",
     status: "",
   });
   const [isModalOpen, setModalOpen] = useState(false);
