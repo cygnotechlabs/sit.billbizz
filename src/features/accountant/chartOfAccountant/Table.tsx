@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Ellipsis from "../../../assets/icons/Ellipsis";
 import SearchBar from "../../../Components/SearchBar";
-import useApi from "../../../Hooks/useApi";
-import { endponits } from "../../../Services/apiEndpoints";
-import { Link } from "react-router-dom";
 
 interface Account {
   _id: string;
@@ -14,28 +11,13 @@ interface Account {
   description: string;
 }
 
-const Table = () => {
-  const [accountData, setAccountData] = useState<Account[]>([]);
-  const [searchValue, setSearchValue] = useState<string>("");
-  const { request: AllAccounts } = useApi("get", 5001);
+interface TableProps {
+  accountData: Account[];
+  searchValue: string;
+  setSearchValue: (value: string) => void;
+}
 
-  useEffect(() => {
-    fetchAllAccounts();
-  }, []);
-
-  const fetchAllAccounts = async () => {
-    try {
-      const url = `${endponits.Get_ALL_Acounts}`;
-      const { response, error } = await AllAccounts(url);
-      if (!error && response) {
-        setAccountData(response.data);
-        console.log(response);
-      }
-    } catch (error) {
-      console.error("Error fetching accounts:", error);
-    }
-  };
-
+const Table = ({ accountData, searchValue, setSearchValue }: TableProps) => {
   const filteredAccounts = accountData.filter((account) => {
     const searchValueLower = searchValue.toLowerCase();
     return (
