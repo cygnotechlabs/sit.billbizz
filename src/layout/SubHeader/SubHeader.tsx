@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import navlist from "../../assets/constants";
 import { Link } from "react-router-dom";
 import ItemEllipsis from "../../Components/ellipsis/Ellipsis";
-
+import HomeIcon from "../../assets/icons/HomeIcon";
 type Props = {
   activeIndex: number | null;
 };
@@ -25,7 +25,7 @@ const SubHeader = ({ activeIndex }: Props) => {
   return (
     <div className="bg-BgSubhead flex mx-7 justify-between px-7 py-5 my-4 items-center rounded-full ">
       <div className="flex items-center gap-4">
-        <div className="bg-white px-4 py-2 rounded-full text-sm">Home</div>
+        <div className="bg-white px-3 py-2 rounded-full text-sm"><HomeIcon color="#71736B" size={24}/></div>
         {activeIndex !== null &&
           navlist[activeIndex] &&
           navlist[activeIndex].subhead &&

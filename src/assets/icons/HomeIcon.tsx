@@ -1,6 +1,6 @@
 type Props = { color?: string,size?:number };
 
-const HomeIcon = ({ color,size }: Props) => {
+const home = ({ color,size }: Props) => {
   return (
     <svg
       width={size||"24"}
@@ -20,4 +20,4 @@ const HomeIcon = ({ color,size }: Props) => {
   );
 };
 
-export default HomeIcon;
+export default home;

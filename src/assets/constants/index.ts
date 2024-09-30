@@ -1,7 +1,6 @@
 import Bell from "../icons/Bell";
 import box from "../icons/box";
 import circleDollar from "../icons/circle-dollar-sign";
-import home from "../icons/home";
 import newspapper from "../icons/newspaper";
 import receiptIndianRupee from "../icons/receipt-indian-rupee";
 import shoppingBag from "../icons/shopping-bag";
@@ -11,11 +10,11 @@ import truck from "../icons/truck";
 import userRound from "../icons/user-round";
 import usersRound from "../icons/users-round";
 import Wallet from "../icons/Wallet";
-
+import VectorDashboard from "../icons/VectorBashboard";
 const navlist = [
   {
     nav: "Home",
-    icon: home,
+    icon: VectorDashboard,
     route: "/dashboard",
   },
   {
