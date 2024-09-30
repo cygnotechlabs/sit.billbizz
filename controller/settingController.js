@@ -1,12 +1,134 @@
-// v1.0
+// v1.1
 
 const Currency = require("../database/model/currency")
-const Organization = require("../database/model/organization");
+const Organization = require("../database/model/organization")
 const Settings = require('../database/model/settings')
 const PaymentTerms = require('../database/model/paymentTerm')
 const Tax = require('../database/model/tax')
 const Prefix = require('../database/model/prefix')
+const Account = require("../database/model/account")
+const TrialBalance = require("../database/model/trialBalance")
 const mongoose = require('mongoose');
+
+
+const gstAccounts = [
+  {
+    accountName: "Input SGST",
+    accountSubhead: "Current Asset",
+    accountHead: "Asset",
+    accountGroup: "Asset",
+    accountCode: "TX-01",
+    description: "Input SGST",
+  },
+  {
+    accountName: "Input CGST",
+    accountSubhead: "Current Asset",
+    accountHead: "Asset",
+    accountGroup: "Asset",
+    accountCode: "TX-02",
+    description: "Input CGST",
+  },
+  {
+    accountName: "Input IGST",
+    accountSubhead: "Current Asset",
+    accountHead: "Asset",
+    accountGroup: "Asset",
+    accountCode: "TX-03",
+    description: "Input IGST",
+  },{
+    accountName: "Output SGST",
+    accountSubhead: "Current Liability",
+    accountHead: "Liabilities",
+    accountGroup: "Liability",
+    accountCode: "TX-04",
+    description: "Output SGST",
+  },
+  {
+    accountName: "Output CGST",
+    accountSubhead: "Current Liability",
+    accountHead: "Liabilities",
+    accountGroup: "Liability",
+    accountCode: "TX-05",
+    description: "Output CGST",
+  },
+  {
+    accountName: "Output IGST",
+    accountSubhead: "Current Liability",
+    accountHead: "Liabilities",
+    accountGroup: "Liability",
+    accountCode: "TX-06",
+    description: "Output IGST",
+  },];
+
+const vatAccounts = [
+    {
+      accountName: "Input VAT",
+      accountSubhead: "Current Asset",
+      accountHead: "Asset",
+      accountGroup: "Asset",
+      accountCode: "TX-01",
+      description: "Input VAT",
+    },    
+    {
+      accountName: "Output VAT",
+      accountSubhead: "Current Liability",
+      accountHead: "Liabilities",
+      accountGroup: "Liability",
+      accountCode: "TX-02",
+      description: "Output VAT",
+    },];
+
+async function insertAccounts(accounts,organizationId,createdDateAndTime) {
+
+  const accountDocuments = accounts.map(account => {
+      return {
+          organizationId: organizationId, 
+          accountName: account.accountName,
+          accountCode: account.accountCode, 
+
+          accountSubhead: account.accountSubhead,
+          accountHead: account.accountHead,
+          accountGroup: account.accountGroup,
+
+          openingDate: createdDateAndTime, 
+          description: account.description
+      };});
+
+    try {
+        const autoAccountCreation = await Account.insertMany(accountDocuments);
+        console.log('Accounts created successfully');
+
+         // Loop through the created accounts and add a trial balance entry for each one
+  for (const savedAccount of autoAccountCreation) {
+    const debitOpeningBalance = 0;  
+    const creditOpeningBalance = 0; 
+
+
+    const newTrialEntry = new TrialBalance({
+        organizationId,
+        operationId: savedAccount._id,
+        date: savedAccount.openingDate,
+        accountId: savedAccount._id,
+        accountName: savedAccount.accountName,
+        action: "Opening Balance",
+        debitAmount: debitOpeningBalance,
+        creditAmount: creditOpeningBalance,
+        remark: 'Opening Balance'
+    });
+
+    await newTrialEntry.save();
+}
+
+console.log('Trial balance entries created successfully');
+        
+        
+        
+    } catch (error) {
+        console.error('Error inserting accounts:', error);
+    }
+  }
+
+
 
 
 
@@ -424,13 +546,30 @@ exports.addTax = async (req, res) => {
     const organizationId = req.user.organizationId;
     const { taxType, gstIn, gstBusinesLegalName, gstBusinessTradeName, gstRegisteredDate, gstTaxRate, compositionSchema, compositionPercentage, vatNumber, vatBusinesLegalName, vatBusinessTradeName, vatRegisteredDate, tinNumber, vatTaxRate, msmeType, msmeRegistrationNumber } = req.body;
     console.log("Add Tax :",req.body);
+
+    const existingOrganization = await Organization.findOne({ organizationId });
+
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
     
     // Find the tax record by organizationId and taxType
     let taxRecord = await Tax.findOne({ organizationId });
+    const acctype = taxRecord.taxType;
 
     if (!taxRecord) {
       return res.status(404).json({ message: "Tax record not found for the given organization and tax type." });
     }
+
+    const generatedDateTime = generateTimeAndDateForDB(
+      timeZoneExp,
+      dateFormatExp,
+      dateSplit
+    );
+
+    const createdDateAndTime = generatedDateTime.dateTime;
 
     // Update the relevant fields based on the taxType
     if (taxType === 'GST') {
@@ -460,6 +599,16 @@ exports.addTax = async (req, res) => {
 
     // Save the updated tax record
     const updatedTaxRecord = await taxRecord.save();
+
+    if (acctype === '') {
+      if (taxType === 'GST') {
+        insertAccounts(gstAccounts, organizationId, createdDateAndTime);
+      }else if (taxType === 'VAT') {
+        insertAccounts(vatAccounts, organizationId, createdDateAndTime);
+      }
+      
+    }
+
 
     res.status(200).json({ message: "Tax record updated successfully", updatedTaxRecord });
   } catch (error) {
