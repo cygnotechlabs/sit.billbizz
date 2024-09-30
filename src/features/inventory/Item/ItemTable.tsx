@@ -179,7 +179,7 @@ const ItemTable = () => {
                   className="rounded-lg"
                 />
                 <div className="mt-6 flex gap-2">
-                  <Button variant="tertiary" className="text-xs font-medium h-[32px]">
+                  <Button  onClick={handleEdit} variant="tertiary" className="text-xs font-medium h-[32px]">
                     <Pen color="#585953" /> Change image
                   </Button>
                   <Button variant="tertiary" className="text-xs font-medium h-[32px]">

@@ -10,7 +10,6 @@ type Props = {};
 
 function MsmeSettings({}: Props) {
   const initialMsmeSettings = {
-    organizationId: "INDORG0001",
     msmeType: "",
     msmeRegistrationNumber: "",
   };
@@ -18,15 +17,14 @@ function MsmeSettings({}: Props) {
   const [msmeSettings, setMsmeSettings] = useState(initialMsmeSettings);
   const [isGstRegistered, setIsGstRegistered] = useState(false);
 
-  const { request: fetchMsmeSettings } = useApi("put", 5004); 
+  const { request: fetchMsmeSettings } = useApi("get", 5004); 
   const { request: saveMsmeSettings } = useApi("post", 5004); 
 
   useEffect(() => {
     const fetchAllMsmeSettings = async () => {
       try {
         const url = `${endponits.GET_ALL_TAX}`;
-        const body = { organizationId: msmeSettings.organizationId };
-        const { response, error } = await fetchMsmeSettings(url, body);
+        const { response, error } = await fetchMsmeSettings(url);
         if (!error && response) {
           const { msmeType, msmeRegistrationNumber } = response.data;
           setMsmeSettings((prevSettings) => ({

@@ -42,6 +42,7 @@ GET_ALL_ITEMS_Dropdown: `get-itemDropdown`,
   Get_LAST_Journel_Prefix: "get-last-journal-prefix",
   Add_NEW_Journel: "add-journal-entry",
   GET_ALL_JOURNALS: "get-all-journal",
+  GET_ONE_JOURNAL:"get-one-journal",
   Add_NEW_ACCOUNT: "add-account",
   GET_ONE_TRIAL_BALANCE:"get-one-trial-balance",
  

@@ -17,7 +17,6 @@ import ExpensesGraph from "./ExpensesGraph"
 // import UserRound from "../../../../assets/icons/user-round"
 
 interface Status {
-  organizationId: string;
   status: any;
 }
 

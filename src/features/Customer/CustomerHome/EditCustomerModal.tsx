@@ -475,13 +475,10 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
 
 
 const addressscroll=()=>{
-  console.log("addressEdit changed:", addressEdit); 
   if (addressEdit === "shippingAddressEdit" && shippingAddressRef.current) {
-    console.log("Scrolling to shipping address..."); 
     shippingAddressRef.current.scrollIntoView({  behavior: 'smooth', block: 'start'});
   }
   if (addressEdit === "billingAddressEdit" && BillingAddressRef.current) {
-    console.log("Scrolling to shipping address..."); 
     BillingAddressRef.current.scrollIntoView({ behavior: 'smooth' });
   }
 }
@@ -1637,8 +1634,8 @@ useEffect(() => {
                             <input
                               className="pl-3 text-sm w-full text-[#818894] rounded-md text-start bg-white border border-inputBorder h-[39px] p-2 leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                               placeholder="Street 2"
-                              name="shippingAddress1"
-                              value={customerdata.shippingAddress1}
+                              name="shippingAddress2"
+                              value={customerdata.shippingAddress2}
                               onChange={handleChange}
                             />
                           </div>

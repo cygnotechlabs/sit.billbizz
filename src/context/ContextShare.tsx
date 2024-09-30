@@ -68,7 +68,7 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
   const [gstResponse, setGstResponse] = useState<any>({});
   const [vatResponse, setVatResponse] = useState<any>({});
   const [settingsResponse, setSettingsesponse] = useState<any>({});
-  const { request: getAllSettingsData } = useApi("put", 5004);
+  const { request: getAllSettingsData } = useApi("get", 5004);
   const [supplierResponse, setsupplierResponse] = useState<any>({});
   const [customerResponse, setcustomerResponse] = useState<any>({});
   const [customerEditResponse, setcustomereditResponse] = useState<any>({});
@@ -76,7 +76,7 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
   const getSettingsData = async () => {
     try {
       const url = `${endponits.GET_SETTINGS_DATA}`;
-      const apiResponse = await getAllSettingsData(url, { organizationId: "INDORG0001" });
+      const apiResponse = await getAllSettingsData(url);
       const { response, error } = apiResponse;
       if (!error && response) {
         setSettingsesponse(response);
