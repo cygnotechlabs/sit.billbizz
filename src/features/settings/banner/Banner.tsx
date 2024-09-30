@@ -43,9 +43,9 @@ function Banner({ seeOrgDetails }: Props) {
                   {oneOrganization?.organizationName || "Organization Profile"}
                 </b>
               </p>
-              <div className="ms-3 bg-white rounded-md p-1 text-textColor">
-                ID: {oneOrganization?.organizationId || "852749"}
-              </div>
+             { oneOrganization.organizationId && <div className="ms-3 bg-white rounded-md p-1 text-textColor">
+                ID: {oneOrganization?.organizationId}
+              </div>}
             </div>
           </div>
         </div>

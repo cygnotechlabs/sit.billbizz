@@ -42,6 +42,7 @@ const CreateOrganizationForm = () => {
   const [countryData, setcountryData] = useState<any | []>([]);
   const [currencyData, setcurrencyData] = useState<any | []>([]);
   const [stateList, setStateList] = useState<any | []>([]);
+  const [orgPhone,setOrgPhone]=useState<any>(null)
   const { request: getAdditionalData } = useApi("get", 5004);
   const { request: createOrganization } = useApi("post", 5004);
   const { request: getOneOrganization } = useApi("get", 5004);
@@ -53,7 +54,7 @@ const CreateOrganizationForm = () => {
   });
 
   const [inputData, setInputData] = useState<InputData>({
-    organizationLogo: "", //image field
+    organizationLogo: "", 
     organizationName: "",
     organizationCountry: "",
     organizationIndustry: "",
@@ -74,6 +75,8 @@ const CreateOrganizationForm = () => {
     phoneNumberCode: "",
   });
 
+  console.log(inputData);
+  
 
   const getDropdownList = async () => {
     try {
@@ -113,26 +116,24 @@ const CreateOrganizationForm = () => {
       console.log("Error in fetching currency data", error);
     }
   };
-console.log(inputData.organizationPhNum,"in");
 
   const getOrganization = async () => {
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
       const apiResponse = await getOneOrganization(url);
-      // console.log(apiResponse);
       const { response, error } = apiResponse;
       if (!error && response?.data) {
-        setInputData(response.data);
-        // console.log(response.data, "oneOrganization");
-
-        setInputData((prevData) => ({
+        setInputData(response.data);       
+        setInputData((prevData:any) => ({
           ...prevData,
           organizationName: response.data.organizationName,
+          organizationPhNum:Number (response.data.organizationPhNum)
         }));
       } else {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.message || "Error fetching organization");
       }
     } catch (error) {
+      toast.error("Error fetching organization");
       console.error("Error fetching organization:", error);
     }
   };
@@ -465,7 +466,7 @@ console.log(inputData.organizationPhNum,"in");
               <div className="-mt-4">
                 <label
                   className="text-slate-600 "
-                  htmlFor="organizationAddress"
+                  htmlFor="City"
                 >
                   City
                 </label>
@@ -483,7 +484,7 @@ console.log(inputData.organizationPhNum,"in");
               <div className="-mt-4">
                 <label
                   className="text-slate-600 "
-                  htmlFor="organizationAddress"
+                  htmlFor="pincode"
                 >
                   Pin / Zip / Post code
                 </label>
@@ -501,7 +502,7 @@ console.log(inputData.organizationPhNum,"in");
               <div className="-mt-4">
                 <label
                   className="text-slate-600 "
-                  htmlFor="organizationAddress"
+                  htmlFor="state"
                 >
                   State / Region / County
                 </label>
@@ -537,7 +538,7 @@ console.log(inputData.organizationPhNum,"in");
               <div className="-mt-4">
                 <label
                   className="text-slate-600 "
-                  htmlFor="organizationAddress"
+                  htmlFor="organizationPhNum"
                 >
                   Phone
                 </label>
@@ -557,10 +558,10 @@ console.log(inputData.organizationPhNum,"in");
                   containerStyle={{ width: "100%" }}
                   country={
                     inputData.organizationCountry
-                      ? inputData.organizationCountry
+                      ? inputData.organizationCountry.toLowerCase()
                       : "in"
                   }
-                  value={inputData?.organizationPhNum}
+                  value={inputData.organizationPhNum}
                   onChange={handlePhoneChange}
                 />
               </div>

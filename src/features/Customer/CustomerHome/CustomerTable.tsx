@@ -102,7 +102,7 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
           <Print />
         </div>
       </div>
-      <div className="overflow-x-auto mt-3 h-96 hide-scrollbar">
+      <div className="mt-3 overflow-y-scroll max-h-[25rem]">
         <table className="min-w-full bg-white mb-5">
           <thead className="text-[12px] text-center text-dropdownText">
             <tr style={{ backgroundColor: "#F9F7F0" }}>
