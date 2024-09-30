@@ -467,7 +467,7 @@ const CreateOrganizationForm = () => {
               <div className="-mt-4">
                 <label
                   className="text-slate-600 "
-                  htmlFor="organizationAddress"
+                  htmlFor="City"
                 >
                   City
                 </label>
@@ -485,7 +485,7 @@ const CreateOrganizationForm = () => {
               <div className="-mt-4">
                 <label
                   className="text-slate-600 "
-                  htmlFor="organizationAddress"
+                  htmlFor="pincode"
                 >
                   Pin / Zip / Post code
                 </label>
@@ -503,7 +503,7 @@ const CreateOrganizationForm = () => {
               <div className="-mt-4">
                 <label
                   className="text-slate-600 "
-                  htmlFor="organizationAddress"
+                  htmlFor="state"
                 >
                   State / Region / County
                 </label>
@@ -539,7 +539,7 @@ const CreateOrganizationForm = () => {
               <div className="-mt-4">
                 <label
                   className="text-slate-600 "
-                  htmlFor="organizationAddress"
+                  htmlFor="organizationPhNum"
                 >
                   Phone
                 </label>
