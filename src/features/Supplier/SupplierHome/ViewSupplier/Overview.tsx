@@ -1,17 +1,20 @@
 import { useParams } from "react-router-dom"
 import ArrowRight from "../../../../assets/icons/ArrowRight"
-
 import { ChangeEvent, useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import MailIcon from "../../../../assets/icons/MailIcon"
 import Pen from "../../../../assets/icons/Pen"
 import PhoneIcon from "../../../../assets/icons/PhoneIcon"
-import UserRound from "../../../../assets/icons/UserRound"
 import Button from "../../../../Components/Button"
 import useApi from "../../../../Hooks/useApi"
 import { endponits } from "../../../../Services/apiEndpoints"
 import EditSupplier from "../EditSupplier"
 import ExpensesGraph from "./ExpensesGraph"
+
+
+// import ShoppingCart from "../../../../assets/icons/ShoppingCart"
+// import NewspaperIcon from "../../../../assets/icons/NewspaperIcon"
+// import UserRound from "../../../../assets/icons/user-round"
 
 interface Status {
   organizationId: string;
@@ -29,7 +32,9 @@ interface OverviewProps {
 const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData }) => {
   const { id } = useParams<{ id: string }>();
   const {request:updateSupplierStatus}=useApi("put",5009)
+  const {request:getSupplierHistory}=useApi("get",5009)
   const [addressEdit, setAddressEdit] = useState<string>();
+  const[supplierHis,setSupplierHis]=useState<any>();
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = (billing?:string,shipping?:string) => {
     setModalOpen((prev)=>!prev);
@@ -45,49 +50,43 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
   const closeModal = () => {
     setModalOpen((prev)=>!prev);
   };
+
+  useEffect(() => {
+   supplierHistory();
+   
+  }, []);
+
+  console.log(id);
+
+
+  const supplierHistory= async () => {
+    try {
+      const url = `${endponits.GET_ONE_SUPPLIER_HISTORY}/${id}`;
+      const apiResponse = await getSupplierHistory(url);
+      const { response, error } = apiResponse;
+      if (!error && response) {
+        setSupplierHis(response.data);
+      console.log(response);
+          } else {
+        console.error('API Error:', error?.response?.data?.message || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('Failed to fetch settings:', error);
+    }
+
+  };
   
-  const historyData = [
-    // {
-    //   initials: <ShoppingCart size="16" color="white"/>,
-    //   date: '30/5/2020',
-    //   time: '2:30 pm',
-    //   title: "Purchase Order",
-    //   description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate harum tempora at!',
-    //   author: 'By Info'
-    // },
-    // {
-    //   initials: <ShoppingCart size="16" color="white" />,
-    //   date: '30/5/2020',
-    //   time: '2:30 pm',
-    //   title: "Sales Order Added",
-    //   description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate harum tempora at!',
-    //   author: 'By Info'
-    // },
-    {
-      initials: <UserRound size="16" color="white"/>,
-      date: '20/9/2024',
-      time: '4:40 pm',
-      title: "Contact Added",
-      description: 'Parvathy Contact added successfully',
-      author: 'By Info'
-    },
-    // {
-    //   initials: <NewspaperIcon size="16"/>,
-    //   date: '30/5/2020',
-    //   time: '2:30 pm',
-    //   title: "Invoice Created",
-    //   description: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptate harum tempora at!',
-    //   author: 'By Info'
-    // },
-  ];
+ 
   const getCircleStyle = (title: string) => {
     switch (title) {
+      case 'Purchase Order':
+      return { bgColor: 'bg-[#820000]', text: 'hi' }; 
       case 'Contact Added':
         return { bgColor: 'bg-[#97998E]', text: 'tg' };
       case 'Invoice Created':
         return { bgColor: 'bg-[#B9AD9B]', text: 'rss' };
       default:
-        return { bgColor: 'bg-[#820000]', text: '' }; // Default style
+        return { bgColor: 'bg-[#820000]', text: ''}; // Default style
     }
   };
 
@@ -119,6 +118,30 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
   
 
   console.log(supplier?.status);
+  const formatDateTime = (dateString: string) => {
+    const [datePart, timePart] = dateString.split(" ");
+    const [hoursString, minutes] = timePart.split(":");
+
+    let period = "AM";
+    
+    let hours = parseInt(hoursString);
+  
+    if (hours >= 12) {
+      period = "PM";
+      hours = hours > 12 ? hours - 12 : hours;
+    } else if (hours === 0) {
+      hours = 12;
+    }
+  
+    const formattedTime = `${hours}:${minutes} ${period}`;
+ 
+    
+    return { date: datePart, time: formattedTime };
+    
+  };
+ 
+
+ 
   
   return (
     <>
@@ -164,7 +187,7 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
                 >
                   <option value="Active">Active  </option>
                   <option value="Inactive"><div>Inactive</div></option>
-                </select>
+              </select>
               </div>
             </div>
         </div>
@@ -228,10 +251,12 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
    <div className="col-span-4 py-5 px-3 bg-[#F6F6F6] rounded-[8px]">
       <h3 className="font-bold text-[14px] mb-4">Supplier Status History</h3>
       <div className="flex flex-col relative pb-8">
-        <div className="w-[2px] absolute left-4 top-0 bg-slate-500" style={{ height: 'calc(100% - 70px)' }}></div>
-        {historyData.map((item, index) => {
+        <div className="w-[2px] absolute left-4 top-0 bg-WhiteIce" style={{ height: 'calc(100% - 70px)' }}></div>
+        {supplierHis?.map((item:any, index:number) => {
           const circleStyle = getCircleStyle(item.title);
+          const { date, time } = formatDateTime(item.date);
           console.log(circleStyle.bgColor);
+
           
           return (
  
@@ -247,20 +272,21 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
               </div>
               <div className="space-y-2">
                 <div className="flex space-x-3 text-[14px]">
-                  <p>{item.date}</p>
-                  <p>{item.time}</p>
+                  <p>{date}</p>
+                  <p>{time}</p>
+                  
                 </div>
                 <p className="font-bold">{item.title}</p>
                 <p>{item.description}</p>
                 <div className="flex space-x-4 font-bold text-[14px]">
                   <p>{item.author}</p>
-                  <p><u>View Details</u></p>
+                  {/* <p><u>View Details</u></p> */}
                 </div>
               </div>
             </div>
           
             {/* Second item */}
-            <div className="space-x-4 flex pb-8">
+            {/* <div className="space-x-4 flex pb-8">
               <div className="flex flex-col items-center">
                 <div className={`w-8 h-8 z-10 ${circleStyle.bgColor} flex items-center justify-center rounded-full text-white`}>
                   <p>{item.initials}</p>
@@ -278,11 +304,11 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
                   <p><u>View Details</u></p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/*Third item*/}
           
-            <div className="space-x-4 flex pb-8">
+            {/* <div className="space-x-4 flex pb-8">
               <div className="flex flex-col items-center">
                 <div className={`w-8 h-8 z-10 ${circleStyle.bgColor} flex items-center justify-center rounded-full text-white`}>
                   <p>{item.initials}</p>
@@ -300,10 +326,10 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
                   <p><u>View Details</u></p>
                 </div>
               </div>
-            </div>
+            </div> */}
             {/*Fourth Item */}
             
-            <div className="space-x-4 flex pb-8">
+            {/* <div className="space-x-4 flex pb-8">
               <div className="flex flex-col items-center">
                 <div className={`w-8 h-8 z-10 ${circleStyle.bgColor} flex items-center justify-center rounded-full text-white`}>
                   <p>{item.initials}</p>
@@ -321,7 +347,7 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
                   <p><u>View Details</u></p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
 
           </div>
@@ -334,7 +360,7 @@ const Overview: React.FC<OverviewProps> = ({ supplier, statusData, setStatusData
     </div>
     <div className="flexz justify-end">
     <Button size="sm" className="w-[120px] flex justify-center float-end">
-    <p>save</p>
+    <p>Save</p>
   </Button>
     </div>
   </>

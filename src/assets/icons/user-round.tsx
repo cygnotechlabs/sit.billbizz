@@ -1,9 +1,10 @@
-type Props = { color: string };
+type Props = { color: string ,width?:string};
 
-const UserRound = ({color}: Props) => {
+const UserRound = ({color,width}: Props) => {
   return (
     <svg
-      width="18"
+    
+      width={width?width:"18"}
       height="14"
       viewBox="0 0 24 24"
       fill="none"
