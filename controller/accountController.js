@@ -46,6 +46,8 @@ exports.addAccount = async (req, res) => {
       return res.status(404).json({ message: "No Organization Found.", });
     }
 
+
+
     const generatedDateTime = generateTimeAndDateForDB(existingOrganization.timeZoneExp, existingOrganization.dateFormatExp, existingOrganization.dateSplit);
     const openingDate = generatedDateTime.dateTime;    
     
@@ -56,10 +58,12 @@ exports.addAccount = async (req, res) => {
         organizationId: organizationId,
         });  
       if (existingAccount) {
+        console.log("Account with the provided Account Name already exists");
         return res.status(409).json({
           message: "Account with the provided Account Name already exists.",
-        });
+        });        
       }
+      
 
       // Encrypt bankAccNum before storing it
       let encryptedBankAccNum = undefined;
@@ -67,10 +71,23 @@ exports.addAccount = async (req, res) => {
 
       const newAccount = new Account({ ...cleanedData, organizationId, openingDate, bankAccNum: encryptedBankAccNum, bankIfsc, bankCurrency });      
       await newAccount.save();
+
+      const trialEntry = new TrialBalance({
+        organizationId: organizationId,
+        operationId: newAccount._id,
+        date: openingDate,
+        accountId: newAccount._id,
+        accountName: newAccount.accountName,
+        action: "Opening Balance",
+        debitAmount: 0,
+        creditAmount: 0,
+        remark: newAccount.remark,
+      });
+      await trialEntry.save();
   
       
       res.status(201).json({ message: "Account created successfully." });
-      console.log("Account created successfully",newAccount);
+      console.log("Account created successfully",newAccount,trialEntry);
     } catch (error) {
       console.error("Error creating Account:", error);
       res.status(500).json({ message: "Internal server error." });
