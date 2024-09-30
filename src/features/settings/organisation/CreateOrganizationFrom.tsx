@@ -42,7 +42,6 @@ const CreateOrganizationForm = () => {
   const [countryData, setcountryData] = useState<any | []>([]);
   const [currencyData, setcurrencyData] = useState<any | []>([]);
   const [stateList, setStateList] = useState<any | []>([]);
-  const [orgPhone,setOrgPhone]=useState<any>(null)
   const { request: getAdditionalData } = useApi("get", 5004);
   const { request: createOrganization } = useApi("post", 5004);
   const { request: getOneOrganization } = useApi("get", 5004);
