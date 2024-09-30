@@ -1,147 +1,61 @@
+// v1.0
+
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account")
 const TrialBalance = require("../database/model/trialBalance")
 const crypto = require('crypto');
 const moment = require('moment-timezone');
 
-
-
 const key = Buffer.from(process.env.ENCRYPTION_KEY, 'utf8'); 
 const iv = Buffer.from(process.env.ENCRYPTION_IV, 'utf8'); 
-
-function encrypt(text) {
-  try {
-      const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
-      let encrypted = cipher.update(text, 'utf8', 'hex');
-      encrypted += cipher.final('hex');
-
-      const authTag = cipher.getAuthTag().toString('hex'); // Get authentication tag
-
-      return `${iv.toString('hex')}:${encrypted}:${authTag}`; // Return IV, encrypted text, and tag
-  } catch (error) {
-      console.error("Encryption error:", error);
-      throw error;
-  }
-}
-
-function decrypt(encryptedText) {
-  try {
-      // Split the encrypted text to get the IV, encrypted data, and authentication tag
-      const [ivHex, encryptedData, authTagHex] = encryptedText.split(':');
-      const iv = Buffer.from(ivHex, 'hex');
-      const authTag = Buffer.from(authTagHex, 'hex');
-
-      // Create the decipher with the algorithm, key, and IV
-      const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
-      decipher.setAuthTag(authTag); // Set the authentication tag
-
-      let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
-      decrypted += decipher.final('utf8');
-      return decrypted;
-  } catch (error) {
-      console.error("Decryption error:", error);
-      throw error;
-  }
-}
 
 
 
 //Add Account
 exports.addAccount = async (req, res) => {
+    const startTime = Date.now();
     console.log("Add Account:", req.body);
 
     try {
       const organizationId = req.user.organizationId;
-      const {        
-        accountName,
-        accountCode,
 
-        accountSubhead,
-        accountHead,
-        accountGroup,
+      const cleanedData = cleanCustomerData(req.body);
+      console.log(cleanedData);
 
-        description,
-        bankAccNum,
-        bankIfsc,
-        bankCurrency,
-      } = req.body;
+      const { accountName, accountSubhead, accountHead, accountGroup } = cleanedData;
 
-    // Define valid groups, heads, and subheads
-    const validStructure = {
-      Asset: {
-        Asset: [
-          "Asset",
-          "Current asset",
-          "Cash",
-          "Bank",
-          "Fixed asset",
-          "Stock",
-          "Payment Clearing",
-          "Sundry Debtors",
-        ],
-        Equity: ["Equity"],
-        Income: ["Income", "Other Income"],
-      },
-      Liability: {
-        Liabilities: [
-          "Current Liability",
-          "Credit Card",
-          "Long Term Liability",
-          "Other Liability",
-          "Overseas Tax Payable",
-          "Sundry Creditors",
-        ],
-        Expenses: ["Expense", "Cost of Goods Sold", "Other Expense"],
-      },
-    };
+      // Validate account structure
+    const isValidAccountStructure = validateAccountStructure( accountGroup, accountHead, accountSubhead );
+    if (!isValidAccountStructure) {
+      console.log("Invalid account group, head, or subhead.");
+      return res.status(400).json({ message: "Invalid account group, head, or subhead.", });
+    }
 
-    // Validate accountGroup, accountHead, and accountSubhead
-    // if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
-    //   console.log("Invalid account group, head, or subhead.");
-    //   return res.status(400).json({
-    //     message: "Invalid account group, head, or subhead.",
-    //   });
-
-    // }
-
-if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
-  console.log("Invalid account group, head, or subhead.");
-  return res.status(400).json({
-    message: "Invalid account group, head, or subhead.",
-  });
-}
+    const bankDetails = { bankAccNum: cleanedData.bankAccNum, bankIfsc: cleanedData.bankIfsc, bankCurrency: cleanedData.bankCurrency };
 
     // Validate bank details if accountSubhead is "Bank"
-    if (
-      accountSubhead === "Bank" &&
-      (!bankAccNum || !bankIfsc || !bankCurrency)
-    ) {
-      return res.status(400).json({
-        message: "Bank Details (Account Number, IFSC, Currency) are required",
-      });
+    const isValidBankDetails = validateBankDetails( accountSubhead, bankDetails );
+    if (!isValidBankDetails) {
+      return res.status(400).json({ message: "Bank Details (Account Number, IFSC, Currency) are required", });
     }
+
+    const { bankAccNum, bankIfsc, bankCurrency } = bankDetails;
 
     // Check if an Organization already exists
-    const existingOrganization = await Organization.findOne({ organizationId });
- 
+    const existingOrganization = await Organization.findOne({ organizationId }); 
     if (!existingOrganization) {
-      return res.status(404).json({
-        message: "No Organization Found.",
-      });
+      return res.status(404).json({ message: "No Organization Found.", });
     }
 
-
     const generatedDateTime = generateTimeAndDateForDB(existingOrganization.timeZoneExp, existingOrganization.dateFormatExp, existingOrganization.dateSplit);
-    const openingDate = generatedDateTime.dateTime;
-    
+    const openingDate = generatedDateTime.dateTime;    
     
   
       // Check if an accounts with the same name already exists
       const existingAccount = await Account.findOne({
         accountName: accountName,
         organizationId: organizationId,
-    });
-  
+        });  
       if (existingAccount) {
         return res.status(409).json({
           message: "Account with the provided Account Name already exists.",
@@ -149,42 +63,24 @@ if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
       }
 
       // Encrypt bankAccNum before storing it
-      let encryptedBankAccNum = null;
-      if(bankAccNum){
-        encryptedBankAccNum = encrypt(bankAccNum);        
-      }
-      
-  
-      // Create a new Account
-      const newAccount = new Account({
-        organizationId,
-        accountName,
-        accountCode,
+      let encryptedBankAccNum = undefined;
+      if(bankAccNum){ encryptedBankAccNum = encrypt(bankAccNum); }
 
-        accountSubhead,
-        accountHead,
-        accountGroup,
-
-        openingDate,
-        description,
-        bankAccNum: encryptedBankAccNum,
-        bankIfsc,
-        bankCurrency,        
-      });
-  
-      
+      const newAccount = new Account({ ...cleanedData, organizationId, openingDate, bankAccNum: encryptedBankAccNum, bankIfsc, bankCurrency });      
       await newAccount.save();
   
       
-      res.status(201).json({
-        message: "Account created successfully."
-      });
+      res.status(201).json({ message: "Account created successfully." });
       console.log("Account created successfully",newAccount);
     } catch (error) {
       console.error("Error creating Account:", error);
       res.status(500).json({ message: "Internal server error." });
-    }  
+    } 
+    const endTime = Date.now();
+    const responseTime = endTime - startTime;
+    console.log(`Response time: ${responseTime} ms`); 
 };
+
 
 // Get all accounts for a given organizationId
 exports.getAllAccount = async (req, res) => {
@@ -432,6 +328,8 @@ exports.getOneTrailBalance = async (req, res) => {
   try {
       const { accountId } = req.params;
       const organizationId = req.user.organizationId;
+      console.log(accountId);
+      
 
       // Find the TrialBalance by accountId and organizationId
       const trialBalance = await TrialBalance.find({
@@ -451,6 +349,90 @@ exports.getOneTrailBalance = async (req, res) => {
       res.status(500).json({ message: "Internal server error." });
   }
 };
+
+
+//Account Structure
+const validStructure = {
+  Asset: {
+    Asset: [
+      "Asset",
+      "Current asset",
+      "Cash",
+      "Bank",
+      "Fixed asset",
+      "Stock",
+      "Payment Clearing",
+      "Sundry Debtors",
+    ],
+    Equity: ["Equity"],
+    Income: ["Income", "Other Income"],
+  },
+  Liability: {
+    Liabilities: [
+      "Current Liability",
+      "Credit Card",
+      "Long Term Liability",
+      "Other Liability",
+      "Overseas Tax Payable",
+      "Sundry Creditors",
+    ],
+    Expenses: ["Expense", "Cost of Goods Sold", "Other Expense"],
+  },
+};
+
+
+
+
+
+
+//Encrpytion 
+function encrypt(text) {
+  try {
+      const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+      let encrypted = cipher.update(text, 'utf8', 'hex');
+      encrypted += cipher.final('hex');
+
+      const authTag = cipher.getAuthTag().toString('hex'); // Get authentication tag
+
+      return `${iv.toString('hex')}:${encrypted}:${authTag}`; // Return IV, encrypted text, and tag
+  } catch (error) {
+      console.error("Encryption error:", error);
+      throw error;
+  }
+}
+
+
+//Decrpytion
+function decrypt(encryptedText) {
+  try {
+      // Split the encrypted text to get the IV, encrypted data, and authentication tag
+      const [ivHex, encryptedData, authTagHex] = encryptedText.split(':');
+      const iv = Buffer.from(ivHex, 'hex');
+      const authTag = Buffer.from(authTagHex, 'hex');
+
+      // Create the decipher with the algorithm, key, and IV
+      const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+      decipher.setAuthTag(authTag); // Set the authentication tag
+
+      let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+      decrypted += decipher.final('utf8');
+      return decrypted;
+  } catch (error) {
+      console.error("Decryption error:", error);
+      throw error;
+  }
+}
+
+
+//Clean Data 
+function cleanCustomerData(data) {
+  const cleanData = (value) => (value === null || value === undefined || value === "" || value === 0 ? undefined : value);
+  return Object.keys(data).reduce((acc, key) => {
+    acc[key] = cleanData(data[key]);
+    return acc;
+  }, {});
+}
+
 
 // Function to generate time and date for storing in the database
 function generateTimeAndDateForDB(
@@ -486,4 +468,26 @@ function generateTimeAndDateForDB(
     time: `${formattedTime} (${timeZoneName})`,
     dateTime: dateTime,
   };
+}
+
+
+
+// Validation function for account structure
+function validateAccountStructure(accountGroup, accountHead, accountSubhead) {
+  return (
+    validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead) ||
+    false
+  );
+}
+
+// Validation function for bank details
+function validateBankDetails(accountSubhead, bankDetails) {
+  if (accountSubhead === "Bank") {
+    // Validate if all bank details are present
+    return bankDetails.bankAccNum && bankDetails.bankIfsc && bankDetails.bankCurrency;
+  }
+
+  // Set bank details to undefined if not "Bank"
+  bankDetails.bankAccNum = bankDetails.bankIfsc = bankDetails.bankCurrency = undefined;
+  return true;
 }
