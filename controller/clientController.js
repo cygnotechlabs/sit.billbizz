@@ -1,3 +1,5 @@
+// v1.0
+
 const Organization = require("../database/model/organization");
 const Client = require("../database/model/client");
 const User = require("../database/model/user");
@@ -50,7 +52,7 @@ const createRolesForOrganization = async (organizationId) => {
           { action: "CurrencyEdit", note: "Edited Currency Information" },
           { action: "CurrencyDelete", note: "Deleted a Currency" },
 
-          // Organization Module - Invoice          
+          // Organization Module - Invoice(Settings)          
           { action: "InvoiceAdd", note: "Setup/Modified Invoice Setting" },
 
           // Organization Module - Payment Terms        
@@ -76,7 +78,6 @@ const createRolesForOrganization = async (organizationId) => {
           { action: "CustomersView", note: "Viewed Customer details" },          
           { action: "CustomersEdit", note: "Edited Customer information" },
           { action: "CustomersStatus", note: "Modified Customer Status" },
-
           { action: "CustomerImport", note: "Imported New Customers" },
 
 
@@ -85,11 +86,42 @@ const createRolesForOrganization = async (organizationId) => {
           { action: "AccountAdd", note: "Created a New Account" },          
           { action: "AccountView", note: "Viewed Account Information" },
           { action: "AccountEdit", note: "Edited Account Information" },
-
           { action: "AccountDelete", note: "Deleted an Account" },
           
           { action: "JournalAdd", note: "Added a Journal Entry" },
           { action: "JournalView", note: "Viewed Journal Entry" },
+
+
+          // Inventory Module
+          { action: "ItemAdd", note: "Created a New Item" },
+          { action: "ItemView", note: "Viewed Item Information" },          
+          { action: "ItemEdit", note: "Edited Item Information" },
+          { action: "ItemDelete", note: "Deleted an Item" },
+
+          // Inventory Module - Unit
+          { action: "UnitAdd", note: "Created a New Unit" },
+          { action: "UnitView", note: "Viewed Unit Information" },          
+          { action: "UnitEdit", note: "Edited Unit Information" },
+          { action: "UnitDelete", note: "Deleted a Unit" },
+
+          // Inventory Module - BMCR
+          { action: "BMCRAdd", note: "Created a New BMCR" },
+          { action: "BMCRView", note: "Viewed BMCR Information" },          
+          { action: "BMCREdit", note: "Edited BMCR Information" },
+          { action: "BMCRDelete", note: "Deleted a BMCR" },
+
+           // Inventory Module - Item(Settings)          
+           { action: "ItemSetting", note: "Setup/Modified Item Setting" },
+
+           //Supplier Module
+          { action: "SupplierCreate", note: "Created a New Supplier" },
+          { action: "SupplierView", note: "Viewed Supplier Details" },
+          { action: "SupplierEdit", note: "Edited Supplier Information" },
+          { action: "SupplierStatus", note: "Modified Supplier Status" },
+          { action: "SupplierImport", note: "Import New Suppliers" },
+
+
+          
 
 
 

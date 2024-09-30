@@ -1,3 +1,5 @@
+// v1.0
+
 const User = require('../database/model/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
