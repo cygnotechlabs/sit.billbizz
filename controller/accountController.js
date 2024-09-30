@@ -343,9 +343,7 @@ exports.deleteAccount = async (req, res) => {
 exports.getOneTrailBalance = async (req, res) => {
   try {
       const { accountId } = req.params;
-      const organizationId = req.user.organizationId;
-      console.log(accountId);
-      
+      const organizationId = req.user.organizationId;      
 
       // Find the TrialBalance by accountId and organizationId
       const trialBalance = await TrialBalance.find({
