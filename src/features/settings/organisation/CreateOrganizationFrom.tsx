@@ -34,7 +34,6 @@ interface InputData {
   phoneNumberCode: string;
 }
 
-
 const CreateOrganizationForm = () => {
   const [additionalData, setAdditionalData] = useState<any | null>([]);
 
@@ -49,11 +48,11 @@ const CreateOrganizationForm = () => {
   const [tooltipState, setTooltipState] = useState<{ [key: string]: boolean }>({
     industry: false,
     address: false,
-    baseCurrency:false
+    baseCurrency: false,
   });
 
   const [inputData, setInputData] = useState<InputData>({
-    organizationLogo: "", 
+    organizationLogo: "",
     organizationName: "",
     organizationCountry: "",
     organizationIndustry: "",
@@ -74,8 +73,6 @@ const CreateOrganizationForm = () => {
     phoneNumberCode: "",
   });
 
-  console.log(inputData);
-  
 
   const getDropdownList = async () => {
     try {
@@ -122,14 +119,16 @@ const CreateOrganizationForm = () => {
       const apiResponse = await getOneOrganization(url);
       const { response, error } = apiResponse;
       if (!error && response?.data) {
-        setInputData(response.data);       
-        setInputData((prevData:any) => ({
+        setInputData(response.data);
+        setInputData((prevData: any) => ({
           ...prevData,
           organizationName: response.data.organizationName,
-          organizationPhNum:Number (response.data.organizationPhNum)
+          organizationPhNum: Number(response.data.organizationPhNum),
         }));
       } else {
-        toast.error(error.response.data.message || "Error fetching organization");
+        toast.error(
+          error.response.data.message || "Error fetching organization"
+        );
       }
     } catch (error) {
       toast.error("Error fetching organization");
@@ -218,7 +217,6 @@ const CreateOrganizationForm = () => {
       const url = `${endponits.CREATE_ORGANIZATION}`;
       const apiResponse = await createOrganization(url, inputData);
       // console.log(apiResponse, "api response");
-
       const { response, error } = apiResponse;
       if (!error && response) {
         toast.success(response.data.message);
@@ -263,13 +261,12 @@ const CreateOrganizationForm = () => {
   const renderCustomTooltip = (content: string) => {
     return (
       <Tooltip
-      fontsize="12px"
+        fontsize="12px"
         content={content}
         textColor="#ffffff"
         bgColor="#585953"
         arrowColor="transparant"
         width="250px"
-      
       />
     );
   };
@@ -377,19 +374,19 @@ const CreateOrganizationForm = () => {
               >
                 <p> Industry </p>
                 <div
-            className="mt-1"
-            onMouseEnter={() => handleTooltipToggle("industry", true)}
-            onMouseLeave={() => handleTooltipToggle("industry", false)}
-          >
-            <Info size={18} color={"currentColor"} stroke={3} />
-            {tooltipState.industry && (
-              <div className="absolute z-10 -mt-32 -ms-28">
-                {renderCustomTooltip(
-                  "Select your industry type to help us fine-tune your experience. If you can't find your industry type from the list of options, you can input your own."
-                )}
-              </div>
-            )}
-          </div>
+                  className="mt-1"
+                  onMouseEnter={() => handleTooltipToggle("industry", true)}
+                  onMouseLeave={() => handleTooltipToggle("industry", false)}
+                >
+                  <Info size={18} color={"currentColor"} stroke={3} />
+                  {tooltipState.industry && (
+                    <div className="absolute z-10 -mt-32 -ms-28">
+                      {renderCustomTooltip(
+                        "Select your industry type to help us fine-tune your experience. If you can't find your industry type from the list of options, you can input your own."
+                      )}
+                    </div>
+                  )}
+                </div>
               </label>
               <div className=" w-full mt-2.5 relative">
                 <select
@@ -424,21 +421,20 @@ const CreateOrganizationForm = () => {
               htmlFor="organizationAddress"
             >
               Organization Address{" "}
-              
               <div
-            className="mt-1"
-            onMouseEnter={() => handleTooltipToggle("address", true)}
-            onMouseLeave={() => handleTooltipToggle("address", false)}
-          >
-            <Info size={18} color={"currentColor"}  stroke={3}/>
-            {tooltipState.address && (
-              <div className="absolute -mt-24 -ms-28">
-                {renderCustomTooltip(
-                  "You can display your organization's address in your preferred style. Edit  it in Settings > Preferences > General."
+                className="mt-1"
+                onMouseEnter={() => handleTooltipToggle("address", true)}
+                onMouseLeave={() => handleTooltipToggle("address", false)}
+              >
+                <Info size={18} color={"currentColor"} stroke={3} />
+                {tooltipState.address && (
+                  <div className="absolute -mt-24 -ms-28">
+                    {renderCustomTooltip(
+                      "You can display your organization's address in your preferred style. Edit  it in Settings > Preferences > General."
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
             </label>
           </div>
           <div className="grid grid-cols-2 gap-4 -mt-2 space-y-4 ">
@@ -463,10 +459,7 @@ const CreateOrganizationForm = () => {
             </div>
             <div>
               <div className="-mt-4">
-                <label
-                  className="text-slate-600 "
-                  htmlFor="City"
-                >
+                <label className="text-slate-600 " htmlFor="City">
                   City
                 </label>
               </div>
@@ -481,10 +474,7 @@ const CreateOrganizationForm = () => {
 
             <div>
               <div className="-mt-4">
-                <label
-                  className="text-slate-600 "
-                  htmlFor="pincode"
-                >
+                <label className="text-slate-600 " htmlFor="pincode">
                   Pin / Zip / Post code
                 </label>
               </div>
@@ -499,10 +489,7 @@ const CreateOrganizationForm = () => {
             </div>
             <div className="relative ">
               <div className="-mt-4">
-                <label
-                  className="text-slate-600 "
-                  htmlFor="state"
-                >
+                <label className="text-slate-600 " htmlFor="state">
                   State / Region / County
                 </label>
               </div>
@@ -535,17 +522,12 @@ const CreateOrganizationForm = () => {
 
             <div>
               <div className="-mt-4">
-                <label
-                  className="text-slate-600 "
-                  htmlFor="organizationPhNum"
-                >
+                <label className="text-slate-600 " htmlFor="organizationPhNum">
                   Phone
                 </label>
               </div>
               <div className="flex">
-                <div className="relative w-24  mt-2 ">
-                
-                </div>
+                <div className="relative w-24  mt-2 "></div>
               </div>
               <div className="w-full border-0">
                 <PhoneInput
@@ -567,7 +549,6 @@ const CreateOrganizationForm = () => {
             </div>
           </div>
         </div>
-
         <p className="mt-4">
           <b>Website Address</b>
         </p>
@@ -596,19 +577,21 @@ const CreateOrganizationForm = () => {
               >
                 Base Currency{" "}
                 <div
-            className="mt-1"
-            onMouseEnter={() => handleTooltipToggle("baseCurrency", true)}
-            onMouseLeave={() => handleTooltipToggle("baseCurrency", false)}
-          >
-            <Info size={18} color={"currentColor"} stroke={3}/>
-            {tooltipState.baseCurrency && (
-              <div className="absolute z-10 -top-5 left-32">
-                {renderCustomTooltip(
-                  "Your transactions and financial reports will be shown in the base currency."
-                )}
-              </div>
-            )}
-          </div>
+                  className="mt-1"
+                  onMouseEnter={() => handleTooltipToggle("baseCurrency", true)}
+                  onMouseLeave={() =>
+                    handleTooltipToggle("baseCurrency", false)
+                  }
+                >
+                  <Info size={18} color={"currentColor"} stroke={3} />
+                  {tooltipState.baseCurrency && (
+                    <div className="absolute z-10 -top-5 left-32">
+                      {renderCustomTooltip(
+                        "Your transactions and financial reports will be shown in the base currency."
+                      )}
+                    </div>
+                  )}
+                </div>
               </label>
 
               <div className="relative w-full mt-3">

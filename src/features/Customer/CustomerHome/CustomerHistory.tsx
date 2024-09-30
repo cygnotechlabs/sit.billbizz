@@ -89,7 +89,7 @@ const CustomerHistory = ({ id }: Props) => {
             <p>No history available.</p>
           )}
 
-          <div className="flex flex-col relative pb-8 px-2 my-8 h-96 overflow-x-scroll hide-scrollbar">
+          <div className="flex flex-col relative pb-8 px-2 my-8  overflow-x-scroll hide-scrollbar" style={{height:"100vh"}}>
             {historyData.map((item: any, index: number) => {
               const circleStyle = getCircleStyle(item.title);
               const { date, time } = formatDateTime(item.date);
@@ -104,7 +104,7 @@ const CustomerHistory = ({ id }: Props) => {
                         {item.initials}
                       </div>
                       <div className="flex items-center justify-center my-3">
-                        <div className="w-[2px] left-4 bg-[#DADBDD] h-14"></div>
+                        <div className="w-[2px] left-4 bg-[#DADBDD] h-16"></div>
                       </div>
                     </div>
 
