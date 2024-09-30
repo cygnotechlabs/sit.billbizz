@@ -98,89 +98,6 @@ exports.addAccount = async (req, res) => {
 };
 
 
-// Get all accounts for a given organizationId
-exports.getAllAccount = async (req, res) => {
-    try {
-      const organizationId = req.user.organizationId;
-
-        // Find all accounts where organizationId matches
-        const accounts = await Account.find(
-          { organizationId: organizationId },{ bankAccNum: 0 } 
-      );
-
-    if (!accounts.length) {
-      return res.status(404).json({
-        message: "No accounts found for the provided organization ID.",
-      });
-    }
-
-    res.status(200).json(accounts);
-  } catch (error) {
-    console.error("Error fetching accounts:", error);
-    res.status(500).json({ message: "Internal server error." });
-  }
-};
-
-//Get one Account for a given organizationId
-exports.getOneAccount = async (req, res) => {
-  try {
-    const { accountId } = req.params;
-    const organizationId = req.user.organizationId;
-
-
-    // Find the account by accountId and organizationId
-    const account = await Account.findOne({
-      _id: accountId,
-      organizationId: organizationId,
-    });
-
-    if (!account) {
-      return res.status(404).json({
-        message:
-          "Account not found for the provided Organization ID and Account ID.",
-      });
-    }
-
-    res.status(200).json(account);
-  } catch (error) {
-    console.error("Error fetching account:", error);
-    res.status(500).json({ message: "Internal server error." });
-  }
-};
-
-
-// Get only bankAccNum for a given organizationId and accountId
-exports.getBankAccNum = async (req, res) => {
-  try {
-      const { accountId } = req.params;
-      const organizationId = req.user.organizationId;
-
-      const account = await Account.findOne({
-          _id: accountId,
-          organizationId: organizationId,
-      }, 'bankAccNum'); 
-
-      if (!account) {
-          return res.status(404).json({
-              message: "Account not found for the provided Organization ID and Account ID.",
-          });
-      }
-
-      // Decrypt the bankAccNum
-      let decryptedBankAccNum = null;
-      if (account.bankAccNum) {
-          decryptedBankAccNum = decrypt(account.bankAccNum);
-      }
-
-      res.status(200).json({ bankAccNum: decryptedBankAccNum });
-  } catch (error) {
-      console.error("Error fetching bank account number:", error);
-      res.status(500).json({ message: "Internal server error." });
-  }
-};
-
-
-
 //Edit account
 exports.editAccount = async (req, res) => {
   console.log("Edit Account:", req.body);
@@ -255,6 +172,90 @@ exports.editAccount = async (req, res) => {
   }
 };
 
+
+// Get all accounts for a given organizationId
+exports.getAllAccount = async (req, res) => {
+    try {
+      const organizationId = req.user.organizationId;
+
+        // Find all accounts where organizationId matches
+        const accounts = await Account.find(
+          { organizationId: organizationId },{ bankAccNum: 0 } 
+      );
+
+    if (!accounts.length) {
+      return res.status(404).json({
+        message: "No accounts found for the provided organization ID.",
+      });
+    }
+
+    res.status(200).json(accounts);
+  } catch (error) {
+    console.error("Error fetching accounts:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
+//Get one Account for a given organizationId
+exports.getOneAccount = async (req, res) => {
+  try {
+    const { accountId } = req.params;
+    const organizationId = req.user.organizationId;
+
+
+    // Find the account by accountId and organizationId
+    const account = await Account.findOne({
+      _id: accountId,
+      organizationId: organizationId,
+    });
+
+    if (!account) {
+      return res.status(404).json({
+        message:
+          "Account not found for the provided Organization ID and Account ID.",
+      });
+    }
+
+    res.status(200).json(account);
+  } catch (error) {
+    console.error("Error fetching account:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
+// Get only bankAccNum for a given organizationId and accountId
+exports.getBankAccNum = async (req, res) => {
+  try {
+      const { accountId } = req.params;
+      const organizationId = req.user.organizationId;
+
+      const account = await Account.findOne({
+          _id: accountId,
+          organizationId: organizationId,
+      }, 'bankAccNum'); 
+
+      if (!account) {
+          return res.status(404).json({
+              message: "Account not found for the provided Organization ID and Account ID.",
+          });
+      }
+
+      // Decrypt the bankAccNum
+      let decryptedBankAccNum = null;
+      if (account.bankAccNum) {
+          decryptedBankAccNum = decrypt(account.bankAccNum);
+      }
+
+      res.status(200).json({ bankAccNum: decryptedBankAccNum });
+  } catch (error) {
+      console.error("Error fetching bank account number:", error);
+      res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
 //Delete account
 exports.deleteAccount = async (req, res) => {
   try {
@@ -315,6 +316,11 @@ exports.getOneTrailBalance = async (req, res) => {
 };
 
 
+
+
+
+
+
 //Account Structure
 const validStructure = {
   Asset: {
@@ -343,10 +349,6 @@ const validStructure = {
     Expenses: ["Expense", "Cost of Goods Sold", "Other Expense"],
   },
 };
-
-
-
-
 
 
 //Encrpytion 
@@ -433,7 +435,6 @@ function generateTimeAndDateForDB(
     dateTime: dateTime,
   };
 }
-
 
 
 // Validation function for account structure
