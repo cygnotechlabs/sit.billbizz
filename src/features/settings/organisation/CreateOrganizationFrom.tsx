@@ -53,7 +53,7 @@ const CreateOrganizationForm = () => {
   });
 
   const [inputData, setInputData] = useState<InputData>({
-    organizationLogo: "", //image field
+    organizationLogo: "", 
     organizationName: "",
     organizationCountry: "",
     organizationIndustry: "",
@@ -74,6 +74,8 @@ const CreateOrganizationForm = () => {
     phoneNumberCode: "",
   });
 
+  console.log(inputData);
+  
 
   const getDropdownList = async () => {
     try {
@@ -113,7 +115,6 @@ const CreateOrganizationForm = () => {
       console.log("Error in fetching currency data", error);
     }
   };
-console.log(inputData.organizationPhNum,"in");
 
   const getOrganization = async () => {
     try {
@@ -130,9 +131,10 @@ console.log(inputData.organizationPhNum,"in");
           organizationName: response.data.organizationName,
         }));
       } else {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.message || "Error fetching organization");
       }
     } catch (error) {
+      toast.error("Error fetching organization");
       console.error("Error fetching organization:", error);
     }
   };
