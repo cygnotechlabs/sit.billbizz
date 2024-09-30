@@ -1,4 +1,4 @@
-// v1.0
+// v1.1
 
 const Organization = require("../database/model/organization");
 const Client = require("../database/model/client");
@@ -119,189 +119,8 @@ const createRolesForOrganization = async (organizationId) => {
           { action: "SupplierEdit", note: "Edited Supplier Information" },
           { action: "SupplierStatus", note: "Modified Supplier Status" },
           { action: "SupplierImport", note: "Import New Suppliers" },
-
-
+    
           
-
-
-
-
-
-    
-          // Vendors
-          { action: "Suppliersview", note: "Viewed all Suppliers" },
-          { action: "VendorsView", note: "Viewed vendor details" },
-          { action: "VendorsCreate", note: "Created a new vendor" },
-          { action: "VendorsEdit", note: "Edited vendor information" },
-          { action: "VendorsDelete", note: "Deleted a vendor" },
-    
-          // Item
-          { action: "ItemView", note: "Viewed item details" },
-          { action: "ItemCreate", note: "Created a new item" },
-          { action: "ItemEdit", note: "Edited item information" },
-          { action: "ItemDelete", note: "Deleted an item" },
-    
-          // Inventory Adjustments
-          { action: "InventoryAdjustmentsView", note: "Viewed inventory adjustments" },
-          { action: "InventoryAdjustmentsCreate", note: "Created inventory adjustment" },
-          { action: "InventoryAdjustmentsDelete", note: "Deleted inventory adjustment" },
-    
-          // Warehouses
-          { action: "WarehousesView", note: "Viewed warehouse details" },
-          { action: "WarehousesCreate", note: "Created a new warehouse" },
-          { action: "WarehousesEdit", note: "Edited warehouse information" },
-          { action: "WarehousesDelete", note: "Deleted a warehouse" },
-    
-          // Price List
-          { action: "PriceListView", note: "Viewed price list" },
-          { action: "PriceListCreate", note: "Created a new price list" },
-          { action: "PriceListEdit", note: "Edited price list" },
-          { action: "PriceListDelete", note: "Deleted a price list" },
-    
-          // Banking
-          { action: "BankingView", note: "Viewed banking details" },
-          { action: "BankingCreate", note: "Created a new banking entry" },
-          { action: "BankingEdit", note: "Edited banking details" },
-          { action: "BankingDelete", note: "Deleted banking entry" },
-    
-          // Invoices
-          { action: "InvoicesView", note: "Viewed invoice details" },
-          { action: "InvoicesCreate", note: "Created a new invoice" },
-          { action: "InvoicesEdit", note: "Edited invoice details" },
-          { action: "InvoicesDelete", note: "Deleted an invoice" },
-    
-          // Customer Payments
-          { action: "CustomerPaymentsView", note: "Viewed customer payments" },
-          { action: "CustomerPaymentsCreate", note: "Created a new customer payment" },
-          { action: "CustomerPaymentsEdit", note: "Edited customer payment details" },
-          { action: "CustomerPaymentsDelete", note: "Deleted customer payment" },
-    
-          // Quotes
-          { action: "QuotesView", note: "Viewed quotes" },
-          { action: "QuotesCreate", note: "Created a new quote" },
-          { action: "QuotesEdit", note: "Edited quote details" },
-          { action: "QuotesDelete", note: "Deleted a quote" },
-    
-          // Delivery Challan
-          { action: "DeliveryChallanView", note: "Viewed delivery challan" },
-          { action: "DeliveryChallanCreate", note: "Created a new delivery challan" },
-          { action: "DeliveryChallanEdit", note: "Edited delivery challan details" },
-          { action: "DeliveryChallanDelete", note: "Deleted a delivery challan" },
-    
-          // Sales Orders
-          { action: "SalesOrdersView", note: "Viewed sales orders" },
-          { action: "SalesOrdersCreate", note: "Created a new sales order" },
-          { action: "SalesOrdersEdit", note: "Edited sales order details" },
-          { action: "SalesOrdersDelete", note: "Deleted a sales order" },
-    
-          // Credit Notes
-          { action: "CreditNotesView", note: "Viewed credit notes" },
-          { action: "CreditNotesCreate", note: "Created a new credit note" },
-          { action: "CreditNotesEdit", note: "Edited credit note details" },
-          { action: "CreditNotesDelete", note: "Deleted a credit note" },
-    
-          // Bills
-          { action: "BillsView", note: "Viewed bills" },
-          { action: "BillsCreate", note: "Created a new bill" },
-          { action: "BillsEdit", note: "Edited bill details" },
-          { action: "BillsDelete", note: "Deleted a bill" },
-    
-          // Vendor Payments
-          { action: "VendorPaymentsView", note: "Viewed vendor payments" },
-          { action: "VendorPaymentsCreate", note: "Created a new vendor payment" },
-          { action: "VendorPaymentsEdit", note: "Edited vendor payment details" },
-          { action: "VendorPaymentsDelete", note: "Deleted a vendor payment" },
-    
-          // Expenses
-          { action: "ExpensesView", note: "Viewed expenses" },
-          { action: "ExpensesCreate", note: "Created a new expense" },
-          { action: "ExpensesEdit", note: "Edited expense details" },
-          { action: "ExpensesDelete", note: "Deleted an expense" },
-    
-          // Purchase Orders
-          { action: "PurchaseOrdersView", note: "Viewed purchase orders" },
-          { action: "PurchaseOrdersCreate", note: "Created a new purchase order" },
-          { action: "PurchaseOrdersEdit", note: "Edited purchase order details" },
-          { action: "PurchaseOrdersDelete", note: "Deleted a purchase order" },
-    
-          // Vendor Credits
-          { action: "VendorCreditsView", note: "Viewed vendor credits" },
-          { action: "VendorCreditsCreate", note: "Created a new vendor credit" },
-          { action: "VendorCreditsEdit", note: "Edited vendor credit details" },
-          { action: "VendorCreditsDelete", note: "Deleted a vendor credit" },
-    
-          // Chart of Accounts
-          { action: "ChartofAccountsView", note: "Viewed chart of accounts" },
-          { action: "ChartofAccountsCreate", note: "Created a new chart of accounts" },
-          { action: "ChartofAccountsEdit", note: "Edited chart of accounts details" },
-          { action: "ChartofAccountsDelete", note: "Deleted chart of accounts" },
-    
-          // Journals
-          { action: "JournalsView", note: "Viewed journals" },
-          { action: "JournalsCreate", note: "Created a new journal" },
-          { action: "JournalsEdit", note: "Edited journal details" },
-          { action: "JournalsDelete", note: "Deleted a journal" },
-    
-          // Budget
-          { action: "BudgetView", note: "Viewed budget" },
-          { action: "BudgetCreate", note: "Created a new budget" },
-          { action: "BudgetEdit", note: "Edited budget details" },
-          { action: "BudgetDelete", note: "Deleted a budget" },
-    
-          // Tasks
-          { action: "TasksView", note: "Viewed tasks" },
-          { action: "TasksCreate", note: "Created a new task" },
-          { action: "TasksEdit", note: "Edited task details" },
-          { action: "TasksDelete", note: "Deleted a task" },
-    
-          // Projects
-          { action: "ProjectsView", note: "Viewed projects" },
-          { action: "ProjectsCreate", note: "Created a new project" },
-          { action: "ProjectsEdit", note: "Edited project details" },
-          { action: "ProjectsDelete", note: "Deleted a project" },
-    
-          // GST
-          { action: "GSTViewReturnDetails", note: "Viewed GST return details" },
-          { action: "GSTPushTransactions", note: "Pushed GST transactions" },
-          { action: "GSTReconcileTransactions", note: "Reconciled GST transactions" },
-          { action: "GSTFileReturns", note: "Filed GST returns" },
-    
-          // Documents
-          { action: "DocumentsViewDocuments", note: "Viewed documents" },
-          { action: "DocumentsUploadDocuments", note: "Uploaded documents" },
-          { action: "DocumentsDeleteDocuments", note: "Deleted documents" },
-          { action: "DocumentsManageFolder", note: "Managed document folders" },
-    
-          // e-Way Bill
-          { action: "GenerateEWayBill", note: "Generated an e-Way bill" },
-          { action: "CancelEWayBill", note: "Cancelled an e-Way bill" },
-    
-          // Settings
-          { action: "UpdateOrganizationProfile", note: "Updated organization profile" },
-          { action: "Users", note: "Managed users" },
-          { action: "ExportData", note: "Exported data" },
-          { action: "GeneralPreferences", note: "Updated general preferences" },
-          { action: "AccountantPreferences", note: "Updated accountant preferences" },
-          { action: "Taxes", note: "Managed taxes" },
-          { action: "ProvideAccessToProtectedData", note: "Provided access to protected data" },
-          { action: "PaymentTerms", note: "Managed payment terms" },
-          { action: "Templates", note: "Managed templates" },
-          { action: "EmailTemplate", note: "Managed email templates" },
-          { action: "ReportingTags", note: "Managed reporting tags" },
-          { action: "ManageIntegration", note: "Managed integrations" },
-          { action: "Automation", note: "Managed automation" },
-          { action: "IncomingWebhook", note: "Managed incoming webhook" },
-          { action: "Signal", note: "Managed signal settings" },
-    
-          // Dashboard
-          { action: "TotalPayables", note: "Viewed total payables" },
-          { action: "TotalReceivables", note: "Viewed total receivables" },
-          { action: "CashFlow", note: "Viewed cash flow" },
-          { action: "IncomeAndExpenses", note: "Viewed income and expenses" },
-          { action: "YourTopExpense", note: "Viewed top expense" },
-          { action: "Projects", note: "Viewed projects on dashboard" },
-          { action: "BankAndCreditCards", note: "Viewed bank and credit cards" },
-          { action: "AccountWatchlist", note: "Viewed account watchlist" },
         ],
       },
     ];
@@ -326,9 +145,9 @@ const createCurrencyForOrganization = async (organizationId) => {
   try {
     
     // Check if the Currency already exist for the organization
-    const existingRoles = await Currency.find({ organizationId:organizationId });
+    const existingCurrency = await Currency.find({ organizationId:organizationId });
     
-    if (existingRoles.length > 0) {
+    if (existingCurrency.length > 0) {
       console.log("Currency already exist for this organization.");
       return { success: true, message: "Currency already exist for this organization." };
     }
@@ -704,18 +523,6 @@ exports.getAllClient = async (req, res) => {
   }
 };
 
-
-
-// Dev phase only - Get  OrganizationId
-exports.getOrganizationId = (req, res) => {
-  try {
-    const organizationId = "INDORG0001";
-    res.status(200).json({ organizationId });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json("Internal server error");
-  }
-};
 
 
 // Flush DB
