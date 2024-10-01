@@ -39,7 +39,7 @@ function DebitNote({}: Props) {
           <TypesOfDebits/>
           </div>
           <div className="flex pl-3 pr-3 items-center gap-4 mt-2">
-            <div className="w-[80%]">
+            <div className="w-[90%]">
               <SearchBar  onSearchChange={setSearchValue} searchValue={searchValue} placeholder="Search Sales Order" />
             </div>
             <DebitSort/>
