@@ -56,13 +56,13 @@ const NewPaymentMadeOrderTable = ({}: Props) => {
 
   return (
     <div>
-      <div className="rounded-lg border-2 border-tableBorder mt-5">
+      <div className="rounded-lg border-2 border-tableBorder mt-3">
         <table className="min-w-full bg-white rounded-lg relative pb-4 border-dropdownText">
           <thead className="text-[12px] text-center text-dropdownText">
-            <tr className="bg-lightPink">
+            <tr className="bg-[#FDF8F0]">
               {PaymentMadeUnpaidBillTable.map((item, index) => (
                 <th
-                  className="py-2 px-4 font-medium border-b border-tableBorder relative"
+                  className="py-3 px-4 font-medium border-b border-tableBorder relative"
                   key={index}
                 >
                   {item}
@@ -105,7 +105,7 @@ const NewPaymentMadeOrderTable = ({}: Props) => {
           </tbody>
         </table>
       </div>
-      <p className="text-right mt-2">Total: 0.00</p>
+      <p className="text-right text-textColor text-sm mt-4">Total <span className="ms-20 font-semibold">0.00</span></p>
     </div>
   );
 };
