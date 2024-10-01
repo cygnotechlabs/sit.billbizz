@@ -1,4 +1,3 @@
-import CheveronLeftIcon from "../../../../assets/icons/CheveronLeftIcon";
 import CehvronDown from "../../../../assets/icons/CehvronDown";
 import Button from "../../../../Components/Button";
 import { useEffect, useRef, useState } from "react";
@@ -11,7 +10,7 @@ import UserRound from "../../../../assets/icons/user-round";
 
 type Props = {};
 
-const NewPaymentMade = ({}: Props) => {
+const NewPaymentMade = ({ }: Props) => {
   const [searchValue, setSearchValue] = useState<string>("");
   // const [selected, setSelected] = useState<string | null>(null);
   const [openDropdownIndex, setOpenDropdownIndex] = useState<string | null>(
@@ -46,21 +45,11 @@ const NewPaymentMade = ({}: Props) => {
 
   return (
     <div className="px-8">
-      <div className="flex gap-5">
-        <div className="flex justify-center items-center h-11 w-11 bg-tertiary_main rounded-full">
-          <CheveronLeftIcon />
-        </div>
-
-        <div className="flex justify-center items-center">
-          <h4 className="font-bold text-xl text-textColor ">Bill Payment</h4>
-        </div>
-      </div>
-
       <div className="grid grid-cols-12 gap-4 py-5 rounded-lg">
         <div className="col-span-8">
           <div className="bg-secondary_main p-5 min-h-max rounded-xl relative ">
             <p className="text-textColor text-xl font-bold"></p>
-            <div className=" mt-5 space-y-6">
+            <div className=" space-y-5">
               <div className="cols-span-12">
                 <div className="col-span-5">
                   <label className="block text-sm mb-1 text-labelColor">
@@ -70,9 +59,9 @@ const NewPaymentMade = ({}: Props) => {
                     className="relative w-full"
                     onClick={() => toggleDropdown("supplier")}
                   >
-                    <div className="items-center flex appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500 flex">
-  <p className="w-3/4">Select or add Supplier</p>
-</div>
+                    <div className="items-center  appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500 flex">
+                      <p className="w-3/4">Select or add Supplier</p>
+                    </div>
 
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                       <CehvronDown color="gray" />
@@ -115,17 +104,15 @@ const NewPaymentMade = ({}: Props) => {
                 </div>
               </div>
               <div className="cols-12">
-              <p className="font-bold inline-flex items-center" style={{ color: '#820000' }}>
-<UserRound color="#820000"/>  See vendor details
-</p>
- </div>
+                <p className="font-bold inline-flex items-center text-sm" style={{ color: '#820000' }}>
+                  <UserRound color="#820000" /> &nbsp;  See vendor details
+                </p>
+              </div>
 
 
-             
-             
 
               <div className="grid grid-cols-2 gap-4">
-              <div className="">
+                <div className="">
                   <label className="block text-sm mb-1 text-labelColor">
                     Payment Date
                   </label>
@@ -154,7 +141,7 @@ const NewPaymentMade = ({}: Props) => {
                     Payment ID
                   </label>
 
-                  
+
                   <div
                     className="relative w-full"
                     onClick={() => toggleDropdown("warehouseAddress")}
@@ -216,37 +203,23 @@ const NewPaymentMade = ({}: Props) => {
                 </div>
                 <div className="">
                   <label className="block text-sm mb-1 text-labelColor">
-                    Payment ID New 
+                    Payment ID New
                   </label>
                   <input
                     placeholder="Value"
                     type="text"
                     className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9"
                   />
-                  {openDropdownIndex === "warehouseAddress" && (
-                    <div
-                      ref={dropdownRef}
-                      className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 -m-9 w-[40%] space-y-1"
-                    >
-                      <SearchBar
-                        searchValue={searchValue}
-                        onSearchChange={setSearchValue}
-                        placeholder="Select Supplier"
-                      />
-
-                     
-                    </div>
-                  )}
                 </div>
               </div>
-            
+
             </div>
 
 
-            <div className="grid grid-cols-2 gap-4  mt-3">
+            <div className="grid grid-cols-2 gap-4  mt-5">
               <div>
                 <label className="block text-sm mb-1 text-labelColor">
-                  Shipment Preference
+                Payment Mode
                 </label>
                 <div className="relative w-full">
                   <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
@@ -268,7 +241,7 @@ const NewPaymentMade = ({}: Props) => {
                 <div className="relative w-full">
                   <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                     <option value="" className="text-gray">
-                      18/09/2024
+                    Petty Cash
                     </option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -276,82 +249,30 @@ const NewPaymentMade = ({}: Props) => {
                   </div>
                 </div>
               </div>
-          
-      
             </div>
-
-            {/* <label className="block text-sm mb-1 text-labelColor mt-5">
-              Payment Mode
-            </label>
-            <div className="grid grid-cols-2 bg-red-500 gap-4">
-              <div>
-                <input
-                  placeholder="Cash"
-                  type="text"
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9"
-                />
-              </div>
-
+            <div className="grid grid-cols-2 gap-4  mt-5">
               <div>
                 <label className="block text-sm mb-1 text-labelColor">
-                  Purchase Order Date
+                 Reference#
                 </label>
                 <div className="relative w-full">
-                  <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                    <option value="" className="text-gray">
-                      18/09/2024
-                    </option>
-                  </select>
+                  <input type="text" className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                  placeholder="Value"
+                  />
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <CehvronDown color="gray" />
-                  </div>
-                </div>
-              </div>
-            </div> */}
-            <div className="grid grid-cols-2 gap-4  mt-3">
-              <div>
-                <label className="block text-sm mb-1 text-labelColor">
-                  Shipment Preference
-                </label>
-                <div className="relative w-full">
-                  <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                    <option value="" className="text-gray">
-                      Cash
-                    </option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <CehvronDown color="gray" />
                   </div>
                 </div>
               </div>
 
-
-              <div>
-                <label className="block text-sm mb-1 text-labelColor">
-                  Paid  Through
-                </label>
-                <div className="relative w-full">
-                  <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                    <option value="" className="text-gray">
-                      18/09/2024
-                    </option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <CehvronDown color="gray" />
-                  </div>
-                </div>
-              </div>
-          
-      
             </div>
-            <p className="font-bold mt-4">Unpaid Bill</p>
+            <p className="font-bold text-textColor text-sm mt-4">Unpaid Bill</p>
             <NewPaymentMadeOrderTable />
             <button className="mt-1">
-           
+
             </button>{" "}
             <br />
             <div className="text-sm">
-              <label htmlFor="" className="">
+              <label htmlFor="" className="text-sm text-textColor">
                 Notes
                 <input
                   name=""
@@ -362,29 +283,29 @@ const NewPaymentMade = ({}: Props) => {
               </label>
             </div>
             <div className="text-sm mt-3">
-              <label className="block mb-1">
+              <label className="block mb-2 text-textColor">
                 Attachments
-                <div className="border-dashed border border-neutral-300 p-2 rounded flex flex-col gap-2 justify-center items-center">
-  <span className="text-center inline-flex items-center gap-2">
-    <Upload /> 
-    Upload File 
-  </span>
-  <div className="text-center">
-    Maximum File Size: 1 MB
-  </div>
-</div>
+                <div className="mt-2 border-dashed border-2 border-neutral-300 p-4 rounded-lg flex flex-col gap-2 justify-center items-center">
+                  <span className="text-center text-dropdownText font-semibold text-xs inline-flex items-center gap-2">
+                    <Upload />
+                    Upload File
+                  </span>
+                  <div className="text-center text-xs text-textColor">
+                    Maximum File Size: 1 MB
+                  </div>
+                </div>
 
 
 
                 <p className="text-xs mt-1 text-gray-600">
-                 
+
                 </p>
                 <input
                   type="file"
                   className="hidden"
                   value=""
                   name="documents"
-                  // onChange={(e)=>handleFileChange(e)}
+                // onChange={(e)=>handleFileChange(e)}
                 />
               </label>
             </div>
@@ -401,25 +322,25 @@ const NewPaymentMade = ({}: Props) => {
                 <p className="text-base">0.00</p>
               </div>
 
-              <div className="col-span-9 mt-1">
+              <div className="col-span-9 mt-3">
                 <p>Amount Used for Payments</p>
               </div>
-              <div className="col-span-3 mt-1">
+              <div className="col-span-3 mt-3">
                 <p className="text-base">0.00</p>
               </div>
 
-              <div className="col-span-9">
+              <div className="col-span-9 mt-3">
                 <p> Amount Refunded</p>
               </div>
-              <div className="col-span-3">
+              <div className="col-span-3 mt-3">
                 <p className="text-base"> 0.00</p>
               </div>
 
-              <div className="col-span-9 mt-1">
-                <p className="text-base">Amount in Excess</p>
+              <div className="col-span-9 mt-3">
+                <p className="text-sm">Amount in Excess</p>
               </div>
-              <div className="col-span-3 mt-1">
-                <p className="text-base">0.00</p>
+              <div className="col-span-3 mt-3">
+                <p className="text-base -ms-3">₹ 0.00</p>
               </div>
             </div>
 
