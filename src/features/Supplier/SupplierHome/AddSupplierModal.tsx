@@ -14,7 +14,6 @@ import Trash2 from "../../../assets/icons/Trash2";
 import Globe from "../../../assets/icons/Globe";
 import Eye from "../../../assets/icons/Eye";
 import EyeOff from "../../../assets/icons/EyeOff";
-import Pen from "../../../assets/icons/Pen";
 
 type Props = { page?: string };
 type SupplierData = {
@@ -705,7 +704,7 @@ const AddSupplierModal = ({ page }: Props) => {
             <CirclePlus color="darkRed" size="18" />
 
             <p className="text-[#820000] text-sm">
-              <b>Add ne<Button onClick={openModal} variant="secondary" className="pl-6 pr-6"  size="sm"><Pen size={18} color="#565148" /> <p className="text-sm font-medium">Edit</p></Button>w Supplier</b>
+              <b>Add new Supplier</b>
             </p>
           </div>
           <div className=" col-span-2 text-end text-2xl cursor-pointer relative ">
