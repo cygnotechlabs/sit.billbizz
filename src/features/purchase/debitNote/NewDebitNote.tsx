@@ -9,6 +9,7 @@ import AddSupplierModal from "../../Supplier/SupplierHome/AddSupplierModal";
 import DebitNumberPrfncModal from "./DebitNumberPrfncModal";
 import NeworderTable from "../purchaseOrder/addPurchaseOrder/NeworderTable";
 import CheveronLeftIcon from "../../../assets/icons/CheveronLeftIcon";
+import Upload from "../../../assets/icons/Upload";
 
 type Props = {};
 
@@ -124,6 +125,129 @@ const NewDebitNote = ({}: Props) => {
               </label>
             <DebitNumberPrfncModal/>
             </div>
+            {/* <div className="grid grid-cols-2 gap-4 mt-5 space-y-1">
+            <div>
+              <label className="block text-sm mb-1 text-labelColor">
+                Supplier Name
+              </label>
+              <div
+                className="relative w-full"
+                onClick={() => toggleDropdown("supplier")}
+              >
+                <div className="items-center flex appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <p>Select Supplier</p>
+                </div>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <CehvronDown color="gray" />
+                </div>
+              </div>
+              {openDropdownIndex === "supplier" && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 -m-9 w-[40%] space-y-1"
+                >
+                  <SearchBar
+                    searchValue={searchValue}
+                    onSearchChange={setSearchValue}
+                    placeholder="Select Supplier"
+                  />
+                  <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
+                    <div className="col-span-2 flex items-center justify-center">
+                      <img
+                        src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
+                        alt=""
+                      />
+                    </div>
+                    <div className="col-span-10 flex">
+                      <div>
+                        <p className="font-bold text-sm">Smart world</p>
+                        <p className="text-xs text-gray-500">
+                          Phone: 9643287899
+                        </p>
+                      </div>
+                      <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
+                        &times;
+                      </div>
+                    </div>
+                  </div>
+                  <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-3">
+                  <AddSupplierModal page="purchase" />
+                  </div>
+                </div>
+              )}
+            </div>
+       
+
+         
+         
+
+     
+
+          </div> */}
+          
+          <div className=" w-full">
+              <label htmlFor="" className="">
+                Source of Supply
+                {/* <input
+                  name=""
+                  id=""
+                  placeholder="Value"
+                  className="border-inputBorder w-full text-sm border rounded text-dropdownText  p-2 h-9 mt-2 "
+                /> */}
+              </label>  <div className="relative w-full">
+                <select className="block appearance-none w-full h-9 mt-2 text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <option value="" className="text-gray">
+                  Value 
+                  </option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <CehvronDown color="gray" />
+                </div>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm mb-1 text-labelColor">
+                Destination of Supply
+              </label>
+              <div className="relative w-full">
+                <select className="block appearance-none w-full h-9 mt-2 text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <option value="" className="text-gray">
+                    Select A Destination
+                  </option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <CehvronDown color="gray" />
+                </div>
+              </div>
+            </div>
+            <div className=" w-full">
+              <label htmlFor="" className="">
+                Bill#
+                <input
+                  name=""
+                  id=""
+                  placeholder="Select Bill"
+                  className="border-inputBorder w-full text-sm border rounded text-dropdownText  p-2 h-9 mt-2 "
+                />
+              </label>
+            </div>
+
+
+      <div>
+              <label className="block text-sm mb-1 text-labelColor">
+Bill Type
+              </label>
+              <div className="relative w-full">
+                <select className="block appearance-none w-full h-9 mt-2 text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <option value="" className="text-gray">
+                    Select Bill Type
+                  </option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <CehvronDown color="gray" />
+                </div>
+              </div>
+            </div>
 
             <div className=" w-full">
               <label htmlFor="" className="">
@@ -202,7 +326,10 @@ const NewDebitNote = ({}: Props) => {
               />
             </label>
           </div>
-          <div className="mt-4">
+          
+        </div>
+        <div className="col-span-4">
+        <div className="mt-0">
             <label htmlFor="" className="">
               Terms & Conditions
               <input
@@ -213,12 +340,46 @@ const NewDebitNote = ({}: Props) => {
               />
             </label>
           </div>
-        </div>
-        <div className="col-span-4">
+          <div className="text-sm mt-3">
+  <label className="block mb-3">
+    Attach files to the Debit Notes 
+    <div className="border-inputBorder border-gray-800 w-full border-dashed border p-2 rounded flex flex-col gap-2 justify-center items-center bg-white mb-4 mt-2">
+      <span className="text-center inline-flex items-center gap-2">
+        <Upload /> 
+        Upload File 
+      </span>
+      <div className="text-center">
+        Maximum File Size: 1 MB
+      </div>
+    </div>
+    <p className="text-xs mt-1 text-gray-600"></p>
+    <input
+      type="file"
+      className="hidden"
+      value=""
+      name="documents"
+      // onChange={(e)=>handleFileChange(e)}
+    />
+  </label>
+</div>
+
+
           <div className="bg-secondary_main p-5 min-h-max rounded-xl relative ">
             <div className="grid grid-cols-12 pb-4  text-dropdownText border-b-2 border-slate-200">
+            <div className="col-span-9 mt-5">
+                <p>Discount</p>
+              </div>
+              <div className="col-span-3 mt-5">
+                <p className="text-xl font-bold">RS 0.00</p>
+              </div>
               <div className="col-span-9 mt-5">
                 <p>Untaxed Amount</p>
+              </div>
+              <div className="col-span-3 mt-5">
+                <p className="text-xl font-bold">RS 0.00</p>
+              </div>
+              <div className="col-span-9 mt-5">
+                <p>Discount</p>
               </div>
               <div className="col-span-3 mt-5">
                 <p className="text-xl font-bold">RS 0.00</p>
