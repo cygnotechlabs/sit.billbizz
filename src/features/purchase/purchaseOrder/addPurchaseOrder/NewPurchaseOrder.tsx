@@ -6,9 +6,13 @@ import Button from "../../../../Components/Button";
 import PlusCircle from "../../../../assets/icons/PlusCircle";
 import { useEffect, useRef, useState } from "react";
 import SearchBar from "../../../../Components/SearchBar";
-import CirclePlus from "../../../../assets/icons/circleplus";
-import NewCustomerModal from "../../../Customer/CustomerHome/NewCustomerModal";
 import PrinterIcon from "../../../../assets/icons/PrinterIcon";
+import AddSupplierModal from "../../../Supplier/SupplierHome/AddSupplierModal";
+import Calender from "../../../../assets/icons/Calender";
+import Upload from "../../../../assets/icons/Upload";
+import ViewDetails from "./ViewDetails";
+import Settings from "../../../../assets/icons/Settings";
+import CirclePlus from "../../../../assets/icons/circleplus";
 
 type Props = {};
 
@@ -66,7 +70,6 @@ const NewPurchaseOrder = ({}: Props) => {
             <p className="text-textColor text-xl font-bold">
               Enter Purchase details
             </p>
-
             <div className=" mt-5 space-y-6">
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-5">
@@ -92,7 +95,7 @@ const NewPurchaseOrder = ({}: Props) => {
                       <SearchBar
                         searchValue={searchValue}
                         onSearchChange={setSearchValue}
-                        placeholder="Select Supplier" 
+                        placeholder="Select Supplier"
                       />
                       <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
                         <div className="col-span-2 flex items-center justify-center">
@@ -114,14 +117,13 @@ const NewPurchaseOrder = ({}: Props) => {
                         </div>
                       </div>
                       <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4">
-                        <NewCustomerModal page="purchase" />
+                        <AddSupplierModal page="purchase" />
                       </div>
                     </div>
                   )}
                 </div>
-  
               </div>
-             <div className="grid grid-cols-12 gap-4">
+              <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-5">
                   <label
                     className="block text-sm mb-1 text-labelColor"
@@ -192,10 +194,10 @@ const NewPurchaseOrder = ({}: Props) => {
                     </div>
                   </div>
                 </div>
-             </div>
+              </div>
 
               <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-5">
+                {/* <div className="col-span-5">
                   <label className="block text-sm mb-1 text-labelColor">
                     Select Customer
                   </label>
@@ -244,21 +246,10 @@ const NewPurchaseOrder = ({}: Props) => {
                       </div>
                     </div>
                   )}
-                </div>
-  
-                <div className="col-span-7">
-                  <label className="block text-sm mb-1 text-labelColor">
-                    Reference#
-                  </label>
-                  <input
-                    placeholder="reference"
-                    type="text"
-                    className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9"
-                  />
-                </div>
+                </div> */}
               </div>
 
-              <div className="grid grid-cols-12 gap-4">
+              {/* <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-5">
                   <label className="block text-sm mb-1 text-labelColor">
                     Select warehouse to be updated
@@ -321,33 +312,77 @@ const NewPurchaseOrder = ({}: Props) => {
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
-
-            <label className="block text-sm mb-1 text-labelColor mt-3">
-              Purchase order#
-            </label>
             <div className="grid grid-cols-2 gap-4">
+            <div className="relative w-full">
+  <label className="text-sm mb-1 text-labelColor">
+    Purchase order#
+  </label>
+  <div className="items-center flex appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+    <p>PO-00001</p>
+  </div>
+  <div
+    className="absolute inset-y-0 right-0 mt-7 flex items-center px-2 text-gray-700"
+    onClick={() => toggleDropdown("warehouseAddress")}
+  >
+    <Settings color="gray" />
+  </div>
+  {openDropdownIndex === "warehouseAddress" && (
+    <div
+      ref={dropdownRef}
+      className="absolute z-10 bg-white shadow rounded-md mt-1 p-2  w-[75%] space-y-1"
+    >
+      <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink">
+        <div className="col-span-2 flex items-center justify-center">
+          <img
+            src="https://i.postimg.cc/3xX2LBpS/Ellipse-43-1.png"
+            alt=""
+          />
+        </div>
+        <div className="col-span-10 flex ">
+          <div>
+            <p className="font-normal text-sm">Electronics</p>
+            <p className="text-xs text-textColor">
+              Karnataka Yoga <br />
+              Sanga, Bangalore <br />
+              683576
+            </p>
+          </div>
+          <div className="ms-auto text-xl cursor-pointer relative -mt-2">
+            &times;
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4">
+        <div className="col-span-2 flex items-center justify-center">
+          <CirclePlus color="darkRed" size="18" />
+        </div>
+        <div className="col-span-10 text-sm flex gap-2 items-center">
+          <p className="text-darkRed">
+            <b>Add new Address</b>
+          </p>
+          <div className="ms-auto text-xl cursor-pointer relative -mt-2">
+            &times;
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+
               <div>
+                <label className="block text-sm mb-1 text-labelColor">
+                  Reference#
+                </label>
                 <input
-                  placeholder="DB"
+                  placeholder="reference"
                   type="text"
                   className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9"
                 />
               </div>
-
-              <div className="relative w-full">
-                <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                  <option value="" className="text-gray">
-                    PO-00001
-                  </option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <CehvronDown color="gray" />
-                </div>
-              </div>
+              
             </div>
-
             <div className="grid grid-cols-2 gap-4  mt-3">
               <div>
                 <label className="block text-sm mb-1 text-labelColor">
@@ -369,7 +404,10 @@ const NewPurchaseOrder = ({}: Props) => {
                   Purchase Order Date
                 </label>
                 <div className="relative w-full">
-                  <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <div className="pointer-events-none absolute inset-y-0 flex items-center px-2 text-gray-700">
+                    <Calender color={"gray"} height={20} width={20} />
+                  </div>
+                  <select className="block appearance-none w-full h-9 ps-7 text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                     <option value="" className="text-gray">
                       18/09/2024
                     </option>
@@ -410,7 +448,13 @@ const NewPurchaseOrder = ({}: Props) => {
                 </div>
               </div>
             </div>
-            <p className="font-bold">Add Item</p>
+            <div className="border-b w-[20%] flex items-center justify-center text-textColor gap-3 my-5 py-2 border-[#EAECF0] text-sm">
+              <p>Discount Type</p>{" "}
+              <div className="border border-neutral-300 flex rounded-lg text-xs p-1">
+                <CehvronDown color="currentColor" width={15} height={15} />
+              </div>
+            </div>
+            <p className="font-bold mt-3">Add Item</p>
             <NeworderTable />
             <button className="mt-1">
               <p className="text-darkRed my-3 text-sm flex gap-2 items-center">
@@ -419,6 +463,12 @@ const NewPurchaseOrder = ({}: Props) => {
               </p>
             </button>{" "}
             <br />
+            <ViewDetails />
+          </div>
+        </div>
+
+        <div className="col-span-4">
+          <div className="bg-secondary_main p-5 text-sm rounded-xl space-y-4 text-textColor">
             <div className="text-sm">
               <label htmlFor="" className="">
                 Add Note
@@ -441,12 +491,22 @@ const NewPurchaseOrder = ({}: Props) => {
                 />
               </label>
             </div>
-          </div>
-        </div>
+            <div className="mt-4">
+              <label className="block mb-1">
+                Documents
+                <div className="border-dashed border border-neutral-300 p-2 rounded  gap-2 text-center h-[68px] mt-2">
+                  <div className="flex gap-1 justify-center">
+                    <Upload />
+                    <span>Upload File</span>
+                  </div>
+                  <p className="text-xs mt-1 text-gray-600">
+                    Maximum File Size : 1MB
+                  </p>
+                </div>
+                <input type="file" className="hidden" name="documents" />
+              </label>
+            </div>
 
-        <div className="col-span-4">
-          <div className="bg-secondary_main p-5 text-sm rounded-xl space-y-4 text-textColor">
-           
             <div className="grid grid-cols-12 pb-4  text-dropdownText border-b-2 border-slate-200">
               <div className="col-span-9 mt-5">
                 <p>Untaxed Amount</p>
@@ -476,17 +536,17 @@ const NewPurchaseOrder = ({}: Props) => {
                 <p className="text-base font-bold">RS 0.00</p>
               </div>
             </div>
-          
+
             <div className="flex gap-4 pt-3 justify-end">
               {" "}
-              <Button variant="secondary" size="sm" >
+              <Button variant="secondary" size="sm">
                 Cancel
               </Button>
-              <Button variant="secondary"size="sm"  >
+              <Button variant="secondary" size="sm">
                 <PrinterIcon height={18} width={18} color="currentColor" />
                 Print
               </Button>
-              <Button variant="primary" size="sm" >
+              <Button variant="primary" size="sm">
                 Save & Send
               </Button>{" "}
             </div>
