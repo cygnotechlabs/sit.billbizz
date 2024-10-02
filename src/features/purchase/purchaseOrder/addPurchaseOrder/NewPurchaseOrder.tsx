@@ -11,19 +11,18 @@ import AddSupplierModal from "../../../Supplier/SupplierHome/AddSupplierModal";
 import Calender from "../../../../assets/icons/Calender";
 import Upload from "../../../../assets/icons/Upload";
 import ViewDetails from "./ViewDetails";
-import Settings from "../../../../assets/icons/Settings";
-import CirclePlus from "../../../../assets/icons/circleplus";
+import NewCustomerModal from "../../../Customer/CustomerHome/NewCustomerModal";
 
 type Props = {};
 
 const NewPurchaseOrder = ({}: Props) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [selected, setSelected] = useState<string | null>(null);
+  const [discountType, setDiscoutType] = useState<string>("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState<string | null>(
     null
   );
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
   const toggleDropdown = (key: string | null) => {
     setOpenDropdownIndex(key === openDropdownIndex ? null : key);
   };
@@ -124,7 +123,7 @@ const NewPurchaseOrder = ({}: Props) => {
                 </div>
               </div>
               <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-5">
+                <div className="col-span-5 ">
                   <label
                     className="block text-sm mb-1 text-labelColor"
                     htmlFor=""
@@ -189,199 +188,123 @@ const NewPurchaseOrder = ({}: Props) => {
                         htmlFor="warehouse"
                         className="text-start font-medium"
                       >
-                        Warehouse
+                        Organization
                       </label>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-4">
-                {/* <div className="col-span-5">
-                  <label className="block text-sm mb-1 text-labelColor">
-                    Select Customer
-                  </label>
-                  <div
-                    className="relative w-full"
-                    onClick={() => toggleDropdown("customer")}
-                  >
-                    <div className="items-center flex appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                      <p>Select Supplier</p>
-                    </div>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <CehvronDown color="gray" />
-                    </div>
-                  </div>
-                  {openDropdownIndex === "customer" && (
+              {selected === "customer" && (
+                <div className="grid grid-cols-12 gap-4 -mt-3">
+                  <div className="col-span-5 ">
+                    <label className="text-sm mb-1 text-labelColor">
+                      Customer Name
+                    </label>
                     <div
-                      ref={dropdownRef}
-                      className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 -m-9 w-[40%] space-y-1"
+                      className="relative w-full"
+                      onClick={() => toggleDropdown("customer")}
                     >
-                      <SearchBar
-                        searchValue={searchValue}
-                        onSearchChange={setSearchValue}
-                        placeholder="Select Supplier" />
-  
-                      <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
-                        <div className="col-span-2 flex items-center justify-center">
-                          <img
-                            src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
-                            alt=""
-                          />
-                        </div>
-                        <div className="col-span-10 flex">
-                          <div>
-                            <p className="font-bold text-sm">Smart world</p>
-                            <p className="text-xs text-gray-500">
-                              Phone: 9643287899
-                            </p>
-                          </div>
-                          <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
-                            &times;
-                          </div>
-                        </div>
+                      <div className="items-center flex appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                        <p>Select Customer</p>
                       </div>
-                      <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4">
-                        <NewCustomerModal page="purchase" />
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <CehvronDown color="gray" />
                       </div>
                     </div>
-                  )}
-                </div> */}
-              </div>
-
-              {/* <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-5">
-                  <label className="block text-sm mb-1 text-labelColor">
-                    Select warehouse to be updated
-                  </label>
-                  <div
-                    className="relative w-full"
-                    onClick={() => toggleDropdown("warehouseAddress")}
-                  >
-                    <div className="items-center flex appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-                      <p>Select warehouse</p>
-                    </div>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <CehvronDown color="gray" />
-                    </div>
+                    {openDropdownIndex === "customer" && (
+                      <div
+                        ref={dropdownRef}
+                        className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 -m-9 w-[40%] space-y-1"
+                      >
+                        <SearchBar
+                          searchValue={searchValue}
+                          onSearchChange={setSearchValue}
+                          placeholder="Select customer"
+                        />
+                        <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
+                          <div className="col-span-2 flex items-center justify-center">
+                            <img
+                              src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
+                              alt=""
+                            />
+                          </div>
+                          <div className="col-span-10 flex">
+                            <div>
+                              <p className="font-bold text-sm">Smart world</p>
+                              <p className="text-xs text-gray-500">
+                                Phone: 9643287899
+                              </p>
+                            </div>
+                            <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
+                              &times;
+                            </div>
+                          </div>
+                        </div>
+                        <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4">
+                          <NewCustomerModal page="purchase" />
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  {openDropdownIndex === "warehouseAddress" && (
-                    <div
-                      ref={dropdownRef}
-                      className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 -m-9 w-[40%] space-y-1"
-                    >
-                      <SearchBar
-                        searchValue={searchValue}
-                        onSearchChange={setSearchValue}
-                        placeholder="Select Supplier" />
-  
-                      <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink">
-                        <div className="col-span-2 flex items-center justify-center">
-                          <img
-                            src="https://i.postimg.cc/3xX2LBpS/Ellipse-43-1.png"
-                            alt=""
-                          />
-                        </div>
-                        <div className="col-span-10 flex ">
-                          <div>
-                            <p className="font-normal text-sm">Electronics</p>
-                            <p className="text-xs text-textColor">
-                              Karnataka Yoga <br />
-                              Sanga, Bangalore <br />
-                              683576
-                            </p>
-                          </div>
-                          <div className="ms-auto text-xl cursor-pointer relative -mt-2">
-                            &times;
-                          </div>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4">
-                        <div className="col-span-2 flex items-center justify-center">
-                          <CirclePlus color="darkRed" size="18" />
-                        </div>
-                        <div className="col-span-10    text-sm flex gap-2 items-center">
-                          <p className="text-darkRed">
-                            <b>Add new Address</b>
-                          </p>
-                          <div className="ms-auto text-xl cursor-pointer relative -mt-2">
-                            &times;
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <div className="col-span-7">
+                    <label className="block text-sm mb-1 text-labelColor">
+                      Reference#
+                    </label>
+                    <input
+                      placeholder="reference"
+                      type="text"
+                      className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9"
+                    />
+                  </div>
                 </div>
-              </div> */}
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
-            <div className="relative w-full">
-  <label className="text-sm mb-1 text-labelColor">
-    Purchase order#
-  </label>
-  <div className="items-center flex appearance-none w-full h-9 text-zinc-400 bg-white border border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
-    <p>PO-00001</p>
-  </div>
-  <div
-    className="absolute inset-y-0 right-0 mt-7 flex items-center px-2 text-gray-700"
-    onClick={() => toggleDropdown("warehouseAddress")}
-  >
-    <Settings color="gray" />
-  </div>
-  {openDropdownIndex === "warehouseAddress" && (
-    <div
-      ref={dropdownRef}
-      className="absolute z-10 bg-white shadow rounded-md mt-1 p-2  w-[75%] space-y-1"
-    >
-      <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink">
-        <div className="col-span-2 flex items-center justify-center">
-          <img
-            src="https://i.postimg.cc/3xX2LBpS/Ellipse-43-1.png"
-            alt=""
-          />
-        </div>
-        <div className="col-span-10 flex ">
-          <div>
-            <p className="font-normal text-sm">Electronics</p>
-            <p className="text-xs text-textColor">
-              Karnataka Yoga <br />
-              Sanga, Bangalore <br />
-              683576
-            </p>
-          </div>
-          <div className="ms-auto text-xl cursor-pointer relative -mt-2">
-            &times;
-          </div>
-        </div>
-      </div>
-      <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4">
-        <div className="col-span-2 flex items-center justify-center">
-          <CirclePlus color="darkRed" size="18" />
-        </div>
-        <div className="col-span-10 text-sm flex gap-2 items-center">
-          <p className="text-darkRed">
-            <b>Add new Address</b>
-          </p>
-          <div className="ms-auto text-xl cursor-pointer relative -mt-2">
-            &times;
-          </div>
-        </div>
-      </div>
-    </div>
-  )}
-</div>
-
-              <div>
-                <label className="block text-sm mb-1 text-labelColor">
-                  Reference#
+              <div className="relative w-full">
+                <label className="text-sm mb-1 text-labelColor">
+                  Purchase order#
                 </label>
-                <input
-                  placeholder="reference"
-                  type="text"
-                  className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9"
-                />
+                <div className="relative w-full">
+                  <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                    <option value="" className="text-gray">
+                      PO-0001
+                    </option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <CehvronDown color="gray" />
+                  </div>
+                </div>
               </div>
-              
+
+              {selected === "customer" ? (
+                <div>
+                  <label className="block text-sm mb-1 text-labelColor">
+                    Payment Mode
+                  </label>
+                  <div className="relative w-full">
+                    <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                      <option value="" className="text-gray">
+                        Select Payment Mode
+                      </option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <CehvronDown color="gray" />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-sm mb-1 text-labelColor">
+                    Reference#
+                  </label>
+                  <input
+                    placeholder="reference"
+                    type="text"
+                    className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9"
+                  />
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4  mt-3">
               <div>
@@ -449,10 +372,37 @@ const NewPurchaseOrder = ({}: Props) => {
               </div>
             </div>
             <div className="border-b w-[20%] flex items-center justify-center text-textColor gap-3 my-5 py-2 border-[#EAECF0] text-sm">
-              <p>Discount Type</p>{" "}
-              <div className="border border-neutral-300 flex rounded-lg text-xs p-1">
+              <p>{discountType === "" ? "Discount Type" : discountType}</p>{" "}
+              <div
+                className="border border-neutral-300 flex rounded-lg text-xs p-1"
+                onClick={() => toggleDropdown("discountType")}
+              >
                 <CehvronDown color="currentColor" width={15} height={15} />
               </div>
+              {openDropdownIndex === "discountType" && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute z-10 bg-white  shadow  rounded-md  p-2 mt-36 w-[28%] space-y-1  "
+                >
+                  <div
+                    className=" p-2 hover:bg-red-50 cursor-pointe  rounded-lg py-3"
+                    onClick={() => {
+                      setDiscoutType("Time Line");
+                      setOpenDropdownIndex(null); 
+                    }}                  >
+                    Time Line
+                  </div>
+                  <div
+                    className=" p-2 hover:bg-red-50 cursor-pointe   rounded-lg  pt-3"
+                    onClick={() => {
+                      setDiscoutType("Transaction Line");
+                      setOpenDropdownIndex(null); 
+                    }}                  >
+                    Transaction Line
+                  </div>
+                  <div className="h-[.5px] bg-neutral-300"></div>
+                </div>
+              )}
             </div>
             <p className="font-bold mt-3">Add Item</p>
             <NeworderTable />
