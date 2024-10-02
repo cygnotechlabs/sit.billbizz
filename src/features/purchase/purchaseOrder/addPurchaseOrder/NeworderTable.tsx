@@ -101,27 +101,34 @@ const NeworderTable = ({}: Props) => {
                     {item.tax}
                     <div className="border border-neutral-300 flex rounded-lg text-xs p-1">
                       %{" "}
-                      <CehvronDown
-                        color="currentColor"
-                        width={15}
-                        height={15}
-                      />
+                  
                     </div>
                   </div>
                 </td>
-                <td className="py-2.5 px-4 border-y border-tableBorder relative">
-                  <div className="flex items-center justify-center gap-2">
-                    {item.discount}
-                    <div className="border border-neutral-300 flex rounded-lg text-xs p-1">
-                      %{" "}
-                      <CehvronDown
-                        color="currentColor"
-                        width={15}
-                        height={15}
-                      />
-                    </div>
-                  </div>
-                </td>
+                <td className="py-2.5 px-4 border-y border-tableBorder relative max-w-[150px]">
+  <div className="flex items-center gap-2 w-full justify-center">
+    {/* Fixed width input field */}
+    <input 
+      type="text" 
+      placeholder="0" 
+      className="w-[50px] border-b focus:outline-none text-center" 
+      value={item.discount} 
+    />
+
+    {/* Select field with a fixed width */}
+    <div className="relative">
+      <select className="text-xs appearance-none w-[60px] p-1 text-zinc-400 bg-white border border-inputBorder rounded-lg">
+        <option value="%" className="text-gray">%</option>
+        <option value="INR" className="text-gray">INR</option>
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <CehvronDown color="gray" height={15} width={15} />
+      </div>
+    </div>
+  </div>
+</td>
+
+
                 <td className="font-semibold">{item.amt}</td>
                 <td className="cursor-pointer py-2.5 px-4 border-y border-tableBorder">
                   <div className="flex items-center justify-center gap-3">
@@ -232,19 +239,30 @@ const NeworderTable = ({}: Props) => {
                   0
                   <div className="border border-neutral-300 flex rounded-lg text-xs p-1">
                     %{" "}
-                    <CehvronDown color="currentColor" width={15} height={15} />
                   </div>
                 </div>
               </td>
-              <td className="py-2.5 px-4 border-y border-tableBorder">
-                <div className="flex items-center justify-center gap-2">
-                  0
-                  <div className="border border-neutral-300 flex rounded-lg text-xs p-1">
-                    %{" "}
-                    <CehvronDown color="currentColor" width={15} height={15} />
-                  </div>
-                </div>
-              </td>
+              <td className="py-2.5 px-4 border-y border-tableBorder relative max-w-[150px] ">
+  <div className="flex items-center gap-2 w-full justify-center">
+    {/* Fixed width input field */}
+    <input 
+      type="text" 
+      placeholder="0" 
+      className="w-[50px] border-b focus:outline-none text-center" 
+    />
+
+    {/* Select field with a fixed width */}
+    <div className="relative">
+      <select className="text-xs appearance-none w-[60px] p-1 text-zinc-400 bg-white border border-inputBorder rounded-lg">
+        <option value="%" className="text-gray">%</option>
+        <option value="INR" className="text-gray">INR</option>
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <CehvronDown color="gray" height={15} width={15} />
+      </div>
+    </div>
+  </div>
+</td>
               <td className="py-2.5 px-4 border-y border-tableBorder ">0.00</td>
               <td className="cursor-pointer py-2.5 px-4 border-y border-tableBorder">
                 <div className="flex items-center justify-center gap-3">
