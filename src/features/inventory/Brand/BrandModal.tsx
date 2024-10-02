@@ -157,7 +157,7 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               Add Brand
             </Button>
           </div>
-
+              {/*  */}
           <div className="grid grid-cols-3 gap-5">
             {allBrandData.map((brand:any) => (
               <div key={brand._id} className="flex p-2">
@@ -222,8 +222,11 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               </div>
             </div>
 
-            <div className="flex justify-end">
-              <Button size="sm" variant="primary" className="text-sm" type="submit">
+            <div className="flex justify-end gap-2">
+            <Button variant="secondary" className="text-sm pl-6 pr-6" size="sm" onClick={closeModal}>
+                  Cancel
+                </Button>{" "}
+              <Button size="sm" variant="primary" className="text-sm pl-8 pr-8" type="submit">
                Save
               </Button>
             </div>

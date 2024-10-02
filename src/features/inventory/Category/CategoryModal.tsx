@@ -284,10 +284,10 @@ function Category({ isOpen, onClose, page }: Props) {
               </div>
 
               <div className="flex justify-end gap-2">
-                <Button variant="secondary" size="sm" onClick={closeModal}>
+                <Button variant="secondary" size="sm" className="text-sm pl-6 pr-6" onClick={closeModal}>
                   Cancel
                 </Button>{" "}
-                <Button variant="primary" size="sm" onClick={handleSave}>
+                <Button variant="primary" size="sm" className="text-sm pl-8 pr-8" onClick={handleSave}>
                   Save
                 </Button>
               </div>

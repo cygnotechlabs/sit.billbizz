@@ -249,11 +249,11 @@ else{
               </div>
 
               <div className="flex justify-end gap-2 mb-3">
-                <Button type="submit" variant="primary" size="sm">
-                  Save
-                </Button>
-                <Button onClick={closeModal} variant="tertiary" size="sm">
+                <Button onClick={closeModal} className="text-sm pl-6 pr-6" variant="tertiary" size="sm">
                   Cancel
+                </Button>
+                <Button type="submit" variant="primary" className="text-sm pl-6 pr-6" size="sm">
+                  Save
                 </Button>
               </div>
             </div>

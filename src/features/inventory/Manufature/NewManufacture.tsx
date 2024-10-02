@@ -251,6 +251,9 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
             </div>
 
             <div className="flex justify-end gap-2 mb-3">
+              <Button onClick={closeModal} variant="tertiary" className="text-sm pl-6 pr-6" size="sm">
+                Cancel
+              </Button>
               <Button
                 onClick={(e) => {
                   e.preventDefault();
@@ -258,11 +261,9 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
                 }}
                 variant="primary"
                 size="sm"
+                className="pl-8 pr-8"
               >
                 Save
-              </Button>
-              <Button onClick={closeModal} variant="tertiary" size="sm">
-                Cancel
               </Button>
             </div>
           </form>
