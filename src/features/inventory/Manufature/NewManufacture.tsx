@@ -13,7 +13,6 @@ type Manufacturer = {
   _id?: string;
   name: string;
   description: string;
-  organizationId: string;
   type?: string;
   createdDate?: string;
 };
@@ -29,7 +28,6 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const { request: addManufacturerRequest } = useApi("post", 5003);
   const [allManufactures, setAllManufatures] = useState([]);
   const [manufacturers, setManufacturers] = useState<Manufacturer>({
-    organizationId: "INDORG0001",
     name: "",
     description: "",
     type: "manufacturer",
@@ -45,13 +43,11 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
         _id: item.id,
         name: item.manufacturerName,
         description: item.description,
-        organizationId: item.organizationId || "INDORG0001",
         type: item.type || "manufacturer",
       });
     } else {
       setIsEdit(false);
       setManufacturers({
-        organizationId: "INDORG0001",
         name: "",
         description: "",
         type: "manufacturer",
@@ -63,12 +59,12 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const loadManufacturers = async () => {
     try {
       const url = `${endponits.GET_ALL_BRMC}`;
-      const body = { type: "manufacturer", organizationId: "INDORG0001" };
+      const body = { type: "manufacturer" };
       const { response, error } = await fetchAllManufacturers(url, body);
       if (!error && response) {
         setAllManufatures(response.data);
       } else {
-        toast.error("Failed to fetch manufacturers.");
+        console.error("Failed to fetch manufacturers.");
       }
     } catch (error) {
       toast.error("Error fetching manufacturers data");
@@ -107,9 +103,8 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
 
   const handleDelete = async (item: any) => {
     try {
-      const body = { organizationId: "INDORG0001" };
       const url = `${endponits.DELETE_BRMC}/${item.id}`;
-      const { response, error } = await deleteManufacturerRequest(url, body);
+      const { response, error } = await deleteManufacturerRequest(url);
       if (!error && response) {
         toast.success("Manufaturer deleted successfully!");
         loadManufacturers();
@@ -202,8 +197,8 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
             ))}
           </div>
           <div className="flex justify-end my-3">
-            <Button variant="primary" size="sm" className="text-sm">
-              Save
+            <Button variant="primary" onClick={onClose} size="sm" className="text-sm">
+              Done
             </Button>
           </div>
         </div>

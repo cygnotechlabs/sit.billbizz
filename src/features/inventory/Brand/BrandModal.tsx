@@ -24,7 +24,7 @@ type Props = {
 };
 
 const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
-  const { request: fetchAllBrands } = useApi("get", 5003);
+  const { request: fetchAllBrands } = useApi("put", 5003);
   const { request: deleteBrandRequest } = useApi("delete", 5003);
   const { request: updateBrandRequest } = useApi("put", 5003);
   const { request: addBrandRequest } = useApi("post", 5003);
@@ -84,7 +84,7 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
       if (!error && response) {
         setAllBrandData(response.data);
       } else {
-        toast.error("Failed to fetch brand data.");
+        console.error("Failed to fetch brand data.");
       }
     } catch (error) {
       toast.error("Error in fetching brand data.");
@@ -179,8 +179,8 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
             ))}
           </div>
            <div className="flex justify-end gap-2 my-3">
-            <Button className="flex justify-center px-8" variant="primary" size="sm" >
-              Save
+            <Button onClick={onClose} className="flex justify-center px-8" variant="primary" size="sm" >
+              Done
             </Button>
             </div>
         </div>
