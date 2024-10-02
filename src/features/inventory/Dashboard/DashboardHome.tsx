@@ -4,12 +4,10 @@ import ArrowUpIcon from '../../../assets/icons/ArrowUpIcon'
 import Ellipsis from '../../../assets/icons/Ellipsis'
 import RefreshIcon from '../../../assets/icons/RefreshIcon'
 import AvaragePurchase from './AvaragePurchase'
-
-import CustomersRetentionRate from './CustomersRetentionRate'
 import RepeatPurchaseRate from './RepeatPurchaseRate'
 import TopCustomers from './TopCustomers'
-
-import Cards from './Cards'
+import InventoryCards from './InventoryCards'
+import ProductsDashTable from './ProductsDashTable'
 
 type Props = {}
 
@@ -109,16 +107,16 @@ function DashboardHome({}: Props) {
         </div>
         {/* Cards */}
         
-        <Cards/>
+        <InventoryCards/>
        
         
         {/* Top suppliers and supplier rentaion rate overtime */}
         <div className="grid grid-cols-3 gap-5">
-          <div className="flex justify-center ">
-            <TopCustomers />
+          <div className="flex justify-center col-span-2">
+          <ProductsDashTable />
           </div>
-          <div className="col-span-2 flex justify-center">
-            <CustomersRetentionRate />
+          <div className=" flex justify-center ">
+            <TopCustomers />
           </div>
           <div className="col-span-2 flex justify-center ">
             <RepeatPurchaseRate />
