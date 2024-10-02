@@ -4,6 +4,7 @@ const router = new express.Router()
 
 //supplier
 const supplierController = require('../controller/supplierController');
+const supplierCont = require('../controller/suppliercont');
 
 const importController = require('../controller/importSupplier')
 
@@ -11,21 +12,21 @@ const checkPermission = require('../controller/permission')
 const { verifyToken } = require('../controller/middleware');
 
 // supplier
-router.post('/add-suppliers',verifyToken,checkPermission('Created a new Supplier'), supplierController.addSupplier);
+router.post('/add-suppliers',verifyToken,checkPermission('Created a New Supplier'), supplierCont.addSupplier);
 
-router.get('/get-all-supplier',verifyToken,checkPermission('Viewed Supplier details'), supplierController.getAllSuppliers);
+router.get('/get-all-supplier',verifyToken,checkPermission('Viewed Supplier Details'), supplierCont.getAllSuppliers);
 
-router.get('/get-supplier/:id',verifyToken,checkPermission('Viewed Supplier details'), supplierController.getASupplier);
+router.get('/get-supplier/:supplierId',verifyToken,checkPermission('Viewed Supplier Details'), supplierCont.getOneSupplier);
 
-router.put('/update-supplier/:id',verifyToken,checkPermission('Edited Supplier Information'), supplierController.updateSupplier);
+router.put('/update-supplier/:supplierId',verifyToken,checkPermission('Edited Supplier Information'), supplierCont.updateSupplier);
 
-router.put('/update-supplier-status/:supplierId' ,verifyToken,checkPermission('modified Supplier Status'),supplierController.updateSupplierStatus)
+router.put('/update-supplier-status/:supplierId' ,verifyToken,checkPermission('Modified Supplier Status'),supplierCont.updateSupplierStatus)
 
-router.get('/supplier-additional-data',verifyToken, supplierController.getSupplierAdditionalData);
+router.get('/supplier-additional-data',verifyToken, supplierCont.getSupplierAdditionalData);
 
-router.post('/import-supplier',verifyToken,checkPermission('Import new Suppliers'),importController.importSupplier);
+router.post('/import-supplier',verifyToken,checkPermission('Import New Suppliers'),importController.importSupplier);
 
-router.get('/get-one-supplier-history/:supplierId',verifyToken,checkPermission('Viewed Supplier details'),supplierController.getOneSupplierHistory)
+router.get('/get-one-supplier-history/:supplierId',verifyToken,checkPermission('Viewed Supplier Details'),supplierCont.getOneSupplierHistory)
 
 
         //   { action: "SupplierCreate", note: "Created a new Supplier" },

@@ -22,7 +22,7 @@ const dataExist = async (organizationId) => {
 };
 
 exports.addSupplier = async (req, res) => {
-  // console.log("Add supplier:", req.body);
+  console.log("Add supplier:",req.user.userName);
   try {
     const organizationId = req.user.organizationId
   
@@ -101,7 +101,7 @@ exports.addSupplier = async (req, res) => {
 
   const userId = req.user.id;
   const userName = req.user.userName;
-console.log(userName);
+// console.log(userName);
 
     // organizationId= cleanData(organizationId);
     salutation= cleanData(salutation);
@@ -410,6 +410,7 @@ if (existingFields.length > 0) {
 
 
 
+
 // Create a new supplier
 const newSupplier = new Supplier({
   // Basic
@@ -571,7 +572,7 @@ userId: userId,
 userName: userName,
 });
 
-await supplierHistoryEntry.save();
+ await supplierHistoryEntry.save();
 
 let description1; 
 
@@ -618,7 +619,7 @@ exports.getAllSuppliers = async (req, res) => {
     const organizationId  = req.user.organizationId
     const userId = req.user.id;
   const userName = req.user.userName;
-  console.log(organizationId,userId,userName);
+  console.log("get all supplier:",req.user.userName);
     const suppliers = await Supplier.find({ organizationId: organizationId });
     // console.log(suppliers);
 
@@ -627,8 +628,12 @@ exports.getAllSuppliers = async (req, res) => {
         message: "No suppliers found for the provided organization ID.",
       });
     }
-
-    res.status(200).json(suppliers);
+    const sanitizedHistory = suppliers.map((history) => {
+      const { organizationId, ...rest } = history.toObject(); // Convert to plain object and omit organizationId
+      return rest;
+    });
+    res.status(200).json(sanitizedHistory);
+    console.log("Success:",req.user.userName);
   } catch (error) {
     console.error("Error fetching suppliers:", error);
     res.status(500).json({ message: "Internal server error." });
@@ -637,6 +642,7 @@ exports.getAllSuppliers = async (req, res) => {
 
 exports.getASupplier = async (req, res) => {
   try {
+    console.log("view a  supplier:",req.user.userName);
     const supplierId = req.params.id;
     const  organizationId  = req.user.organizationId;
 
@@ -653,8 +659,17 @@ exports.getASupplier = async (req, res) => {
           message: "Supplier not found",
         });
     }
-
+    // const sanitizedHistory = supplier.map((history) => {
+    //   const { organizationId, ...rest } = history.toObject(); // Convert to plain object and omit organizationId
+    //   return rest;
+    // });
+    // const sanitizedHistory = (() => {
+    //   const { organizationId, ...rest } = supplier.toObject(); // Convert to plain object and omit organizationId
+    //   return rest;
+    // })();
+    // supplier.organizationId = undefined;
     res.status(200).json(supplier);
+    console.log("Success:",req.user.userName);
   } catch (error) {
     console.error("Error fetching supplier:", error);
     res.status(500).json({ message: "Internal server error." });
@@ -663,8 +678,7 @@ exports.getASupplier = async (req, res) => {
 
 
 exports.updateSupplier = async (req, res) => {
-  console.log("Update supplier:", req.body);
-
+  console.log("Update supplier:",req.user.userName);
   try {
     const supplierId = req.params.id;
     const  organizationId  = req.user.organizationId;
@@ -1186,7 +1200,7 @@ await accountsupplierHistoryEntry.save();
         message: "Supplier updated successfully",
         supplier: updatedSupplier,
       });
-    console.log("Supplier updated successfully:", updatedSupplier);
+    console.log("Supplier updated successfully:", req.user.userName);
   } catch (error) {
     console.error("Error updating supplier:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -1227,7 +1241,8 @@ await accountsupplierHistoryEntry.save();
 
 // Update the status of a Supplier based on the provided status value
 exports.updateSupplierStatus = async (req, res) => {
-  console.log("Update Supplier Status:", req.body);
+  console.log("Update supplier status:",req.user.userName);
+
   try {
     const { supplierId } = req.params;
     const { status } = req.body; // Status is now taken from the request body
@@ -1411,14 +1426,18 @@ exports.getOneSupplierHistory = async (req, res) => {
       supplierId,
       organizationId,
     });
-
+    // remove sensitive data
+    const sanitizedHistory = supplierHistory.map((history) => {
+      const { organizationId, ...rest } = history.toObject(); // Convert to plain object and omit organizationId
+      return rest;
+    });
     if (!supplierHistory) {
       return res.status(404).json({
         message: "Supplier History not found",
       });
     }
 
-    res.status(200).json(supplierHistory);
+    res.status(200).json(sanitizedHistory);
   } catch (error) {
     console.error("Error fetching Supplier:", error);
     res.status(500).json({ message: "Internal server error." });

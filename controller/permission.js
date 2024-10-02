@@ -15,8 +15,8 @@ const checkPermission = (permissionAction) => {
 
       const organizationId= req.user.organizationId
       // Fetch the role associated with the user
-      // const role = await Role.findOne({ roleName: user.role });
-      const role = await Role.findOne({ roleName: user.role, organizationId });
+      const role = await Role.findOne({ roleName: user.role });
+      // const role = await Role.findOne({ roleName: user.role, organizationId });
       if (!role) {
         return res.status(401).json({ message: 'Role not found' });
       }
@@ -30,7 +30,7 @@ const checkPermission = (permissionAction) => {
 
       // Find the permission in the role's permissions array
       const permission = role.permissions.find(p => p.note === permissionAction);
-      console.log( "user  ",user);
+      // console.log( "user  ",role);
       
       
 
