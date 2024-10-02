@@ -15,7 +15,6 @@ type CategoryData = {
   _id?: string;
   name: string;
   description: string;
-  organizationId: string;
   type?: string;
   createdDate?: string;
 };
@@ -28,13 +27,11 @@ type Props = {
 
 function Category({ isOpen, onClose, page }: Props) {
   const { request: fetchAllCategories } = useApi("put", 5003);
-  // const { request: getCategoryRequest } = useApi("get", 5003);
   const { request: deleteCategoryRequest } = useApi("delete", 5003);
   const { request: updateCategoryRequest } = useApi("put", 5003);
   const { request: addCategoryRequest } = useApi("post", 5003);
 
   const [categories, setCategories] = useState<CategoryData>({
-    organizationId: "INDORG0001",
     name: "",
     description: "",
     type: "category",
@@ -55,7 +52,7 @@ function Category({ isOpen, onClose, page }: Props) {
   const loadCategories = async () => {
     try {
       const url = `${endponits.GET_ALL_BRMC}`;
-      const body = { type: "category", organizationId: "INDORG0001" };
+      const body = { type: "category"};
       const { response, error } = await fetchAllCategories(url, body);
       if (!error && response) {
         setAllcategoryData(response.data);
@@ -81,13 +78,11 @@ function Category({ isOpen, onClose, page }: Props) {
         _id: category.id,
         name: category.categoriesName,
         description: category.description,
-        organizationId: category.organizationId || "INDORG0001",
         type: category.type || "category",
       });
     } else {
       setIsEdit(false);
       setCategories({
-        organizationId: "INDORG0001",
         name: "",
         description: "",
         type: "category",
@@ -118,9 +113,8 @@ function Category({ isOpen, onClose, page }: Props) {
 
   const handleDelete = async (item: any) => {
     try {
-      const body = { organizationId: "INDORG0001" };
       const url = `${endponits.DELETE_BRMC}/${item.id}`;
-      const { response, error } = await deleteCategoryRequest(url, body);
+      const { response, error } = await deleteCategoryRequest(url);
       if (!error && response) {
         toast.success("Category deleted successfully!");
         loadCategories();
@@ -237,8 +231,9 @@ function Category({ isOpen, onClose, page }: Props) {
               className="flex justify-center px-8"
               variant="primary"
               size="sm"
+              onClick={onClose}
             >
-              Save
+              Done
             </Button>
           </div>
         )}
@@ -289,10 +284,10 @@ function Category({ isOpen, onClose, page }: Props) {
               </div>
 
               <div className="flex justify-end gap-2">
-                <Button variant="secondary" size="sm" onClick={closeModal}>
+                <Button variant="secondary" size="sm" className="text-sm pl-6 pr-6" onClick={closeModal}>
                   Cancel
                 </Button>{" "}
-                <Button variant="primary" size="sm" onClick={handleSave}>
+                <Button variant="primary" size="sm" className="text-sm pl-8 pr-8" onClick={handleSave}>
                   Save
                 </Button>
               </div>

@@ -24,7 +24,7 @@ type Props = {
 };
 
 const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
-  const { request: fetchAllBrands } = useApi("get", 5003);
+  const { request: fetchAllBrands } = useApi("put", 5003);
   const { request: deleteBrandRequest } = useApi("delete", 5003);
   const { request: updateBrandRequest } = useApi("put", 5003);
   const { request: addBrandRequest } = useApi("post", 5003);
@@ -84,7 +84,7 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
       if (!error && response) {
         setAllBrandData(response.data);
       } else {
-        toast.error("Failed to fetch brand data.");
+        console.error("Failed to fetch brand data.");
       }
     } catch (error) {
       toast.error("Error in fetching brand data.");
@@ -157,7 +157,7 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               Add Brand
             </Button>
           </div>
-
+              {/*  */}
           <div className="grid grid-cols-3 gap-5">
             {allBrandData.map((brand:any) => (
               <div key={brand._id} className="flex p-2">
@@ -179,8 +179,8 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
             ))}
           </div>
            <div className="flex justify-end gap-2 my-3">
-            <Button className="flex justify-center px-8" variant="primary" size="sm" >
-              Save
+            <Button onClick={onClose} className="flex justify-center px-8" variant="primary" size="sm" >
+              Done
             </Button>
             </div>
         </div>
@@ -222,8 +222,11 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               </div>
             </div>
 
-            <div className="flex justify-end">
-              <Button size="sm" variant="primary" className="text-sm" type="submit">
+            <div className="flex justify-end gap-2">
+            <Button variant="secondary" className="text-sm pl-6 pr-6" size="sm" onClick={closeModal}>
+                  Cancel
+                </Button>{" "}
+              <Button size="sm" variant="primary" className="text-sm pl-8 pr-8" type="submit">
                Save
               </Button>
             </div>
