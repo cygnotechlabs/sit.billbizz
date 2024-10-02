@@ -95,7 +95,7 @@ const TopCustomers = () => {
         Top Customers by Sales Volume
       </h3>
       <h4 className="ms-10 py-4 text-[10px] text-[#4A5568]">Sales Volume</h4>
-      <BarChart width={450} height={280} data={data}>
+      <BarChart width={420} height={280} data={data}>
         <XAxis
           stroke="#4A5568"
           fontSize={10}

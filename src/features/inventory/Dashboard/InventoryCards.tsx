@@ -1,39 +1,44 @@
 import { useState } from "react";
-import OrderCards from "./OrderCards"
+import OrderCards from "./OrderCards";
+import toatalInvImage from "../../../assets/Images/product packaging (packaging the product into a box).png";
+import totalSalesImage from "../../../assets/Images/processing_2816119 1.png";
+import turnoverImage from "../../../assets/Images/exchange_873924 1.png";
+import pendingImage from "../../../assets/Images/shopping-bags_3601438 1.png";
+import pendingSalesImage from "../../../assets/Images/discount_12707444 1.png"
 type Props = {}
 
-const Cards = ({}: Props) => {
-    const [activeCard, setActiveCard] = useState<number | null>(0);
+const InventoryCards = ({}: Props) => {
+    const [activeCard, setActiveCard] = useState<number | null>(null);
     const handleCardClick = (index: number) => {
         setActiveCard(index);
       };
   const cards = [
     {
-      icon: <i className="fa-solid fa-cart-shopping text-xl text-black"></i>,
+      icon: toatalInvImage,
       title: "Total Inventory Value",
       count: "1500",
-      rating: "12,95",
+      rating: "12",
     },
     {
-      icon: <i className="fa-solid fa-cogs text-xl text-black"></i>,
+      icon: totalSalesImage,
       title: "Total Sales Value",
       count: "120",
-      rating: "18,95",
+      rating: "18",
     },
     {
-        icon: <i className="fa-solid fa-cogs text-xl text-black"></i>,
+        icon: turnoverImage,
         title: "Turnover Rate",
         count: "800",
-        rating: "12,95",
+        rating: "12",
     },
     {
-        icon: <i className="fa-solid fa-cogs text-xl text-black"></i>,
+        icon: pendingImage,
         title: "Pending Purchase",
         count: "85%",
         rating: "18",
     },
     {
-        icon: <i className="fa-solid fa-cogs text-xl text-black"></i>,
+        icon: pendingSalesImage,
         title: "Pending Sales",
         count: "15%",
         rating: "10",
@@ -58,4 +63,4 @@ const Cards = ({}: Props) => {
   )
 }
 
-export default Cards
+export default InventoryCards;

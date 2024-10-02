@@ -46,7 +46,16 @@ const NewPaymentMade = ({ }: Props) => {
   return (
     <div className="px-8">
       <div className="grid grid-cols-12 gap-4 py-5 rounded-lg">
-        <div className="col-span-8">
+        {/* scroll y */}
+        <div className="col-span-8 h-[60vh] overflow-y-scroll" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+          <style>
+            {`
+      /* Hide scrollbar for Chrome, Safari, and Opera */
+      .col-span-8::-webkit-scrollbar {
+        display: none;
+            }
+              `}
+          </style>
           <div className="bg-secondary_main p-5 min-h-max rounded-xl relative ">
             <p className="text-textColor text-xl font-bold"></p>
             <div className=" space-y-5">
@@ -70,7 +79,7 @@ const NewPaymentMade = ({ }: Props) => {
                   {openDropdownIndex === "supplier" && (
                     <div
                       ref={dropdownRef}
-                      className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 -m-9 w-[40%] space-y-1"
+                      className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  w-[40%] space-y-1"
                     >
                       <SearchBar
                         searchValue={searchValue}
@@ -219,7 +228,7 @@ const NewPaymentMade = ({ }: Props) => {
             <div className="grid grid-cols-2 gap-4  mt-5">
               <div>
                 <label className="block text-sm mb-1 text-labelColor">
-                Payment Mode
+                  Payment Mode
                 </label>
                 <div className="relative w-full">
                   <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
@@ -241,7 +250,7 @@ const NewPaymentMade = ({ }: Props) => {
                 <div className="relative w-full">
                   <select className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                     <option value="" className="text-gray">
-                    Petty Cash
+                      Petty Cash
                     </option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -253,11 +262,11 @@ const NewPaymentMade = ({ }: Props) => {
             <div className="grid grid-cols-2 gap-4  mt-5">
               <div>
                 <label className="block text-sm mb-1 text-labelColor">
-                 Reference#
+                  Reference#
                 </label>
                 <div className="relative w-full">
-                  <input type="text" className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-                  placeholder="Value"
+                  <input type="text" className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    placeholder="Value"
                   />
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                   </div>
