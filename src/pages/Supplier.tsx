@@ -1,3 +1,5 @@
+import DashboardHome from "../features/Supplier/Dashboard/DashboardHome";
+
 
 
 type Props = {}
@@ -5,7 +7,7 @@ type Props = {}
 function Supplier({}: Props) {
   return (
     <>
-    <p>dashboard</p>
+  <DashboardHome/>
     </>
   )
 }
