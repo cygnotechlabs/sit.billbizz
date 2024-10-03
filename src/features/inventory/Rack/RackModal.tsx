@@ -57,7 +57,7 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
     loadRacks();
   }, []);
 
-  const openModal = (rack?:any) => {
+  const openModal = (rack?: any) => {
     if (rack) {
       setIsEdit(true);
       setRackData({
@@ -85,14 +85,14 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
       const { response, error } = await apiCall(url, rackData);
 
       if (!error && response) {
-if(isEdit){
-  toast.success(response.data.message);
+        if (isEdit) {
+          toast.success(response.data.message);
 
-}    
-else{
-  toast.success(response.data);
+        }
+        else {
+          toast.success(response.data);
 
-}    
+        }
         loadRacks();
         closeModal();
       } else {
@@ -165,31 +165,30 @@ else{
           </div>
 
           <div className="grid grid-cols-3 gap-5">
-            {Allracks.map((item:any) => (
-              <div key={item._id} className="flex p-2">
-                <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
-                  <div>
-                    <h3 className="text-sm font-bold">{item.rackName}</h3>
-                    <p className="text-xs text-textColor">{item.description}</p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <p
-                      className="cursor-pointer"
-                      onClick={() => openModal(item)}
-                    >
-                      <PencilEdit color="currentColor" />
-                    </p>
-                    <p
-                      className="cursor-pointer"
-                      onClick={() => handleDelete(item)}
-                    >
-                      <TrashCan color="currentColor" />
-                    </p>
+            {Allracks.length > 0 ? (
+              Allracks.map((item: any) => (
+                <div key={item._id} className="flex p-2">
+                  <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold">{item.rackName}</h3>
+                      <p className="text-xs text-textColor">{item.description}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <p className="cursor-pointer" onClick={() => openModal(item)}>
+                        <PencilEdit color="currentColor" />
+                      </p>
+                      <p className="cursor-pointer" onClick={() => handleDelete(item)}>
+                        <TrashCan color="currentColor" />
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-center col-span-3 text-red-500 font-semibold">No racks found!</p>
+            )}
           </div>
+
           <div className="flex justify-end my-3">
             <Button variant="primary" onClick={onClose} size="sm" className="text-sm">
               Done
@@ -202,7 +201,7 @@ else{
         <div className="p-5 mt-3">
           <div className="flex p-4 rounded-xl relative overflow-hidden">
             <h3 className="text-xl font-bold text-textColor">
-              {isEdit? "Edit Rack" : "Add Rack"}
+              {isEdit ? "Edit Rack" : "Add Rack"}
             </h3>
             <div
               className="ms-auto text-3xl cursor-pointer relative z-10"
