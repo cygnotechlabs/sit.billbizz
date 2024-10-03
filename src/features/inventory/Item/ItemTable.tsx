@@ -20,7 +20,7 @@ interface Column {
 }
 
 const ItemTable = () => {
-  
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
@@ -58,7 +58,7 @@ const ItemTable = () => {
       if (!error && response) {
         setItemsData(response.data);
         console.log(response.data);
-        
+
       } else {
         console.error("Error in response:", error);
       }
@@ -174,12 +174,16 @@ const ItemTable = () => {
             <div className="flex gap-6">
               <div className="p-6 rounded-lg bg-[#F3F3F3] w-[35%] h-[50%] flex flex-col items-center justify-center">
                 <img
-                  src={selectedItem.itemImage}
+                  src={selectedItem?.itemImage || "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-6.png"}
                   alt="*Item image"
-                  className="rounded-lg"
+                  className="rounded-lg text-xs"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-6.png"; // Fallback in case image fails to load
+                  }}
                 />
+
                 <div className="mt-6 flex gap-2">
-                  <Button  onClick={handleEdit} variant="tertiary" className="text-xs font-medium h-[32px]">
+                  <Button onClick={handleEdit} variant="tertiary" className="text-xs font-medium h-[32px]">
                     <Pen color="#585953" /> Change image
                   </Button>
                   <Button variant="tertiary" className="text-xs font-medium h-[32px]">
@@ -203,12 +207,12 @@ const ItemTable = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       <Button
-      variant="tertiary"
-      className="text-xs font-medium h-[32px] pl-3 pr-5"
-      onClick={handleEdit} // Handle navigation to ItemAdd
-    >
-      <Pen color="#585953" /> Edit
-    </Button>
+                        variant="tertiary"
+                        className="text-xs font-medium h-[32px] pl-3 pr-5"
+                        onClick={handleEdit} // Handle navigation to ItemAdd
+                      >
+                        <Pen color="#585953" /> Edit
+                      </Button>
                       <Ellipsis />
                     </div>
                   </div>

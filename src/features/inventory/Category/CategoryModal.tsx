@@ -57,7 +57,7 @@ function Category({ isOpen, onClose, page }: Props) {
       if (!error && response) {
         setAllcategoryData(response.data);
       } else {
-        toast.error("Failed to fetch Category data.");
+        console.error("Failed to fetch Category data.");
       }
     } catch (error) {
       toast.error("Error in fetching Category data.");
