@@ -24,7 +24,7 @@ type Props = {
 };
 
 const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
-  const { request: fetchAllBrands } = useApi("get", 5003);
+  const { request: fetchAllBrands } = useApi("put", 5003);
   const { request: deleteBrandRequest } = useApi("delete", 5003);
   const { request: updateBrandRequest } = useApi("put", 5003);
   const { request: addBrandRequest } = useApi("post", 5003);
@@ -44,7 +44,7 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
     setIsEdit(false);
   };
 
-  const openModal = (brand?:any) => {
+  const openModal = (brand?: any) => {
     if (brand) {
       setIsEdit(true);
       setBrandData({
@@ -84,7 +84,7 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
       if (!error && response) {
         setAllBrandData(response.data);
       } else {
-        toast.error("Failed to fetch brand data.");
+        console.error("Failed to fetch brand data.");
       }
     } catch (error) {
       toast.error("Error in fetching brand data.");
@@ -93,7 +93,7 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   };
 
 
-  
+
 
   const handleDelete = async (brand: any) => {
 
@@ -147,7 +147,7 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               </p>
             </div>
             <div className="ms-auto text-3xl cursor-pointer relative z-10" onClick={onClose}>
-              &times; 
+              &times;
             </div>
           </div>
 
@@ -157,32 +157,36 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               Add Brand
             </Button>
           </div>
-
           <div className="grid grid-cols-3 gap-5">
-            {allBrandData.map((brand:any) => (
-              <div key={brand._id} className="flex p-2">
-                <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
-                  <div>
-                    <h3 className="text-sm font-bold">{brand.brandName}</h3>
-                    <p className="text-xs text-textColor">{brand.description}</p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <p className="cursor-pointer" onClick={() => openModal(brand)}>
-                      <PencilIcon color="currentColor" />
-                    </p>
-                    <p className="cursor-pointer" onClick={() => handleDelete(brand)}>
-                      <OutlineTrashIcon color="currentColor" />
-                    </p>
+            {allBrandData.length === 0 ? (
+              <p className="text-center col-span-3 text-red-500 font-semibold">No brands found !</p>
+            ) : (
+              allBrandData.map((brand: any) => (
+                <div key={brand._id} className="flex p-2">
+                  <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold">{brand.brandName}</h3>
+                      <p className="text-xs text-textColor">{brand.description}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <p className="cursor-pointer" onClick={() => openModal(brand)}>
+                        <PencilIcon color="currentColor" />
+                      </p>
+                      <p className="cursor-pointer" onClick={() => handleDelete(brand)}>
+                        <OutlineTrashIcon color="currentColor" />
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
-           <div className="flex justify-end gap-2 my-3">
-            <Button className="flex justify-center px-8" variant="primary" size="sm" >
-              Save
+
+          <div className="flex justify-end gap-2 my-3">
+            <Button onClick={onClose} className="flex justify-center px-8" variant="primary" size="sm" >
+              Done
             </Button>
-            </div>
+          </div>
         </div>
       </Modal>
 
@@ -222,9 +226,12 @@ const BrandManager = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
               </div>
             </div>
 
-            <div className="flex justify-end">
-              <Button size="sm" variant="primary" className="text-sm" type="submit">
-               Save
+            <div className="flex justify-end gap-2">
+              <Button variant="secondary" className="text-sm pl-6 pr-6" size="sm" onClick={closeModal}>
+                Cancel
+              </Button>{" "}
+              <Button size="sm" variant="primary" className="text-sm pl-8 pr-8" type="submit">
+                Save
               </Button>
             </div>
           </form>

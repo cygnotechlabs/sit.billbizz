@@ -52,7 +52,7 @@ interface Organization {
 
 const initialItemDataState = {
   _id: "",
-  itemType: "",
+  itemType: "goods",
   itemName: "",
   itemImage: "",
   sku: "",
@@ -61,6 +61,7 @@ const initialItemDataState = {
   hsnCode: "",
   sac: "",
   taxPreference: "",
+  taxExemptReason: "",
   productUsage: "",
   length: "",
   width: "",
@@ -113,6 +114,12 @@ const AddItem = ({ }: Props) => {
   const [isManufatureModalOpen, setIsManufatureModalOpen] = useState(false);
 
   const [accountData, setAccountData] = useState<Account[]>([]);
+  useEffect(() => {
+    fetchAllItems();
+    fetchAllItemName();
+    fetchAllAccounts();
+  }, []);
+
   const { request: AllAccounts } = useApi("get", 5001);
 
   const fetchAllAccounts = async () => {
@@ -153,9 +160,6 @@ const AddItem = ({ }: Props) => {
     }
   };
 
-  useEffect(() => {
-    fetchAllAccounts();
-  }, []);
   const [itemsDataName, setItemsDataName] = useState<string[]>([]);
   const { request: GetAllItemsName } = useApi("get", 5003);
 
@@ -173,9 +177,7 @@ const AddItem = ({ }: Props) => {
       console.error("Error fetching items:", error);
     }
   };
-  useEffect(() => {
-    fetchAllItemName();
-  }, []);
+
 
 
   const handleInputChange = (
@@ -291,6 +293,7 @@ const AddItem = ({ }: Props) => {
         hsnCode: selectedItem.hsnCode || "",
         sac: selectedItem.sac || "",
         taxPreference: selectedItem.taxPreference || "",
+        taxExemptReason: selectedItem.taxExemptReason || "",
         productUsage: selectedItem.productUsage || "",
         length: selectedItem.length || "",
         width: selectedItem.width || "",
@@ -325,8 +328,15 @@ const AddItem = ({ }: Props) => {
         currentStock: selectedItem.currentStock || "",
         status: selectedItem.status || "",
       });
+      if (selectedItem.itemType === "service") {
+        setIsService(true);
+      } else {
+        setIsService(false);
+      }
     }
   }, [selectedItem]);
+  console.log(accountData, "not in use");
+
 
   return (
     <>
@@ -407,16 +417,16 @@ const AddItem = ({ }: Props) => {
                       name="itemType"
                       value="goods"
                       className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${initialItemData.itemType === "goods"
-                          ? "border-8 border-[#97998E]"
-                          : "border-1 border-[#97998E]"
+                        ? "border-8 border-[#97998E]"
+                        : "border-1 border-[#97998E]"
                         }`}
-                      checked={initialItemData.itemType === "goods"}
+                      checked={initialItemData.itemType === "goods"} // "Goods" will be checked by default
                       onChange={handleInputChange}
                     />
                     <div
                       className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${initialItemData.itemType === "goods"
-                          ? "bg-neutral-50"
-                          : "bg-transparent"
+                        ? "bg-neutral-50"
+                        : "bg-transparent"
                         }`}
                     />
                   </div>
@@ -424,7 +434,8 @@ const AddItem = ({ }: Props) => {
                     Goods
                   </label>
                 </div>
-                <div className="flex gap-2  justify-center items-center">
+
+                <div className="flex gap-2 justify-center items-center">
                   <div
                     className="grid place-items-center mt-1"
                     onClick={() => {
@@ -441,16 +452,16 @@ const AddItem = ({ }: Props) => {
                       name="itemType"
                       value="service"
                       className={`col-start-1 row-start-1 appearance-none shrink-0 w-5 h-5 rounded-full border ${initialItemData.itemType === "service"
-                          ? "border-8 border-[#97998E]"
-                          : "border-1 border-[#97998E]"
+                        ? "border-8 border-[#97998E]"
+                        : "border-1 border-[#97998E]"
                         }`}
                       checked={initialItemData.itemType === "service"}
                       onChange={handleInputChange}
                     />
                     <div
                       className={`col-start-1 row-start-1 w-2 h-2 rounded-full ${initialItemData.itemType === "service"
-                          ? "bg-neutral-50"
-                          : "bg-transparent"
+                        ? "bg-neutral-50"
+                        : "bg-transparent"
                         }`}
                     />
                   </div>
@@ -460,6 +471,7 @@ const AddItem = ({ }: Props) => {
                 </div>
               </div>
             </div>
+
 
             <div className="grid grid-cols-12 gap-4">
               <div className="grid grid-cols-2 gap-4 mt-3 col-span-9">
@@ -634,6 +646,28 @@ const AddItem = ({ }: Props) => {
             </div>
           </div>
         </div>
+        {initialItemData.taxPreference === "Non-taxable" && (
+          <div className="grid grid-cols-12 gap-4 my-3">
+            <div className="col-span-7"></div>
+            <div className="col-span-5">
+              <div>
+                <label
+                  className="text-slate-600 flex text-sm items-center gap-2"
+                  htmlFor="productUsage"
+                >
+                  Tax Exempt Reason <span className="text-red-600 font-semibold">*</span>
+                </label>
+                <input
+                  className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  placeholder="Enter a reason"
+                  name="taxExemptReason"
+                  value={initialItemData.taxExemptReason}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-12 gap-4 my-3">
           <div className="col-span-2"></div>
@@ -665,13 +699,17 @@ const AddItem = ({ }: Props) => {
                 Dimensions
                 <div className="flex gap-2">
                   <input
+                    type="number"
                     className="text-sm w-[100%] rounded-md pl-3 text-start mt-1.5 bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                     placeholder="Length"
                     name="length"
                     value={initialItemData.length}
                     onChange={handleInputChange}
+                    min={0}
                   />
                   <input
+                    type="number"
+                    min={0}
                     className="text-sm w-[100%] rounded-md pl-3 text-start mt-1.5 bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                     placeholder="Width"
                     name="width"
@@ -679,6 +717,8 @@ const AddItem = ({ }: Props) => {
                     onChange={handleInputChange}
                   />
                   <input
+                    type="number"
+                    min={0}
                     className="text-sm w-[100%] rounded-md pl-3 text-start mt-1.5 bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                     placeholder="Height"
                     name="height"
@@ -733,23 +773,25 @@ const AddItem = ({ }: Props) => {
                     Weight
                     <div className="flex">
                       <input
+                        type="number"
+                        min={0}
                         className="pl-3 text-sm w-[100%] rounded-l-md mt-0.5 text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                         placeholder="Weight"
                         name="weight"
                         value={initialItemData.weight}
                         onChange={handleInputChange}
                       />
-                      <div className="relative w-20 mt-0.5">
+                      <div className="relative w-24 mt-0.5">
                         <select
                           name="weightUnit"
-                          className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-r-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                          className="block appearance-none w-full text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-7 rounded-r-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                           value={initialItemData.weightUnit}
                           onChange={handleInputChange}
                         >
                           <option value="">KG</option>
                           <option value="G">G</option>
                         </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center  text-gray-700">
                           <CehvronDown color="gray" />
                         </div>
                       </div>
@@ -1105,7 +1147,7 @@ const AddItem = ({ }: Props) => {
         <p className="text-textColor text-base font-semibold mt-4">
           Sales Information
         </p>
-        <div className="grid grid-cols-4 gap-4 my-6">
+        <div className="grid grid-cols-3 gap-4 my-6">
           <div className="relative">
             <label
               className="text-slate-600 flex text-sm gap-2"
@@ -1118,6 +1160,8 @@ const AddItem = ({ }: Props) => {
                 {itemsData.organization.baseCurrency.toUpperCase() || "INR"}
               </div>
               <input
+              type="number"
+              min={0}
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-r-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Enter Price"
                 name="sellingPrice"
@@ -1135,6 +1179,8 @@ const AddItem = ({ }: Props) => {
               MRP
             </label>
             <input
+            type="number"
+            min={0}
               className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
               placeholder="Enter MRP"
               name="saleMrp"
@@ -1142,7 +1188,7 @@ const AddItem = ({ }: Props) => {
               onChange={handleInputChange}
             />
           </div>
-
+          {/* 
           <div className="relative">
             <label htmlFor="salesAccount" className="text-slate-600 text-sm gap-2">
               Account
@@ -1174,6 +1220,8 @@ const AddItem = ({ }: Props) => {
               </div>
             </div>
           </div>
+           */}
+
 
           <div>
             <label
@@ -1183,7 +1231,7 @@ const AddItem = ({ }: Props) => {
               Description
             </label>
             <input
-              className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+              className="pl-3 text-sm w-full mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
               placeholder="Description"
               name="salesDescription"
               value={initialItemData.salesDescription}
@@ -1209,6 +1257,8 @@ const AddItem = ({ }: Props) => {
                 {itemsData.organization.baseCurrency.toUpperCase() || "INR"}
               </div>
               <input
+              type="number"
+              min={0}
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-r-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Enter Price"
                 name="costPrice"
@@ -1218,7 +1268,7 @@ const AddItem = ({ }: Props) => {
             </div>
           </div>
 
-          <div className="relative">
+          {/* <div className="relative">
             <label htmlFor="purchaseAccount" className="text-slate-600 text-sm gap-2">
               Account
             </label>
@@ -1255,7 +1305,7 @@ const AddItem = ({ }: Props) => {
                 <CehvronDown color="gray" />
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div>
             <label
@@ -1293,79 +1343,82 @@ const AddItem = ({ }: Props) => {
             </div>
           </div>
 
-          <div className="relative">
-            <label
-              htmlFor="taxRate-input"
-              className="text-slate-600 text-sm flex items-center gap-2"
-            >
-              Tax Rate
-            </label>
-            <div className="relative w-full mt-1.5">
-              <input
-                id="taxRate-input"
-                type="text"
-                value={initialItemData.taxRate}
-                readOnly
-                className="cursor-pointer appearance-none w-full mt-0.5 items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                placeholder="Select State Tax Rate"
-                onClick={() => toggleDropdown("taxRate")}
-              />
-              <div className="cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <CehvronDown color="gray" />
-              </div>
-            </div>
-            {openDropdownIndex === "taxRate" && (
-              <div
-                ref={dropdownRef}
-                className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
+          {/* Conditionally render Tax Rate field based on taxPreference */}
+          {initialItemData.taxPreference === "Taxable" && (
+            <div className="relative">
+              <label
+                htmlFor="taxRate-input"
+                className="text-slate-600 text-sm flex items-center gap-2"
               >
-                <div className="mb-2.5">
-                  <SearchBar
-                    searchValue={searchValueTaxRate}
-                    onSearchChange={setSearchValueTaxRate}
-                    placeholder="Select Tax Rate"
-                  />
+                Tax Rate
+              </label>
+              <div className="relative w-full mt-1.5">
+                <input
+                  id="taxRate-input"
+                  type="text"
+                  value={initialItemData.taxRate}
+                  readOnly
+                  className="cursor-pointer appearance-none w-full mt-0.5 items-center flex text-zinc-400 bg-white border border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                  placeholder="Select State Tax Rate"
+                  onClick={() => toggleDropdown("taxRate")}
+                />
+                <div className="cursor-pointer pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <CehvronDown color="gray" />
                 </div>
-                {itemsData.taxRate
-                  .filter((tax: TaxRate) =>
-                    tax.taxName.toLowerCase().includes(searchValueTaxRate.toLowerCase())
-                  )
-                  .map((tax, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleDropdownSelect("taxRate", tax.taxName)}
-                      className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
-                    >
-                      <div className="col-span-10 flex">
-                        <div>
-                          <p className="font-bold text-sm">{tax.taxName}</p>
+              </div>
+
+              {openDropdownIndex === "taxRate" && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[50%] space-y-1"
+                >
+                  <div className="mb-2.5">
+                    <SearchBar
+                      searchValue={searchValueTaxRate}
+                      onSearchChange={setSearchValueTaxRate}
+                      placeholder="Select Tax Rate"
+                    />
+                  </div>
+
+                  {itemsData.taxRate
+                    .filter((tax: TaxRate) =>
+                      tax.taxName.toLowerCase().includes(searchValueTaxRate.toLowerCase())
+                    )
+                    .map((tax, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleDropdownSelect("taxRate", tax.taxName)}
+                        className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
+                      >
+                        <div className="col-span-10 flex">
+                          <div>
+                            <p className="font-bold text-sm">{tax.taxName}</p>
+                          </div>
                         </div>
                       </div>
+                    ))}
+                  <Link to={"/settings/taxes"}>
+                    <div className="hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold">
+                      <SettingsIcons color="darkRed" bold={2} />
+                      <p className="mt-0.5">Manage Tax Rates</p>
                     </div>
-                  ))}
-              <Link to={"/settings/taxes"}>
-              <div
-                  className="hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-4 px-4 text-darkRed flex text-sm gap-2 font-bold"
-                >
-                  <SettingsIcons color="darkRed" bold={2} />
-                  <p className="mt-0.5">Manage Tax Rates</p>
+                  </Link>
                 </div>
-              </Link>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         <>
           <div className="flex items-center gap-1 text-textColor">
-            <input
+            {/* <input
               type="checkbox"
               className="accent-[#97998E] bg-white h-6 w-5 mx-1"
               id="checkboxTrack"
               name="trackInventory"
               checked={initialItemData.trackInventory}
               onChange={handleInputChange}
-            />
+            /> */}
             <label
               htmlFor="checkboxTrack"
               className="text-textColor text-base font-semibold"
@@ -1373,14 +1426,14 @@ const AddItem = ({ }: Props) => {
               Track Inventory for this item
             </label>
           </div>
-          <p className="text-textColor text-sm mt-3">
+          {/* <p className="text-textColor text-sm mt-3">
             You cannot enable/disable inventory tracking once you've created
             transactions for this item
-          </p>
+          </p> */}
 
-          {initialItemData.trackInventory && (
-            <div className="grid grid-cols-2 gap-4 my-3">
-              <div className="relative">
+          {/* {initialItemData.trackInventory && ( */}
+          <div className="grid grid-cols-2 gap-4 my-3">
+            {/* <div className="relative">
                 <label htmlFor="inventoryAccount" className="text-slate-600 text-sm gap-2">
                   Inventory Account
                 </label>
@@ -1408,66 +1461,72 @@ const AddItem = ({ }: Props) => {
                     <CehvronDown color="gray" />
                   </div>
                 </div>
-              </div>
+              </div> */}
 
-              <div>
-                <label
-                  className="text-slate-600 flex text-sm gap-2"
-                  htmlFor="openingStock"
-                >
-                  Opening Balance
-                </label>
-                <input
-                  className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  placeholder="Value"
-                  name="openingStock"
-                  value={initialItemData.openingStock}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div>
-                <label
-                  className="text-slate-600 flex text-sm gap-2"
-                  htmlFor="openingStockRatePerUnit"
-                >
-                  Opening Stock Rate Per Unit
-                </label>
-                <input
-                  className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  placeholder="Value"
-                  name="openingStockRatePerUnit"
-                  value={initialItemData.openingStockRatePerUnit}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              <div>
-                <label
-                  className="text-slate-600 flex text-sm gap-2"
-                  htmlFor="reorderPoint"
-                >
-                  Reorder Point
-                </label>
-                <input
-                  className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  placeholder="Value"
-                  name="reorderPoint"
-                  value={initialItemData.reorderPoint}
-                  onChange={handleInputChange}
-                />
-              </div>
+            <div>
+              <label
+                className="text-slate-600 flex text-sm gap-2 mt-3"
+                htmlFor="openingStock"
+              >
+                Opening Balance
+              </label>
+              <input
+                type="number"
+                min={0}
+                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                placeholder="Value"
+                name="openingStock"
+                value={initialItemData.openingStock}
+                onChange={handleInputChange}
+              />
             </div>
-          )}
+
+            <div>
+              <label
+                className="text-slate-600 flex text-sm gap-2 mt-3"
+                htmlFor="openingStockRatePerUnit"
+              >
+                Opening Stock Rate Per Unit
+              </label>
+              <input
+               type="number"
+               min={0}
+                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                placeholder="Value"
+                name="openingStockRatePerUnit"
+                value={initialItemData.openingStockRatePerUnit}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div>
+              <label
+                className="text-slate-600 flex text-sm gap-2"
+                htmlFor="reorderPoint"
+              >
+                Reorder Point
+              </label>
+              <input
+               type="number"
+               min={0}
+                className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                placeholder="Value"
+                name="reorderPoint"
+                value={initialItemData.reorderPoint}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+          {/* )} */}
         </>
       </div>
       <div className="justify-end m-5 flex gap-4">
         <Link to="/inventory/Item">
-          <Button variant="secondary" size="sm" className="text-sm">
+          <Button variant="secondary" size="sm" className="text-sm pl-8 pr-8">
             Cancel
           </Button>
         </Link>
-        <Button onClick={handleSave} variant="primary" size="sm" className="text-sm">
+        <Button onClick={handleSave} variant="primary" size="sm" className="text-sm pl-8 pr-8">
           Save
         </Button>
         <Toaster position="top-center" reverseOrder={false} />

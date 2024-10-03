@@ -13,7 +13,6 @@ type Rack = {
   _id?: string;
   name: string;
   description: string;
-  organizationId: string;
   type?: string;
   createdDate?: string;
 };
@@ -28,7 +27,6 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const { request: updateRackRequest } = useApi("put", 5003);
   const { request: addRackRequest } = useApi("post", 5003);
   const [rackData, setRackData] = useState<Rack>({
-    organizationId: "INDORG0001",
     name: "",
     description: "",
     type: "rack",
@@ -42,15 +40,13 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
   const loadRacks = async () => {
     try {
       const url = `${endponits.GET_ALL_BRMC}`;
-      const body = { type: "rack", organizationId: "INDORG0001" };
-
+      const body = { type: "rack" };
       const { response, error } = await fetchAllRacks(url, body
-
       );
       if (!error && response) {
         setallRacks(response.data);
       } else {
-        toast.error("Failed to fetch racks data.");
+        console.error("Failed to fetch racks data.");
       }
     } catch (error) {
       toast.error("Error fetching racks data.");
@@ -58,7 +54,6 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
     }
   };
   useEffect(() => {
-
     loadRacks();
   }, []);
 
@@ -69,13 +64,11 @@ const RackModal = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
         _id: rack.id,
         name: rack.rackName,
         description: rack.description,
-        organizationId: rack.organizationId || "INDORG0001",
         type: rack.type || "rack",
       });
     } else {
       setIsEdit(false);
       setRackData({
-        organizationId: "INDORG0001",
         name: "",
         description: "",
         type: "rack",
@@ -113,11 +106,8 @@ else{
   const handleDelete = async (rack: any) => {
 
     try {
-      const body={ organizationId: "INDORG0001"}
-      console.log(body);
-      
       const url = `${endponits.DELETE_BRMC}/${rack.id}`;
-      const { response, error } = await deleteRackRequest(url,body);
+      const { response, error } = await deleteRackRequest(url);
       if (!error && response) {
         toast.success("Rack deleted successfully!");
         loadRacks();
@@ -201,8 +191,8 @@ else{
             ))}
           </div>
           <div className="flex justify-end my-3">
-            <Button variant="primary" size="sm" className="text-sm">
-              Save
+            <Button variant="primary" onClick={onClose} size="sm" className="text-sm">
+              Done
             </Button>
           </div>
         </div>
@@ -259,11 +249,11 @@ else{
               </div>
 
               <div className="flex justify-end gap-2 mb-3">
-                <Button type="submit" variant="primary" size="sm">
-                  Save
-                </Button>
-                <Button onClick={closeModal} variant="tertiary" size="sm">
+                <Button onClick={closeModal} className="text-sm pl-6 pr-6" variant="tertiary" size="sm">
                   Cancel
+                </Button>
+                <Button type="submit" variant="primary" className="text-sm pl-6 pr-6" size="sm">
+                  Save
                 </Button>
               </div>
             </div>

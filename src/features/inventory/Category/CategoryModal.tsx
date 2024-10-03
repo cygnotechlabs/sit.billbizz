@@ -15,7 +15,6 @@ type CategoryData = {
   _id?: string;
   name: string;
   description: string;
-  organizationId: string;
   type?: string;
   createdDate?: string;
 };
@@ -28,13 +27,11 @@ type Props = {
 
 function Category({ isOpen, onClose, page }: Props) {
   const { request: fetchAllCategories } = useApi("put", 5003);
-  // const { request: getCategoryRequest } = useApi("get", 5003);
   const { request: deleteCategoryRequest } = useApi("delete", 5003);
   const { request: updateCategoryRequest } = useApi("put", 5003);
   const { request: addCategoryRequest } = useApi("post", 5003);
 
   const [categories, setCategories] = useState<CategoryData>({
-    organizationId: "INDORG0001",
     name: "",
     description: "",
     type: "category",
@@ -55,12 +52,12 @@ function Category({ isOpen, onClose, page }: Props) {
   const loadCategories = async () => {
     try {
       const url = `${endponits.GET_ALL_BRMC}`;
-      const body = { type: "category", organizationId: "INDORG0001" };
+      const body = { type: "category" };
       const { response, error } = await fetchAllCategories(url, body);
       if (!error && response) {
         setAllcategoryData(response.data);
       } else {
-        toast.error("Failed to fetch Category data.");
+        console.error("Failed to fetch Category data.");
       }
     } catch (error) {
       toast.error("Error in fetching Category data.");
@@ -81,13 +78,11 @@ function Category({ isOpen, onClose, page }: Props) {
         _id: category.id,
         name: category.categoriesName,
         description: category.description,
-        organizationId: category.organizationId || "INDORG0001",
         type: category.type || "category",
       });
     } else {
       setIsEdit(false);
       setCategories({
-        organizationId: "INDORG0001",
         name: "",
         description: "",
         type: "category",
@@ -118,9 +113,8 @@ function Category({ isOpen, onClose, page }: Props) {
 
   const handleDelete = async (item: any) => {
     try {
-      const body = { organizationId: "INDORG0001" };
       const url = `${endponits.DELETE_BRMC}/${item.id}`;
-      const { response, error } = await deleteCategoryRequest(url, body);
+      const { response, error } = await deleteCategoryRequest(url);
       if (!error && response) {
         toast.success("Category deleted successfully!");
         loadCategories();
@@ -201,35 +195,42 @@ function Category({ isOpen, onClose, page }: Props) {
         </div>
 
         <div className="grid grid-cols-3 gap-5">
-          {allCategoryData.map((category: any) => (
-            <div key={category.id} className="flex p-2">
-              <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
-                <div>
-                  <h3 className="text-sm font-bold">
-                    {category.categoriesName}
-                  </h3>
-                  <p className="text-xs text-textColor">
-                    {category.description}
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <p
-                    className="cursor-pointer"
-                    onClick={() => openModal(category)}
-                  >
-                    <PencilEdit color="currentColor" />
-                  </p>
-                  <p
-                    className="cursor-pointer"
-                    onClick={() => handleDelete(category)}
-                  >
-                    <TrashCan color="currentColor" />
-                  </p>
+          {allCategoryData.length === 0 ? (
+            <p className="text-center col-span-3 text-red-500 font-semibold">
+              No categories found !
+            </p>
+          ) : (
+            allCategoryData.map((category: any) => (
+              <div key={category.id} className="flex p-2">
+                <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold">
+                      {category.categoriesName}
+                    </h3>
+                    <p className="text-xs text-textColor">
+                      {category.description}
+                    </p>
+                  </div>
+                  <div className="flex space-x-2">
+                    <p
+                      className="cursor-pointer"
+                      onClick={() => openModal(category)}
+                    >
+                      <PencilEdit color="currentColor" />
+                    </p>
+                    <p
+                      className="cursor-pointer"
+                      onClick={() => handleDelete(category)}
+                    >
+                      <TrashCan color="currentColor" />
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
+
 
         {page !== "expense" && (
           <div className="flex justify-end gap-2 my-3">
@@ -237,8 +238,9 @@ function Category({ isOpen, onClose, page }: Props) {
               className="flex justify-center px-8"
               variant="primary"
               size="sm"
+              onClick={onClose}
             >
-              Save
+              Done
             </Button>
           </div>
         )}
@@ -289,10 +291,10 @@ function Category({ isOpen, onClose, page }: Props) {
               </div>
 
               <div className="flex justify-end gap-2">
-                <Button variant="secondary" size="sm" onClick={closeModal}>
+                <Button variant="secondary" size="sm" className="text-sm pl-6 pr-6" onClick={closeModal}>
                   Cancel
                 </Button>{" "}
-                <Button variant="primary" size="sm" onClick={handleSave}>
+                <Button variant="primary" size="sm" className="text-sm pl-8 pr-8" onClick={handleSave}>
                   Save
                 </Button>
               </div>
