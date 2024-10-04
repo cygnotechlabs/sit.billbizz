@@ -23,6 +23,7 @@ exports.addItem = async (req, res) => {
         hsnCode,
         sac,
         taxPreference,
+        taxExemptReason,
         productUsage,
 
         //Storage & Classification
@@ -121,6 +122,7 @@ exports.addItem = async (req, res) => {
         hsnCode,
         sac,
         taxPreference,
+        taxExemptReason,
         productUsage,
 
         //Storage & Classification
@@ -274,6 +276,7 @@ exports.updateItem = async (req, res) => {
         hsnCode,
         sac,
         taxPreference,
+        taxExemptReason,
         productUsage,
 
         //Storage & Classification
@@ -348,6 +351,7 @@ exports.updateItem = async (req, res) => {
         hsnCode,
         sac,
         taxPreference,
+        taxExemptReason,
         productUsage,
 
         //Storage & Classification

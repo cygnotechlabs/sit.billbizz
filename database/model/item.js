@@ -12,7 +12,8 @@ const itemSchema = new Schema({
     returnableItem: { type: Boolean },
     hsnCode: { type: String },
     sac:{type:String},
-    taxPreference: { type: String },    
+    taxPreference: { type: String },   
+    taxExemptReason: { type: String },  
     productUsage: { type: String },
 
     //Storage & Classification
