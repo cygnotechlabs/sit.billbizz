@@ -352,10 +352,6 @@ const AddItem = ({ }: Props) => {
     }
   }, [selectedItem]);
   const hsnSac = location.state?.hsnSac;
-  console.log("HSN SAC value:", hsnSac);
-
-
-
 
   return (
     <>
@@ -604,7 +600,7 @@ const AddItem = ({ }: Props) => {
             )}
 
             <div className="grid grid-cols-2 gap-4  mt-3">
-              {location.state?.hsnSac && (
+              {hsnSac && (
                 isService ? (
                   <div>
                     <label

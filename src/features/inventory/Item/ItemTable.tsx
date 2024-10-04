@@ -172,13 +172,18 @@ const ItemTable = () => {
             </div>
 
             <div className="flex gap-6">
+              {/* Left Section (Image and Actions) */}
               <div className="p-6 rounded-lg bg-[#F3F3F3] w-[35%] h-[50%] flex flex-col items-center justify-center">
                 <img
-                  src={selectedItem?.itemImage || "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-6.png"}
-                  alt="*Item image"
+                  src={
+                    selectedItem?.itemImage ||
+                    "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-6.png"
+                  }
+                  alt="Item image"
                   className="rounded-lg text-xs"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-6.png"; // Fallback in case image fails to load
+                    (e.target as HTMLImageElement).src =
+                      "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-6.png"; // Fallback in case image fails to load
                   }}
                 />
 
@@ -199,17 +204,17 @@ const ItemTable = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="font-bold text-textColor text-2xl">
-                        {selectedItem.itemName}
+                        {selectedItem.itemName || "N/A"}
                       </p>
                       <p className="text-dropdownText text-base font-normal">
-                        IQN9P-256-BLK-5G
+                        {selectedItem.sku || "N/A"}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
                       <Button
                         variant="tertiary"
                         className="text-xs font-medium h-[32px] pl-3 pr-5"
-                        onClick={handleEdit} // Handle navigation to ItemAdd
+                        onClick={handleEdit} // Handle navigation to ItemEdit
                       >
                         <Pen color="#585953" /> Edit
                       </Button>
@@ -217,6 +222,8 @@ const ItemTable = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Overview */}
                 <div className="p-2 bg-[#F3F3F3] rounded-lg mt-4">
                   <button
                     className={`px-4 py-2 rounded-lg w-[185px] text-sm font-semibold bg-BgSubhead text-textColor`}
@@ -225,7 +232,6 @@ const ItemTable = () => {
                       <FileSearchIcon color="#303F58" /> Overview
                     </span>
                   </button>
-
                 </div>
 
                 {/* Purchase and Sales Information */}
@@ -235,43 +241,54 @@ const ItemTable = () => {
                     {/* Labels */}
                     <div className="text-dropdownText font-normal text-sm space-y-4">
                       <p>Item Type</p>
-                      <p>SKUI</p>
+                      <p>SKU</p>
                       <p>Unit</p>
-                      <p>Created Source</p>
+                      <p>Returnable</p>
                     </div>
+
                     {/* Values */}
                     <div className="text-dropdownText font-semibold text-sm space-y-4">
-                      <p>{selectedItem?.itemType}</p>
-                      <p>{selectedItem?.sku}</p>
-                      <p>PCS</p>
-                      <p>User</p>
+                      <p>{selectedItem?.itemType || "N/A"}</p>
+                      <p>{selectedItem?.sku || "N/A"}</p>
+                      <p>{selectedItem?.unit || "N/A"}</p>
+                      <p>{selectedItem?.returnableItem ? "Yes" : "No"}</p>
                     </div>
                   </div>
 
                   {/* Purchase Information */}
                   <div className="mt-6">
-                    <p className="font-bold text-base text-textColor mb-2">Purchase Information</p>
+                    <p className="font-bold text-base text-textColor mb-2">
+                      Purchase Information
+                    </p>
                     <div className="grid grid-cols-2 gap-y-4">
                       <p className="text-dropdownText text-sm">Cost Price</p>
-                      <p className="text-dropdownText font-semibold text-sm">Rs.30,000.00</p>
+                      <p className="text-dropdownText font-semibold text-sm">
+                        Rs. {selectedItem?.costPrice || "N/A"}
+                      </p>
                       <p className="text-dropdownText text-sm">Purchase Account</p>
-                      <p className="text-dropdownText font-semibold text-sm">Purchase</p>
+                      <p className="text-dropdownText font-semibold text-sm">
+                        {selectedItem?.purchaseAccount || "N/A"}
+                      </p>
                     </div>
                   </div>
 
                   {/* Sales Information */}
                   <div className="mt-6">
-                    <p className="font-bold text-base text-textColor mb-2">Sales Information</p>
+                    <p className="font-bold text-base text-textColor mb-2">
+                      Sales Information
+                    </p>
                     <div className="grid grid-cols-2 gap-y-4">
                       <p className="text-dropdownText text-sm">Selling Price</p>
-                      <p className="text-dropdownText font-semibold text-sm">Rs.50,000.00</p>
-                      <p className="text-dropdownText text-sm">Selling Account</p>
-                      <p className="text-dropdownText font-semibold text-sm">Sales</p>
+                      <p className="text-dropdownText font-semibold text-sm">
+                        Rs. {selectedItem?.sellingPrice || "N/A"}
+                      </p>
+                      <p className="text-dropdownText text-sm">Sales Account</p>
+                      <p className="text-dropdownText font-semibold text-sm">
+                        {selectedItem?.salesAccount || "N/A"}
+                      </p>
                     </div>
                   </div>
                 </div>
-
-
               </div>
             </div>
           </div>
@@ -279,6 +296,7 @@ const ItemTable = () => {
           <p>No item selected</p>
         )}
       </Modal>
+
 
     </div>
   );
