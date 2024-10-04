@@ -17,13 +17,13 @@ const itemSchema = new Schema({
     productUsage: { type: String },
 
     //Storage & Classification
-    length:{type: String},
-    width:{type: String},
-    height:{type: String},
+    length:{type: Number},
+    width:{type: Number},
+    height:{type: Number},
     dimensionUnit:{type: String},
 
     warranty: { type: String },
-    weight:{ type: String },
+    weight:{ type: Number },
     weightUnit:{ type: String },
 
     manufacturer: { type: String },
@@ -47,15 +47,15 @@ const itemSchema = new Schema({
     preferredVendor: { type: String },
 
     taxRate:{type:String},
-    cgst:{type:String},
-    sgst:{type:String},
-    igst:{type:String},
-    vat:{type:String},
+    cgst:{type:Number},
+    sgst:{type:Number},
+    igst:{type:Number},
+    vat:{type:Number},
 
 
-    openingStock:{typr:String},
-    openingStockRatePerUnit: { type: String },
-    reorderPoint: { type: String },
+    openingStock:{type:Number},
+    openingStockRatePerUnit: { type: Number },
+    reorderPoint: { type: Number },
     
     createdDate: { type: String },  
 });

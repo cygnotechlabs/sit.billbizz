@@ -28,7 +28,7 @@ exports.addItem = async (req, res) => {
 
       //Data Exist Validation
       const { organizationExists, taxExists, settingsExist } = await dataExist(organizationId);
-      if (!validateOrganizationTaxCurrency(organizationExists, taxExists, settingsExist, res)) return; 
+      if (!validateOrganizationTaxCurrency(organizationExists, taxExists, settingsExist, res)) return;     
 
       const { itemName, sku, openingStock, taxRate } = cleanedData;
 
@@ -419,12 +419,13 @@ function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = ne
 
 
 
-const validItemTypes = ["goods", "Business"];
+const validItemTypes = ["goods", "service"];
 const validTaxPreference = ["Non-taxable", "Taxable"]; 
 
 //Validate inputs
 function validateInputs(data, taxExists, organizationId, res) {
   const validationErrors = validateItemData( data, taxExists, organizationId );
+
   if (validationErrors.length > 0) {
     res.status(400).json({ message: validationErrors.join(", ") });
     return false;
@@ -435,7 +436,7 @@ function validateInputs(data, taxExists, organizationId, res) {
 
 
 //Validate Data
-function validateItemData(data, taxExists, organizationId) {
+function validateItemData(data, taxExists, organizationId) {  
   
   const errors = [];
 
@@ -525,8 +526,9 @@ function validateAlphabetsFields(fields, data, errors) {
 }
 
 //Validate Tax Type
-function validateTaxType(taxRate, taxExists, taxPreference, errors) {
+function validateTaxType( taxRate, taxPreference, taxExists, errors ) {
   const taxType = taxExists.taxType;
+  
   let taxFound = false;
 
   // Check if taxType is GST
