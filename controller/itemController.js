@@ -420,7 +420,7 @@ function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = ne
 
 
 const validItemTypes = ["goods", "Business"];
-const validTaxPreference = ["Non-Taxable", "Taxable"]; 
+const validTaxPreference = ["Non-taxable", "Taxable"]; 
 
 //Validate inputs
 function validateInputs(data, taxExists, organizationId, res) {
@@ -452,7 +452,7 @@ function validateItemData(data, taxExists, organizationId) {
   //validateAlphabetsFields([''], data, errors);
 
   //Tax Details
-  validateTaxType(data.taxRate, taxExists, errors);
+  validateTaxType(data.taxRate, data.taxPreference, taxExists, errors);
 
   return errors;
 }
@@ -525,12 +525,12 @@ function validateAlphabetsFields(fields, data, errors) {
 }
 
 //Validate Tax Type
-function validateTaxType(taxRate, taxExists, errors) {
+function validateTaxType(taxRate, taxExists, taxPreference, errors) {
   const taxType = taxExists.taxType;
   let taxFound = false;
 
   // Check if taxType is GST
-  if (taxType === 'GST') {
+  if (taxType === 'GST' && taxPreference =='Taxable' ) {
     taxExists.gstTaxRate.forEach((tax) => {
       if (tax.taxName === taxRate) {
         taxFound = true;
@@ -540,7 +540,7 @@ function validateTaxType(taxRate, taxExists, errors) {
   }
 
   // Check if taxType is VAT
-  if (taxType === 'VAT') {
+  if (taxType === 'VAT' && taxPreference =='Taxable') {
     taxExists.vatTaxRate.forEach((tax) => {
       if (tax.taxName === taxRate) {
         taxFound = true;
@@ -550,7 +550,7 @@ function validateTaxType(taxRate, taxExists, errors) {
   }
 
   // If no matching tax rate found, add an error
-  if (!taxFound) {
+  if (!taxFound  && taxPreference =='Taxable' ) {
     errors.push(`No matching ${taxType} Tax group found for: ${taxRate}`);
   }  
   
