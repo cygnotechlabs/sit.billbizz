@@ -1,18 +1,14 @@
 const BMCR = require('../database/model/bmcr');
 const Organization = require('../database/model/organization');
 const Item = require("../database/model/item"); 
-const { log } = require('console');
+// const { log } = require('console');
 
 
 
 exports.addBmcr = async (req, res) => {
     console.log("Add BMCR:", req.body);
     const organizationId = req.user.organizationId;
-    const {
-        type, // This indicates whether it's a brand, manufacturer, category, or rack
-        name,
-        description,
-    } = req.body;
+    const { type, name, description } = req.body;
 
     if (!['brand', 'manufacturer', 'category', 'rack'].includes(type)) {
         return res.status(400).json({ message: "Invalid type provided." });
@@ -55,8 +51,9 @@ exports.addBmcr = async (req, res) => {
 
         // Check if the entity already exists
         if (existingEntity) {
+            console.log(`A ${type.charAt(0).toUpperCase() + type.slice(1)} with this name already exists`);
             return res.status(409).json({
-                message: `A ${type} with this name already exists in the given organization.`,
+                message: `A ${type.charAt(0).toUpperCase() + type.slice(1)} with this name already exists`,
             });
         }
 
@@ -69,7 +66,7 @@ exports.addBmcr = async (req, res) => {
 
         // Save the new document
         await newBmcr.save();
-
+        console.log(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully.`);
         res.status(201).json(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully.`);
     } catch (error) {
         console.error(`Error adding ${type}:`, error);
@@ -83,6 +80,7 @@ exports.addBmcr = async (req, res) => {
 exports.getAllBmcr = async (req, res) => {
     const organizationId = req.user.organizationId;
     const { type } = req.body;
+    
 
     try {
         // Check if the Organization exists
