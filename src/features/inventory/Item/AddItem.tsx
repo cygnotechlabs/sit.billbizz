@@ -245,7 +245,6 @@ const AddItem = ({ }: Props) => {
   };
   const [errors, setErrors] = useState({
     itemName: false,
-    sku: false,
     sellingPrice: false,
   });
 
@@ -259,7 +258,6 @@ const AddItem = ({ }: Props) => {
     // Validation checks
     const newErrors = {
       itemName: !initialItemData.itemName,
-      sku: !initialItemData.sku,
       sellingPrice: !initialItemData.sellingPrice,
     };
     setErrors(newErrors);
@@ -524,9 +522,9 @@ const AddItem = ({ }: Props) => {
                     value={initialItemData.sku}
                     onChange={handleInputChange}
                   />
-                  {errors.sku && (
+                  {/* {errors.sku && (
                     <div className="text-red-800 text-xs mt-1.5 ms-1">SKU is required</div>
-                  )}
+                  )} */}
                 </div>
               </div>
 
@@ -1546,7 +1544,7 @@ const AddItem = ({ }: Props) => {
           {/* )} */}
         </>
       </div>
-      <div className="justify-end m-5 flex gap-4">
+      <div className="justify-end me-5 flex gap-4 sticky bottom-0 bg-white p-2">
         <Link to="/inventory/Item">
           <Button variant="secondary" size="sm" className="text-sm pl-8 pr-8">
             Cancel
