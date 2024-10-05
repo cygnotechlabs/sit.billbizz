@@ -2,6 +2,7 @@ const Organization = require("../database/model/organization");
 const Item = require("../database/model/item");
 const ItemTrack = require("../database/model/itemTrack");
 const Settings = require("../database/model/settings");
+const BMCR = require("../database/model/bmcr");
 const Tax = require("../database/model/tax");
 const moment = require('moment-timezone');
 
@@ -18,6 +19,17 @@ const dataExist = async (organizationId) => {
   return { organizationExists, taxExists, allItem, settingsExist };
 };
 
+// BMCR existing data
+const bmcrDataExist = async (organizationId) => {
+  const [brandExist, manufacturerExist, categoriesExist, rackExist] = await Promise.all([
+    BMCR.find({ type: 'brand', organizationId }, { brandName: 1, _id: 0 }),
+    BMCR.find({ type: 'manufacturer', organizationId }, { manufacturerName: 1, _id: 0 }),
+    BMCR.find({ type: 'category', organizationId }, { categoriesName: 1, _id: 0 }),
+    BMCR.find({ type: 'rack', organizationId }, { rackName: 1, _id: 0 })
+  ]);
+  return { brandExist, manufacturerExist, categoriesExist, rackExist };
+};
+
 // Add item
 exports.addItem = async (req, res) => {
     console.log("Add Item:", req.body);
@@ -28,32 +40,28 @@ exports.addItem = async (req, res) => {
 
       //Data Exist Validation
       const { organizationExists, taxExists, settingsExist } = await dataExist(organizationId);
+      const { brandExist, manufacturerExist, categoriesExist, rackExist } = await bmcrDataExist(organizationId);
+      const bmcr = { brandExist, manufacturerExist, categoriesExist, rackExist };
+
+
       if (!validateOrganizationTaxCurrency(organizationExists, taxExists, settingsExist, res)) return;     
 
       const { itemName, sku, openingStock, taxRate } = cleanedData;
 
-    // If itemDuplicateName is false, check for duplicate itemName
-    if (!settingsExist.itemDuplicateName) {
-      const existingItemName = await Item.findOne({ itemName, organizationId });
-      if (existingItemName) {
-        console.error("Item with this name already exists.");
-        return res.status(400).json({ message: "Item with this name already exists." });
-      }
-    }
+       // Check for duplicate item name
+       if (!settingsExist.itemDuplicateName && await isDuplicateItemName(itemName, organizationId, res)) return;
 
-    const existingItem = await Item.findOne({ sku });     
-    if (existingItem) {       
-      console.error("Item with this SKU already exists.");       
-      return res.status(400).json({ message: "Item with this SKU already exists." }); 
-    }
+       // Check for duplicate SKU
+       if (cleanedData.sku !== undefined && await isDuplicateSKU(sku, organizationId, res)) return;
 
-    //Validate Inputs  
-    if (!validateInputs(cleanedData, taxExists, organizationId, res)) return;
 
-    const generatedDateTime = generateTimeAndDateForDB(organizationExists.timeZoneExp, organizationExists.dateFormatExp, organizationExists.dateSplit);
-    const createdDate = generatedDateTime.dateTime;
+      //Validate Inputs  
+      if (!validateInputs(cleanedData, taxExists, organizationId, bmcr, res)) return;
 
-    let igst, cgst, sgst, vat; 
+      const generatedDateTime = generateTimeAndDateForDB(organizationExists.timeZoneExp, organizationExists.dateFormatExp, organizationExists.dateSplit);
+      const createdDate = generatedDateTime.dateTime;
+
+      let igst, cgst, sgst, vat; 
 
     if (taxExists.taxType === 'GST') {
       taxExists.gstTaxRate.forEach((tax) => {
@@ -79,21 +87,20 @@ exports.addItem = async (req, res) => {
 
       const savedItem = await newItem.save();
 
-
-      const trackEntry = new ItemTrack({
-        organizationId,
-        operationId: savedItem._id,
-        action: "Opening Stock", //Opening Stock
-        date: createdDate,
-        itemId: savedItem._id,
-        itemName ,
-        creditQuantity: openingStock,
-        currentStock: openingStock,
-    });
-
-    await trackEntry.save();
-
-
+      if (openingStock){
+        const trackEntry = new ItemTrack({
+          organizationId,
+          operationId: savedItem._id,
+          action: "Opening Stock", 
+          date: createdDate,
+          itemId: savedItem._id,
+          itemName,
+          creditQuantity: openingStock,
+          currentStock: openingStock,
+      });  
+      await trackEntry.save();
+      console.log( "Item Track Added", trackEntry );      
+      }
   
       res.status(201).json({ message: "New Item created successfully." });
       console.log( "New Item created successfully:", savedItem );
@@ -167,150 +174,71 @@ exports.getAItem = async (req, res) => {
 exports.updateItem = async (req, res) => {
   console.log("Received request to update item:", req.body);
  
-  try {
-        const organizationId = req.user.organizationId;
-
+  try {    
+    const organizationId = req.user.organizationId;
     const { itemId } = req.params;
-      const {
-        //Basics           
-        itemType,
-        itemName,
-        itemImage,
-        sku,
-        unit,
-        returnableItem,
-        hsnCode,
-        sac,
-        taxPreference,
-        productUsage,
+    const cleanedData = cleanCustomerData(req.body);
 
-        //Storage & Classification
-        length,
-        width,
-        height,
-        dimensionUnit,
+    const existingItem = await Item.findById(itemId);
+      if (!existingItem) {
+        console.log("Item not found with ID:", itemId);
+        return res.status(404).json({ message: "Item not found" });
+      }
 
-        warranty,
-        weight,
-        weightUnit,
 
-        manufacturer,
-        brand,
-        categories,
-        rack,
+    //Data Exist Validation
+    const { organizationExists, taxExists, settingsExist } = await dataExist(organizationId);
+    const { brandExist, manufacturerExist, categoriesExist, rackExist } = await bmcrDataExist(organizationId);
+    const bmcr = { brandExist, manufacturerExist, categoriesExist, rackExist };
+    
+    if (!validateOrganizationTaxCurrency(organizationExists, taxExists, settingsExist, itemId, res)) return;     
+    
+    const { itemName, sku, taxRate } = cleanedData;
 
-        upc,
-        mpn,
-        ean,
-        isbn,
+    // Check for duplicate item name
+    if (!settingsExist.itemDuplicateName && await isDuplicateItemNameExist( itemName, organizationId, itemId, res )) return;
 
-        //Sale Info
-        baseCurrency,
-        sellingPrice,
-        saleMrp,
-        salesAccount,
-        salesDescription,
-        
-        //Purchase Info
-        costPrice,
-        purchaseAccount,
-        purchaseDescription,
-        preferredVendor,
-        taxRate,
+    // Check for duplicate SKU
+    if (cleanedData.sku !== undefined && await isDuplicateSKUExist( sku, organizationId, itemId, res )) return;
 
-        trackInventory,
-        inventoryAccount,
-        openingStock,
-        openingStockRatePerUnit,
-        reorderPOint,
-        
-        currentStock,
-        status
-      } = req.body;
 
-      // Log the ID being updated
-      console.log("Updating organization with ID:", itemId);
+   //Validate Inputs  
+   if (!validateInputs(cleanedData, taxExists, organizationId, bmcr, res)) return;
 
-      // Check if an Organization already exists
-      const existingOrganization = await Organization.findOne({ organizationId });
+   const generatedDateTime = generateTimeAndDateForDB(organizationExists.timeZoneExp, organizationExists.dateFormatExp, organizationExists.dateSplit);
+   cleanedData.lastModifiedDate = generatedDateTime.dateTime;
+
+    if (taxExists.taxType === 'GST') {
+      taxExists.gstTaxRate.forEach((tax) => {
+        if (tax.taxName === taxRate) {
+          cleanedData.igst = tax.igst;
+          cleanedData.cgst = tax.cgst; 
+          cleanedData.sgst = tax.sgst;           
+        }
+      });
+    }
   
-      if (!existingOrganization) {
-        return res.status(404).json({
-          message: "No Organization Found.",
-        });
-      }
+    // Check if taxType is VAT
+    if (taxExists.taxType === 'VAT') {
+      taxExists.vatTaxRate.forEach((tax) => {
+        if (tax.taxName === taxRate) {
+          cleanedData.vat = tax.vat; 
+        }
+      });
+    }
 
-      
 
-      const updatedItem = await Item.findByIdAndUpdate(
-        itemId,
-          {
-            //Basics
-        organizationId,   
-        itemType,
-        itemName,
-        itemImage,
-        sku,
-        unit,
-        returnableItem,
-        hsnCode,
-        sac,
-        taxPreference,
-        productUsage,
+     // Update customer fields
+     Object.assign( existingItem, cleanedData );
+     const savedItem = await existingItem.save();
+ 
+     if (!savedItem) {
+       console.error("Item could not be saved.");
+       return res.status(500).json({ message: "Failed to Update Item" });
+     }      
 
-        //Storage & Classification
-        length,
-        width,
-        height,
-        dimensionUnit,
-
-        warranty,
-        weight,
-        weightUnit,
-
-        manufacturer,
-        brand,
-        categories,
-        rack,
-
-        upc,
-        mpn,
-        ean,
-        isbn,
-
-        //Sale Info
-        baseCurrency,
-        sellingPrice,
-        saleMrp,
-        salesAccount,
-        salesDescription,
-        
-        //Purchase Info
-        costPrice,
-        purchaseAccount,
-        purchaseDescription,
-        preferredVendor,
-        taxRate,
-
-        trackInventory,
-        inventoryAccount,
-        openingStock,
-        openingStockRatePerUnit,
-        reorderPOint,
-        
-        currentStock,
-        status
-          },
-          { new: true, runValidators: true }
-      );
-
-      if (!updatedItem) {
-          console.log("Item not found with ID:", itemId);
-          return res.status(404).json({ message: "Item not found" });
-      }
-
-      res.status(200).json({ message: "Item updated successfully", item: updatedItem });
-      console.log("Item updated successfully:", updatedItem);
+      res.status(200).json({ message: "Item updated successfully", savedItem });
+      console.log("Item updated successfully:", savedItem);
   } catch (error) {
       console.error("Error updating item:", error);
       res.status(500).json({ message: "Internal server error" });
@@ -351,6 +279,57 @@ exports.deleteItem = async (req, res) => {
 
 
 
+
+
+// Check for duplicate item name - ADD
+const isDuplicateItemName = async (itemName, organizationId, res) => {
+  const existingItemName = await Item.findOne({ itemName, organizationId });
+  if (existingItemName) {
+      console.error("Item with this name already exists.");
+      res.status(400).json({ message: "Item with this name already exists" });
+      return true;
+  }
+  return false;
+};
+
+// Check for duplicate SKU - ADD
+const isDuplicateSKU = async (sku, organizationId, res) => {
+  const existingItem = await Item.findOne({ sku, organizationId });
+  if (existingItem) {
+      console.error("Item with this SKU already exists.");
+      res.status(400).json({ message: "Item with this SKU already exists." });
+      return true;
+  }
+  return false;
+};
+
+// Check for duplicate item name - EDIT
+const isDuplicateItemNameExist = async (itemName, organizationId, itemId, res) => { 
+  const existingItemName = await Item.findOne({
+    itemName,
+    organizationId,
+    _id: { $ne: itemId }
+  });
+  
+  if (existingItemName) {
+      console.error("Item with this name already exists.");
+      res.status(400).json({ message: "Item with this name already exists" });
+      return true;
+  }
+  
+  return false;
+};
+
+// Check for duplicate SKU - EDIT
+const isDuplicateSKUExist = async (sku, organizationId, itemId, res) => {
+  const existingItem = await Item.findOne({ sku, organizationId,  _id: { $ne: itemId }  });
+  if (existingItem) {
+      console.error("Item with this SKU already exists.");
+      res.status(400).json({ message: "Item with this SKU already exists." });
+      return true;
+  }
+  return false;
+};
 
 
 //Clean Data 
@@ -419,12 +398,12 @@ function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = ne
 
 
 
-const validItemTypes = ["goods", "service"];
-const validTaxPreference = ["Non-taxable", "Taxable"]; 
+const validItemTypes = [ "goods", "service" ];
+const validTaxPreference = [ "Non-taxable", "Taxable" ]; 
 
 //Validate inputs
-function validateInputs(data, taxExists, organizationId, res) {
-  const validationErrors = validateItemData( data, taxExists, organizationId );
+function validateInputs(data, taxExists, organizationId, bmcr, res) {
+   const validationErrors = validateItemData( data, taxExists, organizationId, bmcr );
 
   if (validationErrors.length > 0) {
     res.status(400).json({ message: validationErrors.join(", ") });
@@ -436,7 +415,7 @@ function validateInputs(data, taxExists, organizationId, res) {
 
 
 //Validate Data
-function validateItemData(data, taxExists, organizationId) {  
+function validateItemData( data, taxExists, organizationId, bmcr ) {  
   
   const errors = [];
 
@@ -446,6 +425,8 @@ function validateItemData(data, taxExists, organizationId) {
   validateItemType(data.itemType, errors);
   validateTaxPreference(data.taxPreference, errors);
   validateReqFields( data.itemName, data.sellingPrice, data.taxPreference, data.taxRate , errors);
+  validateBMCRFields( data.brand, data.manufacturer, data.categories, data.rack, bmcr, errors);
+
 
   //validateAlphanumericFields([''], data, errors);
   //validateIntegerFields([''], data, errors);
@@ -463,18 +444,23 @@ function validateItemData(data, taxExists, organizationId) {
 
 // Field validation utility
 function validateField(condition, errorMsg, errors) {
-    if (condition) errors.push(errorMsg);
-  }
+    if (condition) {
+      console.log(errorMsg);      
+      errors.push(errorMsg)};
+}
+
 //Valid Item Type
 function validateItemType(itemType, errors) {
   validateField(itemType && !validItemTypes.includes(itemType),
     "Invalid Item type: " + itemType, errors);
 }
+
 //Valid Item Type
 function validateTaxPreference(taxPreference, errors) {
   validateField(taxPreference && !validTaxPreference.includes(taxPreference),
     "Invalid Tax Preference: " + taxPreference, errors);
 }
+
 //Valid Req Fields
 function validateReqFields( itemName, sellingPrice, taxPreference, taxRate , errors ) {
   if (typeof itemName === 'undefined' ) {
@@ -496,18 +482,43 @@ function validateReqFields( itemName, sellingPrice, taxPreference, taxRate , err
     errors.push("Invalid Tax Preference");
   }
 }
+
+//Valid BMCR field
+function validateBMCRFields(brand, manufacturer, categories, rack, bmcr, errors) {
+    const validBrandNames = bmcr.brandExist.map(item => item.brandName);
+    validateField(brand && !validBrandNames.includes(brand), "Invalid Brand: " + brand, errors);
+
+    const validManufacturerNames = bmcr.manufacturerExist.map(item => item.manufacturerName);
+    validateField(manufacturer && !validManufacturerNames.includes(manufacturer), "Invalid Manufacturer: " + manufacturer, errors);
+
+    const validCategoryNames = bmcr.categoriesExist.map(item => item.categoriesName);
+    validateField(categories && !validCategoryNames.includes(categories), "Invalid Category: " + categories, errors);
+
+    const validRackNames = bmcr.rackExist.map(item => item.rackName);
+    validateField(rack && !validRackNames.includes(rack), "Invalid Rack: " + rack, errors);  
+}
+
+
+
+
+
+
+  
+
 //Valid Alphanumeric Fields
 function validateAlphanumericFields(fields, data, errors) {
   fields.forEach((field) => {
     validateField(data[field] && !isAlphanumeric(data[field]), "Invalid " + field + ": " + data[field], errors);
   });
 }
+
 // Validate Integer Fields
 function validateIntegerFields(fields, data, errors) {
 fields.forEach(field => {
   validateField(data[field] && !isInteger(data[field]), `Invalid ${field}: ${data[field]}`, errors);
 });
 }
+
 //Valid Float Fields  
 function validateFloatFields(fields, data, errors) {
   fields.forEach((balance) => {
@@ -515,6 +526,7 @@ function validateFloatFields(fields, data, errors) {
       "Invalid " + balance.replace(/([A-Z])/g, " $1") + ": " + data[balance], errors);
   });
 }
+
 //Valid Alphabets Fields 
 function validateAlphabetsFields(fields, data, errors) {
   fields.forEach((field) => {
@@ -553,7 +565,7 @@ function validateTaxType( taxRate, taxPreference, taxExists, errors ) {
 
   // If no matching tax rate found, add an error
   if (!taxFound  && taxPreference =='Taxable' ) {
-    errors.push(`No matching ${taxType} Tax group found for: ${taxRate}`);
+    errors.push(`No matching ${taxType} Tax group found `);
   }  
   
 }

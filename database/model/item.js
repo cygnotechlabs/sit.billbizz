@@ -57,7 +57,8 @@ const itemSchema = new Schema({
     openingStockRatePerUnit: { type: Number },
     reorderPoint: { type: Number },
     
-    createdDate: { type: String },  
+    createdDate: { type: String },
+    lastModifiedDate: { type: String },  
 });
 
 const Item = mongoose.model("Item", itemSchema);
