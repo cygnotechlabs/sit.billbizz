@@ -57,7 +57,16 @@ const settingSchema = new Schema({
   outOfStockBelowZero : { type: Boolean }, //default:false
   notifyReorderPoint: { type: Boolean }, //default:false
   trackCostOnItems: { type: Boolean }, //default:false
+ 
+  // supplier
+  duplicateSupplierDisplayName: { type: Boolean },
+  duplicateSupplierEmail: { type: Boolean },
+  duplicateSupplierMobile: { type: Boolean },
 
+  // customer
+  duplicateCustomerDisplayName: { type: Boolean },
+  duplicateCustomerEmail: { type: Boolean },
+  duplicateCustomerMobile: { type: Boolean },
 
 
   //Sales Order

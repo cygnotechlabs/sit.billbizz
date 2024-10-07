@@ -331,10 +331,10 @@ const createSettingsOrganization = async (organizationId) => {
       {organizationId,
       //item  
       itemDuplicateName:false, hsnSac:false, priceList:false, priceListAtLineLevel:false, compositeItem:false,
-      stockBelowZero:false, OutOfStockBelowZero :false, notifyReorderPoint:false, trackCostOnItems:false,}
+      stockBelowZero:false,duplicateCustomerMobile:false,duplicateCustomerEmail:false,duplicateCustomerDisplayName:false,duplicateSupplierDisplayName:false,duplicateSupplierEmail:false,duplicateSupplierMobile:false, OutOfStockBelowZero :false, notifyReorderPoint:false, trackCostOnItems:false,}
          
     ];
-
+    
     await Setting.insertMany(settings);
     console.log("Settings created successfully for organization:", organizationId);
     return { success: true, message: "Settings created successfully." };

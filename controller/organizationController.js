@@ -452,7 +452,7 @@ exports.getAllOrganization = async (req, res) => {
     const allOrganizations = await Organization.find();
 
     if (allOrganizations.length > 0) {
-      allOrganizations.organizationId = undefined;
+      //allOrganizations.organizationId = undefined;
       res.status(200).json(allOrganizations);
     } else {
       res.status(404).json("No organizations found");
@@ -473,7 +473,7 @@ exports.getOneOrganization = async (req, res) => {
 
     if (existingOrganization) {
       // Remove sensitive data
-      existingOrganization.organizationId = undefined;
+      // existingOrganization.organizationId = undefined;
       res.status(200).json(existingOrganization);
     } else {
       res.status(404).json({ message: "Organization not found" });
