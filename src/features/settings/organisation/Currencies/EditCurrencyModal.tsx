@@ -10,7 +10,6 @@ import useApi from "../../../../Hooks/useApi";
 import toast, { Toaster } from "react-hot-toast";
 
 interface InputCurrencyData {
-  organizationId: string;
   currencyCode: string;
   currencySymbol: string;
   currencyName: string;
@@ -24,7 +23,6 @@ const EditCurrencyModal = ({ selectedCurrency }: { selectedCurrency: any }) => {
   const { request: editCurrency } = useApi("put", 5004);
 
   const [newCurrency, setNewCurrency] = useState<InputCurrencyData>({
-    organizationId: "INDORG0001",
     currencyCode: "",
     currencySymbol: "",
     currencyName: "",
@@ -71,7 +69,6 @@ const EditCurrencyModal = ({ selectedCurrency }: { selectedCurrency: any }) => {
   useEffect(() => {
     if (selectedCurrency) {
       setNewCurrency({
-        organizationId: selectedCurrency.organizationId,
         currencyCode: selectedCurrency.currencyCode,
         currencySymbol: selectedCurrency.currencySymbol,
         currencyName: selectedCurrency.currencyName,
@@ -79,7 +76,6 @@ const EditCurrencyModal = ({ selectedCurrency }: { selectedCurrency: any }) => {
         format: selectedCurrency.format,
         currencyId: selectedCurrency._id,
       });
-      // Do not automatically open the modal in useEffect
     }
   }, [selectedCurrency]);
 

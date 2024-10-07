@@ -25,14 +25,10 @@ const ExchangeRates = ({}: Props) => {
   const { request: getOneCurr } = useApi("get", 5004);
 
   const getOne = async () => {
-    // e.preventDefault();
-    console.log(_id);
-
     try {
       if (_id) {
         // Ensure _id is defined before using it
         const url = endponits.GET_ONE_CURRENCY(_id);
-
         const { response, error } = await getOneCurr(url);
         console.log(response);
         if (!error && response) {
@@ -40,9 +36,7 @@ const ExchangeRates = ({}: Props) => {
           console.log(response.data);
 
         }
-        // Handle the response as needed
       } else {
-        // Handle the case where _id is not defined
         console.error("Currency ID is not provided");
       }
     } catch (error) {
@@ -51,7 +45,6 @@ const ExchangeRates = ({}: Props) => {
   };
 
   useEffect(() => {
-    // If you want to fetch data immediately when the component loads
     getOne();
   }, [_id]); // Run the effect when _id changes
 
