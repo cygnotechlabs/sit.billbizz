@@ -546,7 +546,7 @@ exports.getAllPaymentTerms = async (req, res) => {
 exports.addTax = async (req, res) => {
   try {
     const organizationId = req.user.organizationId;
-    const { taxType, gstIn, gstBusinesLegalName, gstBusinessTradeName, gstRegisteredDate, gstTaxRate, compositionSchema, compositionPercentage, vatNumber, vatBusinesLegalName, vatBusinessTradeName, vatRegisteredDate, tinNumber, vatTaxRate, msmeType, msmeRegistrationNumber } = req.body;
+    const { taxType, gstIn, gstBusinesLegalName, gstBusinessTradeName, gstRegisteredDate, gstTaxRate, compositionSchema, reverseCharge, importExport, digitalServices, compositionPercentage, vatNumber, vatBusinesLegalName, vatBusinessTradeName, vatRegisteredDate, tinNumber, vatTaxRate, msmeType, msmeRegistrationNumber } = req.body;
     console.log("Add Tax :",req.body);
 
     const existingOrganization = await Organization.findOne({ organizationId });
@@ -581,6 +581,9 @@ exports.addTax = async (req, res) => {
       if (gstBusinessTradeName) taxRecord.gstBusinessTradeName = gstBusinessTradeName;
       if (gstRegisteredDate) taxRecord.gstRegisteredDate = gstRegisteredDate;
       if (compositionSchema) taxRecord.compositionSchema = compositionSchema;
+      if (reverseCharge) taxRecord.reverseCharge = reverseCharge;
+      if (importExport) taxRecord.importExport = importExport;
+      if (digitalServices) taxRecord.digitalServices = digitalServices;
       if (compositionPercentage) taxRecord.compositionPercentage = compositionPercentage;
       if (gstTaxRate) taxRecord.gstTaxRate.push(gstTaxRate);
 

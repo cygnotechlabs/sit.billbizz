@@ -472,6 +472,8 @@ exports.getOneOrganization = async (req, res) => {
     const existingOrganization = await Organization.findOne({ organizationId : organization });
 
     if (existingOrganization) {
+      existingOrganization.organizationCountry= existingOrganization.organizationCountry|| "a";
+      existingOrganization.organizationPhNum = existingOrganization.organizationPhNum|| "";
       // Remove sensitive data
       // existingOrganization.organizationId = undefined;
       res.status(200).json(existingOrganization);
@@ -557,18 +559,24 @@ exports.getCountriesData = (req, res) => {
             name: "India",
             states: ["Andaman and Nicobar Island", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"],
             phoneNumberCode: "+91",
+            flag:"https://flagicons.lipis.dev/flags/1x1/in.svg",
+            phoneNumberLimit:10,
             taxType:"GST"
           },
           {
             name: "Saudi Arabia",
             states: ["Asir","Al Bahah", "Al Jawf", "Al Madinah", "Al-Qassim", "Eastern Province", "Hail", "Jazan", "Makkah","Medina", "Najran", "Northern Borders", "Riyadh", "Tabuk"],
             phoneNumberCode: "+966",
+            flag:"https://flagicons.lipis.dev/flags/1x1/sa.svg",
+            phoneNumberLimit:9,
             taxType:"VAT"
           },
           {
             name: "United Arab Emirates",
             states: ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al-Quwain", "Fujairah", "Ras Al Khaimah"],
             phoneNumberCode: "+971",
+            flag:"https://flagicons.lipis.dev/flags/1x1/ae.svg",
+            phoneNumberLimit:9,
             taxType:"VAT"
           },
         ]
@@ -591,44 +599,11 @@ exports.setupOrganization = async (req, res) => {
   console.log("Setup Organization:", req.body);
   try {
     const organizationId = req.user.organizationId;
-    let {
-      organizationLogo,
-      organizationCountry,
-      organizationIndustry,
-      addline1,
-      addline2,
-      city,
-      pincode,
-      state,
-      organizationPhNum,
-      website,
-      baseCurrency,
-      fiscalYear,
-      timeZone,
-      timeZoneExp,
-      dateFormat,
-      dateFormatExp,
-      dateSplit,
-    } = req.body;
 
-    //Data Cleaning
-    organizationLogo = cleanData(organizationLogo);
-    organizationCountry = cleanData(organizationCountry);
-    organizationIndustry = cleanData(organizationIndustry);
-    addline1 = cleanData(addline1);
-    addline2 = cleanData(addline2);
-    city = cleanData(city);
-    pincode = cleanData(pincode);
-    state = cleanData(state);
-    organizationPhNum = cleanData(organizationPhNum);
-    website = cleanData(website);
-    baseCurrency = cleanData(baseCurrency);
-    fiscalYear = cleanData(fiscalYear);
-    timeZone = cleanData(timeZone);
-    timeZoneExp = cleanData(timeZoneExp);
-    dateFormat = cleanData(dateFormat);
-    dateFormatExp = cleanData(dateFormatExp);
-    dateSplit = cleanData(dateSplit);
+    //Clean Data
+    const cleanedData = cleanCustomerData(req.body);
+
+    const { timeZoneExp, dateFormatExp, dateSplit, baseCurrency } = cleanedData;
 
 
     const existingOrganization = await Organization.findOne({ organizationId });
@@ -639,15 +614,7 @@ exports.setupOrganization = async (req, res) => {
       });
     }
 
-    const generatedDateTime = generateTimeAndDateForDB(
-      timeZoneExp,
-      dateFormatExp,
-      dateSplit
-    );
-
-    console.log("Generated Date:", generatedDateTime.date);
-    console.log("Generated Time:", generatedDateTime.time);
-    console.log("Generated Combined DateTime:", generatedDateTime.dateTime);
+    const generatedDateTime = generateTimeAndDateForDB( timeZoneExp, dateFormatExp, dateSplit );
 
     const createdDateAndTime = generatedDateTime.dateTime;
 
@@ -657,60 +624,13 @@ exports.setupOrganization = async (req, res) => {
         message: "Currency not found",
       });
     }  
-    const validCurrencies = currencyExists.map(
-      (currency) => currency.currencyCode
-    );
-    if (baseCurrency !== undefined && !validCurrencies.includes(baseCurrency)) {
-      return res.status(400).json({ message: `Invalid Currency: ${baseCurrency}` });
-    }
-
-    const validationErrors = validateCustomerData({
-      organizationCountry,
-      organizationIndustry,
-      addline1,
-      addline2,
-      city,
-      pincode,
-      state,
-      organizationPhNum,
-      baseCurrency,
-      fiscalYear,
-      timeZone,
-      timeZoneExp,
-      dateFormat,
-      dateFormatExp,
-      dateSplit,
-    });
-
-    if (validationErrors.length > 0) {
-      return res.status(400).json({ message: validationErrors.join(", ") });
-    }
-
     
+    //Validate data
+    if (!validateInputs(cleanedData, currencyExists, existingOrganization, res)) return;
 
 
-    
-
-    // Update the existing organization's fields
-    existingOrganization.organizationLogo = organizationLogo;
-    existingOrganization.organizationCountry = organizationCountry;
-    existingOrganization.organizationIndustry = organizationIndustry;
-    existingOrganization.addline1 = addline1;
-    existingOrganization.addline2 = addline2;
-    existingOrganization.city = city;
-    existingOrganization.pincode = pincode;
-    existingOrganization.state = state;
-    existingOrganization.organizationPhNum = organizationPhNum;
-    existingOrganization.website = website;
-    existingOrganization.baseCurrency = baseCurrency;
-    existingOrganization.fiscalYear = fiscalYear;
-    existingOrganization.timeZone = timeZone;
-    existingOrganization.timeZoneExp = timeZoneExp;
-    existingOrganization.dateFormat = dateFormat;
-    existingOrganization.dateFormatExp = dateFormatExp;
-    existingOrganization.dateSplit = dateSplit;
-    existingOrganization.createdDateAndTime = createdDateAndTime;
-
+    // Update customer fields
+    Object.assign(existingOrganization, cleanedData);
     const savedOrganization = await existingOrganization.save();
 
     if (!savedOrganization) {
@@ -750,6 +670,10 @@ exports.setupOrganization = async (req, res) => {
   }
 };
 
+
+
+
+
 // Function to generate time and date for storing in the database
 function generateTimeAndDateForDB(
   timeZone,
@@ -786,11 +710,14 @@ function generateTimeAndDateForDB(
   };
 }
 
-function cleanData(value) {
-  return value === null || value === undefined || value === "" || value === 0
-    ? undefined
-    : value;
-}
+  //Clean Data 
+  function cleanCustomerData(data) {
+    const cleanData = (value) => (value === null || value === undefined || value === "" || value === 0 ? undefined : value);
+    return Object.keys(data).reduce((acc, key) => {
+      acc[key] = cleanData(data[key]);
+      return acc;
+    }, {});
+  }
 
 const countriesData = [
   {
@@ -1026,8 +953,6 @@ const validCountries = {
     "Tabuk",
   ],
 };
-
-
 const validTimezone ={
 "GMT+02:00": "Europe/Kiev",
 "GMT+03:00": "Europe/Moscow",
@@ -1035,7 +960,6 @@ const validTimezone ={
 "GMT+04:00": "Asia/Dubai",
 "GMT+05:30": "Asia/Kolkata",
 };
-
 const validDateFormats = {
   "mm/dd/yy": "MM/DD/YY",
   "dd/mm/yy": "DD/MM/YY",
@@ -1052,55 +976,131 @@ const validDateFormats = {
 
 
 
+//Validate inputs
+function validateInputs(data, currencyExists, organizationExists, res) {
+  const validCurrencies = currencyExists.map((currency) => currency.currencyCode);
+  const validationErrors = validateOrganizationData(data, validCurrencies, organizationExists);
+
+  if (validationErrors.length > 0) {
+    res.status(400).json({ message: validationErrors.join(", ") });
+    return false;
+  }
+  return true;
+}
 
 
 
-
-
-
-
-
-function validateCustomerData(data) {
+//Validate Data
+function validateOrganizationData(data, validCurrencies, organization ) {
   const errors = [];
 
+  //Basic Info
+  validateReqFields( data, errors);
+  validateIndustry(data.organizationIndustry, errors);
+  validateFiscalYear(data.fiscalYear, errors);
 
-  if (data.organizationCountry !== undefined && data.state !== undefined && !validCountries[data.organizationCountry]?.includes(data.state))
-    errors.push(
-      `Invalid Organization Country or State: ${data.organizationCountry}, ${data.state}`
-    );
-  if (data.organizationIndustry !== undefined && !industry.includes(data.organizationIndustry))
-    errors.push(`Invalid Industry: ${data.organizationIndustry}`);
+  //Date and Time
+  validateTimeZone( data.timeZone, data.timeZoneExp, errors );
+  validateDateFormat( data.dateFormat, data.dateFormatExp, errors );
+  validateDateSplit(data.dateSplit, errors);
 
-  if (data.addline1 !== undefined &&  !isAlphabets(data.addline1))
-    errors.push("Address should contain only alphabets.");
-  if (data.addline2 !== undefined && !isAlphabets(data.addline2))
-    errors.push("Address should contain only alphabets.");
-  if (data.city !== undefined && !isAlphabets(data.city))
-    errors.push("City should contain only alphabets.");
-  if (data.pincode !== undefined && !isInteger(data.pincode))
-    errors.push(`Pincode should contain only digits: ${data.pincode}`);
-  if (data.organizationPhNum !== undefined && !isInteger(data.organizationPhNum))
-    errors.push(`Invalid Phone Number: ${data.organizationPhNum}`);
-  if (data.baseCurrency !== undefined && !isAlphanumeric(data.baseCurrency)) 
-     errors.push(`Invalid PAN: ${data.baseCurrency}`);
-  if (data.fiscalYear !== undefined && !financialYear.includes(data.fiscalYear))
-    errors.push(`Invalid Financial Year: ${data.fiscalYear}`);
 
-  if (data.timeZone !== undefined && data.timeZoneExp !== undefined && !validTimezone[data.timeZone]?.includes(data.timeZoneExp))
-    errors.push(
-      `Invalid Time Zone: ${data.timeZone}, ${data.timeZoneExp}`
-    );
+  //OtherDetails
+  validateIntegerFields(['organizationPhNum','pincode'], data, errors);
 
-    if (data.dateFormat !== undefined && data.dateFormatExp !== undefined && !validDateFormats[data.dateFormat]?.includes(data.dateFormatExp))
-      errors.push(
-        `Invalid Date Format: ${data.dateFormat}, ${data.dateFormatExp}`
-      );
 
-  if (data.dateSplit !== undefined && !dateSplit.includes(data.dateSplit))
-    errors.push(`Invalid Date Split: ${data.dateSplit}`);
-  
+  //Currency
+  validateCurrency(data.baseCurrency, validCurrencies, errors);
+
+  //Address
+  validateAddress(data, errors);
+
   return errors;
 }
+
+
+
+
+// Field validation utility
+function validateField(condition, errorMsg, errors) {
+    if (condition) errors.push(errorMsg);
+}
+//Valid Req Fields
+function validateReqFields( data, errors ) {
+  if (typeof data.organizationCountry === 'undefined' ) {
+    errors.push("Please select a Country");
+  }
+  if (typeof data.state === 'undefined' ) {
+  errors.push("Please select a State");
+  }
+  if (typeof data.organizationPhNum === 'undefined' ) {
+    errors.push("Please enter Phone Number");
+  }
+  if (typeof data.baseCurrency === 'undefined' ) {
+  errors.push("Please select a Currency");
+  }
+  if (typeof data.timeZone === 'undefined' ) {
+  errors.push("Please select a Time Zone");
+  }
+  if (typeof data.dateFormat === 'undefined' ) {
+  errors.push("Please select a Date Format");
+  }
+  if (typeof data.dateSplit === 'undefined' ) {
+  errors.push("Please select a Date Split");
+  }  
+}
+// Validate address
+function validateAddress(data, errors) {
+  const country = data.organizationCountry, state = data.state;
+
+  validateField(country && state && !validCountries[country]?.includes(state),
+    `Invalid Country or State: ${country}, ${state}`, errors);
+}
+//Validate Industry
+function validateIndustry(organizationIndustry, errors) {
+  validateField(organizationIndustry && !industry.includes(organizationIndustry),
+    "Invalid Industry: " + organizationIndustry, errors);
+}
+// Validate Integer Fields
+function validateIntegerFields(fields, data, errors) {
+  fields.forEach(field => {
+    validateField(data[field] && !isInteger(data[field]), `Invalid ${field}: ${data[field]}`, errors);
+  });
+}
+//Validate Fiscal Year
+function validateFiscalYear(fiscalYear, errors) {
+  validateField(fiscalYear && !financialYear.includes(fiscalYear),
+    "Invalid Fiscal Year: " + fiscalYear, errors);
+}
+//Validate Date Split
+function validateDateSplit(organizationDateSplit, errors) {
+  validateField(organizationDateSplit && !dateSplit.includes(organizationDateSplit),
+    "Invalid Date Split: " + organizationDateSplit, errors);
+}
+//Validate Currency
+function validateCurrency(currency, validCurrencies, errors) {
+  validateField(currency && !validCurrencies.includes(currency), "Invalid Currency: " + currency, errors);
+}
+//Validate Time Zone
+function validateTimeZone(timeZone, timeZoneExp, errors) {
+  validateField(timeZone !== undefined && timeZoneExp !== undefined && !validTimezone[timeZone]?.includes(timeZoneExp), "Invalid Time Zone:" + timeZone, errors);
+}
+//Validate Date Format
+function validateDateFormat(dateFormat, dateFormatExp, errors) {
+  validateField( dateFormat !== undefined && dateFormatExp !== undefined && !validDateFormats[dateFormat]?.includes(dateFormatExp) , "Invalid Date Format" + dateFormat, errors);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 function isAlphabets(value) {
   return /^[A-Za-z\s]+$/.test(value);
