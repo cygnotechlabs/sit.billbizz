@@ -63,7 +63,7 @@ const CustomBar: React.FC<CustomBarProps> = ({ x = 0, y = 0, width = 0, height =
 const RepeatPurchaseRate: React.FC = () => {
   return (
     <div className="bg-white rounded-lg w-full px-8">
-      <h3 className="text-[16px] mt-6 font-bold">Repeat Purchase Rate</h3>
+      <h3 className="text-base text-textColor mt-6 font-semibold">Stoke Levels</h3>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart layout="vertical" data={data} margin={{ left: -70, right: 100, bottom: -25 }}>
           <XAxis

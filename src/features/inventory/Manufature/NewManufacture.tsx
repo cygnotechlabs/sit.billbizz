@@ -166,36 +166,33 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
           </div>
 
           <div className="grid grid-cols-3 gap-5">
-            {allManufactures?.map((item: any) => (
-              <div key={item._id} className="flex p-2">
-                <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
-                  <div>
-                    <h3 className="text-sm font-bold">
-                      {item.manufacturerName}
-                    </h3>
-                    <p className="text-xs text-textColor">{item.description}</p>
-                  </div>
-                  <div className="flex space-x-2">
-                    {/* Edit Button */}
-                    <button
-                      className="cursor-pointer"
-                      onClick={() => openModal(item)}
-                    >
-                      <PencilEdit color="currentColor" />
-                    </button>
+            {allManufactures?.length > 0 ? (
+              allManufactures.map((item: any) => (
+                <div key={item._id} className="flex p-2">
+                  <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
+                    <div>
+                      <h3 className="text-sm font-bold">{item.manufacturerName}</h3>
+                      <p className="text-xs text-textColor">{item.description}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      {/* Edit Button */}
+                      <button className="cursor-pointer" onClick={() => openModal(item)}>
+                        <PencilEdit color="currentColor" />
+                      </button>
 
-                    {/* Delete Button */}
-                    <button
-                      className="cursor-pointer"
-                      onClick={() => handleDelete(item)}
-                    >
-                      <TrashCan color="currentColor" />
-                    </button>
+                      {/* Delete Button */}
+                      <button className="cursor-pointer" onClick={() => handleDelete(item)}>
+                        <TrashCan color="currentColor" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-center col-span-3 text-red-500 font-semibold">No manufacturers found !</p>
+            )}
           </div>
+
           <div className="flex justify-end my-3">
             <Button variant="primary" onClick={onClose} size="sm" className="text-sm">
               Done

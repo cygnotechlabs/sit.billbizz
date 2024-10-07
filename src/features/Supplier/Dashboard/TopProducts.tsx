@@ -1,10 +1,9 @@
-type Props = {};
+import React from 'react';
 
-// Sample product data
 const products = [
   {
     name: "iqoo neo 9 pro",
-    image: "https://s3-alpha-sig.figma.com/img/419c/f6fb/bc414d734f93483073c50f453ae51aaf?Expires=1728864000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=flnDr64TWjeA-fWbIpZ~88lzfAQWMpN-8Gq5xHreCDt1akgzb7hFKyWwRglh5wqotha27TkeJRmGNpjM6-nz1gQwcFBKCFIt7qopncUxbaSq9sMSmTFmMDmYDv1URCT983Bb7iXmpzNJlTHeKlaY0MXtetAaXltXixV075HjYqL5hw~LUBYOcxM7UHasPv5NWf3iwxGmDeTZOKidZWSQwhcHq0u6FRl~ROsW-gYOI3MpiWwRygR3opcCGpaWAVXWaVM15ydnN5vqx9yVTrdfjn6CVXf52HIt92yKBimTRTlpUPauhiQKXm6sUZeop6ZQ7RyVAqMUn0UIhbJuolJoMA__", // Add your image paths
+    image: "https://s3-alpha-sig.figma.com/img/419c/f6fb/bc414d734f93483073c50f453ae51aaf?Expires=1728864000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=flnDr64TWjeA-fWbIpZ~88lzfAQWMpN-8Gq5xHreCDt1akgzb7hFKyWwRglh5wqotha27TkeJRmGNpjM6-nz1gQwcFBKCFIt7qopncUxbaSq9sMSmTFmMDmYDv1URCT983Bb7iXmpzNJlTHeKlaY0MXtetAaXltXixV075HjYqL5hw~LUBYOcxM7UHasPv5NWf3iwxGmDeTZOKidZWSQwhcHq0u6FRl~ROsW-gYOI3MpiWwRygR3opcCGpaWAVXWaVM15ydnN5vqx9yVTrdfjn6CVXf52HIt92yKBimTRTlpUPauhiQKXm6sUZeop6ZQ7RyVAqMUn0UIhbJuolJoMA__",
     salesVolume: "$50,000",
     unitsSold: "1000 Units",
     status: "In Stock",
@@ -32,31 +31,30 @@ const products = [
   },
 ];
 
-function ProductsDashTable({}: Props) {
+const ProductsDashTable: React.FC = () => {
   return (
-    <div className="bg-white p-6 rounded-lg w-[100%]">
-      <h3 className="text-base text-textColor font-semibold mb-5">
-        Top Selling Products
-      </h3>
-      <div className="overflow-x-auto">
+    <div className="bg-white rounded-lg w-full px-8 py-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-[16px] font-bold">Total Purchase by Supplier</h3>
+        <select
+          className="border border-[#565148] h-8 pl-3 pr-4 rounded-md bg-[#FEFDFA] text-xs font-semibold text-gray-800"
+          style={{ color: "#585953" }}
+        >
+          <option>Select Supplier</option>
+          <option>Other</option>
+          <option>Other</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div className="overflow-x-auto pt-3">
         <table className="min-w-full table-auto text-left">
           <thead className="border-b border-tableBorder bg-[#FDF8F0] p-4">
             <tr className="bg-gray-50">
-              <th className="px-4 py-4 text-xs font-semibold text-[#495160]">
-                Product name
-              </th>
-              <th className="px-4 py-4 text-xs font-semibold text-[#495160]">
-                Image
-              </th>
-              <th className="px-4 py-4 text-xs font-semibold text-[#495160]">
-                Sales Volume
-              </th>
-              <th className="px-4 py-4 text-xs font-semibold text-[#495160]">
-                Units Sold
-              </th>
-              <th className="px-4 py-4 text-xs font-semibold text-[#495160]">
-                Status
-              </th>
+              <th className="px-4 py-4 text-xs font-semibold text-[#495160]">Product name</th>
+              <th className="px-4 py-4 text-xs font-semibold text-[#495160]">Image</th>
+              <th className="px-4 py-4 text-xs font-semibold text-[#495160]">Sales Volume</th>
+              <th className="px-4 py-4 text-xs font-semibold text-[#495160]">Units Sold</th>
+              <th className="px-4 py-4 text-xs font-semibold text-[#495160]">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -64,18 +62,10 @@ function ProductsDashTable({}: Props) {
               <tr key={index} className="border-b border-tableBorder">
                 <td className="px-4 py-2 text-xs text-dropdownText">{product.name}</td>
                 <td className="px-4 py-2">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-12 h-12 object-cover rounded"
-                  />
+                  <img src={product.image} alt={product.name} className="w-12 h-12 object-cover rounded" />
                 </td>
-                <td className="px-4 py-2 text-xs text-gray-700">
-                  {product.salesVolume}
-                </td>
-                <td className="px-4 py-2 text-xs text-gray-700">
-                  {product.unitsSold}
-                </td>
+                <td className="px-4 py-2 text-xs text-gray-700">{product.salesVolume}</td>
+                <td className="px-4 py-2 text-xs text-gray-700">{product.unitsSold}</td>
                 <td className="px-4 py-2">
                   <span
                     className={`inline-block px-2 py-1.5 text-xs font-semibold rounded-[4px] ${
@@ -94,6 +84,6 @@ function ProductsDashTable({}: Props) {
       </div>
     </div>
   );
-}
+};
 
 export default ProductsDashTable;

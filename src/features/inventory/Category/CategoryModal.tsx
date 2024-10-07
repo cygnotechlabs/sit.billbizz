@@ -52,12 +52,12 @@ function Category({ isOpen, onClose, page }: Props) {
   const loadCategories = async () => {
     try {
       const url = `${endponits.GET_ALL_BRMC}`;
-      const body = { type: "category"};
+      const body = { type: "category" };
       const { response, error } = await fetchAllCategories(url, body);
       if (!error && response) {
         setAllcategoryData(response.data);
       } else {
-        toast.error("Failed to fetch Category data.");
+        console.error("Failed to fetch Category data.");
       }
     } catch (error) {
       toast.error("Error in fetching Category data.");
@@ -195,35 +195,42 @@ function Category({ isOpen, onClose, page }: Props) {
         </div>
 
         <div className="grid grid-cols-3 gap-5">
-          {allCategoryData.map((category: any) => (
-            <div key={category.id} className="flex p-2">
-              <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
-                <div>
-                  <h3 className="text-sm font-bold">
-                    {category.categoriesName}
-                  </h3>
-                  <p className="text-xs text-textColor">
-                    {category.description}
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <p
-                    className="cursor-pointer"
-                    onClick={() => openModal(category)}
-                  >
-                    <PencilEdit color="currentColor" />
-                  </p>
-                  <p
-                    className="cursor-pointer"
-                    onClick={() => handleDelete(category)}
-                  >
-                    <TrashCan color="currentColor" />
-                  </p>
+          {allCategoryData.length === 0 ? (
+            <p className="text-center col-span-3 text-red-500 font-semibold">
+              No categories found !
+            </p>
+          ) : (
+            allCategoryData.map((category: any) => (
+              <div key={category.id} className="flex p-2">
+                <div className="border border-slate-200 text-textColor rounded-xl w-96 h-auto p-3 flex justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold">
+                      {category.categoriesName}
+                    </h3>
+                    <p className="text-xs text-textColor">
+                      {category.description}
+                    </p>
+                  </div>
+                  <div className="flex space-x-2">
+                    <p
+                      className="cursor-pointer"
+                      onClick={() => openModal(category)}
+                    >
+                      <PencilEdit color="currentColor" />
+                    </p>
+                    <p
+                      className="cursor-pointer"
+                      onClick={() => handleDelete(category)}
+                    >
+                      <TrashCan color="currentColor" />
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
+
 
         {page !== "expense" && (
           <div className="flex justify-end gap-2 my-3">
