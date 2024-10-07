@@ -1,3 +1,5 @@
+// v1.0
+
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account");
 const Customer = require("../database/model/customer");
@@ -28,15 +30,14 @@ const dataExist = async (organizationId) => {
       // const organizationId ="INDORG0001";
       // const userId ="45454";
       // const userName ="Thaha";
-      console.log("organizationId :",organizationId);
+      // console.log("organizationId :",organizationId);
 
-      const duplicateCustomerDisplayName = false;
-      const duplicateCustomerEmail = false;
-      const duplicateCustomerMobile = false;
+      const duplicateCustomerDisplayName = true;
+      const duplicateCustomerEmail = true;
+      const duplicateCustomerMobile = true;
 
       //Clean Data
-      const cleanedData = cleanCustomerData(req.body);
-      //console.log(cleanedData);            
+      const cleanedData = cleanCustomerData(req.body);     
 
       const { customerEmail, debitOpeningBalance, creditOpeningBalance, customerDisplayName, mobile } = cleanedData;
   
@@ -56,7 +57,9 @@ const dataExist = async (organizationId) => {
 
       //Duplication Check
       const errors = [];
-      await checkDuplicateCustomerFields( duplicateCustomerDisplayName, duplicateCustomerEmail, duplicateCustomerMobile, customerDisplayName, customerEmail, mobile, organizationId, errors);  
+      const duplicateCheck = { duplicateCustomerDisplayName, duplicateCustomerEmail, duplicateCustomerMobile };
+
+      await checkDuplicateCustomerFields( duplicateCheck, customerDisplayName, customerEmail, mobile, organizationId, errors);  
       if (errors.length) {
       return res.status(200).json({ message: errors }); }
 
@@ -476,22 +479,22 @@ exports.getOneCustomerHistory = async (req, res) => {
  
 
 //Duplication check
-async function checkDuplicateCustomerFields( duplicateCustomerDisplayName, duplicateCustomerEmail, duplicateCustomerPhoneNumber, customerDisplayName, customerEmail, mobile, organizationId, errors ) {
+async function checkDuplicateCustomerFields( duplicateCheck, customerDisplayName, customerEmail, mobile, organizationId, errors ) {
           const checks = [
             {
-              condition: duplicateCustomerDisplayName && customerDisplayName !== undefined,
+              condition: duplicateCheck.duplicateCustomerDisplayName && customerDisplayName !== undefined,
               field: 'customerDisplayName',
               value: customerDisplayName,
               errorMessage: `Customer with the provided display name already exists: ${customerDisplayName}`,
             },
             {
-              condition: duplicateCustomerEmail && customerEmail !== undefined,
+              condition: duplicateCheck.duplicateCustomerEmail && customerEmail !== undefined,
               field: 'customerEmail',
               value: customerEmail,
               errorMessage: `Customer with the provided email already exists: ${customerEmail}`,
             },
             {
-              condition: duplicateCustomerPhoneNumber && mobile !== undefined,
+              condition: duplicateCheck.duplicateCustomerPhoneNumber && mobile !== undefined,
               field: 'mobile',
               value: mobile,
               errorMessage: `Customer with the provided phone number already exists: ${mobile}`,
