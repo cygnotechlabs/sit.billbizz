@@ -6,31 +6,32 @@ const Currency = require("../database/model/currency");
 const moment = require("moment-timezone");
 const TrialBalance = require("../database/model/trialBalance");
 const SupplierHistory = require("../database/model/supplierHistory");
-
+const Settings = require("../database/model/settings")
 // Fetch existing data
 const dataExist = async (organizationId) => {
-    const [organizationExists, taxExists, currencyExists, allSupplier] = await Promise.all([
+    const [organizationExists, taxExists, currencyExists, allSupplier ,settings] = await Promise.all([
       Organization.findOne({ organizationId }),
       Tax.findOne({ organizationId }),
       Currency.find({ organizationId }, { currencyCode: 1, _id: 0 }),
-      Supplier.find({ organizationId })
+      Supplier.find({ organizationId }),
+      Settings.find({ organizationId })
     ]);
-    return { organizationExists, taxExists, currencyExists, allSupplier };
+    return { organizationExists, taxExists, currencyExists, allSupplier , settings };
   };
   
     // Add Customer
     exports.addSupplier = async (req, res) => {
-      console.log("Add Supplier:", req.user.username);
+      console.log("Add Supplier:", req.user.userName);
       try {
         const { organizationId, id: userId, userName } = req.user;
         // const organizationId ="INDORG0001";
       // const userId ="45454";
       // const userName ="Thaha";
         // console.log("organizationId :",organizationId);
-  
+        // if true it is unique
         const duplicateSupplierDisplayName = true;
-        const duplicateSupplierEmail = false;
-        const duplicateSupplierMobile = false;
+        const duplicateSupplierEmail = true;
+        const duplicateSupplierMobile = true;
   
         //Clean Data
         const cleanedData = cleanSupplierData(req.body);
@@ -38,8 +39,11 @@ const dataExist = async (organizationId) => {
   
         const { supplierEmail, debitOpeningBalance, creditOpeningBalance, supplierDisplayName, mobile } = cleanedData;
     
-        const { organizationExists, taxExists, currencyExists } = await dataExist(organizationId);
-    
+        const { organizationExists, taxExists, currencyExists , settings} = await dataExist(organizationId);
+        
+        // checking values from supplier settings
+        // const { duplicateSupplierDisplayName , duplicateSupplierEmail , duplicateSupplierMobile } = settings[0]
+        
         //Data Exist Validation
         if (!validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res)) return;     
     
@@ -135,7 +139,7 @@ const dataExist = async (organizationId) => {
           supplierDisplayName: savedSupplier.supplierDisplayName,
           date: openingDate,
           title: "supplier Data Modified",
-          description: `${savedSupplier.supplierDisplayName} Account Modified by ${userName}`,
+          description: `Supplier data  Modified by ${userName}`,
   
           userId: userId,
           userName: userName,
@@ -221,7 +225,7 @@ const dataExist = async (organizationId) => {
     console.log("Update Customer Status:", req.body);
     try {
       const {   supplierId } = req.params;
-      const organizationId = req.user.organizationId;
+      const {organizationId , userName , userId} = req.user;
       const { status } = req.body; // Status is now taken from the request body
   
       // Validate organizationId
@@ -244,13 +248,27 @@ const dataExist = async (organizationId) => {
           message: "supplier not found",
         });
       }
-  
+      const openingDate = generateOpeningDate(organizationExists);
       // Update the customer status with the value provided by the frontend
       supplier.status = status;
   
       // Save the updated customer
       await supplier.save();
+       // Add entry to Customer History
+       const accountSupplierHistoryEntry = new SupplierHistory({
+        organizationId,
+        operationId: supplier._id,
+        supplierId,
+        supplierDisplayName: supplier.supplierDisplayName,
+        date: openingDate,
+        title: "supplier Status Modified",
+        description: `Supplier status updated to ${status} by ${userName}`,
+
+        userId: userId,
+        userName: userName,
+      });
   
+      await accountSupplierHistoryEntry.save();
       res.status(200).json({
         message: "Supplier status updated successfully.",
         status: supplier.status,

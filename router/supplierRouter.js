@@ -5,6 +5,7 @@ const router = new express.Router()
 //supplier
 const supplierController = require('../controller/supplierController');
 const supplierCont = require('../controller/suppliercont');
+const supplierSettings = require('../controller/suplierSettings')
 
 const importController = require('../controller/importSupplier')
 
@@ -28,6 +29,7 @@ router.post('/import-supplier',verifyToken,checkPermission('Import New Suppliers
 
 router.get('/get-one-supplier-history/:supplierId',verifyToken,checkPermission('Viewed Supplier Details'),supplierCont.getOneSupplierHistory)
 
+router.put('/update-supplier-settings',verifyToken,checkPermission('Created a New Supplier'),supplierSettings.updateSupplierSettings)
 
         //   { action: "SupplierCreate", note: "Created a new Supplier" },
         //   { action: "SupplierView", note: "Viewed Supplier details" },
