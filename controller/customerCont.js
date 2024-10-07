@@ -39,7 +39,8 @@ const dataExist = async (organizationId) => {
       const duplicateCustomerMobile = true;
 
       //Clean Data
-      const cleanedData = cleanCustomerData(req.body);     
+      const cleanedData = cleanCustomerData(req.body);
+      console.log("cleanedData :",cleanedData.taxType);     
 
       const { customerEmail, debitOpeningBalance, creditOpeningBalance, customerDisplayName, mobile } = cleanedData;
   
