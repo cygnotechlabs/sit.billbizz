@@ -6,90 +6,34 @@ const Tax = require("../database/model/tax");
 const moment = require('moment-timezone');
 
 
+
+// Fetch existing data
+const dataExist = async (organizationId) => {
+  const [organizationExists, taxExists, allItem, settingsExist] = await Promise.all([
+    Organization.findOne({ organizationId }),
+    Tax.findOne({ organizationId }),
+    Item.find({ organizationId }),
+    Settings.findOne({ organizationId })
+  ]);
+  return { organizationExists, taxExists, allItem, settingsExist };
+};
+
 // Add item
 exports.addItem = async (req, res) => {
     console.log("Add Item:", req.body);
     try {
      const organizationId = req.user.organizationId;
 
-      const {    
-        //Basics           
-        itemType,
-        itemName,
-        itemImage,
-        sku,
-        unit,
-        returnableItem,
-        hsnCode,
-        sac,
-        taxPreference,
-        taxExemptReason,
-        productUsage,
+      const cleanedData = cleanCustomerData(req.body);
 
-        //Storage & Classification
-        length,
-        width,
-        height,
-        dimensionUnit,
+      //Data Exist Validation
+      const { organizationExists, taxExists, settingsExist } = await dataExist(organizationId);
+      if (!validateOrganizationTaxCurrency(organizationExists, taxExists, settingsExist, res)) return; 
 
-        warranty,
-        weight,
-        weightUnit,
-
-        manufacturer,
-        brand,
-        categories,
-        rack,
-
-        upc,
-        mpn,
-        ean,
-        isbn,
-
-        //Sale Info
-        baseCurrency,
-        sellingPrice,
-        saleMrp,
-        salesAccount,
-        salesDescription,
-        
-        //Purchase Info
-        costPrice,
-        purchaseAccount,
-        purchaseDescription,
-        preferredVendor,
-        taxRate,
-
-        trackInventory,
-        inventoryAccount,
-        openingStock,
-        openingStockRatePerUnit,
-        reorderPOint,
-        
-        currentStock,
-        status
-      } = req.body;
-
-    // Check if an Organization already exists
-    const existingOrganization = await Organization.findOne({ organizationId });
- 
-    if (!existingOrganization) {
-      return res.status(404).json({
-        message: "No Organization Found.",
-      });
-    }
-
-    // Fetch settings to check itemDuplicateName configuration
-    const settings = await Settings.findOne({ organizationId });
-
-    if (!settings) {
-      return res.status(500).json({
-        message: "Settings not found for the organization.",
-      });
-    }
+      const { itemName, sku, openingStock, taxRate } = cleanedData;
 
     // If itemDuplicateName is false, check for duplicate itemName
-    if (!settings.itemDuplicateName) {
+    if (!settingsExist.itemDuplicateName) {
       const existingItemName = await Item.findOne({ itemName, organizationId });
       if (existingItemName) {
         console.error("Item with this name already exists.");
@@ -103,81 +47,45 @@ exports.addItem = async (req, res) => {
       return res.status(400).json({ message: "Item with this SKU already exists." }); 
     }
 
-    const timeZoneExp = existingOrganization.timeZoneExp;
-    const dateFormatExp = existingOrganization.dateFormatExp;
-    const dateSplit = existingOrganization.dateSplit;
-    const generatedDateTime = generateTimeAndDateForDB(timeZoneExp, dateFormatExp, dateSplit);
+    //Validate Inputs  
+    if (!validateInputs(cleanedData, taxExists, organizationId, res)) return;
+
+    const generatedDateTime = generateTimeAndDateForDB(organizationExists.timeZoneExp, organizationExists.dateFormatExp, organizationExists.dateSplit);
     const createdDate = generatedDateTime.dateTime;
-  
-      // Create a new item
-      const newItem = new Item({
-        //Basics
-        organizationId,   
-        itemType,
-        itemName,
-        itemImage,
-        sku,
-        unit,
-        returnableItem,
-        hsnCode,
-        sac,
-        taxPreference,
-        taxExemptReason,
-        productUsage,
 
-        //Storage & Classification
-        length,
-        width,
-        height,
-        dimensionUnit,
+    let igst, cgst, sgst, vat; 
 
-        warranty,
-        weight,
-        weightUnit,
-
-        manufacturer,
-        brand,
-        categories,
-        rack,
-
-        upc,
-        mpn,
-        ean,
-        isbn,
-
-        //Sale Info
-        baseCurrency,
-        sellingPrice,
-        saleMrp,
-        salesAccount,
-        salesDescription,
-        
-        //Purchase Info
-        costPrice,
-        purchaseAccount,
-        purchaseDescription,
-        preferredVendor,
-        taxRate,
-
-        trackInventory,
-        inventoryAccount,
-        openingStock,
-        openingStockRatePerUnit,
-        reorderPOint,
-        
-        currentStock,
-        createdDate,
-        status
+    if (taxExists.taxType === 'GST') {
+      taxExists.gstTaxRate.forEach((tax) => {
+        if (tax.taxName === taxRate) {
+          igst = tax.igst;
+          cgst = tax.cgst; 
+          sgst = tax.sgst;           
+        }
       });
-      await newItem.save();
+    }
+  
+    // Check if taxType is VAT
+    if (taxExists.taxType === 'VAT') {
+      taxExists.vatTaxRate.forEach((tax) => {
+        if (tax.taxName === taxRate) {
+          vat = tax.vat; 
+        }
+      });
+    }
+  
+     
+      const newItem = new Item({ ...cleanedData, organizationId, igst:igst, cgst, sgst, vat, createdDate });
+
+      const savedItem = await newItem.save();
 
 
       const trackEntry = new ItemTrack({
         organizationId,
-        operationId: newItem._id,
+        operationId: savedItem._id,
         action: "Opening Stock", //Opening Stock
         date: createdDate,
-        itemId: newItem._id,
+        itemId: savedItem._id,
         itemName ,
         creditQuantity: openingStock,
         currentStock: openingStock,
@@ -187,10 +95,8 @@ exports.addItem = async (req, res) => {
 
 
   
-      res.status(201).json({
-        message: "New Item created successfully."
-      });
-      console.log("New Item created successfully:");
+      res.status(201).json({ message: "New Item created successfully." });
+      console.log( "New Item created successfully:", savedItem );
     } catch (error) {
       console.error("Error creating Item:", error);
       res.status(500).json({ message: "Internal server error." });
@@ -447,6 +353,44 @@ exports.deleteItem = async (req, res) => {
 
 
 
+
+
+//Clean Data 
+function cleanCustomerData(data) {
+    const cleanData = (value) => (value === null || value === undefined || value === "" || value === 0 ? undefined : value);
+    return Object.keys(data).reduce((acc, key) => {
+      acc[key] = cleanData(data[key]);
+      return acc;
+    }, {});
+  }
+
+// Validate Organization Tax Currency
+function validateOrganizationTaxCurrency(organizationExists, taxExists, allItem, settingsExist, res) {
+  if (!organizationExists) {
+    res.status(404).json({ message: "Organization not found" });
+    return false;
+  }
+  if (!taxExists) {
+    res.status(404).json({ message: "Tax not found" });
+    return false;
+  }
+  if (!allItem) {
+    res.status(404).json({ message: "Currency not found" });
+    return false;
+  }if (!settingsExist) {
+    res.status(404).json({ message: "Settings not found" });
+    return false;
+  }
+  return true;
+}
+
+
+
+
+
+
+
+
 // Function to generate time and date for storing in the database
 function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = new Date(), timeFormat = 'HH:mm:ss', timeSplit = ':') {
   // Convert the base time to the desired time zone
@@ -474,3 +418,163 @@ function generateTimeAndDateForDB(timeZone, dateFormat, dateSplit, baseTime = ne
   };
 }
 
+
+
+
+const validItemTypes = ["goods", "Business"];
+const validTaxPreference = ["Non-taxable", "Taxable"]; 
+
+//Validate inputs
+function validateInputs(data, taxExists, organizationId, res) {
+  const validationErrors = validateItemData( data, taxExists, organizationId );
+  if (validationErrors.length > 0) {
+    res.status(400).json({ message: validationErrors.join(", ") });
+    return false;
+  }
+  return true;
+}
+
+
+
+//Validate Data
+function validateItemData(data, taxExists, organizationId) {
+  
+  const errors = [];
+
+  //Basic Info
+
+  //OtherDetails
+  validateItemType(data.itemType, errors);
+  validateTaxPreference(data.taxPreference, errors);
+  validateReqFields( data.itemName, data.sellingPrice, data.taxPreference, data.taxRate , errors);
+
+  //validateAlphanumericFields([''], data, errors);
+  //validateIntegerFields([''], data, errors);
+  validateFloatFields(['length', 'width', 'height', 'weight', 'sellingPrice', 'saleMrp', 'costPrice', 'openingStock', 'openingStockRatePerUnit', 'reorderPoint'], data, errors);
+  //validateAlphabetsFields([''], data, errors);
+
+  //Tax Details
+  validateTaxType(data.taxRate, data.taxPreference, taxExists, errors);
+
+  return errors;
+}
+
+
+
+
+// Field validation utility
+function validateField(condition, errorMsg, errors) {
+    if (condition) errors.push(errorMsg);
+  }
+//Valid Item Type
+function validateItemType(itemType, errors) {
+  validateField(itemType && !validItemTypes.includes(itemType),
+    "Invalid Item type: " + itemType, errors);
+}
+//Valid Item Type
+function validateTaxPreference(taxPreference, errors) {
+  validateField(taxPreference && !validTaxPreference.includes(taxPreference),
+    "Invalid Tax Preference: " + taxPreference, errors);
+}
+//Valid Req Fields
+function validateReqFields( itemName, sellingPrice, taxPreference, taxRate , errors ) {
+  if (typeof itemName === 'undefined' ) {
+    errors.push("Item Name required");
+  }
+  if (typeof sellingPrice === 'undefined' ) {
+  errors.push(" Selling Price required");
+  }
+  if (typeof taxPreference === 'undefined' ) {
+  errors.push("Tax Preference required");
+  }
+  if (taxPreference =='Taxable' && typeof taxRate === 'undefined' ) {
+  errors.push("Tax Rate required");
+  }
+  if (taxPreference =='Non-Taxable' && typeof taxExemptReason === 'undefined' ) {
+    errors.push("Tax Exemption Reason required");
+  }
+  if (taxPreference =='Non-Taxable' && typeof taxRate !== 'undefined' ) {
+    errors.push("Invalid Tax Preference");
+  }
+}
+//Valid Alphanumeric Fields
+function validateAlphanumericFields(fields, data, errors) {
+  fields.forEach((field) => {
+    validateField(data[field] && !isAlphanumeric(data[field]), "Invalid " + field + ": " + data[field], errors);
+  });
+}
+// Validate Integer Fields
+function validateIntegerFields(fields, data, errors) {
+fields.forEach(field => {
+  validateField(data[field] && !isInteger(data[field]), `Invalid ${field}: ${data[field]}`, errors);
+});
+}
+//Valid Float Fields  
+function validateFloatFields(fields, data, errors) {
+  fields.forEach((balance) => {
+    validateField(data[balance] && !isFloat(data[balance]),
+      "Invalid " + balance.replace(/([A-Z])/g, " $1") + ": " + data[balance], errors);
+  });
+}
+//Valid Alphabets Fields 
+function validateAlphabetsFields(fields, data, errors) {
+  fields.forEach((field) => {
+    if (data[field] !== undefined) {
+      validateField(!isAlphabets(data[field]),
+        field.charAt(0).toUpperCase() + field.slice(1) + " should contain only alphabets.", errors);
+    }
+  });
+}
+
+//Validate Tax Type
+function validateTaxType(taxRate, taxExists, taxPreference, errors) {
+  const taxType = taxExists.taxType;
+  let taxFound = false;
+
+  // Check if taxType is GST
+  if (taxType === 'GST' && taxPreference =='Taxable' ) {
+    taxExists.gstTaxRate.forEach((tax) => {
+      if (tax.taxName === taxRate) {
+        taxFound = true;
+        console.log(`Matching GST tax found: ${tax.taxName} with rate: ${tax.taxRate}`);
+      }
+    });
+  }
+
+  // Check if taxType is VAT
+  if (taxType === 'VAT' && taxPreference =='Taxable') {
+    taxExists.vatTaxRate.forEach((tax) => {
+      if (tax.taxName === taxRate) {
+        taxFound = true;
+        console.log(`Matching VAT tax found: ${tax.taxName} with rate: ${tax.taxRate}`);
+      }
+    });
+  }
+
+  // If no matching tax rate found, add an error
+  if (!taxFound  && taxPreference =='Taxable' ) {
+    errors.push(`No matching ${taxType} Tax group found for: ${taxRate}`);
+  }  
+  
+}
+
+
+
+
+
+// Validation helpers
+function isAlphabets(value) {
+  return /^[A-Za-z\s]+$/.test(value);
+}
+
+function isFloat(value) {
+  return /^-?\d+(\.\d+)?$/.test(value);
+}
+
+function isInteger(value) {
+  return /^\d+$/.test(value);
+}
+
+function isAlphanumeric(value) {
+  return /^[A-Za-z0-9]+$/.test(value);
+}

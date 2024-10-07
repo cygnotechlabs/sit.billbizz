@@ -12,8 +12,8 @@ const itemSchema = new Schema({
     returnableItem: { type: Boolean },
     hsnCode: { type: String },
     sac:{type:String},
-    taxPreference: { type: String },   
-    taxExemptReason: { type: String },  
+    taxPreference: { type: String },
+    taxExemptReason: { type: String },        
     productUsage: { type: String },
 
     //Storage & Classification
@@ -37,29 +37,27 @@ const itemSchema = new Schema({
     isbn:{ type: String },
 
     //Sale Info
-    baseCurrency: { type: String },
     sellingPrice: { type: Number },
     saleMrp: { type: Number },
-    salesAccount: { type: String },
     salesDescription: { type: String },
     
     //Purchase Info
     costPrice: { type: Number },
-    purchaseAccount: { type: String },
     purchaseDescription: { type: String },
     preferredVendor: { type: String },
-    taxRate:{tye:String},
+
+    taxRate:{type:String},
+    cgst:{type:String},
+    sgst:{type:String},
+    igst:{type:String},
+    vat:{type:String},
 
 
-    trackInventory:{type:Boolean},
-    inventoryAccount:{type:String},
     openingStock:{typr:String},
     openingStockRatePerUnit: { type: String },
     reorderPoint: { type: String },
     
     createdDate: { type: String },  
-    currentStock:{type:String},
-    status: { type: String },
 });
 
 const Item = mongoose.model("Item", itemSchema);
