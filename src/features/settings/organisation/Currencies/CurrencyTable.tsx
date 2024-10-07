@@ -9,7 +9,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 
 const CurrencyTable = () => {
-  const { request: get_currencies } = useApi("put", 5004);
+  const { request: get_currencies } = useApi("get", 5004);
   const tableHeaders = ["Name", "Symbol", "Actions"];
   const [currenciesData, setCurrenciesData] = useState<any[]>([]);
 
@@ -20,9 +20,7 @@ const CurrencyTable = () => {
   const getHandleCurrencies = async () => {
     try {
       const url = `${endponits.GET_CURRENCIES}`;
-      const { response, error } = await get_currencies(url, {
-        organizationId: "INDORG0001",
-      });
+      const { response, error } = await get_currencies(url);
       if (!error && response) {
         setCurrenciesData(response.data);
         console.log(response,"currencyData");
@@ -34,8 +32,6 @@ const CurrencyTable = () => {
   };
 
   const handleDelete = async (currencyId: string) => {
-    console.log(currencyId,"Id");
-    
     try {
       const url = `${endponits.DELETE_CURRENCIES(currencyId)}`;
       const { response, error } = await deleteCurrencyRequest(url);
