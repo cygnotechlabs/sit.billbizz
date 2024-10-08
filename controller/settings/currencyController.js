@@ -1,6 +1,6 @@
 
-const Currency = require("../database/model/currency")
-const Organization = require("../database/model/organization")
+const Currency = require("../../database/model/currency")
+const Organization = require("../../database/model/organization")
 
 // Get Currency 
 exports.getCurrency = async (req, res) => {
