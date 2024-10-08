@@ -29,7 +29,7 @@ router.post('/import-supplier',verifyToken,checkPermission('Import New Suppliers
 
 router.get('/get-one-supplier-history/:supplierId',verifyToken,checkPermission('Viewed Supplier Details'),supplierCont.getOneSupplierHistory)
 
-router.put('/update-supplier-settings',verifyToken,checkPermission('Created a New Supplier'),supplierSettings.updateSupplierSettings)
+router.put('/update-supplier-customer-settings',verifyToken,checkPermission('Created a New Supplier'),supplierSettings.updateSupplierCustomerSettings)
 
         //   { action: "SupplierCreate", note: "Created a new Supplier" },
         //   { action: "SupplierView", note: "Viewed Supplier details" },

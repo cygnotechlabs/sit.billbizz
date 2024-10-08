@@ -9,7 +9,7 @@ const dataExist = async (organizationId) => {
   return { organizationExists, settings };
 };
 
-exports.updateSupplierSettings = async (req, res) => {
+exports.updateSupplierCustomerSettings = async (req, res) => {
   try {
     // const { organizationId } = req.body;
     const { organizationId, id: userId, userName } = req.user;
