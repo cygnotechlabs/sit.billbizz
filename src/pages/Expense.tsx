@@ -4,7 +4,6 @@ type Props = {}
 const Expense = ({}: Props) => {
   return (
     <div>
-
     </div>
   )
 }
