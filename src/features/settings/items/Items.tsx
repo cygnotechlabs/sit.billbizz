@@ -10,7 +10,6 @@ import { settingsdataResponseContext } from "../../../context/ContextShare"
 type Props = {};
 
 interface item {
-  organizationId: string;
   itemDecimal: string;
   itemDimensions: string;
   itemWeights: string;
@@ -35,7 +34,6 @@ function Items({}: Props) {
   const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
   const { request: addItem } = useApi("put", 5003);
   const [inputData, setInputData] = useState<item>({
-    organizationId: "INDORG0001",
     itemDecimal: "",
     itemDimensions: "",
     itemWeights: "",
