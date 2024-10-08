@@ -32,6 +32,9 @@ const taxSchema = new mongoose.Schema({
   gstRegisteredDate: { type: String },
   gstTaxRate: [gstTaxRateSchema],
   compositionSchema: { type: String },//boolean
+  reverseCharge: { type: String },//boolean
+  importExport: { type: String },//boolean
+  digitalServices: { type: String },//boolean
   compositionPercentage: { type: String },
 
 

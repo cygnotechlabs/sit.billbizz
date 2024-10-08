@@ -285,11 +285,11 @@ const createTaxForOrganization = async (organizationId) => {
     // Create Tax
     const tax = [
       { organizationId,taxType:"",gstTaxRate:[
-        {taxName: " GST0",taxRate:0,cgst:0,sgst:0,igst:0},
-        {taxName: " GST5",taxRate:5,cgst:2.5,sgst:2.5,igst:5},
-        {taxName: " GST12",taxRate:12,cgst:6,sgst:6,igst:12},
-        {taxName: " GST18",taxRate:18,cgst:9,sgst:9,igst:18},
-        {taxName: " GST28",taxRate:28,cgst:14,sgst:14,igst:28},],
+        {taxName: "GST0",taxRate:0,cgst:0,sgst:0,igst:0},
+        {taxName: "GST5",taxRate:5,cgst:2.5,sgst:2.5,igst:5},
+        {taxName: "GST12",taxRate:12,cgst:6,sgst:6,igst:12},
+        {taxName: "GST18",taxRate:18,cgst:9,sgst:9,igst:18},
+        {taxName: "GST28",taxRate:28,cgst:14,sgst:14,igst:28},],
         vatTaxRate:[
           {taxName: "VAT0",taxRate:0,},
           {taxName: "VAT5",taxRate:5,},
@@ -329,12 +329,19 @@ const createSettingsOrganization = async (organizationId) => {
     // Create settings
     const settings = [
       {organizationId,
-      //item  
-      itemDuplicateName:false, hsnSac:false, priceList:false, priceListAtLineLevel:false, compositeItem:false,
-      stockBelowZero:false,duplicateCustomerMobile:false,duplicateCustomerEmail:false,duplicateCustomerDisplayName:false,duplicateSupplierDisplayName:false,duplicateSupplierEmail:false,duplicateSupplierMobile:false, OutOfStockBelowZero :false, notifyReorderPoint:false, trackCostOnItems:false,}
-         
-    ];
-    
+      //Item
+      itemDuplicateName:false, hsnSac:false, priceList:false, priceListAtLineLevel:false, compositeItem:false,stockBelowZero:false,
+      OutOfStockBelowZero :false, notifyReorderPoint:false, trackCostOnItems:false,
+
+      //Customer
+      duplicateCustomerMobile:false,duplicateCustomerEmail:false,duplicateCustomerDisplayName:false,
+      
+      //Supplier
+      duplicateSupplierDisplayName:false,duplicateSupplierEmail:false,duplicateSupplierMobile:false, 
+      
+
+    }];
+
     await Setting.insertMany(settings);
     console.log("Settings created successfully for organization:", organizationId);
     return { success: true, message: "Settings created successfully." };
