@@ -834,7 +834,7 @@ const NewPurchaseOrder = ({}: Props) => {
                       }));
                     }}
                   >
-                    Transaction Line
+                    Transaction  Line
                   </div>
 
                   <div
