@@ -58,7 +58,6 @@ function InvoiceSettings({}: Props) {
     "Dheeraj@",
   ];
   const [invoiceSettings, setInvoiceSettings] = useState({
-    organizationId: "INDORG0001",
     organizationAddressFormat: "${ORGANIZATION.CITY}",
     qrLocation: "",
     displayQrLocation: false,
