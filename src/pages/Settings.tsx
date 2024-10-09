@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import organizationImg from "../assets/Images/Rectangle 5415.png";
 import taximg from "../assets/Images/Rectangle 5415 (1).png";
 import usersImg from "../assets/Images/Rectangle 5415 (2).png";
@@ -103,31 +103,33 @@ const SettingCard: React.FC<Setting> = ({
       alt={title}
       className="w-full h-24 object-cover rounded-t-[4px]"
     />
-  <div className="my-5 mx-8 items-center text-sm text-textColor h-28 flex flex-col justify-between">
-  <div>
-    <h3 className=" text-base font-semibold">{title}</h3>
-    <p className="text-gray-500 text-sm mt-1">{description}</p>
-  </div>
-  <div className="flex items-center justify-center mt-1">
-    <Link to={route}>
-      <Button
-        variant="secondary"
-        size="sm"
-        className="bg-blue-500 rounded hover:bg-blue-600 text-sm"
-      >
-        See Details <ArrowrightUp/>
-      </Button>
-    </Link>
-  </div>
-</div>
-
-
+    <div className="my-5 mx-8 items-center text-sm text-textColor h-28 flex flex-col justify-between">
+      <div>
+        <h3 className=" text-base font-semibold">{title}</h3>
+        <p className="text-gray-500 text-sm mt-1">{description}</p>
+      </div>
+      <div className="flex items-center justify-center mt-1">
+        <Link to={route}>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="bg-blue-500 rounded hover:bg-blue-600 text-sm"
+          >
+            See Details <ArrowrightUp />
+          </Button>
+        </Link>
+      </div>
+    </div>
   </div>
 );
 
 const Settings: React.FC = () => {
-  // const [searchTerm, setSearchTerm] = useState("");
   const [searchValue, setSearchValue] = useState<string>("");
+  const navigate = useNavigate(); 
+
+  const handleGoBack = () => {
+    navigate(-1); 
+  };
 
   const filteredSettings = settingsData.filter((setting) =>
     setting.title.toLowerCase().includes(searchValue.toLowerCase())
@@ -140,16 +142,17 @@ const Settings: React.FC = () => {
         <div className="ml-auto flex gap-4 w-full">
           <div className="w-[50%] ml-auto">
             <SearchBar
-              placeholder="Serach"
+              placeholder="Search"
               searchValue={searchValue}
               onSearchChange={setSearchValue}
             />
           </div>
-          <Link to={"/inventory"}>
-          <button className="bg-white  px-4 py-1   rounded-lg border-textColor border text-sm">
+          <button
+            onClick={handleGoBack}
+            className="bg-white  px-4 py-1   rounded-lg border-textColor border text-sm"
+          >
             Close <span className="text-lg ms-1 -mt-1"> &times;</span>
           </button>
-          </Link>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-14">

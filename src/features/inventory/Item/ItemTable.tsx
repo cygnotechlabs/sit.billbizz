@@ -37,12 +37,12 @@ const ItemTable = () => {
   const initialColumns: Column[] = [
     { id: "itemName", label: "Name", visible: true },
     { id: "sku", label: "SKU", visible: true },
-    { id: "productUsage", label: "Description", visible: true },
-    { id: "purchaseDescription", label: "Purchase Description", visible: true },
+    { id: "purchaseDescription", label: "Description", visible: true },
+    { id: "sellingPrice", label: "Sales Rate", visible: true },
     { id: "costPrice", label: "Rate", visible: true },
     { id: "itemDetail", label: "Item Details", visible: true },
-    { id: "saleMrp", label: "Purchase Rate", visible: true },
-    { id: "status", label: "Stock On Hand", visible: true },
+    { id: "costPrice", label: "Purchase Rate", visible: true },
+    // { id: "status", label: "Stock On Hand", visible: true },
   ];
 
   const [columns, setColumns] = useState<Column[]>(initialColumns);
@@ -152,6 +152,7 @@ const ItemTable = () => {
                       </td>
                     )
                 )}
+                <td className="py-2.5 px-4 border-y border-tableBorder"></td>
               </tr>
             ))}
           </tbody>
@@ -235,7 +236,7 @@ const ItemTable = () => {
                 </div>
 
                 {/* Purchase and Sales Information */}
-                <div className="bg-[#FDF8F0] rounded-lg mt-4 px-6 py-4">
+                <div className="bg-[#FDF8F0] rounded-lg mt-4 px-9 py-9">
                   {/* Item Details */}
                   <div className="grid grid-cols-2 gap-y-4">
                     {/* Labels */}
@@ -265,10 +266,10 @@ const ItemTable = () => {
                       <p className="text-dropdownText font-semibold text-sm">
                         Rs. {selectedItem?.costPrice || "N/A"}
                       </p>
-                      <p className="text-dropdownText text-sm">Purchase Account</p>
+                      {/* <p className="text-dropdownText text-sm">Purchase Account</p>
                       <p className="text-dropdownText font-semibold text-sm">
                         {selectedItem?.purchaseAccount || "N/A"}
-                      </p>
+                      </p> */}
                     </div>
                   </div>
 
@@ -282,10 +283,10 @@ const ItemTable = () => {
                       <p className="text-dropdownText font-semibold text-sm">
                         Rs. {selectedItem?.sellingPrice || "N/A"}
                       </p>
-                      <p className="text-dropdownText text-sm">Sales Account</p>
+                      {/* <p className="text-dropdownText text-sm">Sales Account</p>
                       <p className="text-dropdownText font-semibold text-sm">
                         {selectedItem?.salesAccount || "N/A"}
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 </div>
