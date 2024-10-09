@@ -13,7 +13,6 @@ function SalesOrder({}: Props) {
   // Define the state with default values
   const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
   const [salesOrderState, setSalesOrderState] = useState({
-    organizationId: "INDORG0001",
     salesOrderAddress: false,
     salesOrderCustomerNote: false,
     salesOrderTermsCondition: false,

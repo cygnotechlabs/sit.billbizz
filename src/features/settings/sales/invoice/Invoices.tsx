@@ -16,7 +16,6 @@ function Invoices({}: Props) {
     const [invoiceURLDropdown,setInvoiceURLDropdown] = useState(false);
     const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
     const [invoiceState, setInvoiceState] = useState({
-        organizationId: "INDORG0001", 
         invoiceEdit: false, // corresponds to `invoiceEdit`
         displayExpenseReceipt: false, // corresponds to `displayExpenseReceipt`
         salesOrderNumber: "orderNum", // corresponds to `salesOrderNumber`, can be 'orderNum' or 'refNum'
