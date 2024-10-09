@@ -27,6 +27,8 @@ export const endponits = {
 
  ADD_ITEMS: `add-item-settings`,
 
+// Prefreance settings 
+Customer_Supplier_prefreance: 'update-supplier-customer-settings',
 
  // get settingsData
 GET_SETTINGS_DATA:`get-settings`,

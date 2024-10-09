@@ -4,10 +4,10 @@ import SearchIcon from "../assets/icons/SearchIcon";
 type Props = {
   searchValue: string;
   onSearchChange: (value: string) => void;
-  placeholder?: string | "search";
+  placeholder?: string;
 };
 
-const SearchBar = ({ searchValue, onSearchChange, placeholder }: Props) => {
+const SearchBar = ({ searchValue, onSearchChange, placeholder = "search" }: Props) => {
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     onSearchChange(e.target.value);
   };

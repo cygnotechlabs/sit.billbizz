@@ -9,7 +9,6 @@ import { settingsdataResponseContext } from "../../../../context/ContextShare";
 type Props = {};
 
 interface DeliveryChallan {
-  organizationId: string;
   deliveryChellanTC: string;
   deliveryChellanCN: string;
 }
@@ -18,7 +17,6 @@ function DeliveryChallans({}: Props) {
   const { request: addDeliveryChallan } = useApi("put", 5007);
   const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
   const [inputData, setInputData] = useState<DeliveryChallan>({
-    organizationId: "INDORG0001",
     deliveryChellanTC: "",
     deliveryChellanCN: "",
   });

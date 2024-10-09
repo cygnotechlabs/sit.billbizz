@@ -21,6 +21,7 @@ import ExpensesHome from "../features/settings/Purcahse/Expense/ExpensesHome";
 import PurchaseOrders from "../features/settings/Purcahse/PuchaseOrder";
 import MsmeSettings from "../features/settings/taxes/msmeSettings/MsmeSettings";
 import TransactionNumber from "../features/settings/customization/TransactionNumber";
+import CustomerAndSupplier from "../features/settings/Preferences/CustomerAndSupplier";
 
 // import Users from "../features/settings/users/Users";
 // import Preferences from "../features/settings/preferences/Preferences";
@@ -58,6 +59,7 @@ const SettingsRoutes: RouteObject[] = [
   { path: "/settings/purchases/expenses", element: <ExpensesHome /> },
   { path: "/settings/purchase/puschaseOrder", element: <PurchaseOrders /> },
   { path: "/settings/transaction-number-series", element: <TransactionNumber /> },
+  { path: "/settings/preferences/CustomerAndSupplier", element: <CustomerAndSupplier /> },
 
 
   //   { path: "/settings/users", element: <Users /> },

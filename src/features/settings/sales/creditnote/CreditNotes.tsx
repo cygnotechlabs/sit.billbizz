@@ -14,7 +14,6 @@ import { settingsdataResponseContext } from "../../../../context/ContextShare";
 type Props = {};
 
 interface creditNote {
-  organizationId: string;
   overrideCostPrice: boolean;
   creditNoteQr: boolean;
   creditNoteQrType: string;
@@ -80,7 +79,6 @@ function CreditNotes({}: Props) {
   const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
 
   const [inputData, setInputData] = useState<creditNote>({
-    organizationId: "INDORG0001",
     overrideCostPrice: false,
     creditNoteQr: false,
     creditNoteQrType: "",
