@@ -4,7 +4,14 @@ const router = new express.Router()
 const organizationController = require("../controller/organizationController")
 const clientController = require("../controller/clientController")
 const userController = require("../controller/userController")
-const settingController = require("../controller/settingController")
+
+const currencyController = require("../controller/settings/currencyController")
+const paymentTermCont = require("../controller/settings/paymentTermCont")
+const prefixController = require("../controller/settings/prefixController")
+const settingController = require("../controller/settings/settingController")
+const taxController = require("../controller/settings/taxController")
+
+
 
 const checkPermission = require('../controller/permission');
 const { verifyToken } = require('../controller/middleware');
@@ -40,56 +47,71 @@ router.get('/get-one-organization',verifyToken,checkPermission('Viewed Organizat
 
 router.get('/get-settings',verifyToken,checkPermission('Viewed Setting details'),settingController.getSettings)
 
+
+
+
+
 // Currency
 
-router.get('/get-currency',verifyToken,checkPermission('Viewed Currency Details'),settingController.getCurrency)
+router.get('/get-currency',verifyToken,checkPermission('Viewed Currency Details'),currencyController.getCurrency)
 
-router.get('/view-currency/:id',verifyToken,checkPermission('Viewed Currency Details'),settingController.viewCurrency)
+router.get('/view-currency/:id',verifyToken,checkPermission('Viewed Currency Details'),currencyController.viewCurrency)
 
-router.post('/add-currency',verifyToken,checkPermission('Added a new Currency'),settingController.addCurrency)
+router.post('/add-currency',verifyToken,checkPermission('Added a new Currency'),currencyController.addCurrency)
 
-router.put('/edit-currency',verifyToken,checkPermission('Edited Currency Information'),settingController.editCurrency)
+router.put('/edit-currency',verifyToken,checkPermission('Edited Currency Information'),currencyController.editCurrency)
 
-router.delete('/delete-currency/:currencyId',verifyToken,checkPermission('Deleted a Currency'),settingController.deleteCurrency)
+router.delete('/delete-currency/:currencyId',verifyToken,checkPermission('Deleted a Currency'),currencyController.deleteCurrency)
+
+
+
+
 
 // Invoice 
 
 router.put('/add-invoice-settings',verifyToken,checkPermission('Setup/Modified Invoice Setting'),settingController.updateInvoiceSettings)
 
+
+
+
+
 // Payment Terms
 
-router.post('/add-payment-terms',verifyToken,checkPermission('Added Payment Term'),settingController.addPaymentTerm)
+router.post('/add-payment-terms',verifyToken,checkPermission('Added Payment Term'),paymentTermCont.addPaymentTerm)
 
-router.put('/edit-payment-terms/:id',verifyToken,checkPermission('Edited Payment Term'),settingController.editPaymentTerm)
+router.put('/edit-payment-terms/:id',verifyToken,checkPermission('Edited Payment Term'),paymentTermCont.editPaymentTerm)
 
-router.delete('/delete-payment-terms',verifyToken,checkPermission('Deleted Payment Term'),settingController.deletePaymentTerm)
+router.delete('/delete-payment-terms',verifyToken,checkPermission('Deleted Payment Term'),paymentTermCont.deletePaymentTerm)
 
-router.get('/get-all-payment-terms',verifyToken,checkPermission('Viewed Payment Term'),settingController.getAllPaymentTerms)
+router.get('/get-all-payment-terms',verifyToken,checkPermission('Viewed Payment Term'),paymentTermCont.getAllPaymentTerms)
+
+
+
+
 
 //Tax
 
-router.post('/add-tax',verifyToken,checkPermission('Added Tax Information'),settingController.addTax)
+router.post('/add-tax',verifyToken,checkPermission('Added Tax Information'),taxController.addTax)
 
-router.put('/edit-tax',verifyToken,checkPermission('Edited Tax Information'),settingController.editTaxRate)
+router.put('/edit-tax',verifyToken,checkPermission('Edited Tax Information'),taxController.editTaxRate)
 
-router.get('/get-tax',verifyToken,checkPermission('Viewed Tax Information'),settingController.getTax)
+router.get('/get-tax',verifyToken,checkPermission('Viewed Tax Information'),taxController.getTax)
+
+
+
+
 
 //Prefix
 
-router.post('/add-prefix',verifyToken,checkPermission('Added Prefix'),settingController.addPrefix)
+router.post('/add-prefix',verifyToken,checkPermission('Added Prefix'),prefixController.addPrefix)
 
-router.get('/get-prefix',verifyToken,checkPermission('Viewed Prefix'),settingController.getPrefix)
+router.get('/get-prefix',verifyToken,checkPermission('Viewed Prefix'),prefixController.getPrefix)
 
-router.put('/edit-prefix',verifyToken,checkPermission('Edited Prefix'),settingController.updatePrefix)
+router.put('/edit-prefix',verifyToken,checkPermission('Edited Prefix'),prefixController.updatePrefix)
 
-router.delete('/delete-prefix',verifyToken,checkPermission('Deleted Prefix'),settingController.deletePrefix)
+router.delete('/delete-prefix',verifyToken,checkPermission('Deleted Prefix'),prefixController.deletePrefix)
 
-router.put('/status-prefix',verifyToken,checkPermission('Modified Prefix Status'),settingController.setPrefixSeriesStatusTrue)
-
-
-
-
-
+router.put('/status-prefix',verifyToken,checkPermission('Modified Prefix Status'),prefixController.setPrefixSeriesStatusTrue)
 
 
 
@@ -119,129 +141,6 @@ router.post('/login',userController.login)
 router.post('/verify-otp',userController.verifyOtp)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// //Production
-// router.post('/setup-organization',organizationController.setupOrganization)
-
-// router.get('/get-additional-data',organizationController.getAdditionalData)
-
-// // router.put('/get-one-organization',organizationController.getOneOrganization)
-
-// router.delete('/delete-organization/:organizationId',organizationController.deleteOrganization)
-
-// router.get('/get-countries-data',organizationController.getCountriesData)
-
-
-
-
-
-// // Setting
-
-// // Currency
-// router.put('/get-currency',settingController.getCurrency)
-
-// router.get('/view-currency/:id',settingController.viewCurrency)
-
-// router.post('/add-currency',settingController.addCurrency)
-
-// router.put('/edit-currency',settingController.editCurrency)
-
-// router.delete('/delete-currency/:currencyId',settingController.deleteCurrency)
-
-
-// // Invoice settings
-// router.put('/add-invoice-settings',settingController.updateInvoiceSettings)
-
-// router.put('/get-settings',settingController.getSettings)
-
-
-// // Payment terms
-// router.post('/add-payment-terms',settingController.addPaymentTerm)
-
-// router.put('/edit-payment-terms/:id',settingController.editPaymentTerm)
-
-// router.delete('/delete-payment-terms',settingController.deletePaymentTerm)
-
-// router.get('/get-all-payment-terms',settingController.getAllPaymentTerms)
-
-
-// //Tax
-// router.post('/add-tax',settingController.addTax)
-
-// router.put('/edit-tax',settingController.editTaxRate)
-
-// router.put('/get-tax',settingController.getTax)
-
-
-// //Prefix
-// router.post('/add-prefix',settingController.addPrefix)
-
-// router.put('/get-prefix',settingController.getPrefix)
-
-// router.put('/edit-prefix',settingController.updatePrefix)
-
-// router.delete('/delete-prefix',settingController.deletePrefix)
-
-// router.put('/status-prefix',settingController.setPrefixSeriesStatusTrue)
-
-
-
-
-
-
-
-
-
-
-
-
-// //Internal
-
-// router.get('/get-all-organization',organizationController.getAllOrganization)
-
-// router.post('/create-client',clientController.createOrganizationAndClient)
-
-// router.get('/get-all-client',clientController.getAllClient)
-
-
-// router.get('/delete-all',clientController.deleteAll)
-
-
-
-// //dev phase only
-// router.get('/get-org-id',clientController.getOrganizationId)
-
-
-
-
-
-// //Login
-// router.post('/login',userController.login)
-
-// router.post('/verify-otp',userController.verifyOtp)
 
 
 
