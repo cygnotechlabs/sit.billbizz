@@ -81,8 +81,9 @@ const validateGstTaxRates = (gstTaxRate) => {
   if ( gstTaxRate === undefined ) {
     return { isValid: true };
   } 
-  let { taxName, taxRate, cgst, sgst, igst } = gstTaxRate;  
-
+  let { taxName, taxRate, cgst, sgst, igst } = gstTaxRate;
+  
+  taxRate = parseFloat(taxRate)
   cgst = parseFloat(cgst);
   sgst = parseFloat(sgst);
   igst = parseFloat(igst);
@@ -106,6 +107,16 @@ const validateGstTaxRates = (gstTaxRate) => {
   if (igst === undefined ) {
     return { isValid: false, message: "IGST is required" };
   }
+  if (taxRate > 100) {
+    return { isValid: false, message: "Tax rate cannot exceed 100%" };
+  }
+  if (cgst > 100) {
+    return { isValid: false, message: "CGST cannot exceed 100%" };
+  }
+  if (sgst > 100) {
+    return { isValid: false, message: "SGST cannot exceed 100%" };
+  }
+
 
   // Check if CGST equals SGST
   if (cgst !== sgst) {
@@ -129,11 +140,16 @@ const validateVatTaxRates = (vatTaxRate) => {
   
   const { taxName, taxRate } = vatTaxRate;
 
+  taxRate = parseFloat(taxRate)
+
   if ( taxName === undefined ) {
     return { isValid: false, message: "Tax name is required" };
   }
   if ( taxRate === undefined ) {
     return { isValid: false, message: "Tax rate is required" };
+  }
+  if (taxRate > 100) {
+    return { isValid: false, message: "Tax rate cannot exceed 100%" };
   }
 
 

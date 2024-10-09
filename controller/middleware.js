@@ -12,7 +12,11 @@ function verifyToken(req, res, next) {
         
         jwt.verify(req.token, secretKey, (err, authData) => {
             if (err) {
-                return res.sendStatus(403);  // Forbidden if token is invalid
+                if (err.name === 'TokenExpiredError') {
+                    return res.status(401).json({ message: 'Token has expired' });
+                } else {
+                    return res.sendStatus(403);  // Forbidden for other token errors
+                }
             } else {
                 // Extract userId and organizationId from authData
                 const { id: userId, organizationId, userName } = authData;
