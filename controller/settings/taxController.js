@@ -36,9 +36,9 @@ const updateGSTFields = (taxRecord, cleanedData) => {
     gstIn, gstBusinesLegalName, gstBusinessTradeName, gstRegisteredDate, compositionSchema,
     reverseCharge, importExport, digitalServices, compositionPercentage, gstTaxRate
   } = cleanedData;
-
   
 
+  taxRecord.taxType = "GST";
   if (gstIn) taxRecord.gstIn = gstIn;
   if (gstBusinesLegalName) taxRecord.gstBusinesLegalName = gstBusinesLegalName;
   if (gstBusinessTradeName) taxRecord.gstBusinessTradeName = gstBusinessTradeName;
@@ -60,6 +60,7 @@ const updateVATFields = (taxRecord, cleanedData) => {
 
   
 
+  taxRecord.taxType = "VAT";
   if (vatNumber) taxRecord.vatNumber = vatNumber;
   if (vatBusinesLegalName) taxRecord.vatBusinesLegalName = vatBusinesLegalName;
   if (vatBusinessTradeName) taxRecord.vatBusinessTradeName = vatBusinessTradeName;
@@ -81,9 +82,8 @@ const validateGstTaxRates = (gstTaxRate) => {
   if ( gstTaxRate === undefined ) {
     return { isValid: true };
   } 
-  let { taxName, taxRate, cgst, sgst, igst } = gstTaxRate;
-  
-  taxRate = parseFloat(taxRate)
+  let { taxName, taxRate, cgst, sgst, igst } = gstTaxRate;  
+
   cgst = parseFloat(cgst);
   sgst = parseFloat(sgst);
   igst = parseFloat(igst);
@@ -107,16 +107,6 @@ const validateGstTaxRates = (gstTaxRate) => {
   if (igst === undefined ) {
     return { isValid: false, message: "IGST is required" };
   }
-  if (taxRate > 100) {
-    return { isValid: false, message: "Tax rate cannot exceed 100%" };
-  }
-  if (cgst > 100) {
-    return { isValid: false, message: "CGST cannot exceed 100%" };
-  }
-  if (sgst > 100) {
-    return { isValid: false, message: "SGST cannot exceed 100%" };
-  }
-
 
   // Check if CGST equals SGST
   if (cgst !== sgst) {
@@ -140,16 +130,11 @@ const validateVatTaxRates = (vatTaxRate) => {
   
   const { taxName, taxRate } = vatTaxRate;
 
-  taxRate = parseFloat(taxRate)
-
   if ( taxName === undefined ) {
     return { isValid: false, message: "Tax name is required" };
   }
   if ( taxRate === undefined ) {
     return { isValid: false, message: "Tax rate is required" };
-  }
-  if (taxRate > 100) {
-    return { isValid: false, message: "Tax rate cannot exceed 100%" };
   }
 
 
@@ -214,7 +199,7 @@ exports.addTax = async (req, res) => {
 
     updateMSMEFields(taxRecord, cleanedData);    
 
-    const updatedTaxRecord = await taxRecord.save();
+    const updatedTaxRecord = await taxRecord.save();   
 
     if (!acctype) {
       if (taxType === 'GST') {
