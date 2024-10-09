@@ -8,21 +8,19 @@ const Currency = require("../database/model/currency");
 const moment = require("moment-timezone");
 const TrialBalance = require("../database/model/trialBalance");
 const CustomerHistory = require("../database/model/customerHistory");
+const Settings = require("../database/model/settings")
 
 // Fetch existing data
 const dataExist = async (organizationId) => {
-    const [organizationExists, taxExists, currencyExists, allCustomer] = await Promise.all([
+    const [organizationExists, taxExists, currencyExists, allCustomer , settings] = await Promise.all([
       Organization.findOne({ organizationId }),
       Tax.findOne({ organizationId }),
       Currency.find({ organizationId }, { currencyCode: 1, _id: 0 }),
-      Customer.find({ organizationId })
+      Customer.find({ organizationId }),
+      Settings.find({ organizationId })
     ]);
-    return { organizationExists, taxExists, currencyExists, allCustomer };
+    return { organizationExists, taxExists, currencyExists, allCustomer , settings };
   };
-  
-
-
-
 
   // Add Customer
   exports.addCustomer = async (req, res) => {
@@ -40,12 +38,14 @@ const dataExist = async (organizationId) => {
 
       //Clean Data
       const cleanedData = cleanCustomerData(req.body);
-      console.log("cleanedData :",cleanedData.taxType);     
 
       const { customerEmail, debitOpeningBalance, creditOpeningBalance, customerDisplayName, mobile } = cleanedData;
   
-      const { organizationExists, taxExists, currencyExists } = await dataExist(organizationId);
-  
+      const { organizationExists, taxExists, currencyExists , settings } = await dataExist(organizationId);
+      
+      // checking values from Customer settings
+      // const { duplicateCustomerDisplayName , duplicateCustomerEmail , duplicateCustomerMobile } = settings[0]
+        
       //Data Exist Validation
       if (!validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res)) return;     
   
@@ -219,7 +219,7 @@ exports.updateCustomerStatus = async (req, res) => {
   console.log("Update Customer Status:", req.body);
   try {
     const { customerId } = req.params;
-    const organizationId = req.user.organizationId;
+    const {organizationId , userName , userId} = req.user;
     const { status } = req.body; // Status is now taken from the request body
 
     // Validate organizationId
@@ -242,12 +242,27 @@ exports.updateCustomerStatus = async (req, res) => {
         message: "Customer not found",
       });
     }
-
+    const openingDate = generateOpeningDate(organizationExists);
     // Update the customer status with the value provided by the frontend
     customer.status = status;
 
     // Save the updated customer
     await customer.save();
+    // Add entry to Customer History
+       const accountCustomerHistoryEntry = new CustomerHistory({
+        organizationId,
+        operationId: customer._id,
+        customerId,
+        customerDisplayName: customer.customerDisplayName,
+        date: openingDate,
+        title: "customer Status Modified",
+        description: `customer status updated to ${status} by ${userName}`,
+
+        userId: userId,
+        userName: userName,
+      });
+  
+      await accountCustomerHistoryEntry.save();
 
     res.status(200).json({
       message: "Customer status updated successfully.",
@@ -479,7 +494,7 @@ async function checkDuplicateCustomerFields( duplicateCheck, customerDisplayName
               errorMessage: `Customer with the provided email already exists: ${customerEmail}`,
             },
             {
-              condition: duplicateCheck.duplicateCustomerPhoneNumber && mobile !== undefined,
+              condition: duplicateCheck.duplicateCustomerMobile && mobile !== undefined,
               field: 'mobile',
               value: mobile,
               errorMessage: `Customer with the provided phone number already exists: ${mobile}`,
@@ -502,7 +517,7 @@ async function checkDuplicateCustomerFields( duplicateCheck, customerDisplayName
 //Validate inputs
   function validateInputs(data, currencyExists, taxExists, organizationExists, res) {
     const validCurrencies = currencyExists.map((currency) => currency.currencyCode);
-    const validTaxTypes = ["None", taxExists.taxType];
+    const validTaxTypes = ["none", taxExists.taxType];
     const validationErrors = validateCustomerData(data, validCurrencies, validTaxTypes, organizationExists);
   
     if (validationErrors.length > 0) {
@@ -693,6 +708,7 @@ function generateTimeAndDateForDB(
     const errors = [];
 
     //Basic Info
+    validateReqFields( data,  errors);
     validateCustomerType(data.customerType, errors);
     validateSalutation(data.salutation, errors);
     validateNames(['firstName', 'lastName'], data, errors);
@@ -723,7 +739,16 @@ function generateTimeAndDateForDB(
   function validateField(condition, errorMsg, errors) {
     if (condition) errors.push(errorMsg);
   }
-
+//Valid Req Fields
+function validateReqFields( data, errors ) {
+  if (typeof data.customerDisplayName === 'undefined' ) {
+    errors.push("Customer Display Name required");
+  }
+  const interestPercentage = parseFloat(data.interestPercentage);
+  if ( interestPercentage > 100 ) {
+    errors.push("Interest Percentage cannot exceed 100%");
+  }
+}
 //Valid Customer Type
   function validateCustomerType(customerType, errors) {
     validateField(customerType && !validCustomerTypes.includes(customerType),

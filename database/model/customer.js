@@ -35,9 +35,9 @@ const customerSchema = new Schema({
     //Other Details
     pan: {type:String},
     currency: {type:String},
-    creditDays: {type:String},
-    creditLimits: {type:String},
-    interestPercentage: {type:String},
+    creditDays: {type:Number},
+    creditLimits: {type:Number},
+    interestPercentage: {type:Number},
     paymentTerms: {type:String},
     enablePortal:{type:Boolean},
     documents: {type:String},
