@@ -12,3 +12,12 @@ export const unitConversionTableHead = [
   " Unit Coversion Rate",
   "Action",
 ];
+
+export const itemTrackingHead = [
+  "Date",
+  "Item Name",
+  "Operation",
+  "Unit Quantity",
+  "Stakeholder",
+  "Actions",
+];
