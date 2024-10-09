@@ -8,16 +8,20 @@ import Button from "../../../Components/Button";
 import PrinterIcon from "../../../assets/icons/PrinterIcon";
 import AddSupplierModal from "../../Supplier/SupplierHome/AddSupplierModal";
 import NeworderTable from "../purchaseOrder/addPurchaseOrder/NeworderTable";
+import Upload from "../../../assets/icons/Upload";
+import ScanEye from "../../../assets/icons/ScanEye";
 
 type Props = {};
 
 const NewBills = ({}: Props) => {
   const [searchValue, setSearchValue] = useState<string>("");
+  const [discountType, setDiscoutType] = useState<string>("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState<string | null>(
     null
   );
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleDropdown = (key: string | null) => {
     setOpenDropdownIndex(key === openDropdownIndex ? null : key);
@@ -31,6 +35,12 @@ const NewBills = ({}: Props) => {
       setOpenDropdownIndex(null);
     }
   };
+
+  const toggleView = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  
 
   useEffect(() => {
     if (openDropdownIndex !== null) {
@@ -85,7 +95,7 @@ const NewBills = ({}: Props) => {
                     onSearchChange={setSearchValue}
                     placeholder="Select Supplier"
                   />
-                  <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink">
+                  <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cuRsor-pointer border border-slate-400 rounded-lg bg-lightPink">
                     <div className="col-span-2 flex items-center justify-center">
                       <img
                         src="https://i.postimg.cc/MHdYrGVP/Ellipse-43.png"
@@ -99,12 +109,12 @@ const NewBills = ({}: Props) => {
                           Phone: 9643287899
                         </p>
                       </div>
-                      <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
+                      <div className="ms-auto text-2xl cuRsor-pointer relative -mt-2 pe-2">
                         &times;
                       </div>
                     </div>
                   </div>
-                  <div className="hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg py-3">
+                  <div className="hover:bg-gray-100 cuRsor-pointer border border-slate-400 rounded-lg py-3">
                     <AddSupplierModal page="purchase" />
                   </div>
                 </div>
@@ -177,7 +187,93 @@ const NewBills = ({}: Props) => {
                 </div>
               </div>
             </div>
+
+            <div className=" w-full">
+
+
+              <label htmlFor="" className="">
+                Payment Mode </label>
+                <div className="relative w-full">
+                <select className="block appearance-none mt-2 w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <option value="" className="text-gray">
+                  
+                  Enter Payment Mode
+                  </option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <CehvronDown color="gray" />
+                </div>
+            
+              </div>
+             
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1 text-labelColor">
+                Paid Amount
+      
+             
+                <input
+                  name=""
+                  id=""
+                  placeholder="Enter Paid Amount"
+                  className="border-inputBorder w-full text-sm border rounded text-dropdownText  p-2 h-9 mt-2 "
+                />
+              </label>
+            </div>
+            <div className=" w-full">
+
+
+<label htmlFor="" className="">
+  Balance 
+  
+
+
+  <input
+    name=""
+    id=""
+    placeholder=""
+    className="border-inputBorder w-full text-sm border rounded text-dropdownText  p-2 h-9 mt-2 "
+  />
+</label>
+</div>
           </div>
+
+          <div className="border-b w-[20%] flex items-center justify-center text-textColor gap-3 my-5 py-2 border-[#EAECF0] text-sm">
+              <p>{discountType === "" ? "Discount Type" : discountType}</p>{" "}
+              <div
+                className="border border-neutral-300 flex rounded-lg text-xs p-1"
+                onClick={() => toggleDropdown("discountType")}
+              >
+                <CehvronDown color="currentColor" width={15} height={15} />
+              </div>
+              {openDropdownIndex === "discountType" && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute z-10 bg-white  shadow  rounded-md  p-2 mt-36 w-[28%] space-y-1  "
+                >
+                  <div
+                    className=" p-2 hover:bg-red-50 cursor-pointe  rounded-lg py-3"
+                    onClick={() => {
+                      setDiscoutType("Time Line");
+                      setOpenDropdownIndex(null);
+                    }}
+                  >
+                    Time Line
+                  </div>
+                  <div
+                    className=" p-2 hover:bg-red-50 cursor-pointe   rounded-lg  pt-3"
+                    onClick={() => {
+                      setDiscoutType("Transaction Line");
+                      setOpenDropdownIndex(null);
+                    }}
+                  >
+                    Transaction Line
+                  </div>
+                  <div className="h-[.5px] bg-neutral-300"></div>
+                </div>
+              )}
+            </div>
           <div className="mt-9">
             <p className="font-bold text-base">Add Item</p>
             <NeworderTable />
@@ -188,8 +284,116 @@ const NewBills = ({}: Props) => {
               <b> Add Item</b>
             </p>
           </button>{" "}
+          <br/>
+          {/* <button className="mt-1">
+            <p className="text-darkRed my-3 text-sm flex gap-2 items-center">
+              <PlusCircle color="darkRed" />
+              <b>View more</b>
+            </p>
+          </button>{" "} */}
+          <div>
+          
+  <button className="mt-1" onClick={toggleView}>
+    <p className="text-black my-3 text-sm flex gap-2 items-center">
+      <ScanEye/>
+      <b>{isExpanded ? 'View less' : 'View more'}</b>
+    </p>
+  </button>
+
+  {isExpanded && (
+   <div>
+   {/* Your form elements go here */}
+   <form>
+  <div className="grid grid-cols-12 gap-4 py-5">
+    <div className="bg-secondary_main p-0 min-h-max rounded-xl relative col-span-12">
+      <div className="grid grid-cols-2 gap-5 mt-0">
+        <div className="relative col-span-1">
+          <div className="w-full">
+            <label htmlFor="" className="">
+              Other expenses
+              <input
+                name=""
+                id=""
+                placeholder="Other expense"
+                className="border-inputBorder w-full text-sm border rounded text-dropdownText p-2 h-9 mt-2"
+              />
+            </label>
+          </div>
+        </div>
+        <div className="relative col-span-1">
+          <div className="w-full">
+            <label className="block text-sm mb-1 text-labelColor">
+              Other Expense Reason
+              <input
+                name=""
+                id=""
+                placeholder="other expense reason"
+                className="border-inputBorder w-full text-sm border rounded text-dropdownText p-2 h-9 mt-2"
+              />
+            </label>
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-5 mt-0">
+        <div className="relative col-span-1">
+          <div className="w-full">
+            <label htmlFor="" className="">
+              Vehicle Number
+              <input
+                name=""
+                id=""
+                placeholder="Enter vehicle number"
+                className="border-inputBorder w-full text-sm border rounded text-dropdownText p-2 h-9 mt-2"
+              />
+            </label>
+          </div>
+        </div>
+        <div className="relative col-span-1">
+          <div className="w-full">
+            <label className="block text-sm mb-1 text-labelColor">
+              Freight Amount
+              <input
+                name=""
+                id=""
+                placeholder="Enter freight Amount"
+                className="border-inputBorder w-full text-sm border rounded text-dropdownText p-2 h-9 mt-2"
+              />
+            </label>
+          </div>
+        </div>
+        <div className="relative col-span-1">
+          <div className="w-full">
+            <label className="block text-sm mb-1 text-labelColor">
+              Round off Amount 
+              <input
+                name=""
+                id=""
+                placeholder="Enter round off amount"
+                className="border-inputBorder w-full text-sm border rounded text-dropdownText p-2 h-9 mt-2"
+              />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+
+ </div>
+
+  )}
+</div>
+
+      
           <br />
-          <div className="mt-5">
+       
+        </div>
+        <div className="col-span-4">
+        <div className="bg-secondary_main p-5 min-h-max rounded-xl relative  mt-0">
+
+        <div className="mt-5">
             <label htmlFor="" className="">
               Add Note
               <input
@@ -211,36 +415,99 @@ const NewBills = ({}: Props) => {
               />
             </label>
           </div>
-        </div>
-        <div className="col-span-4">
-          <div className="bg-secondary_main p-5 min-h-max rounded-xl relative ">
-            <div className="grid grid-cols-12 pb-4  text-dropdownText border-b-2 border-slate-200">
-              <div className="col-span-9 mt-5">
-                <p>Untaxed Amount</p>
+          <div className="text-sm mt-3">
+  <label className="block mb-3">
+    Attach files to the Debit Notes 
+    <div className="border-inputBorder border-gray-800 w-full border-dashed border p-2 rounded flex flex-col gap-2 justify-center items-center bg-white mb-4 mt-2">
+      <span className="text-center inline-flex items-center gap-2">
+        <Upload /> 
+        Upload File 
+      </span>
+      <div className="text-center">
+        Maximum File Size: 1 MB
+      </div>
+    </div>
+    <p className="text-xs mt-1 text-gray-600"></p>
+    <input
+      type="file"
+      className="hidden"
+      value=""
+      name="documents"
+      // onChange={(e)=>handleFileChange(e)}
+    />
+  </label>
+</div>
+
+          <div className="grid grid-cols-12 pb-4  text-dropdownText border-b-2 border-slate-200">
+
+  
+
+            <div className="col-span-9 mt-5">
+                <p>Other expense</p>
               </div>
               <div className="col-span-3 mt-5">
-                <p className="text-xl font-bold">RS 0.00</p>
+                <p className="text-xl">Rs 0.00</p>
               </div>
+              <div className="col-span-9 mt-1">
+                <p>Freight</p>
+              </div>
+              <div className="col-span-3 mt-1">
+                <p className="text-xl">Rs 0.00</p>
+              </div>
+              <div className="col-span-9 mt-1">
+                <p>Sub Total</p>
+              </div>
+
+              <div className="col-span-3 mt-1">
+                <p className="text-xl">Rs 0.00</p>
+              </div>
+              <div className="col-span-9 mt-1">
+                <p>Total item</p>
+              </div>
+
+              <div className="col-span-3 mt-1">
+                <p className="text-xl">0</p>
+              </div>
+              <div className="col-span-9 mt-1">
+                <p>Discount Apply after tax </p>
+              </div>
+
+              <div className="col-span-3 mt-1">
+                <p className="text-xl">Rs 0.00</p>
+              </div>
+
 
               <div className="col-span-9 mt-1">
                 <p>SGST</p>
               </div>
               <div className="col-span-3 mt-1">
-                <p className="text-base">RS 0.00</p>
+                <p className="text-xl">Rs 0.00</p>
               </div>
 
               <div className="col-span-9">
                 <p> CGST</p>
               </div>
               <div className="col-span-3">
-                <p className="text-base">RS 0.00</p>
+                <p className="text-xl">Rs 0.00</p>
               </div>
 
+              <div className="col-span-9">
+                <p> Total Taxed Amount</p>
+              </div>
+              <div className="col-span-3">
+                <p className="text-xl">Rs 0.00</p>
+              </div>
+              <div className="col-span-9">
+                <p> Round off</p>
+              </div>
+              <div className="col-span-3">
+                <p className="text-xl">Rs 0.00</p>
+              </div>
               <div className="col-span-9 mt-1">
                 <p className="font-bold text-base text-black">Total</p>
               </div>
               <div className="col-span-3 mt-1">
-                <p className="text-base font-bold">RS 0.00</p>
+                <p className="text-xl font-bold">Rs 0.00</p>
               </div>
             </div>
 

@@ -176,7 +176,7 @@ function NewAccountModal({ fetchAllAccounts }: NewAccountModalProps) {
                   className="w-full border border-inputBorder rounded p-1.5 pl-2 text-sm"
                 >
                   {/* Default option "Select type" */}
-                  <option value="">Select type</option>
+                  <option disabled hidden selected value="">Select type</option>
                   {chartOfAcc.map((item, index) => (
                     <optgroup
                       className="text-maroon"

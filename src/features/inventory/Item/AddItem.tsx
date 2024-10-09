@@ -15,11 +15,11 @@ import { endponits } from "../../../Services/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
 import CategoryModal from "../Category/CategoryModal"
 type Props = {};
-interface Account {
-  id: string;
-  accountName: string;
-  accountSubhead: string;
-}
+// interface Account {
+//   id: string;
+//   accountName: string;
+//   accountSubhead: string;
+// }
 
 interface ItemSettings {
   itemDuplicateName: boolean;
@@ -113,26 +113,26 @@ const AddItem = ({ }: Props) => {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isManufatureModalOpen, setIsManufatureModalOpen] = useState(false);
 
-  const [accountData, setAccountData] = useState<Account[]>([]);
+  // const [accountData, setAccountData] = useState<Account[]>([]);
   useEffect(() => {
     fetchAllItems();
     fetchAllItemName();
-    fetchAllAccounts();
+    // fetchAllAccounts();
   }, []);
 
-  const { request: AllAccounts } = useApi("get", 5001);
+  // const { request: AllAccounts } = useApi("get", 5001);
 
-  const fetchAllAccounts = async () => {
-    try {
-      const url = `${endponits.Get_ALL_Acounts}`;
-      const { response, error } = await AllAccounts(url);
-      if (!error && response) {
-        setAccountData(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching accounts:", error);
-    }
-  };
+  // const fetchAllAccounts = async () => {
+  //   try {
+  //     const url = `${endponits.Get_ALL_Acounts}`;
+  //     const { response, error } = await AllAccounts(url);
+  //     if (!error && response) {
+  //       setAccountData(response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching accounts:", error);
+  //   }
+  // };
   const [itemsData, setItemsData] = useState<ItemsData>({
     bmcrData: {
       brandNames: [],
@@ -243,6 +243,11 @@ const AddItem = ({ }: Props) => {
     }));
     setOpenDropdownIndex(null);
   };
+  const [errors, setErrors] = useState({
+    itemName: false,
+    sellingPrice: false,
+  });
+
   const navigate = useNavigate();
 
   const { request: CreateItem } = useApi("post", 5003);
@@ -250,7 +255,16 @@ const AddItem = ({ }: Props) => {
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
-
+    // Validation checks
+    const newErrors = {
+      itemName: !initialItemData.itemName,
+      sellingPrice: !initialItemData.sellingPrice,
+    };
+    setErrors(newErrors);
+    if (Object.values(newErrors).some(Boolean)) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
     // Check for duplicate item names if adding a new item
     if (!selectedItem && itemsData?.itemSettings?.itemDuplicateName === false) {
       if (itemsDataName.includes(initialItemData.itemName)) {
@@ -335,8 +349,7 @@ const AddItem = ({ }: Props) => {
       }
     }
   }, [selectedItem]);
-  console.log(accountData, "not in use");
-
+  const hsnSac = location.state?.hsnSac;
 
   return (
     <>
@@ -348,7 +361,7 @@ const AddItem = ({ }: Props) => {
             </div>
           </Link>
           <div className="flex justify-center items-center">
-            <h4 className="font-bold text-xl text-textColor ">New Invoice</h4>
+            <h4 className="font-bold text-xl text-textColor ">New Item</h4>
           </div>
         </div>
 
@@ -475,21 +488,25 @@ const AddItem = ({ }: Props) => {
 
             <div className="grid grid-cols-12 gap-4">
               <div className="grid grid-cols-2 gap-4 mt-3 col-span-9">
-                <div className="">
-                  <label
-                    className="text-slate-600 text-sm"
-                    htmlFor="itemName"
-                  >
+
+                <div>
+                  <label className="text-slate-600 text-sm" htmlFor="itemName">
                     Name
                     <input
-                      className="pl-3 text-sm w-[100%]  rounded-md text-start mt-1.5 bg-white  border border-inputBorder  h-[39px]  leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                      className="pl-3 text-sm w-[100%] rounded-md text-start mt-1.5 bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                       placeholder="Name"
                       name="itemName"
                       value={initialItemData.itemName}
                       onChange={handleInputChange}
                     />
+                    {errors.itemName && (
+                      <div className="text-red-800 text-xs mt-1.5 ms-1">Item name is required</div>
+                    )}
                   </label>
                 </div>
+
+
+
                 <div className="">
                   <label
                     className="text-slate-600 flex items-center gap-2"
@@ -505,6 +522,9 @@ const AddItem = ({ }: Props) => {
                     value={initialItemData.sku}
                     onChange={handleInputChange}
                   />
+                  {/* {errors.sku && (
+                    <div className="text-red-800 text-xs mt-1.5 ms-1">SKU is required</div>
+                  )} */}
                 </div>
               </div>
 
@@ -578,7 +598,7 @@ const AddItem = ({ }: Props) => {
             )}
 
             <div className="grid grid-cols-2 gap-4  mt-3">
-              {itemsData?.itemSettings?.hsnSac && (
+              {hsnSac && (
                 isService ? (
                   <div>
                     <label
@@ -648,7 +668,7 @@ const AddItem = ({ }: Props) => {
         </div>
         {initialItemData.taxPreference === "Non-taxable" && (
           <div className="grid grid-cols-12 gap-4 my-3">
-            <div className="col-span-7"></div>
+            <div className="col-span-2"></div>
             <div className="col-span-5">
               <div>
                 <label
@@ -1160,15 +1180,19 @@ const AddItem = ({ }: Props) => {
                 {itemsData.organization.baseCurrency.toUpperCase() || "INR"}
               </div>
               <input
-              type="number"
-              min={0}
+                type="number"
+                min={0}
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-r-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Enter Price"
                 name="sellingPrice"
                 value={initialItemData.sellingPrice}
                 onChange={handleInputChange}
               />
+
             </div>
+            {errors.sellingPrice && (
+              <div className="text-red-800 text-xs mt-1.5 ms-1">Selling price is required</div>
+            )}
           </div>
 
           <div>
@@ -1179,8 +1203,8 @@ const AddItem = ({ }: Props) => {
               MRP
             </label>
             <input
-            type="number"
-            min={0}
+              type="number"
+              min={0}
               className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
               placeholder="Enter MRP"
               name="saleMrp"
@@ -1257,8 +1281,8 @@ const AddItem = ({ }: Props) => {
                 {itemsData.organization.baseCurrency.toUpperCase() || "INR"}
               </div>
               <input
-              type="number"
-              min={0}
+                type="number"
+                min={0}
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-r-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Enter Price"
                 name="costPrice"
@@ -1489,8 +1513,8 @@ const AddItem = ({ }: Props) => {
                 Opening Stock Rate Per Unit
               </label>
               <input
-               type="number"
-               min={0}
+                type="number"
+                min={0}
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Value"
                 name="openingStockRatePerUnit"
@@ -1507,8 +1531,8 @@ const AddItem = ({ }: Props) => {
                 Reorder Point
               </label>
               <input
-               type="number"
-               min={0}
+                type="number"
+                min={0}
                 className="pl-3 text-sm w-[100%] mt-1.5 rounded-md text-start bg-white border border-inputBorder h-[39px] leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
                 placeholder="Value"
                 name="reorderPoint"
@@ -1520,7 +1544,7 @@ const AddItem = ({ }: Props) => {
           {/* )} */}
         </>
       </div>
-      <div className="justify-end m-5 flex gap-4">
+      <div className="justify-end me-5 flex gap-4 sticky bottom-0 bg-white p-2">
         <Link to="/inventory/Item">
           <Button variant="secondary" size="sm" className="text-sm pl-8 pr-8">
             Cancel

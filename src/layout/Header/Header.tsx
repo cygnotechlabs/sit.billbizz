@@ -21,7 +21,7 @@ navigate("/landing")
     >
       <div className="w-[68%]">
         <SearchBar
-          placeholder="Serach"
+          placeholder="Search"
           searchValue={searchValue}
           onSearchChange={setSearchValue}
         />

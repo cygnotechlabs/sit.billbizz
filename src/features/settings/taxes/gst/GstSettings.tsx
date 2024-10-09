@@ -16,7 +16,9 @@ function GstSettings({ }: GstSettingsProps) {
     gstBusinessTradeName: "",
     gstRegisteredDate: "",
     compositionSchema: "",
-    compositionPercentage: "",
+    reverseCharge:"",
+    importExport:"",
+    digitalServices:""
   };
 
   const [gstSettings, setGstSettings] = useState(initialGstSettings);
@@ -37,7 +39,9 @@ function GstSettings({ }: GstSettingsProps) {
           gstBusinessTradeName: response.data.gstBusinessTradeName || "",
           gstRegisteredDate: response.data.gstRegisteredDate || "",
           compositionSchema: response.data.compositionSchema || "",
-          compositionPercentage: response.data.compositionPercentage || "",
+          reverseCharge:response.data.reverseCharge || "",
+          importExport: response.data.importExport || "",
+          digitalServices: response.data.digitalServices || ""
         }));
       }
     } catch (error) {
@@ -65,8 +69,17 @@ function GstSettings({ }: GstSettingsProps) {
       const { response, error } = await createGstSettings(url, body);
       if (!error && response) {
         toast.success(response.data.message);
-        // Immediately update the state with the new data
-        setGstSettings(response.data);
+        setGstSettings((prev) => ({
+          ...prev,
+          gstIn: response.data.gstIn || prev.gstIn,
+          gstBusinesLegalName: response.data.gstBusinesLegalName || prev.gstBusinesLegalName,
+          gstBusinessTradeName: response.data.gstBusinessTradeName || prev.gstBusinessTradeName,
+          gstRegisteredDate: response.data.gstRegisteredDate || prev.gstRegisteredDate,
+          compositionSchema: response.data.compositionSchema || prev.compositionSchema,
+          reverseCharge:response.data.reverseCharge || prev.reverseCharge,
+          importExport: response.data.importExport || prev.importExport,
+          digitalServices: response.data.digitalServices || prev.digitalServices
+        }));
       } else {
         toast.error(error.response.data.message);
       }
@@ -74,6 +87,7 @@ function GstSettings({ }: GstSettingsProps) {
       console.error("Error:", error);
     }
   };
+  
 
   const [isGstRegistered, setIsGstRegistered] = useState(true);
   const handleToggle = () => {
@@ -135,6 +149,7 @@ function GstSettings({ }: GstSettingsProps) {
                       className="accent-[#97998E] bg-white h-5 w-5"
                       id="compositionSchema"
                       name="compositionSchema"
+                      value={gstSettings.compositionSchema}
                       checked={gstSettings.compositionSchema === "1"}
                       onChange={() =>
                         setGstSettings((prev) => ({
@@ -151,8 +166,18 @@ function GstSettings({ }: GstSettingsProps) {
                 <div className="mt-5">
                   <label className="block mb-1.5 text-dropdownText font-semibold">Import / Export</label>
                   <div className="flex items-center gap-3">
-                    <input type="checkbox" className="accent-[#97998E] bg-white h-5 w-5 " id="checkbox4" />
-                    <label htmlFor="checkbox4" className="mt-0.5">
+                    <input type="checkbox" className="accent-[#97998E] bg-white h-5 w-5 " id="import/export"
+                    name="import/export"
+                    value={gstSettings.importExport}
+                    checked={gstSettings.importExport === "1"}
+                    onChange={() =>
+                      setGstSettings((prev) => ({
+                        ...prev,
+                        importExport: prev.importExport === "1" ? "0" : "1",
+                      }))
+                    }
+                    />
+                    <label htmlFor="import/export" className="mt-0.5">
                       My business is involved in SEZ / Overseas Trading
                     </label>
                   </div>
@@ -190,8 +215,18 @@ function GstSettings({ }: GstSettingsProps) {
                   <div className="mt-5">
                     <label className="block mb-1.5 text-dropdownText font-semibold">Reverse Charge</label>
                     <div className="flex items-center gap-3">
-                      <input type="checkbox" className="accent-[#97998E] bg-white h-5 w-5 " id="checkbox5" />
-                      <label htmlFor="checkbox5" className="mt-0.5">
+                      <input type="checkbox" className="accent-[#97998E] bg-white h-5 w-5 " id="reverseCharge" 
+                        name="reverseCharge"
+                        value={gstSettings.reverseCharge}
+                        checked={gstSettings.reverseCharge === "1"}
+                        onChange={() =>
+                          setGstSettings((prev) => ({
+                            ...prev,
+                            reverseCharge: prev.reverseCharge === "1" ? "0" : "1",
+                          }))
+                        }
+                      />
+                      <label htmlFor="reverseCharge" className="mt-0.5">
                         My business is registered for Composition Scheme.
                       </label>
                     </div>
@@ -199,8 +234,17 @@ function GstSettings({ }: GstSettingsProps) {
                   <div className="mt-5">
                     <label className="block mb-1.5 text-dropdownText font-semibold">Digital Services</label>
                     <div className="flex items-center gap-3">
-                      <input type="checkbox" className="accent-[#97998E] bg-white h-5 w-5 " id="checkbox6" />
-                      <label htmlFor="checkbox6" className="mt-0.5">
+                      <input type="checkbox" className="accent-[#97998E] bg-white h-5 w-5 " id="digitalServices"
+                         name="digitalServices"
+                         value={gstSettings.digitalServices}
+                         checked={gstSettings.digitalServices === "1"}
+                         onChange={() =>
+                           setGstSettings((prev) => ({
+                             ...prev,
+                             digitalServices: prev.digitalServices === "1" ? "0" : "1",
+                           }))
+                         } />
+                      <label htmlFor="digitalServices" className="mt-0.5">
                         Track sale of digital services to overseas customers
                       </label>
                     </div>
