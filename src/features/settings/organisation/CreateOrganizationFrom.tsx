@@ -531,19 +531,12 @@ const CreateOrganizationForm = () => {
               </div>
               <div className="w-full border-0">
                 <PhoneInput
-                  inputClass=" appearance-none  text-[#495160] bg-white border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
-                  inputStyle={{
-                    height: "38px",
-                    width: "100%",
-                  }}
-                  containerStyle={{ width: "100%" }}
-                  country={
-                    inputData.organizationCountry
-                      ? inputData.organizationCountry.toLowerCase()
-                      : "in"
-                  }
-                  value={inputData.organizationPhNum}
-                  onChange={handlePhoneChange}
+                inputClass="appearance-none text-[#818894] bg-white border-inputBorder text-sm h-[39px] pl-3 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-darkRed"
+                inputStyle={{ height: "38px", width: "100%" }}
+                containerStyle={{ width: "100%" }}
+                country={"in"}
+                value={inputData.organizationPhNum ? inputData.organizationPhNum:"" }
+                onChange={handlePhoneChange}
                 />
               </div>
             </div>
