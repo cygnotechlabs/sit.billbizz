@@ -37,7 +37,7 @@ const dataExist = async (organizationId) => {
       const duplicateCustomerMobile = true;
 
       //Clean Data
-      const cleanedData = cleanCustomerData(req.body);     
+      const cleanedData = cleanCustomerData(req.body);
 
       const { customerEmail, debitOpeningBalance, creditOpeningBalance, customerDisplayName, mobile } = cleanedData;
   
@@ -517,7 +517,7 @@ async function checkDuplicateCustomerFields( duplicateCheck, customerDisplayName
 //Validate inputs
   function validateInputs(data, currencyExists, taxExists, organizationExists, res) {
     const validCurrencies = currencyExists.map((currency) => currency.currencyCode);
-    const validTaxTypes = ["None", taxExists.taxType];
+    const validTaxTypes = ["none", taxExists.taxType];
     const validationErrors = validateCustomerData(data, validCurrencies, validTaxTypes, organizationExists);
   
     if (validationErrors.length > 0) {
@@ -708,17 +708,18 @@ function generateTimeAndDateForDB(
     const errors = [];
 
     //Basic Info
+    validateReqFields( data,  errors);
     validateCustomerType(data.customerType, errors);
     validateSalutation(data.salutation, errors);
     validateNames(['firstName', 'lastName'], data, errors);
     validateEmail(data.customerEmail, errors);
-    validatePhones(['workPhone', 'mobile', 'cardNumber'], data, errors);
+    validatePhones(['workPhone', 'mobile', 'cardNumber','billingFaxNumber','shippingFaxNumber'], data, errors);
 
     //OtherDetails
     validateAlphanumericFields(['pan'], data, errors);
     validateIntegerFields(['creditDays', 'creditLimits', 'interestPercentage'], data, errors);
     validateFloatFields(['debitOpeningBalance', 'creditOpeningBalance'], data, errors);
-    validateAlphabetsFields(['department', 'designation'], data, errors);
+    validateAlphabetsFields(['department', 'designation','billingAttention','shippingAttention'], data, errors);
 
     //Tax Details
     validateTaxType(data.taxType, validTaxTypes, errors);
@@ -738,7 +739,16 @@ function generateTimeAndDateForDB(
   function validateField(condition, errorMsg, errors) {
     if (condition) errors.push(errorMsg);
   }
-
+//Valid Req Fields
+function validateReqFields( data, errors ) {
+  if (typeof data.customerDisplayName === 'undefined' ) {
+    errors.push("Customer Display Name required");
+  }
+  const interestPercentage = parseFloat(data.interestPercentage);
+  if ( interestPercentage > 100 ) {
+    errors.push("Interest Percentage cannot exceed 100%");
+  }
+}
 //Valid Customer Type
   function validateCustomerType(customerType, errors) {
     validateField(customerType && !validCustomerTypes.includes(customerType),
