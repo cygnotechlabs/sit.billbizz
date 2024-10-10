@@ -30,6 +30,15 @@ const bmcrDataExist = async (organizationId) => {
   return { brandExist, manufacturerExist, categoriesExist, rackExist };
 };
 
+// Fetch Item existing data
+const itemDataExist = async (organizationId, itemId) => {
+  const [ itemTrackAll ] = await Promise.all([
+    ItemTrack.find({ itemId: { $in: [itemId] } }) 
+  ]);
+  return { itemTrackAll };
+};
+
+
 // Add item
 exports.addItem = async (req, res) => {
     console.log("Add Item:", req.body);
@@ -87,7 +96,7 @@ exports.addItem = async (req, res) => {
 
       const savedItem = await newItem.save();
 
-      if (openingStock){
+      
         const trackEntry = new ItemTrack({
           organizationId,
           operationId: savedItem._id,
@@ -95,12 +104,12 @@ exports.addItem = async (req, res) => {
           date: createdDate,
           itemId: savedItem._id,
           itemName,
-          creditQuantity: openingStock,
-          currentStock: openingStock,
+          creditQuantity: openingStock || 0 ,
+          currentStock: openingStock || 0,
       });  
       await trackEntry.save();
       console.log( "Item Track Added", trackEntry );      
-      }
+      
   
       res.status(201).json({ message: "New Item created successfully." });
       console.log( "New Item created successfully:", savedItem );
@@ -190,10 +199,12 @@ exports.updateItem = async (req, res) => {
     const { organizationExists, taxExists, settingsExist } = await dataExist(organizationId);
     const { brandExist, manufacturerExist, categoriesExist, rackExist } = await bmcrDataExist(organizationId);
     const bmcr = { brandExist, manufacturerExist, categoriesExist, rackExist };
+    const { itemTrackAll  } = await itemDataExist( organizationId, itemId );
+    const prevStock = existingItem.openingStock;
     
     if (!validateOrganizationTaxCurrency(organizationExists, taxExists, settingsExist, itemId, res)) return;     
     
-    const { itemName, sku, taxRate } = cleanedData;
+    const { itemName, sku, taxRate, openingStock } = cleanedData;
 
     // Check for duplicate item name
     if (!settingsExist.itemDuplicateName && await isDuplicateItemNameExist( itemName, organizationId, itemId, res )) return;
@@ -231,6 +242,8 @@ exports.updateItem = async (req, res) => {
      // Update customer fields
      Object.assign( existingItem, cleanedData );
      const savedItem = await existingItem.save();
+
+     await updateOpeningBalanceInItemTrack(openingStock, itemTrackAll, prevStock);
  
      if (!savedItem) {
        console.error("Item could not be saved.");
@@ -272,6 +285,57 @@ exports.deleteItem = async (req, res) => {
       res.json({ message: 'Item deleted successfully' });
   } catch (error) {
       res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+
+
+
+
+
+
+// Function to update the opening balance in item tracking
+const updateOpeningBalanceInItemTrack = async (openingStock, itemTrackAll, prevStock) => {
+  // Ensure openingStock, prevStock, and the difference are non-negative
+  if (openingStock < 0 || prevStock < 0) {
+    console.error("Opening stock and previous stock must be non-negative");
+    return;
+  }
+
+  const diff = openingStock - prevStock;
+  console.log( "Difference : ", diff );
+  
+
+  // If no change in stock, return without updating
+  if (diff === 0) {
+    console.log("No change in opening stock, no update needed.");
+    return;
+  }
+
+  // Iterate through each item track and update the current stock
+  itemTrackAll.forEach(itemTrack => {
+    // Ensure CurrentStock is non-negative before updating
+    if (itemTrack.currentStock < 0) {
+      console.error("CurrentStock must be non-negative");
+      return;
+    }
+
+    // Update current stock by adding or subtracting the difference
+    itemTrack.currentStock += diff;
+  });
+
+  itemTrackAll.forEach(itemTrack => {
+    if (itemTrack.action === "Opening Stock") {
+      itemTrack.creditQuantity += diff;
+    }    
+  });
+
+  console.log("Item track's CurrentStock updated based on the new opening stock.");
+  
+
+  // If you need to persist these changes, save each itemTrack to the database
+  for (const itemTrack of itemTrackAll) {
+    await itemTrack.save(); // Assuming itemTrack is a mongoose model instance
   }
 };
 
