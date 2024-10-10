@@ -34,7 +34,7 @@ exports.updateSupplierCustomerSettings = async (req, res) => {
     // Save the updated settings document
     await settings.save();
 
-    res.status(200).json("Supplier settings updated successfully");
+    res.status(200).json("settings updated successfully");
   } catch (error) {
     console.error("Error updating supplier settings:", error);
     res.status(500).json({ message: "Internal server error" });
