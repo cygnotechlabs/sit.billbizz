@@ -59,7 +59,7 @@ exports.addItem = async (req, res) => {
       if (!validateInputs(cleanedData, taxExists, organizationId, bmcr, res)) return;
 
       const generatedDateTime = generateTimeAndDateForDB(organizationExists.timeZoneExp, organizationExists.dateFormatExp, organizationExists.dateSplit);
-      const createdDate = generatedDateTime.dateTime;
+      const createdDate = generatedDateTime.dateTime
 
       let igst, cgst, sgst, vat; 
 

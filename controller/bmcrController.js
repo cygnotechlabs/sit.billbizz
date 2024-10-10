@@ -14,6 +14,11 @@ exports.addBmcr = async (req, res) => {
         return res.status(400).json({ message: "Invalid type provided." });
     }
 
+    // Validate if name is provided
+    if (!name || name.trim() === "") {
+        return res.status(400).json({ message: `The ${type} name is required.` });
+    }
+
     try {
         // Check if an Organization exists
         const existingOrganization = await Organization.findOne({ organizationId });
