@@ -719,7 +719,7 @@ function generateTimeAndDateForDB(
     validateAlphanumericFields(['pan'], data, errors);
     validateIntegerFields(['creditDays', 'creditLimits', 'interestPercentage'], data, errors);
     validateFloatFields(['debitOpeningBalance', 'creditOpeningBalance'], data, errors);
-    validateAlphabetsFields(['department', 'designation'], data, errors);
+    validateAlphabetsFields(['department', 'designation','billingAttention','shippingAttention'], data, errors);
 
     //Tax Details
     validateTaxType(data.taxType, validTaxTypes, errors);
