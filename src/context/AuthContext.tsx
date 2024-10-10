@@ -1,51 +1,63 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type AuthContextType = {
   isAuthenticated: boolean;
   setIsAuthenticated: (auth: boolean) => void;
+  setAuthToken: (token: string, expiresIn: number) => void;
+  clearAuthToken: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const TOKEN_EXPIRY_KEY = 'tokenExpiry';
-const AUTH_TOKEN_KEY = 'authToken';
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    const expiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
+    const token = localStorage.getItem('authToken');
+    const expiry = localStorage.getItem('authTokenExpiry');
     if (token && expiry) {
-      const expiryTime = new Date(expiry).getTime();
       const currentTime = new Date().getTime();
-      return currentTime < expiryTime;
+      return currentTime < Number(expiry);
     }
     return false;
   });
+  const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const checkTokenValidity = () => {
-      const expiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
-      if (expiry) {
-        const expiryTime = new Date(expiry).getTime();
-        const currentTime = new Date().getTime();
-        if (currentTime >= expiryTime) {
-          localStorage.removeItem(AUTH_TOKEN_KEY);
-          localStorage.removeItem(TOKEN_EXPIRY_KEY);
-          setIsAuthenticated(false);
-        }
+    const token = localStorage.getItem('authToken');
+    const expiry = localStorage.getItem('authTokenExpiry');
+
+    if (token && expiry) {
+      const currentTime = new Date().getTime();
+      if (currentTime < Number(expiry)) {
+        setIsAuthenticated(true);
+      } else {
+        clearAuthToken();
       }
-    };
-
-    const interval = setInterval(checkTokenValidity, 1000 * 60); // Check every minute
-
-    // Initial check
-    checkTokenValidity();
-
-    return () => clearInterval(interval);
+    }
+    setLoading(false);
   }, []);
 
+  const setAuthToken = (token: string, expiresIn: number) => {
+    const expiryTime = new Date().getTime() + expiresIn * 1000;
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('authTokenExpiry', expiryTime.toString());
+    setIsAuthenticated(true);
+  };
+
+  const clearAuthToken = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('authTokenExpiry');
+    setIsAuthenticated(false);
+    navigate('/login');
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider value={{ isAuthenticated, setAuthToken, clearAuthToken, setIsAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
@@ -57,11 +69,4 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
-
-// Example of setting the token with expiry
-export const setAuthToken = (token: string) => {
-  const expiryTime = new Date(new Date().getTime() + 12 * 60 * 60 * 1000); // 12 hours from now
-  localStorage.setItem(AUTH_TOKEN_KEY, token);
-  localStorage.setItem(TOKEN_EXPIRY_KEY, expiryTime.toISOString());
 };
