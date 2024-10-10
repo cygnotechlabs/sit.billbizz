@@ -713,7 +713,7 @@ function generateTimeAndDateForDB(
     validateSalutation(data.salutation, errors);
     validateNames(['firstName', 'lastName'], data, errors);
     validateEmail(data.customerEmail, errors);
-    validatePhones(['workPhone', 'mobile', 'cardNumber'], data, errors);
+    validatePhones(['workPhone', 'mobile', 'cardNumber','billingFaxNumber','shippingFaxNumber'], data, errors);
 
     //OtherDetails
     validateAlphanumericFields(['pan'], data, errors);
