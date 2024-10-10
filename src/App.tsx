@@ -38,7 +38,7 @@ function App() {
       ],
     },
     {
-      path: '/settings',
+      path: '/',
       element: isAuthenticated ? <SettingsLayout children /> : <Navigate to="/login" replace />,
       children: [{ path: '', element: <Navigate to="/login" replace /> }, ...SettingsRoutes],
     },
