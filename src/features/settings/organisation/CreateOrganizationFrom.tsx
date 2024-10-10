@@ -173,7 +173,7 @@ const CreateOrganizationForm = () => {
   
     const enteredPhone = `${selectedCountry?.phoneNumberCode || ''} ${phoneNumber}`;
   
-    console.log(enteredPhone, "entered");
+    // console.log(enteredPhone, "entered");
   
     setInputData((prevData) => ({
       ...prevData,
