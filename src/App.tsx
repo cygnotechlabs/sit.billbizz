@@ -1,32 +1,32 @@
-import { useRoutes, Navigate } from "react-router-dom";
-import { useAuth } from "./context/AuthContext";
-import Layout from "./layout/Layout";
-import SettingsLayout from "./layout/SettingsLayout";
-import Dashboard from "./pages/Dashboard";
-import AccountantRoutes from "./routes/AccountantRoutes";
-import CustomerRoutes from "./routes/CustomerRoutes";
-import ExpenseRoutes from "./routes/ExpenseRoutes";
-import InventoryRoutes from "./routes/InventoryRoutes";
-import PurchaseRoutes from "./routes/PurchaseRoutes";
-import SalesRoutes from "./routes/SalesRoutes";
-import SettingsRoutes from "./routes/SettingsRoutes";
-import StaffRoutes from "./routes/StaffRoutes";
-import SupplierRoutes from "./routes/SupplierRoutes";
-import LandingHome from "./pages/LandingPage/LandingHome";
-import Login from "./features/login/Login";
-import Otp from "./features/login/Otp";
-import Chatboat from "./pages/Chatboat/Chatboat";
-import ErrorPage from "./pages/Error";
+import { Navigate, useRoutes } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import Login from './features/login/Login';
+import Otp from './features/login/Otp';
+import Layout from './layout/Layout';
+import SettingsLayout from './layout/SettingsLayout';
+import Chatboat from './pages/Chatboat/Chatboat';
+import Dashboard from './pages/Dashboard';
+import ErrorPage from './pages/Error';
+import LandingHome from './pages/LandingPage/LandingHome';
+import AccountantRoutes from './routes/AccountantRoutes';
+import CustomerRoutes from './routes/CustomerRoutes';
+import ExpenseRoutes from './routes/ExpenseRoutes';
+import InventoryRoutes from './routes/InventoryRoutes';
+import PurchaseRoutes from './routes/PurchaseRoutes';
+import SalesRoutes from './routes/SalesRoutes';
+import SettingsRoutes from './routes/SettingsRoutes';
+import StaffRoutes from './routes/StaffRoutes';
+import SupplierRoutes from './routes/SupplierRoutes';
 
 function App() {
   const { isAuthenticated } = useAuth();
 
   const routes = [
     {
-      path: "/",
+      path: '/',
       element: isAuthenticated ? <Layout children /> : <Navigate to="/login" replace />,
       children: [
-        { path: "dashboard", element: <Dashboard /> },
+        { path: 'dashboard', element: <Dashboard /> },
         ...AccountantRoutes,
         ...CustomerRoutes,
         ...InventoryRoutes,
@@ -38,28 +38,28 @@ function App() {
       ],
     },
     {
-      path: "/",
-      element: isAuthenticated ? <SettingsLayout children/> : <Navigate to="/login" replace />,
-      children: [{ path: "", element: <Navigate to="/login" replace /> }, ...SettingsRoutes],
+      path: '/settings',
+      element: isAuthenticated ? <SettingsLayout children /> : <Navigate to="/login" replace />,
+      children: [{ path: '', element: <Navigate to="/login" replace /> }, ...SettingsRoutes],
     },
     {
-      path: "/landing",
+      path: '/landing',
       element: isAuthenticated ? <LandingHome /> : <Navigate to="/login" replace />,
     },
     {
-      path: "/chatboat",
+      path: '/chatboat',
       element: isAuthenticated ? <Chatboat /> : <Navigate to="/login" replace />,
     },
     {
-      path: "/login",
+      path: '/login',
       element: <Login />,
     },
     {
-      path: "/otp",
+      path: '/otp',
       element: <Otp />,
     },
     {
-      path: "*",
+      path: '*',
       element: <ErrorPage />,
     },
   ];
