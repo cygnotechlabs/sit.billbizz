@@ -161,16 +161,26 @@ const CreateOrganizationForm = () => {
     }
   };
 
-  const handleInputPhoneChange = (e:any) => {
-    const enteredPhone = (selectedCountry.phoneNumberCode , e.target.value).trim();
-    console.log(enteredPhone,"entered");
-    
-
-    setInputData({
-      ...inputData,
+  const handleInputPhoneChange = (e: any) => {
+    const rawInput = e.target.value.trim();
+    const phoneNumberLimit = selectedCountry?.phoneNumberLimit || 0; 
+  
+    let phoneNumber = rawInput.replace(selectedCountry?.phoneNumberCode, '').trim(); 
+  
+    if (phoneNumber.length > phoneNumberLimit) {
+      phoneNumber = phoneNumber.slice(0, phoneNumberLimit); 
+    }
+  
+    const enteredPhone = `${selectedCountry?.phoneNumberCode || ''} ${phoneNumber}`;
+  
+    // console.log(enteredPhone, "entered");
+  
+    setInputData((prevData) => ({
+      ...prevData,
       organizationPhNum: enteredPhone
-    });
+    }));
   };
+  
   
 
   const handleInputChange = (
