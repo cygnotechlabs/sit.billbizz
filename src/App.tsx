@@ -1,5 +1,5 @@
 import { useRoutes, Navigate } from "react-router-dom";
-import { useAuth } from './context/AuthContext'; 
+import { useAuth } from "./context/AuthContext";
 import Layout from "./layout/Layout";
 import SettingsLayout from "./layout/SettingsLayout";
 import Dashboard from "./pages/Dashboard";
@@ -16,6 +16,7 @@ import LandingHome from "./pages/LandingPage/LandingHome";
 import Login from "./features/login/Login";
 import Otp from "./features/login/Otp";
 import Chatboat from "./pages/Chatboat/Chatboat";
+import ErrorPage from "./pages/Error";
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -23,7 +24,7 @@ function App() {
   const routes = [
     {
       path: "/",
-      element: isAuthenticated ? <Layout children/> : <Navigate to="/login" replace />,
+      element: isAuthenticated ? <Layout children /> : <Navigate to="/login" replace />,
       children: [
         { path: "dashboard", element: <Dashboard /> },
         ...AccountantRoutes,
@@ -38,16 +39,16 @@ function App() {
     },
     {
       path: "/",
-      element: isAuthenticated ? <SettingsLayout children /> : <Navigate to="/login" replace />,
-      children: [{ path: "" }, ...SettingsRoutes],
+      element: isAuthenticated ? <SettingsLayout children/> : <Navigate to="/login" replace />,
+      children: [{ path: "", element: <Navigate to="/login" replace /> }, ...SettingsRoutes],
     },
     {
       path: "/landing",
-      element: <LandingHome />,
+      element: isAuthenticated ? <LandingHome /> : <Navigate to="/login" replace />,
     },
     {
       path: "/chatboat",
-      element: <Chatboat />,
+      element: isAuthenticated ? <Chatboat /> : <Navigate to="/login" replace />,
     },
     {
       path: "/login",
@@ -56,6 +57,10 @@ function App() {
     {
       path: "/otp",
       element: <Otp />,
+    },
+    {
+      path: "*",
+      element: <ErrorPage />,
     },
   ];
 
