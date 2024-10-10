@@ -9,7 +9,7 @@ const moment = require("moment-timezone");
 const TrialBalance = require("../database/model/trialBalance");
 const CustomerHistory = require("../database/model/customerHistory");
 const Settings = require("../database/model/settings")
-
+  
 // Fetch existing data
 const dataExist = async (organizationId) => {
     const [organizationExists, taxExists, currencyExists, allCustomer , settings] = await Promise.all([
@@ -26,7 +26,7 @@ const dataExist = async (organizationId) => {
   exports.addCustomer = async (req, res) => {
     console.log("Add Customer:", req.body);
     try {
-      const { organizationId, id: userId, userName } = req.user;
+      const { organizationId, id: userId, userName } = req.user; 
       // const organizationId ="INDORG0001";
       // const userId ="45454";
       // const userName ="Thaha";
@@ -817,12 +817,13 @@ function validateIntegerFields(fields, data, errors) {
       errors.push("Invalid Place of Supply: " + placeOfSupply);
     }
   }
+
 // Validate GST or VAT details
 function validateGSTorVAT(data, errors) {
   switch (data.taxType) {
     case "GST":
       validateGSTDetails(data, errors);
-      break;
+      break; 
     case "VAT":
       validateVATDetails(data, errors);
       break;

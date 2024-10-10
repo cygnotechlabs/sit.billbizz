@@ -5,6 +5,8 @@ const router = new express.Router()
 // const customerController = require("../controller/customerController")
 const importController = require("../controller/importCustomer")
 const customerController = require("../controller/customerCont")
+const customerSettings = require('../controller/customerSettings')
+
 
 const checkPermission = require('../controller/permission');
 const { verifyToken } = require('../controller/middleware');
@@ -29,6 +31,8 @@ router.get('/get-one-customer/:customerId',verifyToken,checkPermission('Viewed C
 router.put('/edit-customer/:customerId', verifyToken,checkPermission('Edited Customer information'),customerController.editCustomer);
 
 router.put('/update-customer-status/:customerId', verifyToken,checkPermission('Modified Customer Status'),customerController.updateCustomerStatus);
+
+router.put('/update-customer-settings',verifyToken,checkPermission('Created a New Supplier'),customerSettings.updateCustomerSettings)
 
 
 
