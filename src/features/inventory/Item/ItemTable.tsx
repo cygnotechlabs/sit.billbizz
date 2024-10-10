@@ -244,14 +244,20 @@ const ItemTable = () => {
                       <p>Item Type</p>
                       <p>SKU</p>
                       <p>Unit</p>
+                      <p>Date</p>
                       <p>Returnable</p>
                     </div>
 
                     {/* Values */}
                     <div className="text-dropdownText font-semibold text-sm space-y-4">
-                      <p>{selectedItem?.itemType || "N/A"}</p>
+                      <p>
+                        {selectedItem?.itemType
+                          ? selectedItem.itemType.charAt(0).toUpperCase() + selectedItem.itemType.slice(1)
+                          : "N/A"}
+                      </p>
                       <p>{selectedItem?.sku || "N/A"}</p>
                       <p>{selectedItem?.unit || "N/A"}</p>
+                      <p>{selectedItem?.createdDate.split(' ')[0] || "N/A"}</p>
                       <p>{selectedItem?.returnableItem ? "Yes" : "No"}</p>
                     </div>
                   </div>
