@@ -679,7 +679,7 @@ function validateOrganizationData(data, validCurrencies, organization ) {
 
 
   //OtherDetails
-  validateIntegerFields(['organizationPhNum','pincode',], data, errors);
+  validateIntegerFields(['pincode',], data, errors);
 
 
   //Currency

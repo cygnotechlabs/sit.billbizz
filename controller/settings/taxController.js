@@ -3,13 +3,13 @@ const Organization = require("../../database/model/organization")
 const Tax = require('../../database/model/tax')
 const Account = require("../../database/model/account")
 const TrialBalance = require("../../database/model/trialBalance")
+const Item = require("../../database/model/item");
 const moment = require("moment-timezone");
 
 
 
 const isDuplicateGSTTaxName = async (organizationId, gstTaxRate ) => {
   const taxName = gstTaxRate.taxName ;
-  console.log(taxName);
 
   // Check for GST tax name duplicate
   const gstTaxRecord = await Tax.findOne({ organizationId, 'gstTaxRate.taxName': taxName });
@@ -20,7 +20,6 @@ const isDuplicateGSTTaxName = async (organizationId, gstTaxRate ) => {
 
 const isDuplicateVATTaxName = async (organizationId, vatTaxRate) => {
   const taxName = vatTaxRate.taxName;
-  console.log(taxName);
 
   // Check for VAT tax name duplicate
   const vatTaxRecord = await Tax.findOne({ organizationId, 'vatTaxRate.taxName': taxName });
@@ -88,7 +87,6 @@ const validateGstTaxRates = (gstTaxRate) => {
   sgst = parseFloat(sgst);
   igst = parseFloat(igst);
 
-  console.log(cgst, sgst, igst);
  
 
   // Validate for required fields
@@ -224,6 +222,7 @@ exports.editTaxRate = async (req, res) => {
   try {
     const organizationId = req.user.organizationId;
     const { taxType, taxRateId, updatedRate } = req.body;
+    
 
     // Validate the taxType
     if (taxType !== 'GST' && taxType !== 'VAT') {
@@ -231,13 +230,31 @@ exports.editTaxRate = async (req, res) => {
     }
 
     // Find the tax record by organizationId and taxType
-    let taxRecord = await Tax.findOne({ organizationId });
+    let taxRecord = await Tax.findOne({ organizationId });    
 
     if (!taxRecord) {
       return res.status(404).json({ message: "Tax record not found for the given organization." });
     }
 
+    // Validate GST tax rate for duplicates
+    if (taxType == 'GST' &&  await isDuplicateGSTTaxName(organizationId, updatedRate)) {
+      return res.status(400).json({ message: `GST Tax record with tax name already exists.` });
+    }
+
+    if (taxType == 'VAT' &&  await isDuplicateVATTaxName(organizationId, updatedRate)) {
+      return res.status(400).json({ message: `VAT Tax record with tax name already exists.` });
+    }
+
+    const gstValidation = validateGstTaxRates(updatedRate);
+    if (!gstValidation.isValid && taxType == 'GST') { return res.status(400).json({ message: gstValidation.message }); }
+
+    const vatValidation = validateVatTaxRates(updatedRate);
+      if (!vatValidation.isValid && taxType == 'VAT' ) { return res.status(400).json({ message: vatValidation.message }); }
+
+
+
     let rateIndex;
+    let prevTaxName;
 
     // Update the relevant tax rate within the GST or VAT array
     if (taxType === 'GST') {
@@ -246,6 +263,8 @@ exports.editTaxRate = async (req, res) => {
       if (rateIndex === -1) {
         return res.status(404).json({ message: "GST tax rate not found." });
       }
+
+      prevTaxName = taxRecord.gstTaxRate[rateIndex].taxName;
 
       // Update the GST tax rate with the provided details
       taxRecord.gstTaxRate[rateIndex] = { ...taxRecord.gstTaxRate[rateIndex], ...updatedRate };
@@ -257,12 +276,37 @@ exports.editTaxRate = async (req, res) => {
         return res.status(404).json({ message: "VAT tax rate not found." });
       }
 
+      prevTaxName = taxRecord.vatTaxRate[rateIndex].taxName;
+
+
       // Update the VAT tax rate with the provided details
       taxRecord.vatTaxRate[rateIndex] = { ...taxRecord.vatTaxRate[rateIndex], ...updatedRate };
     }
 
     // Save the updated tax record
     const updatedTaxRecord = await taxRecord.save();
+
+
+    // Find all items associated with the updated tax rate and update their tax details
+    const itemsToUpdate = await Item.find({ taxRate : prevTaxName, organizationId });    
+
+    if (itemsToUpdate.length > 0) {
+      for (const item of itemsToUpdate) {
+        // Update the relevant tax details based on taxType
+        if (taxType === 'GST') {
+          item.taxRate = updatedRate.taxName;
+          item.cgst = updatedRate.cgst;
+          item.sgst = updatedRate.sgst;
+          item.igst = updatedRate.igst;
+        } else if (taxType === 'VAT') {
+          item.taxRate = updatedRate.taxRate;
+          item.vat = updatedRate.vat;
+        }
+
+        // Save the updated item
+        await item.save();
+      }
+    }
 
     res.status(200).json({ message: "Tax rate updated successfully", updatedTaxRecord });
   } catch (error) {
