@@ -1164,7 +1164,7 @@ const NewPurchaseOrder = ({}: Props) => {
     <button
       className="text-darkRed cursor-pointer"
       onClick={(e) => {
-        e.preventDefault(); // Prevent the default refresh behavior
+        e.preventDefault(); 
         setBeforeTax(false);
       }}
     >

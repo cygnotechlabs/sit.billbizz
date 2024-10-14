@@ -389,9 +389,7 @@ const calculateTotalSubtotal = () => {
   
   const filteredItems = () => {
     return items.filter((item:any) => {
-      // Check if the item is already selected in the rows
       const isSelected = rows.find(row => row.itemId === item._id);
-      // Only include items that are not selected
       return !isSelected && item.itemName.toLowerCase().includes(searchValue.toLowerCase());
     });
   };
@@ -399,7 +397,6 @@ const calculateTotalSubtotal = () => {
   useEffect(() => {
     if (purchaseOrderState?.discountType === "Transaction Line") {
       setRows((prevData: any) => {
-        // Ensure prevData is an array before mapping
         if (Array.isArray(prevData)) {
           return prevData.map((item) => ({
             ...item,
@@ -407,7 +404,7 @@ const calculateTotalSubtotal = () => {
             itemDiscount: ""
           }));
         }
-        return []; // Return empty array if prevData is not an array
+        return []; 
       });
     }
   }, [purchaseOrderState?.discountType]);
