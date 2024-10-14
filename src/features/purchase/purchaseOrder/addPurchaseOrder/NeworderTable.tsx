@@ -12,8 +12,8 @@ import toast, { Toaster } from "react-hot-toast";
 
 type Row = {
   itemName: string;
-  itemImage: string;
-  itemId: string;
+  itemImage?: string;
+    itemId: string;
   itemQuantity: string;
   itemSellingPrice: string;
   itemDiscount: string;
@@ -98,9 +98,9 @@ const NewOrderTable = ({
       itemSellingPrice: "",
       itemDiscount: "",
       itemAmount: "",
-      itemSgst: "",
-      itemCgst: "",
-      itemIgst: "",
+      itemSgst: 0,
+      itemCgst: 0,
+      itemIgst: 0,
       itemDiscountType: "percentage",
     };
     const updatedRows = [...rows, newRow];
@@ -110,7 +110,8 @@ const NewOrderTable = ({
   const handleItemSelect = (item: any, index: number) => {
     setOpenDropdownId(null);
     setOpenDropdownType(null);
-  console.log(item,'selected otem');
+
+  
   
     const newRows = [...rows];
     newRows[index].itemName = item.itemName;
@@ -131,10 +132,19 @@ const NewOrderTable = ({
   
     setRows(newRows);
     
-    setPurchaseOrderState?.((prevData: any) => ({
-      ...prevData,
-      itemTable: newRows,
-    }));
+    setPurchaseOrderState?.((prevData: any) => {
+      const updatedItem = { ...newRows[index] };
+      delete updatedItem.itemImage; 
+  
+      const updatedItemTable = prevData.itemTable.map((row: any, idx: number) => {
+        return idx === index ? updatedItem : row; 
+      });
+  
+      return {
+        ...prevData,
+        itemTable: updatedItemTable,
+      };
+    });
   };
   
   const calculateDiscountPrice = (totalSellingPrice: number, discountValue: string, discountType: string) => {
@@ -206,10 +216,19 @@ const NewOrderTable = ({
   
     setRows(newRows);
   
-    setPurchaseOrderState?.((prevData: any) => ({
-      ...prevData,
-      itemTable: newRows,
-    }));
+    setPurchaseOrderState?.((prevData: any) => {
+      const updatedItem = { ...newRows[index] };
+      delete updatedItem.itemImage; 
+  
+      const updatedItemTable = prevData.itemTable.map((row: any, idx: number) => {
+        return idx === index ? updatedItem : row; 
+      });
+  
+      return {
+        ...prevData,
+        itemTable: updatedItemTable,
+      };
+    });
   };
 
 
@@ -369,14 +388,18 @@ const calculateTotalSubtotal = () => {
   }, [rows, setPurchaseOrderState]);
   
   const filteredItems = () => {
-    return items.filter((item:any) =>
-      item.itemName?.toLowerCase().includes(searchValue.toLowerCase())
-    );
+    return items.filter((item:any) => {
+      // Check if the item is already selected in the rows
+      const isSelected = rows.find(row => row.itemId === item._id);
+      // Only include items that are not selected
+      return !isSelected && item.itemName.toLowerCase().includes(searchValue.toLowerCase());
+    });
   };
 
   useEffect(() => {
     if (purchaseOrderState?.discountType === "Transaction Line") {
       setRows((prevData: any) => {
+        // Ensure prevData is an array before mapping
         if (Array.isArray(prevData)) {
           return prevData.map((item) => ({
             ...item,
@@ -384,7 +407,7 @@ const calculateTotalSubtotal = () => {
             itemDiscount: ""
           }));
         }
-        return []; 
+        return []; // Return empty array if prevData is not an array
       });
     }
   }, [purchaseOrderState?.discountType]);

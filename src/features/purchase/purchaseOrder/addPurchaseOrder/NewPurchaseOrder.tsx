@@ -363,10 +363,10 @@ const NewPurchaseOrder = ({}: Props) => {
             }));
           }
 
-      console.log(transactionDiscountValue, "transaction discount before tax");
+      // console.log(transactionDiscountValue, "transaction discount before tax");
 
       totalTaxedAmount = totalBeforeTax  + taxAmount- totalDiscountValue;
-      console.log(totalTaxedAmount, "Before tax calculation with discount");
+      // console.log(totalTaxedAmount, "Before tax calculation with discount");
 
 
     } else {
@@ -384,7 +384,7 @@ const NewPurchaseOrder = ({}: Props) => {
 
             }));
           }
-      console.log(transactionDiscountValue, "transaction discount after tax");
+      // console.log(transactionDiscountValue, "transaction discount after tax");
 
         
         totalTaxedAmount = totalAfterTax  -totalDiscountValue ;
@@ -392,7 +392,7 @@ const NewPurchaseOrder = ({}: Props) => {
     }
 
     purchaseOrderState.totalTaxAmount = totalTaxedAmount.toFixed(2);
-    console.log(totalDiscountValue, "total ... discount");
+    // console.log(totalDiscountValue, "total ... discount");
 
     return  totalTaxedAmount.toFixed(2)
   };
@@ -410,7 +410,6 @@ const NewPurchaseOrder = ({}: Props) => {
     return totalAmount.toFixed(2);
   };
 
-  console.log(purchaseOrderState,"total");
   
 
   useEffect(() => {
