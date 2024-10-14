@@ -804,9 +804,7 @@ const NewPurchaseOrder = ({}: Props) => {
                         className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9 text-textColor"
                       />
                 </div>
-  
-                {selected === "customer" ? (
-                  <div>
+                <div>
                     <label className="block text-sm mb-1 text-labelColor">
                       Payment Mode
                     </label>
@@ -839,7 +837,10 @@ const NewPurchaseOrder = ({}: Props) => {
                       </div>
                     </div>
                   </div>
-                ) : (
+  
+                {selected !== "customer" && (
+               
+               
                   <div>
                     <label className="block text-sm mb-1 text-labelColor">
                       Reference#
@@ -853,10 +854,7 @@ const NewPurchaseOrder = ({}: Props) => {
                       className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9"
                     />
                   </div>
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-4  mt-3">
-                <div>
+                )}<div>
                   <label className="block text-sm mb-1 text-labelColor">
                     Shipment Preference
                   </label>
@@ -884,6 +882,9 @@ const NewPurchaseOrder = ({}: Props) => {
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4  mt-3">
+                
                 <div>
                   <label className="block text-sm mb-1 text-labelColor">
                     Purchase Order Date
