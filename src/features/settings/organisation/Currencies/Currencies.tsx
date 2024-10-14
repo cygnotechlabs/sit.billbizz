@@ -13,7 +13,6 @@ import Banner from "../../banner/Banner";
 import CurrencyTable from "./CurrencyTable";
 
 interface InputCurrencyData {
-  organizationId: string;
   currencyCode: string;
   currencySymbol: string;
   currencyName: string;
@@ -28,7 +27,6 @@ const Currencies: React.FC<Props> = () => {
   const [enableExchangeRateModal, setEnableExchangeRateModal] = useState(false);
   const [newCurrencyModal, setNewCurrencyModal] = useState(false);
   const [newCurrency, setNewCurrency] = useState<InputCurrencyData>({
-    organizationId: "INDORG0001",
     currencyCode: "",
     currencySymbol: "",
     currencyName: "",
@@ -37,8 +35,6 @@ const Currencies: React.FC<Props> = () => {
   });
   const {setCurrencyResponse}=useContext(CurrencyResponseContext)!;
   const { request: CreateNewCurrency } = useApi("post", 5004);
-
-  console.log(newCurrency);
 
   const openModal = (
     enableExchangeRateModal = false,

@@ -42,7 +42,10 @@ export interface PurchaseOrder {
     cgst: string;
     igst: string;
     vat: string;
-    transactionDiscount: string;
+    totalDiscount:string;
+    transactionDiscount:string;
+    transactionDiscountType: string;
+    transactionDiscountAmount:string;
     totalTaxAmount: string;
     roundOff: string;
     grandTotal: string;

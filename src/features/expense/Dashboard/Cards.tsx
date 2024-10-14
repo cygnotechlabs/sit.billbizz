@@ -17,31 +17,31 @@ const Cards = () => {
   const cards = [
     {
       icon: packing,
-      title: "Total Supplier",
+      title: "Total Expenses",
       count: "1500",
       rating: "12,95",
     },
     {
       icon: group0,
-      title: "Average Lead Time",
+      title: "Expense Reports Submitted",
       count: "120",
       rating: "18,95",
     },
     {
       icon: group,
-      title: "On-Time Delivery Rate",
+      title: "Average Expense Amoutnt",
       count: "800",
       rating: "12,95",
     },
     {
       icon: group2,
-      title: "Total Spend",
+      title: "Pending Expenses",
       count: "85%",
       rating: "18",
     },
     {
       icon: group4,
-      title: "Total Purchase Order",
+      title: "Rejected Expenses",
       count: "15%",
       rating: "10",
     },

@@ -62,23 +62,46 @@ function TaxRate({ }: Props) {
   const { request: updateTaxGst } = useApi("put", 5004);
   const { setGstResponse, gstResponse } = useContext(GstResponseContext)!;
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setTaxGst((prev) => {
-      const updatedTaxGst = { ...prev, [name]: value };
-      if (name === "taxRate") {
-        const rate = parseFloat(value) || 0;
-        updatedTaxGst.cgst = (rate / 2).toString();
-        updatedTaxGst.sgst = (rate / 2).toString();
-        updatedTaxGst.igst = value;
-      }
-      return updatedTaxGst;
-    });
-  };
+ const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+
+  // Ensuring the taxRate stays between 0 and 100
+  if (name === "taxRate") {
+    const rate = Math.max(0, Math.min(100, parseFloat(value) || 0)); // Clamp the value between 0 and 100
+    setTaxGst((prev) => ({
+      ...prev,
+      [name]: rate.toString(),
+      cgst: (rate / 2).toString(),
+      sgst: (rate / 2).toString(),
+      igst: rate.toString(),
+    }));
+  } else {
+    setTaxGst((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+};
+
+
+  const [errors, setErrors] = useState({
+    taxName: false,
+    taxRate: false,
+  });
+
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+    const newErrors = {
+      taxName: !taxGst.taxName,
+      taxRate: !taxGst.taxRate,
+    };
+    setErrors(newErrors);
+    if (Object.values(newErrors).some(Boolean)) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
     if (taxGst._id) {  // Check if we're in edit mode based on the presence of `id`
       const url = `${endponits.UPDATE_TAX_VAT}`;  // Corrected endpoint for updating GST
       const body = {
@@ -177,11 +200,15 @@ function TaxRate({ }: Props) {
     }
     setModalOpen(true);
   };
-
   const closeModal = () => {
     setModalOpen(false);
     setTaxGst(initialTaxGst);
+    setErrors({
+      taxName: false,
+      taxRate: false,
+    });
   };
+
 
   const handleViewClick = (taxRate: TaxGst) => {
     setSelectedTaxRate(taxRate);
@@ -206,9 +233,8 @@ function TaxRate({ }: Props) {
             <button
               key={customer.title}
               onClick={() => setSelected(customer.title)}
-              className={`flex items-center gap-2 p-2 w-[100%] justify-center rounded ${
-                selected === customer.title ? "bg-WhiteIce" : "bg-white"
-              }`}
+              className={`flex items-center gap-2 p-2 w-[100%] justify-center rounded ${selected === customer.title ? "bg-WhiteIce" : "bg-white"
+                }`}
               style={{ border: "1px solid #DADBDD" }}
             >
               {customer.icon}
@@ -332,20 +358,33 @@ function TaxRate({ }: Props) {
                   name="taxName"
                   value={taxGst.taxName}
                   onChange={handleChange}
-                  className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+                  className={`pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border h-9 p-2
+                    ${errors.taxName ? "border-red-500" : "border-slate-300"}
+                    `}
                   placeholder="Enter tax name"
                 />
+                {errors.taxName && (
+                  <div className="text-red-800 text-xs mt-1.5 ms-1">Item name is required</div>
+                )}
               </div>
               <div className="text-dropdownText text-sm mt-4">
                 <label htmlFor="taxRate">Rate</label>
                 <input
-                  type="text"
+                 step="0.01"
+                  type="number"
+                  max={100}
+                  min={0}
                   name="taxRate"
                   value={taxGst.taxRate}
                   onChange={handleChange}
-                  className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2"
+                  className={`pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border h-9 p-2
+                    ${errors.taxRate ? "border-red-500" : "border-slate-300"}
+                    `}
                   placeholder="Enter tax rate"
                 />
+                {errors.taxRate && (
+                  <div className="text-red-800 text-xs mt-1.5 ms-1">Item name is required</div>
+                )}
               </div>
               <div className="text-dropdownText text-sm mt-4">
                 <label htmlFor="cgst">CGST</label>

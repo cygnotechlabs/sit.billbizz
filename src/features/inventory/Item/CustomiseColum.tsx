@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ListFilter from "../../../assets/icons/ListFilter";
 import Modal from "../../../Components/model/Modal";
 import SearchBar from "../../../Components/SearchBar";
@@ -20,9 +20,18 @@ const CustomiseColmn = ({ columns, setColumns }: Props) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [localColumns, setLocalColumns] = useState<Column[]>(columns);
+  const [filteredColumns, setFilteredColumns] = useState<Column[]>(columns); 
+
+  useEffect(() => {
+    const filtered = localColumns.filter((col) =>
+      col.label.toLowerCase().includes(searchValue.toLowerCase())
+    );
+    setFilteredColumns(filtered);
+  }, [searchValue, localColumns]);
 
   const openModal = () => {
     setLocalColumns(columns);
+    setFilteredColumns(columns); 
     setModalOpen(true);
   };
 
@@ -91,7 +100,8 @@ const CustomiseColmn = ({ columns, setColumns }: Props) => {
           </div>
           <SearchBar onSearchChange={setSearchValue} searchValue={searchValue} placeholder="Search" />
           <div>
-            {localColumns.map((col, index) => (
+            {/* Map over the filteredColumns instead of localColumns */}
+            {filteredColumns.map((col, index) => (
               <div
                 key={col.id}
                 className="flex items-center py-2 px-2 gap-2 mb-2 mt-3 bg-cuscolumnbg cursor-move "

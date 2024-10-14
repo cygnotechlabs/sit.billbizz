@@ -10,7 +10,6 @@ import { settingsdataResponseContext } from "../../../context/ContextShare"
 type Props = {};
 
 interface item {
-  organizationId: string;
   itemDecimal: string;
   itemDimensions: string;
   itemWeights: string;
@@ -33,9 +32,8 @@ interface item {
 function Items({}: Props) {
   const [selectedRadio, setSelectedRadio] = useState<string>("");
   const {settingsResponse, getSettingsData } = useContext(settingsdataResponseContext)!;
-  const { request: addItem } = useApi("put", 5003);
+  const { request: addItem } = useApi("get", 5003);
   const [inputData, setInputData] = useState<item>({
-    organizationId: "INDORG0001",
     itemDecimal: "",
     itemDimensions: "",
     itemWeights: "",

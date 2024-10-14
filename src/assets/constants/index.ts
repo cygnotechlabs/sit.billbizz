@@ -34,6 +34,10 @@ const navlist = [
         headName: "Unit of Measurement",
         subRoute: "/inventory/unit",
       },
+      {
+        headName:"Item Tracking",
+        subRoute: "/inventory/item-tracking",
+      }
     ],
   },
   {
@@ -116,8 +120,8 @@ const navlist = [
         subRoute: "/accountant/cash",
       },
       {
-        headName: "Currency Adjustment",
-        subRoute: "/inventory",
+        headName: "Day Book",
+        subRoute: "/accountant/daybook",
       },
     ],
   },
@@ -141,7 +145,7 @@ const navlist = [
     icon: circleDollar,
     route: "/expense",
     subhead: [
-      { headName: "Dashbord", subRoute: "/" },
+      { headName: "Dashboard", subRoute: "/expense" },
       { headName: "Expense", subRoute: "/expense/home" },
     ],
   },
@@ -238,7 +242,6 @@ export const organizationList = [
   { title: "Profile", route: "/settings/organization/profile" },
   { title: "Currencies", route: "/settings/currencies" },
   { title: "Additional Details", route: "/settings/invoice" },
-  
 ];
 
 export const taxList = [{ title: "Taxes", route: "/settings/taxes" }];
@@ -309,14 +312,13 @@ export const newPurchaseOrderTableHead = [
   "Actions",
 ];
 
-
-export const PaymentMadeUnpaidBillTable=[
+export const PaymentMadeUnpaidBillTable = [
   "Date",
-  "Due Date", 
-  "Bill ID", 
-"Bill Amount",
-"Amount Due", 
-"Payment",
+  "Due Date",
+  "Bill ID",
+  "Bill Amount",
+  "Amount Due",
+  "Payment",
 ];
 
 export const bankAccountviewTableHaed = [
@@ -334,8 +336,10 @@ export const settingsList = [
     subhead: [
       { headName: "Profile", subRoute: "/settings/organization/profile" },
       { headName: "Currencies", subRoute: "/settings/organization/currencies" },
-      { headName: "Additional Details", subRoute: "/settings/organization/invoice" },
-      
+      {
+        headName: "Additional Details",
+        subRoute: "/settings/organization/invoice",
+      },
     ],
   },
   {
@@ -354,19 +358,22 @@ export const settingsList = [
     icon: circleDollar,
     subhead: [
       { headName: "Taxes", subRoute: "/settings/taxes" },
-      { headName: "MSME Settings", subRoute: "/settings/taxes/msme" }
+      { headName: "MSME Settings", subRoute: "/settings/taxes/msme" },
     ],
-},
-{
+  },
+  {
     nav: "Rewards Settings",
     icon: Wallet,
     subhead: [
       { headName: "Rewards", subRoute: "/settings/rewards" },
       { headName: "Refer & Earn", subRoute: "/settings/rewards/refferandearn" },
-      { headName: "Membership Card", subRoute: "/settings/rewards/membershipcard" },
+      {
+        headName: "Membership Card",
+        subRoute: "/settings/rewards/membershipcard",
+      },
     ],
-},
-{
+  },
+  {
     nav: "Sales",
     icon: shoppingCart,
     subhead: [
@@ -379,13 +386,12 @@ export const settingsList = [
       },
       { headName: "Credit Notes", subRoute: "/settings/sales/CreditNotes" },
     ],
-},
+  },
 
   {
     nav: "Purchases",
     icon: shoppingBag,
     subhead: [
-    
       {
         headName: "Purchase Orders",
         subRoute: "/settings/purchase/puschaseOrder",
@@ -425,8 +431,8 @@ export const settingsList = [
     subhead: [
       { headName: "General", subRoute: "/settings/general" },
       {
-        headName: "Customer & Vendors",
-        subRoute: "/settings/customer-vendors",
+        headName: "Customer & Supplier",
+        subRoute: "/settings/preferences/CustomerAndSupplier",
       },
       { headName: "Accountant", subRoute: "/settings/accountant" },
       { headName: "Projects", subRoute: "/settings/projects" },

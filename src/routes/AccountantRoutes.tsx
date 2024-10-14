@@ -10,6 +10,7 @@ import NewJournal from "../features/accountant/manualJournel/newJournal/NewJourn
 import Accountant from "../pages/Accountant";
 import AccountantInfo from "../features/accountant/accountantInfo/AccountantInfo";
 import AccountantView from "../features/accountant/accountantView/AccountantView";
+import DayBook from "../features/accountant/DayBook/DayBook";
 
 const AccountantRoutes: RouteObject[] = [
   { path: "/accountant", element: <Accountant /> },
@@ -24,6 +25,7 @@ const AccountantRoutes: RouteObject[] = [
   { path: "/accountant/info", element: <AccountantInfo /> },
   { path: "/accountant/view/:id", element: <AccountantView /> },
 
+{ path: "/accountant/daybook", element: <DayBook/> },
 ];
 
 export default AccountantRoutes;

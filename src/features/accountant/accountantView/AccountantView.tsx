@@ -20,8 +20,8 @@ function AccountantView() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const fromCash = searchParams.get("fromCash") === "true"; 
-  const fromBank = searchParams.get("fromBank") === "true"; 
+  const fromCash = searchParams.get("fromCash") === "true";
+  const fromBank = searchParams.get("fromBank") === "true";
   const { request: getOneTrialBalance } = useApi("get", 5001);
   const { request: getOneOrganization } = useApi("get", 5004);
   const [trialBalance, setTrialBalance] = useState<TrialBalance[]>([]);
@@ -59,10 +59,17 @@ function AccountantView() {
     }
   }, [id]);
 
+  // Function to calculate total balance
+  const calculateTotal = () => {
+    const totalCredit = trialBalance.reduce((sum, item) => sum + item.creditAmount, 0);
+    const totalDebit = trialBalance.reduce((sum, item) => sum + item.debitAmount, 0);
+    return totalCredit - totalDebit;
+  };
+
   return (
     <div className="px-6">
       <div className="flex items-center gap-5 mb-2">
-      <Link to={fromCash ? "/accountant/cash" : fromBank ? "/accountant/bank" : "/accountant/chart-OF-accountant"}>
+        <Link to={fromCash ? "/accountant/cash" : fromBank ? "/accountant/bank" : "/accountant/chart-OF-accountant"}>
           <div
             style={{ borderRadius: "50%" }}
             className="w-[40px] h-[40px] flex items-center justify-center bg-white"
@@ -122,6 +129,12 @@ function AccountantView() {
               )}
             </tbody>
           </table>
+
+          <div className="mt-4 text-end">
+            <p className="text-textColor font-bold me-36">
+              Total : <span> {calculateTotal().toFixed(2)}</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>

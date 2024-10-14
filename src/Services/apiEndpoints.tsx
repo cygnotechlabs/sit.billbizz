@@ -27,6 +27,8 @@ export const endponits = {
 
  ADD_ITEMS: `add-item-settings`,
 
+// Prefreance settings 
+Customer_Supplier_prefreance: 'update-supplier-customer-settings',
 
  // get settingsData
 GET_SETTINGS_DATA:`get-settings`,
@@ -96,6 +98,11 @@ ADD_BRMC:`add-bmcr`,
 UPDATE_BRMC:`update-bmcr`,
 DELETE_BRMC:`delete-bmcr`,
 GET_ONE_BRMC:`get-a-bmcr`,
+
+
+// Purchase order
+  ADD_PURCHASE_ORDER:`add-purchaseOrder`,
+  GET_LAST_PURCHASE_ORDER_PREFIX: `get-last-purchase-order-prefix`,
  
  
   // Login
