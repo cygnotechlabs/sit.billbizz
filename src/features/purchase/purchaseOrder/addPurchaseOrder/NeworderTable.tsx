@@ -110,6 +110,7 @@ const NewOrderTable = ({
   const handleItemSelect = (item: any, index: number) => {
     setOpenDropdownId(null);
     setOpenDropdownType(null);
+  console.log(item,'selected otem');
   
     const newRows = [...rows];
     newRows[index].itemName = item.itemName;
@@ -163,7 +164,7 @@ const NewOrderTable = ({
       const cgstAmount = ((discountedPrice * cgstPercentage) / 100).toFixed(2);
       const sgstAmount = ((discountedPrice * sgstPercentage) / 100).toFixed(2);
       return {
-        itemAmount: (discountedPrice + parseFloat(cgstAmount) + parseFloat(sgstAmount)).toFixed(2),
+        itemAmount:discountedPrice.toFixed(2),
         cgstAmount,
         sgstAmount,
         igstAmount: "0.00",
@@ -171,7 +172,7 @@ const NewOrderTable = ({
     } else {
       const igstAmount = ((discountedPrice * igstPercentage) / 100).toFixed(2);
       return {
-        itemAmount: (discountedPrice + parseFloat(igstAmount)).toFixed(2),
+        itemAmount: discountedPrice .toFixed(2),
         cgstAmount: "0.00",
         sgstAmount: "0.00",
         igstAmount,
@@ -312,22 +313,27 @@ useEffect(() => {
   };
 
   const calculateDiscount = () => {
-    if (purchaseOrderState?.discountType !== "Item Line") {
+    if (purchaseOrderState?.discountType !== "Transaction Line") {
       return rows.reduce((total, row) => {
-        const discount = parseFloat(row.itemDiscount) || 0;
-        const quantity = parseFloat(row.itemQuantity) || 0;
-        const sellingPrice = parseFloat(row.itemSellingPrice) || 0;
+        const discount = parseFloat(row.itemDiscount) || 0; 
+        const quantity = parseFloat(row.itemQuantity) || 0; 
+        const sellingPrice = parseFloat(row.itemSellingPrice) || 0; 
         
         const totalSellingPrice = sellingPrice * quantity;
-  
+
         if (row.itemDiscountType === "percentage") {
-          return total + (totalSellingPrice * discount) / 100;
+          return total + (totalSellingPrice * discount) / 100; 
+          
         } else {
-          return total + discount;
+          return total + discount; 
         }
       }, 0);
+
     }
+    
+    return 0; 
   };
+  
   
 // Function to calculate the total subtotal
 const calculateTotalSubtotal = () => {
@@ -348,6 +354,9 @@ const calculateTotalSubtotal = () => {
     const totalSellingPrice = calculateTotalSubtotal();
     const totalDiscount =calculateDiscount();
 
+    console.log(totalDiscount,"jsdgh");
+    
+
     setPurchaseOrderState?.((prevData: any) => ({
       ...prevData,
       totalItem: totalQuantity, 
@@ -355,7 +364,7 @@ const calculateTotalSubtotal = () => {
       cgst: totalCGST,             
       igst: totalIGST,    
       subTotal: totalSellingPrice,    
-      totalDiscount:totalDiscount,     
+      totalItemDiscount:totalDiscount,     
     }));
   }, [rows, setPurchaseOrderState]);
   
@@ -364,8 +373,27 @@ const calculateTotalSubtotal = () => {
       item.itemName?.toLowerCase().includes(searchValue.toLowerCase())
     );
   };
-console.log();
 
+  useEffect(() => {
+    if (purchaseOrderState?.discountType === "Transaction Line") {
+      setRows((prevData: any) => {
+        if (Array.isArray(prevData)) {
+          return prevData.map((item) => ({
+            ...item,
+            itemDiscountType: "percentage", 
+            itemDiscount: ""
+          }));
+        }
+        return []; 
+      });
+    }
+  }, [purchaseOrderState?.discountType]);
+  
+  
+  
+  
+  
+  
 
 
 
