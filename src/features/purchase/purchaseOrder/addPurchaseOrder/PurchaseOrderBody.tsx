@@ -28,6 +28,7 @@ export interface PurchaseOrder {
       itemVat: string;
     }>;
   
+    totalItemDiscount:string;
     otherExpense: string;
     otherExpenseReason: string;
     freight: string;
