@@ -854,7 +854,8 @@ const NewPurchaseOrder = ({}: Props) => {
                       className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9"
                     />
                   </div>
-                )}<div>
+                )}
+                <div>
                   <label className="block text-sm mb-1 text-labelColor">
                     Shipment Preference
                   </label>
@@ -881,11 +882,7 @@ const NewPurchaseOrder = ({}: Props) => {
                       <CehvronDown color="gray" />
                     </div>
                   </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4  mt-3">
-                
-                <div>
+                </div><div>
                   <label className="block text-sm mb-1 text-labelColor">
                     Purchase Order Date
                   </label>
@@ -935,8 +932,7 @@ const NewPurchaseOrder = ({}: Props) => {
                       <CehvronDown color="gray" />
                     </div>
                   </div>
-                </div>
-                <div>
+                </div><div>
                   <label className="block text-sm mb-1 text-labelColor">
                     Tax Type
                   </label>
@@ -963,6 +959,7 @@ const NewPurchaseOrder = ({}: Props) => {
                   </div>
                 </div>
               </div>
+             
               <div className="border-b w-[20%] flex items-center justify-center text-textColor gap-3 my-5 py-2 border-[#EAECF0] text-sm">
                 <p>{discountType === "" ? "Discount Type" : discountType}</p>{" "}
                 <div
