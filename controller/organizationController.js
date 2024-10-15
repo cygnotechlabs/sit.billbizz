@@ -679,7 +679,7 @@ function validateOrganizationData(data, validCurrencies, organization ) {
 
 
   //OtherDetails
-  validateIntegerFields(['organizationPhNum','pincode'], data, errors);
+  validateIntegerFields(['pincode'], data, errors);
 
 
   //Currency
@@ -700,15 +700,15 @@ function validateField(condition, errorMsg, errors) {
 }
 //Valid Req Fields
 function validateReqFields( data, errors ) {
-  if (typeof data.organizationCountry === 'undefined' ) {
-    errors.push("Please select a Country");
-  }
-  if (typeof data.state === 'undefined' ) {
-  errors.push("Please select a State");
-  }
-  if (typeof data.organizationPhNum === 'undefined' ) {
-    errors.push("Please enter Phone Number");
-  }
+  // if (typeof data.organizationCountry === 'undefined' ) {
+  //   errors.push("Please select a Country");
+  // }
+  // if (typeof data.state === 'undefined' ) {
+  // errors.push("Please select a State");
+  // }
+  // if (typeof data.organizationPhNum === 'undefined' ) {
+  //   errors.push("Please enter Phone Number");
+  // }
   if (typeof data.baseCurrency === 'undefined' ) {
   errors.push("Please select a Currency");
   }

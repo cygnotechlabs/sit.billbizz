@@ -80,8 +80,9 @@ exports.deletePaymentTerm = async (req, res) => {
 // Get all payment terms
 exports.getAllPaymentTerms = async (req, res) => {
   try {
-    const paymentTerms = await PaymentTerms.find();
-
+    const { organizationId } = req.user; // Correct destructuring
+    const paymentTerms = await PaymentTerms.find({ organizationId }); // Use correct query format
+    
     if (!paymentTerms || paymentTerms.length === 0) {
       return res.status(404).json({ message: "No Payment Terms found" });
     }
