@@ -591,7 +591,7 @@ const calculateTotalSubtotal = () => {
                         className="text-xs appearance-none w-[60px] p-1 text-zinc-400 bg-white border border-inputBorder rounded-lg"
                       >
                         <option value="percentage">%</option>
-                        <option value={oneOrganization.baseCurrency}>{oneOrganization.baseCurrency}</option>
+                        <option value="currency">{oneOrganization?.baseCurrency}</option>
                       </select>
                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                         <ChevronDown color="gray" height={15} width={15} />

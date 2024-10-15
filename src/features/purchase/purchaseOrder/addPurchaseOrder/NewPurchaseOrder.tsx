@@ -47,7 +47,7 @@ const NewPurchaseOrder = ({}: Props) => {
   );
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [purchaseOrderState, setPurchaseOrderState] = useState<PurchaseOrder>({
-    organizationId: "",
+    organizationId: "INDORG0006",
     supplierId: "",
     taxMode: "",
     sourceOfSupply: "",
@@ -100,6 +100,7 @@ const NewPurchaseOrder = ({}: Props) => {
     status: "",
   });
 
+console.log(purchaseOrderState);
 
 
   const toggleDropdown = (key: string | null) => {
@@ -515,7 +516,7 @@ const NewPurchaseOrder = ({}: Props) => {
                           onSearchChange={setSearchValue}
                           placeholder="Select Supplier"
                         />
-                        {filteredSupplier.length > 0 &&
+                        {filteredSupplier.length > 0 ?
                           filteredSupplier.map((supplier: any) => (
                             <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink cursor-pointer">
                               <div className="col-span-2 flex items-center justify-center">
@@ -547,7 +548,9 @@ const NewPurchaseOrder = ({}: Props) => {
                                 </div>
                               </div>
                             </div>
-                          ))}
+                          )):<div className="text-center border-slate-400 border rounded-lg">
+                          <p className="text-[red] text-sm py-4">Supplier Not Found!</p>
+                        </div>}
                         <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4">
                           <AddSupplierModal page="purchase" />
                         </div>
@@ -722,15 +725,15 @@ const NewPurchaseOrder = ({}: Props) => {
                       {openDropdownIndex === "customer" && (
                         <div
                           ref={dropdownRef}
-                          className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2   space-y-1 max-w-72 overflow-y-auto  hide-scrollbar"
-                          style={{ width: "80%" }}
+                          className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  w-[40%] space-y-1 max-w-72 overflow-y-auto  hide-scrollbar"
+                          
                         >
                           <SearchBar
                             searchValue={searchValue}
                             onSearchChange={setSearchValue}
                             placeholder="Serach customer"
                           />
-                          {filteredCustomer ? (
+                          {filteredCustomer.length>0 ? (
                             filteredCustomer.map((customer: any) => (
                               <div
                                 className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink"
@@ -765,7 +768,9 @@ const NewPurchaseOrder = ({}: Props) => {
                               </div>
                             ))
                           ) : (
-                            <></>
+                            <div className="text-center border-slate-400 border rounded-lg">
+                            <p className="text-[red] text-sm py-4">Customer Not Found!</p>
+                          </div>
                           )}
                           <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4">
                             <NewCustomerModal page="purchase" />
@@ -1134,7 +1139,7 @@ const NewPurchaseOrder = ({}: Props) => {
                           name="transactionDiscountType"
                         >
                           <option value="percentage">%</option>
-                          <option value={oneOrganization.baseCurrency}>
+                          <option value="currency">
                             {oneOrganization.baseCurrency}
                           </option>
                         </select>
