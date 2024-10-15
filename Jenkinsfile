@@ -8,8 +8,8 @@ pipeline {
         IMAGE_NAME = 'inventory-billbizz'
         AWS_CREDENTIALS_ID = '2157424a-b8a7-45c0-90c2-bc0d407f6cea'
         AWS_ACCOUNT_ID = '654654462146' // Add your AWS account ID here
-        SONARQUBE_PROJECT_KEY = 'billbizz-inventory'
-        SONARQUBE_SCANNER_CREDENTIALS_ID = '522ffcfc-f5c5-4461-bb9c-930530805ee5' // Jenkins credentials ID for SonarQube token
+        SONARQUBE_PROJECT_KEY = 'Billbizz_inventory'
+        SONARQUBE_SCANNER_CREDENTIALS_ID ='5162e612-a6be-49f3-a25c-e5e311d8b8ca' // Jenkins credentials ID for SonarQube token
         ECS_CLUSTER_NAME = 'dev-billbizz' // Replace with your ECS cluster name
         ECS_SERVICE_NAME = 'billbizz-inventory' // Replace with your ECS service name
         ECS_TASK_DEFINITION_NAME = 'billbizz-inventory' // Replace with your ECS task definition name
