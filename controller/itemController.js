@@ -5,6 +5,7 @@ const Settings = require("../database/model/settings");
 const BMCR = require("../database/model/bmcr");
 const Tax = require("../database/model/tax");
 const moment = require('moment-timezone');
+// const ItemTrack = require("../database/model/itemTrack");
 
 
 
@@ -42,7 +43,7 @@ exports.addItem = async (req, res) => {
       const { organizationExists, taxExists, settingsExist } = await dataExist(organizationId);
       const { brandExist, manufacturerExist, categoriesExist, rackExist } = await bmcrDataExist(organizationId);
       const bmcr = { brandExist, manufacturerExist, categoriesExist, rackExist };
-
+      
 
       if (!validateOrganizationTaxCurrency(organizationExists, taxExists, settingsExist, res)) return;     
 
@@ -129,7 +130,11 @@ exports.getAllItem = async (req, res) => {
 
     const allItem = await Item.find({ organizationId });
     if (allItem.length > 0) {
-      res.status(200).json(allItem);
+      const AllItem = allItem.map((history) => {
+        const { organizationId, ...rest } = history.toObject(); // Convert to plain object and omit organizationId
+        return rest;
+      });
+      res.status(200).json(AllItem);
     } else {
       return res.status(404).json("No Items found.");
     }
@@ -537,22 +542,25 @@ function validateAlphabetsFields(fields, data, errors) {
   });
 }
 
+
 //Validate Tax Type
 function validateTaxType( taxRate, taxPreference, taxExists, errors ) {
   const taxType = taxExists.taxType;
-  
+  console.log("tax now :", taxExists.taxType);
   let taxFound = false;
+
 
   // Check if taxType is GST
   if (taxType === 'GST' && taxPreference =='Taxable' ) {
     taxExists.gstTaxRate.forEach((tax) => {
+      
       if (tax.taxName === taxRate) {
         taxFound = true;
         console.log(`Matching GST tax found: ${tax.taxName} with rate: ${tax.taxRate}`);
       }
     });
   }
-
+  
   // Check if taxType is VAT
   if (taxType === 'VAT' && taxPreference =='Taxable') {
     taxExists.vatTaxRate.forEach((tax) => {

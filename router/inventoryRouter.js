@@ -7,12 +7,17 @@ const unitController = require("../controller/unitController")
 const bmcrController = require('../controller/bmcrController');
 const itemDropdownController = require("../controller/itemDropdownController")
 const itemSettingsController = require("../controller/itemSettingsController")
+const dashboardController = require("../controller/dashboardController")
+
 
 const checkPermission = require('../controller/permission');
 const { verifyToken } = require('../controller/middleware');
 
 //item dropdowm
 router.get('/get-itemDropdown',verifyToken, itemDropdownController.getItemDropdowm);
+
+router.get('/get-Dashboard',verifyToken, dashboardController.calculateTotalInventoryValue);
+
 
 // Item
 router.post('/add-item',verifyToken,checkPermission('Created a New Item'), itemController.addItem);

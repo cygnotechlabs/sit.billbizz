@@ -2,7 +2,6 @@ const Organization = require("../database/model/organization")
 const Settings = require("../database/model/settings")
 
 
-
 exports.addItemSettings = async (req, res) => {
     try {
       const organizationId = req.user.organizationId;
