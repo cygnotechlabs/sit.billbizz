@@ -10,23 +10,32 @@ const rateLimit = require('express-rate-limit');
 
 // Rate limiter for OTP verification to prevent brute force attacks
 const otpRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 5 * 60 * 1000, // 5 minutes
   max: 5, // limit each IP to 5 OTP attempts per windowMs
-  message: 'Too many attempts, please try again after 15 minutes',
+  handler: (req, res) => {
+    return res.status(429).json({
+      success: false,
+      message: 'Too many OTP attempts, please try again after 5 minutes',
+    });
+  },
 });
 
 const loginRateLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minutes window
-  max: 5, // Limit each IP to 5 login requests per windowMs
-  message: 'Too many login attempts from this IP, please try again after 15 minutes',
+  windowMs: 1 * 60 * 1000, // 1 minute window
+  max: 5, // limit each IP to 5 login requests per windowMs
+  handler: (req, res) => {
+    return res.status(429).json({
+      success: false,
+      message: 'Too many login attempts, please try again after 1 minute',
+    });
+  },
 });
-
 
 // Login 
 exports.login = [loginRateLimiter, async (req, res) => {
   try {
     // Get all data
-    const { email, password } = req.body;
+    const { email, password } = req.body;    
 
     // Validate input
     if (!email || !password) {
@@ -100,8 +109,8 @@ exports.verifyOtp = [otpRateLimiter, async (req, res) => {
       const requestIP = req.ip || req.connection.remoteAddress; // Get IP address
       const requestUserAgent = req.headers['user-agent']; // Get User-Agent (browser/device info)
 
-      console.log("requestIP",requestIP);
-      console.log("requestUserAgent",requestUserAgent);      
+      console.log("Request IP :",requestIP);
+      console.log("Request User Agent :",requestUserAgent);      
 
       
       // Create JWT token with user ID and organizationId
