@@ -626,10 +626,10 @@ const calculateTotalSubtotal = () => {
           </tbody>
         </table>
       </div>
-      <div className="w-[60%] mt-6">
+      <div className="w-[60%] mt-0">
         <button
         type="button"
-          className="bg-darkGreen text-darkRed rounded-lg py-2 px-6 flex items-center text-sm font-bold"
+          className="bg-darkGreen text-darkRed rounded-lg py-2 px-1 flex items-center text-sm font-bold"
           onClick={addRow}
         >
           <PlusCircle color="darkRed" />
