@@ -22,7 +22,6 @@ type Row = {
   itemSgst: string;
   itemIgst: string;
   itemDiscountType: string;
-  itemStock: string;
 };
 
 type Props = {
@@ -30,6 +29,7 @@ type Props = {
   isIntraState?: Boolean;
   setPurchaseOrderState?: (value: any) => void;
   oneOrganization?: any;
+  isNonTaxable?: Boolean;
 };
 
 const NewOrderTable = ({
@@ -57,7 +57,6 @@ const NewOrderTable = ({
       itemCgst: "",
       itemIgst: "",
       itemDiscountType: "percentage",
-      itemStock: "",
     },
   ]);
 
@@ -77,17 +76,6 @@ const NewOrderTable = ({
       setOpenDropdownType(null);
     }
   };
-
-  useEffect(() => {
-    if (openDropdownId !== null) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [openDropdownId]);
 
   const addRow = () => {
     const newRow: any = {
@@ -116,8 +104,8 @@ const NewOrderTable = ({
     newRows[index].itemImage = item.itemImage;
     newRows[index].itemSellingPrice = item.sellingPrice || "0";
     newRows[index].itemQuantity = "1";
-    newRows[index].itemStock = item.reorderPoint;
     newRows[index].itemId = item._id;
+
     const sellingPrice = parseFloat(newRows[index].itemSellingPrice);
     const discountedPrice = calculateDiscountPrice(
       sellingPrice,
@@ -131,29 +119,39 @@ const NewOrderTable = ({
       index,
       isIntraState as boolean
     );
+    console.log(item, "item");
 
-    newRows[index].itemAmount = itemAmount;
-    newRows[index].itemCgst = cgstAmount;
-    newRows[index].itemSgst = sgstAmount;
-    newRows[index].itemIgst = igstAmount;
+    if (item.taxPreference === "Non-taxable") {
+      newRows[index].itemAmount = itemAmount;
+      newRows[index].itemCgst = "0";
+      newRows[index].itemSgst = "0";
+      newRows[index].itemIgst = "0";
 
+    setPurchaseOrderState?.((prevData: any) => ({
+      ...prevData,
+      itemTable: newRows.map((row) => {
+        const updatedItem = { ...row };
+        delete updatedItem.itemImage;
+        return updatedItem;
+      }),
+    }));
+    } else {
+      newRows[index].itemAmount = itemAmount;
+      newRows[index].itemCgst = cgstAmount;
+      newRows[index].itemSgst = sgstAmount;
+      newRows[index].itemIgst = igstAmount;
+    }
     setRows(newRows);
 
-    setPurchaseOrderState?.((prevData: any) => {
-      const updatedItem = { ...newRows[index] };
-      delete updatedItem.itemImage;
-
-      const updatedItemTable = prevData.itemTable.map(
-        (row: any, idx: number) => {
-          return idx === index ? updatedItem : row;
-        }
-      );
-
-      return {
-        ...prevData,
-        itemTable: updatedItemTable,
-      };
-    });
+    // Update the entire itemTable with all rows
+    setPurchaseOrderState?.((prevData: any) => ({
+      ...prevData,
+      itemTable: newRows.map((row) => {
+        const updatedItem = { ...row };
+        delete updatedItem.itemImage;
+        return updatedItem;
+      }),
+    }));
   };
 
   const calculateDiscountPrice = (
@@ -162,21 +160,27 @@ const NewOrderTable = ({
     discountType: string
   ) => {
     let discount = parseFloat(discountValue) || 0;
-
-    if (discountType === "percentage") {
+  
+    if (discount < 0) {
+      toast.error("Discount cannot be negative");
+      return totalSellingPrice; 
+    }
+      if (discountType === "percentage") {
       if (discount > 100) {
-        discount = 100;
+        discount = 100; 
         toast.error("Discount cannot exceed 100%");
       }
       return totalSellingPrice - (totalSellingPrice * discount) / 100;
     } else {
       if (discount > totalSellingPrice) {
-        discount = totalSellingPrice;
+        discount = totalSellingPrice; 
         toast.error("Discount cannot exceed the selling price");
       }
       return totalSellingPrice - discount;
     }
   };
+  
+  
 
   const calculateTax = (
     discountedPrice: number,
@@ -213,16 +217,11 @@ const NewOrderTable = ({
     newRows[index] = { ...newRows[index], [field]: value };
 
     const quantity = parseFloat(newRows[index].itemQuantity) || 0;
-    const stock = parseFloat(newRows[index].itemStock) || 0;
     const sellingPrice = parseFloat(newRows[index].itemSellingPrice) || 0;
 
-    if (quantity > stock) {
-      toast.error("Quantity exceeds available stock!");
-      return;
-    }
+   
 
     const totalSellingPrice = quantity * sellingPrice;
-
     const discountedPrice = calculateDiscountPrice(
       totalSellingPrice,
       newRows[index].itemDiscount,
@@ -235,7 +234,6 @@ const NewOrderTable = ({
       index,
       isIntraState as boolean
     );
-
     newRows[index].itemAmount = itemAmount;
     newRows[index].itemCgst = cgstAmount;
     newRows[index].itemSgst = sgstAmount;
@@ -243,48 +241,17 @@ const NewOrderTable = ({
 
     setRows(newRows);
 
-    setPurchaseOrderState?.((prevData: any) => {
-      const updatedItem = { ...newRows[index] };
-      delete updatedItem.itemImage;
-
-      const updatedItemTable = prevData.itemTable.map(
-        (row: any, idx: number) => {
-          return idx === index ? updatedItem : row;
-        }
-      );
-
-      return {
-        ...prevData,
-        itemTable: updatedItemTable,
-      };
-    });
+    setPurchaseOrderState?.((prevData: any) => ({
+      ...prevData,
+      itemTable: newRows.map((row) => {
+        const updatedItem = { ...row };
+        delete updatedItem.itemImage;
+        return updatedItem;
+      }),
+    }));
   };
 
-  useEffect(() => {
-    const updatedRows = rows.map((row, index) => {
-      const discountedPrice = parseFloat(row.itemAmount) || 0;
-      const taxDetails = calculateTax(
-        discountedPrice,
-        items,
-        index,
-        isIntraState as boolean
-      );
-      return {
-        ...row,
-        itemAmount: taxDetails.itemAmount,
-        itemCgst: taxDetails.cgstAmount,
-        itemSgst: taxDetails.sgstAmount,
-        itemIgst: taxDetails.igstAmount,
-      };
-    });
-
-    setRows(updatedRows);
-  }, [
-    purchaseOrderState?.destinationOfSupply,
-    purchaseOrderState?.sourceOfSupply,
-    items,
-    isIntraState,
-  ]);
+  console.log(rows, "rows");
 
   const getAllItems = async () => {
     try {
@@ -321,7 +288,7 @@ const NewOrderTable = ({
           itemAmount: "0",
           itemImage: "",
           itemId: "",
-          itemDiscountType: "",
+          itemDiscountType: "percentage",
           itemStock: "",
         },
       ];
@@ -391,6 +358,73 @@ const NewOrderTable = ({
       return total + subtotal;
     }, 0);
   };
+  const filteredItems = () => {
+    return items.filter((item: any) => {
+      const isSelected = rows.find((row) => row.itemId === item._id);
+      return (
+        !isSelected &&
+        item.itemName.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    });
+  };
+
+  useEffect(() => {
+    if (openDropdownId !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdownId]);
+
+  useEffect(() => {
+    const updatedRows = rows.map((row, index) => {
+      const discountedPrice = parseFloat(row.itemAmount) || 0;
+      const taxDetails = calculateTax(
+        discountedPrice,
+        items,
+        index,
+        isIntraState as boolean
+      );
+      return {
+        ...row,
+        itemAmount: taxDetails.itemAmount,
+        itemCgst: taxDetails.cgstAmount,
+        itemSgst: taxDetails.sgstAmount,
+        itemIgst: taxDetails.igstAmount,
+      };
+    });
+
+    setRows(updatedRows);
+  }, [
+    purchaseOrderState?.destinationOfSupply,
+    purchaseOrderState?.sourceOfSupply,
+    items,
+    isIntraState,
+  ]);
+
+  useEffect(() => {
+    if (purchaseOrderState?.discountType === "Transaction line") {
+      const updatedRows = rows.map((row) => ({
+        ...row,
+        itemDiscountType: "",
+        itemDiscount: "",
+      }));
+
+      setRows(updatedRows);
+
+      setPurchaseOrderState?.((prevData: any) => ({
+        ...prevData,
+        itemTable: updatedRows.map((row) => {
+          const updatedItem = { ...row };
+          delete updatedItem.itemImage;
+          return updatedItem;
+        }),
+      }));
+    }
+  }, [purchaseOrderState?.discountType]);
 
   useEffect(() => {
     const totalQuantity = calculateTotalQuantity();
@@ -412,16 +446,6 @@ const NewOrderTable = ({
       totalItemDiscount: totalDiscount,
     }));
   }, [rows, setPurchaseOrderState]);
-
-  const filteredItems = () => {
-    return items.filter((item: any) => {
-      const isSelected = rows.find((row) => row.itemId === item._id);
-      return (
-        !isSelected &&
-        item.itemName.toLowerCase().includes(searchValue.toLowerCase())
-      );
-    });
-  };
 
   useEffect(() => {
     if (purchaseOrderState?.discountType === "Transaction Line") {
@@ -451,10 +475,11 @@ const NewOrderTable = ({
               {newPurchaseOrderTableHead.map((item, index) => {
                 if (
                   item === "Discount" &&
-                  purchaseOrderState?.discountType === "Transaction Line"
+                  purchaseOrderState?.discountType === "Transaction line"
                 ) {
                   return null;
                 }
+
                 return (
                   <th
                     className="py-2 px-4 font-medium border-b border-tableBorder relative"
@@ -498,7 +523,7 @@ const NewOrderTable = ({
                     openDropdownType === "searchProduct" && (
                       <div
                         ref={dropdownRef}
-                        className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[40%] space-y-1"
+                        className="absolute z-10 bg-white shadow rounded-md mt-1 p-2 w-[30%] space-y-1"
                       >
                         <SearchBar
                           searchValue={searchValue}
@@ -525,7 +550,7 @@ const NewOrderTable = ({
                                     {item.itemName}
                                   </p>
                                   <p className="text-xs text-gray-500">
-                                    Rate: RS.{item.sellingPrice}
+                                    Rate: {item.sellingPrice}
                                   </p>
                                 </div>
                                 <div className="ms-auto text-2xl cursor-pointer relative -mt-2 pe-2">
@@ -562,13 +587,7 @@ const NewOrderTable = ({
                       handleRowChange(index, "itemQuantity", e.target.value)
                     }
                   />
-                  <div className="text-start text-[10px]">
-                    {" "}
-                    <p>
-                      Stock OnHand:
-                      <b className="text-[12px]">{row.itemStock}</b>{" "}
-                    </p>
-                  </div>
+               
                 </td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input
@@ -583,21 +602,29 @@ const NewOrderTable = ({
                   />
                 </td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
-                  <input
-                    disabled
-                    type="text"
-                    placeholder="0"
-                    className="w-[50px]  focus:outline-none text-center"
-                    value={
-                      !isIntraState
-                        ? (
-                            parseFloat(row.itemCgst) + parseFloat(row.itemSgst)
-                          ).toFixed(2)
-                        : row.itemIgst
-                    }
-                  />
+                  {
+                   <input
+                   disabled
+                   type="text"
+                   placeholder="0"
+                   className="w-[50px] focus:outline-none text-center"
+                   value={
+                     !isIntraState
+                       ? (
+                           (parseFloat(row.itemCgst) || 0) + (parseFloat(row.itemSgst) || 0) === 0
+                             ? "Nil"
+                             : (parseFloat(row.itemCgst) + parseFloat(row.itemSgst)).toFixed(2)
+                         )
+                       : (parseFloat(row.itemIgst) || 0) === 0
+                       ? "Nil"
+                       : parseFloat(row.itemIgst).toFixed(2)
+                   }
+                 />
+                 
+                 
+                  }
                 </td>
-                {purchaseOrderState?.discountType !== "Transaction Line" && (
+                {purchaseOrderState?.discountType !== "Transaction line" && (
                   <td className="py-2.5 px-4 border-y border-tableBorder">
                     <div className="flex items-center justify-center gap-2 w-full">
                       <input
@@ -662,7 +689,7 @@ const NewOrderTable = ({
       <div className="w-[60%] mt-0">
         <button
           type="button"
-          className="bg-darkGreen text-darkRed rounded-lg py-2 px-1 flex items-center text-sm font-bold"
+          className="bg-darkGreen text-darkRed rounded-lg py-2 px-6 flex items-center text-sm font-bold"
           onClick={addRow}
         >
           <PlusCircle color="darkRed" />
