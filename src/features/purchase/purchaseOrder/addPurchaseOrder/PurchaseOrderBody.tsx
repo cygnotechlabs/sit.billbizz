@@ -4,6 +4,7 @@ export interface PurchaseOrder {
     taxMode: string;
     sourceOfSupply: string;
     destinationOfSupply: string;
+    deliveryAddress:string;
     customerId: string;
     reference: string;
     purchaseOrder: string;
@@ -26,6 +27,7 @@ export interface PurchaseOrder {
       itemCgst: string;
       itemIgst: string;
       itemVat: string;
+      itemName:string;
     }>;
   
     totalItemDiscount:string;
@@ -48,7 +50,8 @@ export interface PurchaseOrder {
     transactionDiscountType: string;
     transactionDiscountAmount:string;
     totalTaxAmount: string;
+    afterTaxDiscountAmount:string;
+    beforeTaxDiscountAmount:string;
     roundOff: string;
     grandTotal: string;
-    status: string;
   }
