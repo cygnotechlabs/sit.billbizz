@@ -163,7 +163,7 @@ exports.calculateTotalInventoryValue = async (req, res) => {
 
     const totalStockCount = await getTotalInventoryValues(items, organizationId, date);
     const { inventoryValueChange , salesValueChange} = totalStockCount
-    const { topSellingProducts , stockLevel ,frequentlyOrderedItems} = topSelling
+    const { topSellingProducts , stockLevels ,frequentlyOrderedItems} = topSelling
   
     // Send the response with all calculated data
     res.status(200).json({
@@ -177,7 +177,7 @@ exports.calculateTotalInventoryValue = async (req, res) => {
         salesValueChange ,
         topSellingProducts,
         frequentlyOrderedItems,
-        stockLevel,
+        stockLevels,
       // totalStockCount
     });
 
@@ -196,7 +196,7 @@ const topSellingProductsUtil = async (organizationId) => {
       return { topSellingProducts: [], stockLevel: [] };
     }
 
-    let topSellingProducts = [];
+    let topSellingProduct = [];
     let stockLevel = [];
 
     for (const item of items) {
@@ -225,7 +225,7 @@ const topSellingProductsUtil = async (organizationId) => {
         const status = latestTrack && latestTrack.currentStock < 0 ? "Out Of Stock" : "In Stock";
 
         // Add the product details to the topSellingProducts array
-        topSellingProducts.push({
+        topSellingProduct.push({
           itemName: item.itemName,
           itemId: item._id,
           saleVolume: saleVolume,
@@ -244,22 +244,20 @@ const topSellingProductsUtil = async (organizationId) => {
         });
       }
     }
-    console.log( "before sort",topSellingProducts);
     
-    
+    const frequentlyOrderedItems = topSellingProduct.sort((a, b) => b.unitSold - a.unitSold).slice(0, 5);
+
     // Sort the topSellingProducts by unitSold in descending order
-    topSellingProducts.sort((a, b) => b.saleVolume - a.saleVolume);
-    const frequentlyOrderedItems = topSellingProducts.sort((a, b) => b.unitSold - a.unitSold);
-    console.log( "after sort",topSellingProducts);
+    const topSellingProducts = topSellingProduct.sort((a, b) => b.saleVolume - a.saleVolume).slice(0, 5);
+    
 
     // Sort the stockLevel array by stock value (currentStock) in descending order
-    stockLevel.sort((a, b) => b.stock - a.stock);
-    topSellingProducts = topSellingProducts.slice(0, 5);
-    console.log( "after limit to 5",topSellingProducts);
+    const stockLevels = stockLevel.sort((a, b) => b.stock - a.stock).slice(0, 5);
+    console.log( "stockLevels",stockLevels);
+    console.log( "frequentlyOrderedItems",frequentlyOrderedItems)
 
-    stockLevel = stockLevel.slice(0, 5);
     // Return both topSellingProducts and stockLevel
-    return { topSellingProducts, stockLevel , frequentlyOrderedItems};
+    return { topSellingProducts, stockLevels , frequentlyOrderedItems};
   } catch (error) {
     console.error("Error fetching top-selling products or stock levels:", error);
     throw new Error("An error occurred while calculating top-selling products or stock levels.");
