@@ -95,8 +95,8 @@ const moment = require("moment-timezone");
 
 exports.calculateTotalInventoryValue = async (req, res) => {
   try {
-    // const organizationId = req.user.organizationId;
-    const organizationId = req.body.organizationId;
+    const organizationId = req.user.organizationId;
+    // const organizationId = req.body.organizationId;
     console.log(organizationId);
     
     // Get the start and end of the current month
@@ -156,7 +156,9 @@ exports.calculateTotalInventoryValue = async (req, res) => {
     const recentlyAddedItemsCount = recentlyAddedItems.length;
 
     // Use your total stock count function
-    const {date} = req.body
+    // const {date} = req.body
+    const { date } = req.params;
+
 
 
     const totalStockCount = await getTotalInventoryValues(items, organizationId, date);

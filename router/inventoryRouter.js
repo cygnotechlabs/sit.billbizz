@@ -16,12 +16,14 @@ const { verifyToken } = require('../controller/middleware');
 //item dropdowm
 router.get('/get-itemDropdown',verifyToken, itemDropdownController.getItemDropdowm);
 
-router.get('/get-Dashboard', dashboardController.calculateTotalInventoryValue);
+router.get('/get-inventory-Dashboard/:date',verifyToken, dashboardController.calculateTotalInventoryValue);
 
 
 // Item
 router.post('/add-item',verifyToken,checkPermission('Created a New Item'), itemController.addItem);
 router.get('/get-all-item',verifyToken,checkPermission('Viewed Item Information'), itemController.getAllItem);
+router.get('/getAll-item-sx',verifyToken,checkPermission('Viewed Item Information'), itemController.newgetAllItem);
+
 router.get('/get-one-item/:itemId',verifyToken,checkPermission('Viewed Item Information'), itemController.getAItem)
 router.put('/edit-item/:itemId',verifyToken,checkPermission('Edited Item Information'), itemController.updateItem)
 router.delete('/delete-item/:itemId',verifyToken,checkPermission('Deleted an Item'), itemController.deleteItem)
