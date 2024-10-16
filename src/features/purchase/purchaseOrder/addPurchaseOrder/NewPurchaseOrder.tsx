@@ -52,6 +52,7 @@ const NewPurchaseOrder = ({}: Props) => {
     taxMode: "",
     sourceOfSupply: "",
     destinationOfSupply: "",
+    deliveryAddress:"",
     customerId: "",
     reference: "",
     purchaseOrder: "",
@@ -65,6 +66,7 @@ const NewPurchaseOrder = ({}: Props) => {
     itemTable: [
       {
         itemId: "",
+        itemName:"",
         itemQuantity: "",
         itemSellingPrice: "",
         itemDiscount: "",
@@ -92,12 +94,13 @@ const NewPurchaseOrder = ({}: Props) => {
     vat: "",
     totalDiscount: "",
     transactionDiscount: "",
-    transactionDiscountType: "percentage",
+    transactionDiscountType: "",
     transactionDiscountAmount:"",
+    afterTaxDiscountAmount:"",
+    beforeTaxDiscountAmount:"",
     totalTaxAmount: "",
     roundOff: "",
     grandTotal: "",
-    status: "",
   });
 
 console.log(purchaseOrderState);
@@ -116,17 +119,7 @@ console.log(purchaseOrderState);
     }
   };
 
-  useEffect(() => {
-    if (openDropdownIndex !== null) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [openDropdownIndex]);
+   
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -261,45 +254,9 @@ console.log(purchaseOrderState);
     }
   };
 
-  useEffect(() => {
-    if (purchaseOrderState?.destinationOfSupply == "") {
-      setIsIntraState(false);
-    } else {
-      if (
-        purchaseOrderState?.sourceOfSupply !==
-        purchaseOrderState?.destinationOfSupply
-      ) {
-        setIsIntraState(true);
-      } else {
-        setIsIntraState(false);
-      }
-    }
-  }, [
-    purchaseOrderState?.sourceOfSupply,
-    purchaseOrderState?.destinationOfSupply,
-  ]);
+  
 
-  useEffect(() => {
-    const supplierUrl = `${endponits.GET_ALL_SUPPLIER}`;
-    const customerUrl = `${endponits.GET_ALL_CUSTOMER}`;
-    const paymentTermsUrl = `${endponits.GET_PAYMENT_TERMS}`;
-    const organizationUrl = `${endponits.GET_ONE_ORGANIZATION}`;
 
-    fetchData(supplierUrl, setSupplierData, AllSuppliers);
-    fetchData(customerUrl, setCustomerData, AllCustomer);
-    fetchData(paymentTermsUrl, setPaymentTerms, allPyamentTerms);
-    fetchData(organizationUrl, setOneOrganization, getOneOrganization);
-  }, []);
-
-  useEffect(() => {
-    handleDestination();
-    handleplaceofSupply();
-    fetchCountries();
-  }, [oneOrganization, selecteSupplier]);
-
-  useEffect(() => {
-    getPurchaseOrderPrefix();
-  }, []);
 
   const filterByDisplayName = (
     data: any[],
@@ -368,6 +325,8 @@ console.log(purchaseOrderState);
 
       totalTaxedAmount = totalBeforeTax  + taxAmount- totalDiscountValue;
       // console.log(totalTaxedAmount, "Before tax calculation with discount");
+      purchaseOrderState.beforeTaxDiscountAmount = totalTaxedAmount.toFixed(2);
+      purchaseOrderState.afterTaxDiscountAmount = ""
 
 
     } else {
@@ -387,13 +346,15 @@ console.log(purchaseOrderState);
           }
       // console.log(transactionDiscountValue, "transaction discount after tax");
 
-        
+
         totalTaxedAmount = totalAfterTax  -totalDiscountValue ;
+        purchaseOrderState.afterTaxDiscountAmount = totalTaxedAmount.toFixed(2);
+        purchaseOrderState.beforeTaxDiscountAmount = ""
+
 
     }
 
-    purchaseOrderState.totalTaxAmount = totalTaxedAmount.toFixed(2);
-    // console.log(totalDiscountValue, "total ... discount");
+  
 
     return  totalTaxedAmount.toFixed(2)
   };
@@ -411,15 +372,7 @@ console.log(purchaseOrderState);
     return totalAmount.toFixed(2);
   };
 
-  
 
-  useEffect(() => {
-    setPurchaseOrderState((prevState:any) => ({
-      ...prevState,
-      totalDiscount: (parseFloat(prevState.totalItemDiscount) || 0) + (parseFloat(prevState.transactionDiscountAmount) || 0),
-    }));
-  }, [purchaseOrderState.transactionDiscountAmount, purchaseOrderState.totalItemDiscount]);
-  
 
   const handleSave = async () => {
     try {
@@ -456,11 +409,85 @@ console.log(purchaseOrderState);
       }));
     }
   };
+
+
+
+
+  useEffect(() => {
+    if (purchaseOrderState?.destinationOfSupply == "") {
+      setIsIntraState(false);
+    } else {
+      if (
+        purchaseOrderState?.sourceOfSupply !==
+        purchaseOrderState?.destinationOfSupply
+      ) {
+        setIsIntraState(true);
+      } else {
+        setIsIntraState(false);
+      }
+    }
+  }, [
+    purchaseOrderState?.sourceOfSupply,
+    purchaseOrderState?.destinationOfSupply,
+  ]);
+
+  useEffect(() => {
+    const supplierUrl = `${endponits.GET_ALL_SUPPLIER}`;
+    const customerUrl = `${endponits.GET_ALL_CUSTOMER}`;
+    const paymentTermsUrl = `${endponits.GET_PAYMENT_TERMS}`;
+    const organizationUrl = `${endponits.GET_ONE_ORGANIZATION}`;
+
+    fetchData(supplierUrl, setSupplierData, AllSuppliers);
+    fetchData(customerUrl, setCustomerData, AllCustomer);
+    fetchData(paymentTermsUrl, setPaymentTerms, allPyamentTerms);
+    fetchData(organizationUrl, setOneOrganization, getOneOrganization);
+  }, []);
+
+  useEffect(() => {
+    handleDestination();
+    handleplaceofSupply();
+    fetchCountries();
+  }, [oneOrganization, selecteSupplier]);
+
+  useEffect(() => {
+    getPurchaseOrderPrefix();
+  }, []);
+
+  useEffect(() => {
+    if (purchaseOrderState?.discountType === "Item line") {
+      setPurchaseOrderState?.((prevData: any) => ({
+        ...prevData,
+        transactionDiscountType: "",   
+        transactionDiscountAmount: "",
+      }));
+    }
+  }, [purchaseOrderState?.discountType]);
+  
+  
+  useEffect(() => {
+    if (openDropdownIndex !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdownIndex]);
+
+  useEffect(() => {
+    setPurchaseOrderState((prevState:any) => ({
+      ...prevState,
+      totalDiscount: (parseFloat(prevState.totalItemDiscount) || 0) + (parseFloat(prevState.transactionDiscountAmount) || 0),
+    }));
+  }, [purchaseOrderState.transactionDiscountAmount, purchaseOrderState.totalItemDiscount]);
+
+
   useEffect(()=>{
     handleDiscountType()
   },[discountType])
   
-  // console.log(purchaseOrderState);
 
   return (
     <div className="px-8">
@@ -509,7 +536,7 @@ console.log(purchaseOrderState);
                     {openDropdownIndex === "supplier" && (
                       <div
                         ref={dropdownRef}
-                        className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 w-[40%] space-y-1 max-h-72 overflow-y-auto  hide-scrollbar"
+                        className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 w-[30%] space-y-1 max-h-72 overflow-y-auto  hide-scrollbar"
                       >
                         <SearchBar
                           searchValue={searchValue}
@@ -725,8 +752,8 @@ console.log(purchaseOrderState);
                       {openDropdownIndex === "customer" && (
                         <div
                           ref={dropdownRef}
-                          className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  w-[40%] space-y-1 max-w-72 overflow-y-auto  hide-scrollbar"
-                          
+                          className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  space-y-1 max-w-72 overflow-y-auto  hide-scrollbar"
+                          style={{width:"50%"}}
                         >
                           <SearchBar
                             searchValue={searchValue}
@@ -937,7 +964,8 @@ console.log(purchaseOrderState);
                       <CehvronDown color="gray" />
                     </div>
                   </div>
-                </div><div>
+                </div>
+                {/* <div>
                   <label className="block text-sm mb-1 text-labelColor">
                     Tax Type
                   </label>
@@ -951,7 +979,7 @@ console.log(purchaseOrderState);
                       <option value="" className="text-gray">
                         Select Tax Type
                       </option>
-                      <option value="GST" className="text-gray">
+                      <option value="GST" className="text-gray" >
                         GST
                       </option>{" "}
                       <option value="Non Taxable" className="text-gray">
@@ -962,7 +990,7 @@ console.log(purchaseOrderState);
                       <CehvronDown color="gray" />
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
              
               <div className="border-b w-[20%] flex items-center justify-center text-textColor gap-3 my-5 py-2 border-[#EAECF0] text-sm">
@@ -985,7 +1013,7 @@ console.log(purchaseOrderState);
                         setOpenDropdownIndex(null);
                         setPurchaseOrderState((prevData: any) => ({
                           ...prevData,
-                          discountType: "Item Line",
+                          discountType: "Item line",
                         }));
                       }}
                     >
@@ -998,7 +1026,7 @@ console.log(purchaseOrderState);
                         setOpenDropdownIndex(null);
                         setPurchaseOrderState((prevData: any) => ({
                           ...prevData,
-                          discountType: "Transaction Line",
+                          discountType: "Transaction line",
                           transactionDiscountType:"percentage"
                         }));
                       }}
@@ -1092,7 +1120,7 @@ console.log(purchaseOrderState);
                   <div className="w-full text-end">
                     {" "}
                     <p className="text-end">
-                      Rs{" "}
+                      {oneOrganization?.baseCurrency}{" "}
                       {purchaseOrderState.subTotal
                         ? purchaseOrderState.subTotal
                         : "0.00"}{" "}
@@ -1120,6 +1148,31 @@ console.log(purchaseOrderState);
                     <div className="w-[150%]">
                       {" "}
                       <p>Bill Discount</p>
+                      <div className="">
+                {discountType !== "Item Line" && (
+    beforeTax ? (
+      <button
+        className="text-darkRed cursor-pointer "
+        onClick={(e) => {
+          e.preventDefault(); 
+          setBeforeTax(false);
+        }}
+      >
+        Apply After Tax
+      </button>
+    ) : (
+      <button
+        className="text-darkRed cursor-pointer"
+        onClick={(e) => {
+          e.preventDefault(); 
+          setBeforeTax(true);
+        }}
+      >
+        Apply Before Tax
+      </button>
+    )
+  )}
+             </div>
                     </div>
   
                     <div className=" ">
@@ -1148,7 +1201,7 @@ console.log(purchaseOrderState);
                         </div>
                       </div>
                     </div>
-                    <div className="w-full text-end">
+                    <div className="w-full text-end ">
                       {" "}
                       <p className="text-end">
                         <p className="text-end">
@@ -1161,29 +1214,7 @@ console.log(purchaseOrderState);
                     </div>
                   </div>
                 )}
-              {discountType !== "Item Line" && (
-  beforeTax ? (
-    <button
-      className="text-darkRed cursor-pointer"
-      onClick={(e) => {
-        e.preventDefault(); 
-        setBeforeTax(false);
-      }}
-    >
-      Apply After Tax
-    </button>
-  ) : (
-    <button
-      className="text-darkRed cursor-pointer"
-      onClick={(e) => {
-        e.preventDefault(); 
-        setBeforeTax(true);
-      }}
-    >
-      Apply Before Tax
-    </button>
-  )
-)}
+          
 
 {discountType !== "Transaction Line" && (
   <div className="flex ">
@@ -1199,63 +1230,65 @@ console.log(purchaseOrderState);
   </div>
 )}
 
-  
-                {isIntraState ? (
-                  <div className="flex ">
-                    <div className="w-[75%]">
-                      {" "}
-                      <p> IGST</p>
-                    </div>
-                    <div className="w-full text-end">
-                      {" "}
-                      <p className="text-end">
-                        {oneOrganization.baseCurrency}{" "}
-                        {purchaseOrderState.igst
-                          ? purchaseOrderState.igst
-                          : "0.00"}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <>
+<div>
+    
+                  {isIntraState ? (
                     <div className="flex ">
                       <div className="w-[75%]">
                         {" "}
-                        <p> SGST</p>
+                        <p> IGST</p>
                       </div>
                       <div className="w-full text-end">
                         {" "}
                         <p className="text-end">
                           {oneOrganization.baseCurrency}{" "}
-                          {purchaseOrderState.sgst
-                            ? purchaseOrderState.sgst
+                          {purchaseOrderState.igst
+                            ? purchaseOrderState.igst
                             : "0.00"}
                         </p>
                       </div>
                     </div>
-  
-                    <div className="flex ">
-                      <div className="w-[75%]">
-                        {" "}
-                        <p> CGST</p>
+                  ) : (
+                    <>
+                      <div className="flex ">
+                        <div className="w-[75%]">
+                          {" "}
+                          <p> SGST</p>
+                        </div>
+                        <div className="w-full text-end">
+                          {" "}
+                          <p className="text-end">
+                            {oneOrganization.baseCurrency}{" "}
+                            {purchaseOrderState.sgst
+                              ? purchaseOrderState.sgst
+                              : "0.00"}
+                          </p>
+                        </div>
                       </div>
-                      <div className="w-full text-end">
-                        {" "}
-                        <p className="text-end">
-                          {oneOrganization.baseCurrency}{" "}
-                          {purchaseOrderState.cgst
-                            ? purchaseOrderState.cgst
-                            : "0.00"}
-                        </p>
+    
+                      <div className="flex ">
+                        <div className="w-[75%]">
+                          {" "}
+                          <p> CGST</p>
+                        </div>
+                        <div className="w-full text-end">
+                          {" "}
+                          <p className="text-end">
+                            {oneOrganization.baseCurrency}{" "}
+                            {purchaseOrderState.cgst
+                              ? purchaseOrderState.cgst
+                              : "0.00"}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
+  </div>
   
                 <div className="flex ">
                   <div className="w-[75%]">
                     {" "}
-                    <p> Total Taxed Amount</p>
+               <p> Total Taxable Amount</p>
                   </div>
                   <div className="w-full text-end">
                     {" "}
@@ -1274,8 +1307,8 @@ console.log(purchaseOrderState);
                   <div className="w-full text-end">
                     {" "}
                     <p className="text-end">
-                      Rs{" "}
-                      {purchaseOrderState.otherExpense
+                    {oneOrganization?.baseCurrency}{" "}
+                    {purchaseOrderState.otherExpense
                         ? purchaseOrderState.otherExpense
                         : "0.00"}
                     </p>
@@ -1289,8 +1322,8 @@ console.log(purchaseOrderState);
                   <div className="w-full text-end">
                     {" "}
                     <p className="text-end">
-                      Rs{" "}
-                      {purchaseOrderState.freight
+                    {oneOrganization?.baseCurrency}{" "}
+                    {purchaseOrderState.freight
                         ? purchaseOrderState.freight
                         : "0.00"}
                     </p>
