@@ -6,14 +6,16 @@ export const endponits = {
   GET_COUNTRY_DATA: `get-countries-data`,
   GET_CURRENCY_LIST: `get-currency`,
  
-  //Sales
-  ADD_SALES_SETTINGS:`add-sales-settings`,
-  ADD_SALES_INVOICE_SETTINGS:"add-salesInvoice-settings",
-  ADD_SALES_DELIVARY_CHALLANS: "add-deliveryChellans",
-  GET_PREFIX:"get-prefix",
-  ADD_PREFIX:"add-prefix",
-  EDIT_PREFIX:'edit-prefix',
-  STATUS_PREFIX:'status-prefix',
+   //Sales
+   ADD_SALES_SETTINGS:`add-sales-settings`,
+   ADD_SALES_INVOICE_SETTINGS:"add-salesInvoice-settings",
+   ADD_SALES_DELIVARY_CHALLANS: "add-deliveryChellans",
+   GET_PREFIX:"get-prefix",
+   ADD_PREFIX:"add-prefix",
+   EDIT_PREFIX:'edit-prefix',
+   STATUS_PREFIX:'status-prefix',
+   ADD_SALES_QUOTE:"add-sales-quotes",
+   GET_LAST_SALES_QUOTE_PREFIX:"get-last-sales-quotes-prefix",
  
   // Organisation Invoices
   ADD_INVOICE_SETTINGS: "add-invoice-settings",
@@ -76,6 +78,8 @@ GET_ALL_ITEMS_Dropdown: `get-itemDropdown`,
   GET_ONE_CURRENCY: (id: string) => `/view-currency/${id}`,
  
   // Inventory
+  GET_INVENTORY_DASHBOARD:`/get-inventory-Dashboard`,
+
   // Settings/Taxes
   // Gst
   GET_ALL_TAX: "get-tax",

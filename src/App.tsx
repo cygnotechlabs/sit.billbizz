@@ -1,30 +1,34 @@
+import React, { lazy, Suspense } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
-import Login from './features/login/Login';
-import Otp from './features/login/Otp';
-import Layout from './layout/Layout';
-import SettingsLayout from './layout/SettingsLayout';
-import Chatboat from './pages/Chatboat/Chatboat';
-import Dashboard from './pages/Dashboard';
-import ErrorPage from './pages/Error';
-import LandingHome from './pages/LandingPage/LandingHome';
 import AccountantRoutes from './routes/AccountantRoutes';
 import CustomerRoutes from './routes/CustomerRoutes';
-import ExpenseRoutes from './routes/ExpenseRoutes';
 import InventoryRoutes from './routes/InventoryRoutes';
 import PurchaseRoutes from './routes/PurchaseRoutes';
 import SalesRoutes from './routes/SalesRoutes';
-import SettingsRoutes from './routes/SettingsRoutes';
+import ExpenseRoutes from './routes/ExpenseRoutes';
 import StaffRoutes from './routes/StaffRoutes';
 import SupplierRoutes from './routes/SupplierRoutes';
+import SettingsRoutes from './routes/SettingsRoutes';
 
-function App() {
+// Lazy imports of components
+const Login = lazy(() => import('./features/login/Login'));
+const Otp = lazy(() => import('./features/login/Otp'));
+const Layout = lazy(() => import('./layout/Layout'));
+const SettingsLayout = lazy(() => import('./layout/SettingsLayout'));
+const Chatboat = lazy(() => import('./pages/Chatboat/Chatboat'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ErrorPage = lazy(() => import('./pages/Error'));
+const LandingHome = lazy(() => import('./pages/LandingPage/LandingHome'));
+
+
+const App: React.FC = () => {
   const { isAuthenticated } = useAuth();
 
   const routes = [
     {
       path: '/',
-      element: isAuthenticated ? <Layout children /> : <Navigate to="/login" replace />,
+      element: isAuthenticated ? <Layout children/> : <Navigate to="/login" replace />,
       children: [
         { path: 'dashboard', element: <Dashboard /> },
         ...AccountantRoutes,
@@ -39,7 +43,7 @@ function App() {
     },
     {
       path: '/',
-      element: isAuthenticated ? <SettingsLayout children /> : <Navigate to="/login" replace />,
+      element: isAuthenticated ? <SettingsLayout children/> : <Navigate to="/login" replace />,
       children: [{ path: '', element: <Navigate to="/login" replace /> }, ...SettingsRoutes],
     },
     {
@@ -65,7 +69,12 @@ function App() {
   ];
 
   const element = useRoutes(routes);
-  return <>{element}</>;
-}
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      {element}
+    </Suspense>
+  );
+};
 
 export default App;

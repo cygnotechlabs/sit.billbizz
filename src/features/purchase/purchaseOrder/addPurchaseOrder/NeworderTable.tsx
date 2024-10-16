@@ -12,7 +12,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 type Row = {
   itemName: string;
-  itemImage: string;
+  itemImage?: string;
   itemId: string;
   itemQuantity: string;
   itemSellingPrice: string;
@@ -22,21 +22,21 @@ type Row = {
   itemSgst: string;
   itemIgst: string;
   itemDiscountType: string;
-  itemStock:string;
+  itemStock: string;
 };
 
 type Props = {
   purchaseOrderState?: PurchaseOrder;
-  isIntraState?:Boolean;
+  isIntraState?: Boolean;
   setPurchaseOrderState?: (value: any) => void;
-  oneOrganization?:any
+  oneOrganization?: any;
 };
 
 const NewOrderTable = ({
   purchaseOrderState,
   setPurchaseOrderState,
   isIntraState,
-  oneOrganization
+  oneOrganization,
 }: Props) => {
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [openDropdownType, setOpenDropdownType] = useState<string | null>(null);
@@ -57,7 +57,7 @@ const NewOrderTable = ({
       itemCgst: "",
       itemIgst: "",
       itemDiscountType: "percentage",
-      itemStock:"",
+      itemStock: "",
     },
   ]);
 
@@ -98,9 +98,9 @@ const NewOrderTable = ({
       itemSellingPrice: "",
       itemDiscount: "",
       itemAmount: "",
-      itemSgst: "",
-      itemCgst: "",
-      itemIgst: "",
+      itemSgst: 0,
+      itemCgst: 0,
+      itemIgst: 0,
       itemDiscountType: "percentage",
     };
     const updatedRows = [...rows, newRow];
@@ -110,7 +110,7 @@ const NewOrderTable = ({
   const handleItemSelect = (item: any, index: number) => {
     setOpenDropdownId(null);
     setOpenDropdownType(null);
-  
+
     const newRows = [...rows];
     newRows[index].itemName = item.itemName;
     newRows[index].itemImage = item.itemImage;
@@ -119,26 +119,50 @@ const NewOrderTable = ({
     newRows[index].itemStock = item.reorderPoint;
     newRows[index].itemId = item._id;
     const sellingPrice = parseFloat(newRows[index].itemSellingPrice);
-    const discountedPrice = calculateDiscountPrice(sellingPrice, newRows[index].itemDiscount, newRows[index].itemDiscountType);
-    
-    const { itemAmount, cgstAmount, sgstAmount, igstAmount } = calculateTax(discountedPrice, items, index, isIntraState as boolean);
-  
+    const discountedPrice = calculateDiscountPrice(
+      sellingPrice,
+      newRows[index].itemDiscount,
+      newRows[index].itemDiscountType
+    );
+
+    const { itemAmount, cgstAmount, sgstAmount, igstAmount } = calculateTax(
+      discountedPrice,
+      items,
+      index,
+      isIntraState as boolean
+    );
+
     newRows[index].itemAmount = itemAmount;
     newRows[index].itemCgst = cgstAmount;
     newRows[index].itemSgst = sgstAmount;
     newRows[index].itemIgst = igstAmount;
-  
+
     setRows(newRows);
-    
-    setPurchaseOrderState?.((prevData: any) => ({
-      ...prevData,
-      itemTable: newRows,
-    }));
+
+    setPurchaseOrderState?.((prevData: any) => {
+      const updatedItem = { ...newRows[index] };
+      delete updatedItem.itemImage;
+
+      const updatedItemTable = prevData.itemTable.map(
+        (row: any, idx: number) => {
+          return idx === index ? updatedItem : row;
+        }
+      );
+
+      return {
+        ...prevData,
+        itemTable: updatedItemTable,
+      };
+    });
   };
-  
-  const calculateDiscountPrice = (totalSellingPrice: number, discountValue: string, discountType: string) => {
+
+  const calculateDiscountPrice = (
+    totalSellingPrice: number,
+    discountValue: string,
+    discountType: string
+  ) => {
     let discount = parseFloat(discountValue) || 0;
-  
+
     if (discountType === "percentage") {
       if (discount > 100) {
         discount = 100;
@@ -153,17 +177,22 @@ const NewOrderTable = ({
       return totalSellingPrice - discount;
     }
   };
-  
-  const calculateTax = (discountedPrice: number, items: any, index: number, isIntraState: boolean) => {
+
+  const calculateTax = (
+    discountedPrice: number,
+    items: any,
+    index: number,
+    isIntraState: boolean
+  ) => {
     const cgstPercentage = items[index]?.cgst || 0;
     const sgstPercentage = items[index]?.sgst || 0;
     const igstPercentage = items[index]?.igst || 0;
-  
+
     if (!isIntraState) {
       const cgstAmount = ((discountedPrice * cgstPercentage) / 100).toFixed(2);
       const sgstAmount = ((discountedPrice * sgstPercentage) / 100).toFixed(2);
       return {
-        itemAmount: (discountedPrice + parseFloat(cgstAmount) + parseFloat(sgstAmount)).toFixed(2),
+        itemAmount: discountedPrice.toFixed(2),
         cgstAmount,
         sgstAmount,
         igstAmount: "0.00",
@@ -171,7 +200,7 @@ const NewOrderTable = ({
     } else {
       const igstAmount = ((discountedPrice * igstPercentage) / 100).toFixed(2);
       return {
-        itemAmount: (discountedPrice + parseFloat(igstAmount)).toFixed(2),
+        itemAmount: discountedPrice.toFixed(2),
         cgstAmount: "0.00",
         sgstAmount: "0.00",
         igstAmount,
@@ -182,55 +211,81 @@ const NewOrderTable = ({
   const handleRowChange = (index: number, field: keyof Row, value: string) => {
     const newRows = [...rows];
     newRows[index] = { ...newRows[index], [field]: value };
-  
+
     const quantity = parseFloat(newRows[index].itemQuantity) || 0;
-    const stock = parseFloat(newRows[index].itemStock) || 0; 
+    const stock = parseFloat(newRows[index].itemStock) || 0;
     const sellingPrice = parseFloat(newRows[index].itemSellingPrice) || 0;
-  
+
     if (quantity > stock) {
-      toast.error("Quantity exceeds available stock!"); 
+      toast.error("Quantity exceeds available stock!");
       return;
     }
-  
+
     const totalSellingPrice = quantity * sellingPrice;
-  
-    const discountedPrice = calculateDiscountPrice(totalSellingPrice, newRows[index].itemDiscount, newRows[index].itemDiscountType);
-  
-    const { itemAmount, cgstAmount, sgstAmount, igstAmount } = calculateTax(discountedPrice, items, index, isIntraState as boolean);
-  
+
+    const discountedPrice = calculateDiscountPrice(
+      totalSellingPrice,
+      newRows[index].itemDiscount,
+      newRows[index].itemDiscountType
+    );
+
+    const { itemAmount, cgstAmount, sgstAmount, igstAmount } = calculateTax(
+      discountedPrice,
+      items,
+      index,
+      isIntraState as boolean
+    );
+
     newRows[index].itemAmount = itemAmount;
     newRows[index].itemCgst = cgstAmount;
     newRows[index].itemSgst = sgstAmount;
     newRows[index].itemIgst = igstAmount;
-  
+
     setRows(newRows);
-  
-    setPurchaseOrderState?.((prevData: any) => ({
-      ...prevData,
-      itemTable: newRows,
-    }));
+
+    setPurchaseOrderState?.((prevData: any) => {
+      const updatedItem = { ...newRows[index] };
+      delete updatedItem.itemImage;
+
+      const updatedItemTable = prevData.itemTable.map(
+        (row: any, idx: number) => {
+          return idx === index ? updatedItem : row;
+        }
+      );
+
+      return {
+        ...prevData,
+        itemTable: updatedItemTable,
+      };
+    });
   };
 
-
-useEffect(() => {
-  const updatedRows = rows.map((row, index) => {
-      const discountedPrice = parseFloat(row.itemAmount) || 0; 
-      const taxDetails = calculateTax(discountedPrice, items, index, isIntraState as boolean);
+  useEffect(() => {
+    const updatedRows = rows.map((row, index) => {
+      const discountedPrice = parseFloat(row.itemAmount) || 0;
+      const taxDetails = calculateTax(
+        discountedPrice,
+        items,
+        index,
+        isIntraState as boolean
+      );
       return {
-          ...row,
-          itemAmount: taxDetails.itemAmount,
-          itemCgst: taxDetails.cgstAmount,
-          itemSgst: taxDetails.sgstAmount,
-          itemIgst: taxDetails.igstAmount,
+        ...row,
+        itemAmount: taxDetails.itemAmount,
+        itemCgst: taxDetails.cgstAmount,
+        itemSgst: taxDetails.sgstAmount,
+        itemIgst: taxDetails.igstAmount,
       };
-  });
+    });
 
-  setRows(updatedRows);
-}, [purchaseOrderState?.destinationOfSupply, purchaseOrderState?.sourceOfSupply, items, isIntraState]);
-  
-  
-  
-  
+    setRows(updatedRows);
+  }, [
+    purchaseOrderState?.destinationOfSupply,
+    purchaseOrderState?.sourceOfSupply,
+    items,
+    isIntraState,
+  ]);
+
   const getAllItems = async () => {
     try {
       const url = `${endponits.GET_ALL_ITEM}`;
@@ -273,9 +328,6 @@ useEffect(() => {
       setRows(newRows);
     }
   };
-  
-  
-
 
   const calculateTotalSGST = () => {
     return rows.reduce((total, row) => {
@@ -285,13 +337,12 @@ useEffect(() => {
   };
 
   // Function to calculate total CGST
-  const calculateTotalCGST = () => { 
+  const calculateTotalCGST = () => {
     return rows.reduce((total, row) => {
       // console.log(row.itemCgst,"cgst");
 
       const cgst = !isIntraState ? parseFloat(row.itemCgst) || 0 : 0;
       return total + cgst;
-
     }, 0);
   };
 
@@ -306,20 +357,20 @@ useEffect(() => {
   // Function to calculate total item quantity
   const calculateTotalQuantity = () => {
     return rows.reduce((total, row) => {
-      const quantity = parseFloat(row.itemQuantity) || 0; 
-      return total + quantity; 
+      const quantity = parseFloat(row.itemQuantity) || 0;
+      return total + quantity;
     }, 0);
   };
 
   const calculateDiscount = () => {
-    if (purchaseOrderState?.discountType !== "Item Line") {
+    if (purchaseOrderState?.discountType !== "Transaction Line") {
       return rows.reduce((total, row) => {
         const discount = parseFloat(row.itemDiscount) || 0;
         const quantity = parseFloat(row.itemQuantity) || 0;
         const sellingPrice = parseFloat(row.itemSellingPrice) || 0;
-        
+
         const totalSellingPrice = sellingPrice * quantity;
-  
+
         if (row.itemDiscountType === "percentage") {
           return total + (totalSellingPrice * discount) / 100;
         } else {
@@ -327,18 +378,19 @@ useEffect(() => {
         }
       }, 0);
     }
-  };
-  
-// Function to calculate the total subtotal
-const calculateTotalSubtotal = () => {
-  return rows.reduce((total, row) => {
-    const itemQuantity = parseFloat(row.itemQuantity) || 0;  
-    const itemPrice = parseFloat(row.itemSellingPrice) || 0;       
-    const subtotal = itemQuantity * itemPrice;              
-    return total + subtotal;                                 
-  }, 0);
-};
 
+    return 0;
+  };
+
+  // Function to calculate the total subtotal
+  const calculateTotalSubtotal = () => {
+    return rows.reduce((total, row) => {
+      const itemQuantity = parseFloat(row.itemQuantity) || 0;
+      const itemPrice = parseFloat(row.itemSellingPrice) || 0;
+      const subtotal = itemQuantity * itemPrice;
+      return total + subtotal;
+    }, 0);
+  };
 
   useEffect(() => {
     const totalQuantity = calculateTotalQuantity();
@@ -346,28 +398,45 @@ const calculateTotalSubtotal = () => {
     const totalCGST = calculateTotalCGST();
     const totalIGST = calculateTotalIGST();
     const totalSellingPrice = calculateTotalSubtotal();
-    const totalDiscount =calculateDiscount();
+    const totalDiscount = calculateDiscount();
+
+    console.log(totalDiscount, "jsdgh");
 
     setPurchaseOrderState?.((prevData: any) => ({
       ...prevData,
-      totalItem: totalQuantity, 
-      sgst: totalSGST,             
-      cgst: totalCGST,             
-      igst: totalIGST,    
-      subTotal: totalSellingPrice,    
-      totalDiscount:totalDiscount,     
+      totalItem: totalQuantity,
+      sgst: totalSGST,
+      cgst: totalCGST,
+      igst: totalIGST,
+      subTotal: totalSellingPrice,
+      totalItemDiscount: totalDiscount,
     }));
   }, [rows, setPurchaseOrderState]);
-  
+
   const filteredItems = () => {
-    return items.filter((item:any) =>
-      item.itemName?.toLowerCase().includes(searchValue.toLowerCase())
-    );
+    return items.filter((item: any) => {
+      const isSelected = rows.find((row) => row.itemId === item._id);
+      return (
+        !isSelected &&
+        item.itemName.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    });
   };
-console.log();
 
-
-
+  useEffect(() => {
+    if (purchaseOrderState?.discountType === "Transaction Line") {
+      setRows((prevData: any) => {
+        if (Array.isArray(prevData)) {
+          return prevData.map((item) => ({
+            ...item,
+            itemDiscountType: "percentage",
+            itemDiscount: "",
+          }));
+        }
+        return [];
+      });
+    }
+  }, [purchaseOrderState?.discountType]);
 
   useEffect(() => {
     getAllItems();
@@ -407,16 +476,16 @@ console.log();
                   >
                     {row.itemName ? (
                       <div className="cursor-pointer gap-2 grid grid-cols-12 appearance-none items-center justify-center h-9 text-zinc-400 bg-white text-sm">
-                          <div className="flex items-start col-span-4">
-                            <img
-                              className="rounded-full h-10 w-10 "
-                              src={row.itemImage}
-                              alt=""
-                            />
-                          </div>
-                          <div className="col-span-8  text-start">
-                            <p className="text-textColor">{row.itemName}</p>
-                          </div>
+                        <div className="flex items-start col-span-4">
+                          <img
+                            className="rounded-full h-10 w-10 "
+                            src={row.itemImage}
+                            alt=""
+                          />
+                        </div>
+                        <div className="col-span-8  text-start">
+                          <p className="text-textColor">{row.itemName}</p>
+                        </div>
                       </div>
                     ) : (
                       <div className="cursor-pointer flex appearance-none items-center justify-center h-9 text-zinc-400 bg-white text-sm">
@@ -441,7 +510,7 @@ console.log();
                             <div
                               key={idx}
                               className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointer border border-slate-400 rounded-lg bg-lightPink"
-                              onClick={() => handleItemSelect(item, index)} 
+                              onClick={() => handleItemSelect(item, index)}
                             >
                               <div className="col-span-2 flex justify-center">
                                 <img
@@ -467,18 +536,18 @@ console.log();
                           ))
                         ) : (
                           <div className="text-center border-slate-400 border rounded-lg">
-                            <p className="text-[red] text-sm py-4">Items Not Found!</p>
+                            <p className="text-[red] text-sm py-4">
+                              Items Not Found!
+                            </p>
                           </div>
                         )}
                         <div>
-                      <Link to={"/inventory/Item/new"}>
-                          <button
-            className="bg-darkGreen text-darkRed rounded-lg py-4 px-6 flex items-center text-sm font-bold border-slate-400 border gap-2 w-full hover:bg-lightRed"
-          >
-            <PlusCircle color="darkRed" />
-         <p>   Add New Item</p>
-          </button>
-                      </Link>
+                          <Link to={"/inventory/Item/new"}>
+                            <button className="bg-darkGreen text-darkRed rounded-lg py-4 px-6 flex items-center text-sm font-bold border-slate-400 border gap-2 w-full hover:bg-lightRed">
+                              <PlusCircle color="darkRed" />
+                              <p> Add New Item</p>
+                            </button>
+                          </Link>
                         </div>
                       </div>
                     )}
@@ -493,7 +562,13 @@ console.log();
                       handleRowChange(index, "itemQuantity", e.target.value)
                     }
                   />
-                <div className="text-start text-[10px]">  <p>Stock OnHand:<b className="text-[12px]">{row.itemStock}</b> </p></div>
+                  <div className="text-start text-[10px]">
+                    {" "}
+                    <p>
+                      Stock OnHand:
+                      <b className="text-[12px]">{row.itemStock}</b>{" "}
+                    </p>
+                  </div>
                 </td>
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input
@@ -507,51 +582,57 @@ console.log();
                     disabled
                   />
                 </td>
-                  <td className="py-2.5 px-4 border-y border-tableBorder">
-                    <input
-                    disabled
-                      type="text"
-                      placeholder="0"
-                      className="w-[50px]  focus:outline-none text-center"
-                      value={!isIntraState ? (parseFloat(row.itemCgst) + parseFloat(row.itemSgst)).toFixed(2) : row.itemIgst }
-                    
-                    />
-                  </td>
-                {purchaseOrderState?.discountType !== "Transaction Line" && (
-
                 <td className="py-2.5 px-4 border-y border-tableBorder">
-                  <div className="flex items-center justify-center gap-2 w-full">
-                    <input
-                      type="text"
-                      placeholder="0"
-                      className="w-[50px]  focus:outline-none text-center"
-                      value={row.itemDiscount}
-                      onChange={(e) =>
-                        handleRowChange(index, "itemDiscount", e.target.value)
-                      }
-                    />
-                    <div className="relative">
-                      <select
+                  <input
+                    disabled
+                    type="text"
+                    placeholder="0"
+                    className="w-[50px]  focus:outline-none text-center"
+                    value={
+                      !isIntraState
+                        ? (
+                            parseFloat(row.itemCgst) + parseFloat(row.itemSgst)
+                          ).toFixed(2)
+                        : row.itemIgst
+                    }
+                  />
+                </td>
+                {purchaseOrderState?.discountType !== "Transaction Line" && (
+                  <td className="py-2.5 px-4 border-y border-tableBorder">
+                    <div className="flex items-center justify-center gap-2 w-full">
+                      <input
+                        type="text"
+                        placeholder="0"
+                        className="w-[50px]  focus:outline-none text-center"
+                        value={row.itemDiscount}
                         onChange={(e) =>
-                          handleRowChange(
-                            index,
-                            "itemDiscountType",
-                            e.target.value
-                          )
+                          handleRowChange(index, "itemDiscount", e.target.value)
                         }
-                        value={row.itemDiscountType}
-                        className="text-xs appearance-none w-[60px] p-1 text-zinc-400 bg-white border border-inputBorder rounded-lg"
-                      >
-                        <option value="percentage">%</option>
-                        <option value={oneOrganization.baseCurrency}>{oneOrganization.baseCurrency}</option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <ChevronDown color="gray" height={15} width={15} />
+                      />
+                      <div className="relative">
+                        <select
+                          onChange={(e) =>
+                            handleRowChange(
+                              index,
+                              "itemDiscountType",
+                              e.target.value
+                            )
+                          }
+                          value={row.itemDiscountType}
+                          className="text-xs appearance-none w-[60px] p-1 text-zinc-400 bg-white border border-inputBorder rounded-lg"
+                        >
+                          <option value="percentage">%</option>
+                          <option value="currency">
+                            {oneOrganization?.baseCurrency}
+                          </option>
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                          <ChevronDown color="gray" height={15} width={15} />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-                                )}
+                  </td>
+                )}
 
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input
@@ -578,10 +659,10 @@ console.log();
           </tbody>
         </table>
       </div>
-      <div className="w-[60%] mt-6">
+      <div className="w-[60%] mt-0">
         <button
-        type="button"
-          className="bg-darkGreen text-darkRed rounded-lg py-2 px-6 flex items-center text-sm font-bold"
+          type="button"
+          className="bg-darkGreen text-darkRed rounded-lg py-2 px-1 flex items-center text-sm font-bold"
           onClick={addRow}
         >
           <PlusCircle color="darkRed" />
@@ -589,7 +670,6 @@ console.log();
         </button>
       </div>
       <Toaster position="top-center" reverseOrder={true} />
-
     </div>
   );
 };

@@ -3,7 +3,6 @@ import CheveronLeftIcon from "../../../assets/icons/CheveronLeftIcon";
 import { useEffect, useRef, useState } from "react";
 import CehvronDown from "../../../assets/icons/CehvronDown";
 import SearchBar from "../../../Components/SearchBar";
-import PlusCircle from "../../../assets/icons/PlusCircle";
 import Button from "../../../Components/Button";
 import PrinterIcon from "../../../assets/icons/PrinterIcon";
 import AddSupplierModal from "../../Supplier/SupplierHome/AddSupplierModal";
@@ -278,23 +277,13 @@ const NewBills = ({}: Props) => {
             <p className="font-bold text-base">Add Item</p>
             <NeworderTable />
           </div>
-          <button className="mt-1">
-            <p className="text-darkRed my-3 text-sm flex gap-2 items-center">
-              <PlusCircle color="darkRed" />
-              <b> Add Item</b>
-            </p>
-          </button>{" "}
-          <br/>
-          {/* <button className="mt-1">
-            <p className="text-darkRed my-3 text-sm flex gap-2 items-center">
-              <PlusCircle color="darkRed" />
-              <b>View more</b>
-            </p>
-          </button>{" "} */}
+      
+       
+         
           <div>
           
-  <button className="mt-1" onClick={toggleView}>
-    <p className="text-black my-3 text-sm flex gap-2 items-center">
+  <button className="mt-0" onClick={toggleView}>
+    <p className="text-black my-3 text-sm flex gap-1 items-center">
       <ScanEye/>
       <b>{isExpanded ? 'View less' : 'View more'}</b>
     </p>
@@ -469,8 +458,12 @@ const NewBills = ({}: Props) => {
                 <p className="text-xl">0</p>
               </div>
               <div className="col-span-9 mt-1">
-                <p>Discount Apply after tax </p>
-              </div>
+  <p>
+    Bill Discount Apply 
+    <br />
+    after <span className="red-text">tax</span>
+  </p>
+</div>
 
               <div className="col-span-3 mt-1">
                 <p className="text-xl">Rs 0.00</p>

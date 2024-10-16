@@ -1,6 +1,6 @@
 import React from 'react';
 import { Bar, BarChart, Cell, LabelList, ResponsiveContainer, Tooltip, TooltipProps, XAxis, YAxis } from 'recharts';
-import Tooltips from '../../../Components/tooltip/Tooltip';
+import Tooltips from '../../Components/tooltip/Tooltip';
 
 const colors = ['#f2c6b8', '#a72522', '#fbe6c3', '#eef1d6', '#e3e7e5', '#8fd3f4', '#ffcc00'];
 
@@ -60,7 +60,7 @@ const CustomBar: React.FC<CustomBarProps> = ({ x = 0, y = 0, width = 0, height =
   );
 };
 
-const RepeatPurchaseRate: React.FC = () => {
+const HoriBarChart: React.FC = () => {
   return (
     <div className="bg-white rounded-lg w-full px-8">
       <h3 className="text-base text-textColor mt-6 font-semibold">Stoke Levels</h3>
@@ -98,4 +98,4 @@ const RepeatPurchaseRate: React.FC = () => {
   );
 };
 
-export default RepeatPurchaseRate;
+export default HoriBarChart;
