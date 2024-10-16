@@ -163,7 +163,7 @@ exports.calculateTotalInventoryValue = async (req, res) => {
 
     const totalStockCount = await getTotalInventoryValues(items, organizationId, date);
     const { inventoryValueChange , salesValueChange} = totalStockCount
-    const { topSellingProducts , stockLevel} = topSelling
+    const { topSellingProducts , stockLevel ,frequentlyOrderedItems} = topSelling
   
     // Send the response with all calculated data
     res.status(200).json({
@@ -176,6 +176,7 @@ exports.calculateTotalInventoryValue = async (req, res) => {
       inventoryValueChange,
         salesValueChange ,
         topSellingProducts,
+        frequentlyOrderedItems,
         stockLevel,
       // totalStockCount
     });
@@ -225,7 +226,7 @@ const topSellingProductsUtil = async (organizationId) => {
 
         // Add the product details to the topSellingProducts array
         topSellingProducts.push({
-          itemName: item.name,
+          itemName: item.itemName,
           itemId: item._id,
           saleVolume: saleVolume,
           unitSold: unitSold,
@@ -243,15 +244,22 @@ const topSellingProductsUtil = async (organizationId) => {
         });
       }
     }
-
+    console.log( "before sort",topSellingProducts);
+    
+    
     // Sort the topSellingProducts by unitSold in descending order
-    topSellingProducts.sort((a, b) => b.unitSold - a.unitSold);
+    topSellingProducts.sort((a, b) => b.saleVolume - a.saleVolume);
+    const frequentlyOrderedItems = topSellingProducts.sort((a, b) => b.unitSold - a.unitSold);
+    console.log( "after sort",topSellingProducts);
 
     // Sort the stockLevel array by stock value (currentStock) in descending order
     stockLevel.sort((a, b) => b.stock - a.stock);
+    topSellingProducts = topSellingProducts.slice(0, 5);
+    console.log( "after limit to 5",topSellingProducts);
 
+    stockLevel = stockLevel.slice(0, 5);
     // Return both topSellingProducts and stockLevel
-    return { topSellingProducts, stockLevel };
+    return { topSellingProducts, stockLevel , frequentlyOrderedItems};
   } catch (error) {
     console.error("Error fetching top-selling products or stock levels:", error);
     throw new Error("An error occurred while calculating top-selling products or stock levels.");
