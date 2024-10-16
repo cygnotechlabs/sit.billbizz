@@ -169,9 +169,9 @@ exports.calculateTotalInventoryValue = async (req, res) => {
     res.status(200).json({
       totalInventoryValue, // Calculated using costPrice
       totalSaleValue, // Calculated using sellingPrice
-      underStockItems, // Items where totalStock <= reorderPoint
+      // underStockItems, // Items where totalStock <= reorderPoint
       underStockItemsCount, // Count of underStockItems
-      recentlyAddedItems, // Items added in the current month
+      // recentlyAddedItems, // Items added in the current month
       recentlyAddedItemsCount, // Count of items added in the current month
       inventoryValueChange,
         salesValueChange ,
@@ -238,7 +238,7 @@ const topSellingProductsUtil = async (organizationId) => {
       if (latestTrack) {
         stockLevel.push({
           stock: latestTrack.currentStock,
-          itemName: item.name,
+          itemName: item.itemName,
           itemId: item._id,
         });
       }

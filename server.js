@@ -13,6 +13,9 @@ require('./database/connection/connection')
 // Increase the limit for JSON payloads
 server.use(express.json({ limit: '10mb' })); // Set limit to 10MB
 
+// Increase the limit for URL-encoded payloads
+server.use(express.urlencoded({ limit: '10mb', extended: true }));// Set limit to 10MB
+
 server.use(cors())
 
 server.use(express.json())
