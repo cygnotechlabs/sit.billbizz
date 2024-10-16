@@ -245,7 +245,7 @@ const topSellingProductsUtil = async (organizationId) => {
       }
     }
     
-    const frequentlyOrderedItems = topSellingProduct.sort((a, b) => b.unitSold - a.unitSold).slice(0, 5);
+    const frequentlyOrderedItems = topSellingProduct.sort((a, b) => b.unitSold - a.unitSold).slice(0, 4);
 
     // Sort the topSellingProducts by unitSold in descending order
     const topSellingProducts = topSellingProduct.sort((a, b) => b.saleVolume - a.saleVolume).slice(0, 5);
