@@ -32,7 +32,7 @@ const products = [
   },
 ];
 
-function ProductsDashTable({}: Props) {
+function TopDataTable({}: Props) {
   return (
     <div className="bg-white p-6 rounded-lg w-[100%]">
       <h3 className="text-base text-textColor font-semibold mb-5">
@@ -96,4 +96,4 @@ function ProductsDashTable({}: Props) {
   );
 }
 
-export default ProductsDashTable;
+export default TopDataTable;
