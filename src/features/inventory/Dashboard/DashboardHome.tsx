@@ -5,7 +5,7 @@ import Ellipsis from '../../../assets/icons/Ellipsis';
 import RefreshIcon from '../../../assets/icons/RefreshIcon';
 import BarChart from "../../../Components/charts/BarChart";
 import HoriBarChart from '../../../Components/charts/HoriBarChart';
-import SemiChart from '../../../Components/charts/SemiChart';
+import PieCharts from '../../../Components/charts/Piechart';
 import TopDataTable from '../../../Components/charts/TopDataTable';
 import useApi from '../../../Hooks/useApi';
 import { endponits } from '../../../Services/apiEndpoints';
@@ -26,7 +26,7 @@ function DashboardHome({}: Props) {
       const { response, error } = apiResponse;
       if (!error && response) {
         setData(response.data);
-        // console.log(response.data, "get status");
+        console.log(response.data, "get status");
       }
     } catch (error) {
       console.error("Failed to fetch dashboard data", error);
@@ -127,16 +127,22 @@ function DashboardHome({}: Props) {
       {/* Top suppliers and supplier retention rate over time */}
       <div className="grid grid-cols-3 gap-5">
         <div className="flex justify-center col-span-2">
-          <TopDataTable/>
+          {data && data.topSellingProducts && (
+            <TopDataTable topSellingProducts={data.topSellingProducts} />
+          )}
         </div>
         <div className="flex justify-center">
           <BarChart />
         </div>
         <div className="col-span-2 flex justify-center">
-          <HoriBarChart />
+          {data && data.stockLevels && (
+            <HoriBarChart data={data.stockLevels} />
+          )}
         </div>
         <div className="flex justify-center">
-          <SemiChart />
+          {data && data.frequentlyOrderedItems && ( // Ensure frequentlyOrderedItems is present
+            <PieCharts frequentlyOrderedItems={data.frequentlyOrderedItems} /> // Pass the frequentlyOrderedItems here
+          )}
         </div>
       </div>
     </div>
