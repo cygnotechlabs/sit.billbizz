@@ -16,7 +16,7 @@ const { verifyToken } = require('../controller/middleware');
 //item dropdowm
 router.get('/get-itemDropdown',verifyToken, itemDropdownController.getItemDropdowm);
 
-router.get('/get-Dashboard',verifyToken, dashboardController.calculateTotalInventoryValue);
+router.get('/get-Dashboard', dashboardController.calculateTotalInventoryValue);
 
 
 // Item
