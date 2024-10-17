@@ -31,7 +31,6 @@ function NewAccountModal({ fetchAllAccounts }: NewAccountModalProps) {
     debitOpeningBalance: "",
     creditOpeningBalance: "",
   });
-console.log(formValues);
 
   const openModal = () => {
     setModalOpen(true);
@@ -60,7 +59,7 @@ console.log(formValues);
         closeModal();
         fetchAllAccounts(); // Fetch updated data
       } else {
-        throw new Error(response?.data?.message || 'Something went wrong');
+        throw new Error(error?.response?.data?.message || 'Something went wrong');
       }
     } catch (error: any) {
       toast.dismiss(toastId); // Dismiss the loading toast
