@@ -95,7 +95,7 @@ const navlist = [
     ],
   },
   {
-    nav: "Accountant",
+    nav: "Accounts",
     icon: squreUserRound,
     route: "/accountant",
     subhead: [
