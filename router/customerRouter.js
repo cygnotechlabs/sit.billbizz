@@ -6,6 +6,8 @@ const router = new express.Router()
 const importController = require("../controller/importCustomer")
 const customerController = require("../controller/customerCont")
 const customerSettings = require('../controller/customerSettings')
+const dashboardController = require("../controller/dashboardController")
+
 
 
 const checkPermission = require('../controller/permission');
@@ -13,6 +15,9 @@ const { verifyToken } = require('../controller/middleware');
 
 
 //Basic
+
+router.get('/get-Customer-Dashboard/:date',verifyToken,dashboardController.getCustomerStats);
+
 
 router.get('/customer-additional-data', verifyToken,customerController.getCustomerAdditionalData);
 
