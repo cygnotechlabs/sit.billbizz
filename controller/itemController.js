@@ -347,7 +347,7 @@ const updateOpeningBalanceInItemTrack = async (openingStock, itemTrackAll, prevS
     return;
   }
 
-  const diff = openingStock - prevStock;
+  const diff = openingStock - prevStock || 0;
   console.log( "Difference : ", diff );
   
 
