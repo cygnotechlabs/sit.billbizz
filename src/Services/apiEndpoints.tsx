@@ -78,6 +78,8 @@ GET_ALL_ITEMS_Dropdown: `get-itemDropdown`,
   GET_ONE_CURRENCY: (id: string) => `/view-currency/${id}`,
  
   // Inventory
+  GET_INVENTORY_DASHBOARD:`/get-inventory-Dashboard`,
+
   // Settings/Taxes
   // Gst
   GET_ALL_TAX: "get-tax",
