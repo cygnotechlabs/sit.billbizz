@@ -33,15 +33,6 @@ navigate("/landing")
       </span>
       </div>
       <div className="flex items-center gap-4 ml-auto">
-        <select
-          className="border border-outlineButton px-[0.625rem] py-2 text-outlineButton rounded-md bg-orange-100 text-xs font-medium     
-"
-        >
-          <option>Company</option>
-          <option>Other</option>
-          <option>Other</option>
-          <option>Other</option>
-        </select>
         <div className="flex items-center gap-2">
           <Notification />
           <RefferEarn />

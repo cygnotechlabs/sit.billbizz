@@ -47,11 +47,12 @@ const NewPurchaseOrder = ({}: Props) => {
   );
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [purchaseOrderState, setPurchaseOrderState] = useState<PurchaseOrder>({
-    organizationId: "",
+    organizationId: "INDORG0006",
     supplierId: "",
     taxMode: "",
     sourceOfSupply: "",
     destinationOfSupply: "",
+    deliveryAddress:"",
     customerId: "",
     reference: "",
     purchaseOrder: "",
@@ -65,6 +66,7 @@ const NewPurchaseOrder = ({}: Props) => {
     itemTable: [
       {
         itemId: "",
+        itemName:"",
         itemQuantity: "",
         itemSellingPrice: "",
         itemDiscount: "",
@@ -92,14 +94,16 @@ const NewPurchaseOrder = ({}: Props) => {
     vat: "",
     totalDiscount: "",
     transactionDiscount: "",
-    transactionDiscountType: "percentage",
+    transactionDiscountType: "",
     transactionDiscountAmount:"",
+    afterTaxDiscountAmount:"",
+    beforeTaxDiscountAmount:"",
     totalTaxAmount: "",
     roundOff: "",
     grandTotal: "",
-    status: "",
   });
 
+console.log(purchaseOrderState);
 
 
   const toggleDropdown = (key: string | null) => {
@@ -115,17 +119,7 @@ const NewPurchaseOrder = ({}: Props) => {
     }
   };
 
-  useEffect(() => {
-    if (openDropdownIndex !== null) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [openDropdownIndex]);
+   
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -260,45 +254,9 @@ const NewPurchaseOrder = ({}: Props) => {
     }
   };
 
-  useEffect(() => {
-    if (purchaseOrderState?.destinationOfSupply == "") {
-      setIsIntraState(false);
-    } else {
-      if (
-        purchaseOrderState?.sourceOfSupply !==
-        purchaseOrderState?.destinationOfSupply
-      ) {
-        setIsIntraState(true);
-      } else {
-        setIsIntraState(false);
-      }
-    }
-  }, [
-    purchaseOrderState?.sourceOfSupply,
-    purchaseOrderState?.destinationOfSupply,
-  ]);
+  
 
-  useEffect(() => {
-    const supplierUrl = `${endponits.GET_ALL_SUPPLIER}`;
-    const customerUrl = `${endponits.GET_ALL_CUSTOMER}`;
-    const paymentTermsUrl = `${endponits.GET_PAYMENT_TERMS}`;
-    const organizationUrl = `${endponits.GET_ONE_ORGANIZATION}`;
 
-    fetchData(supplierUrl, setSupplierData, AllSuppliers);
-    fetchData(customerUrl, setCustomerData, AllCustomer);
-    fetchData(paymentTermsUrl, setPaymentTerms, allPyamentTerms);
-    fetchData(organizationUrl, setOneOrganization, getOneOrganization);
-  }, []);
-
-  useEffect(() => {
-    handleDestination();
-    handleplaceofSupply();
-    fetchCountries();
-  }, [oneOrganization, selecteSupplier]);
-
-  useEffect(() => {
-    getPurchaseOrderPrefix();
-  }, []);
 
   const filterByDisplayName = (
     data: any[],
@@ -367,6 +325,8 @@ const NewPurchaseOrder = ({}: Props) => {
 
       totalTaxedAmount = totalBeforeTax  + taxAmount- totalDiscountValue;
       // console.log(totalTaxedAmount, "Before tax calculation with discount");
+      purchaseOrderState.beforeTaxDiscountAmount = totalTaxedAmount.toFixed(2);
+      purchaseOrderState.afterTaxDiscountAmount = ""
 
 
     } else {
@@ -386,13 +346,15 @@ const NewPurchaseOrder = ({}: Props) => {
           }
       // console.log(transactionDiscountValue, "transaction discount after tax");
 
-        
+
         totalTaxedAmount = totalAfterTax  -totalDiscountValue ;
+        purchaseOrderState.afterTaxDiscountAmount = totalTaxedAmount.toFixed(2);
+        purchaseOrderState.beforeTaxDiscountAmount = ""
+
 
     }
 
-    purchaseOrderState.totalTaxAmount = totalTaxedAmount.toFixed(2);
-    // console.log(totalDiscountValue, "total ... discount");
+  
 
     return  totalTaxedAmount.toFixed(2)
   };
@@ -410,15 +372,7 @@ const NewPurchaseOrder = ({}: Props) => {
     return totalAmount.toFixed(2);
   };
 
-  
 
-  useEffect(() => {
-    setPurchaseOrderState((prevState:any) => ({
-      ...prevState,
-      totalDiscount: (parseFloat(prevState.totalItemDiscount) || 0) + (parseFloat(prevState.transactionDiscountAmount) || 0),
-    }));
-  }, [purchaseOrderState.transactionDiscountAmount, purchaseOrderState.totalItemDiscount]);
-  
 
   const handleSave = async () => {
     try {
@@ -455,11 +409,85 @@ const NewPurchaseOrder = ({}: Props) => {
       }));
     }
   };
+
+
+
+
+  useEffect(() => {
+    if (purchaseOrderState?.destinationOfSupply == "") {
+      setIsIntraState(false);
+    } else {
+      if (
+        purchaseOrderState?.sourceOfSupply !==
+        purchaseOrderState?.destinationOfSupply
+      ) {
+        setIsIntraState(true);
+      } else {
+        setIsIntraState(false);
+      }
+    }
+  }, [
+    purchaseOrderState?.sourceOfSupply,
+    purchaseOrderState?.destinationOfSupply,
+  ]);
+
+  useEffect(() => {
+    const supplierUrl = `${endponits.GET_ALL_SUPPLIER}`;
+    const customerUrl = `${endponits.GET_ALL_CUSTOMER}`;
+    const paymentTermsUrl = `${endponits.GET_PAYMENT_TERMS}`;
+    const organizationUrl = `${endponits.GET_ONE_ORGANIZATION}`;
+
+    fetchData(supplierUrl, setSupplierData, AllSuppliers);
+    fetchData(customerUrl, setCustomerData, AllCustomer);
+    fetchData(paymentTermsUrl, setPaymentTerms, allPyamentTerms);
+    fetchData(organizationUrl, setOneOrganization, getOneOrganization);
+  }, []);
+
+  useEffect(() => {
+    handleDestination();
+    handleplaceofSupply();
+    fetchCountries();
+  }, [oneOrganization, selecteSupplier]);
+
+  useEffect(() => {
+    getPurchaseOrderPrefix();
+  }, []);
+
+  useEffect(() => {
+    if (purchaseOrderState?.discountType === "Item line") {
+      setPurchaseOrderState?.((prevData: any) => ({
+        ...prevData,
+        transactionDiscountType: "",   
+        transactionDiscountAmount: "",
+      }));
+    }
+  }, [purchaseOrderState?.discountType]);
+  
+  
+  useEffect(() => {
+    if (openDropdownIndex !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdownIndex]);
+
+  useEffect(() => {
+    setPurchaseOrderState((prevState:any) => ({
+      ...prevState,
+      totalDiscount: (parseFloat(prevState.totalItemDiscount) || 0) + (parseFloat(prevState.transactionDiscountAmount) || 0),
+    }));
+  }, [purchaseOrderState.transactionDiscountAmount, purchaseOrderState.totalItemDiscount]);
+
+
   useEffect(()=>{
     handleDiscountType()
   },[discountType])
   
-  // console.log(purchaseOrderState);
 
   return (
     <div className="px-8">
@@ -508,14 +536,14 @@ const NewPurchaseOrder = ({}: Props) => {
                     {openDropdownIndex === "supplier" && (
                       <div
                         ref={dropdownRef}
-                        className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 w-[40%] space-y-1 max-h-72 overflow-y-auto  hide-scrollbar"
+                        className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2 w-[30%] space-y-1 max-h-72 overflow-y-auto  hide-scrollbar"
                       >
                         <SearchBar
                           searchValue={searchValue}
                           onSearchChange={setSearchValue}
                           placeholder="Select Supplier"
                         />
-                        {filteredSupplier.length > 0 &&
+                        {filteredSupplier.length > 0 ?
                           filteredSupplier.map((supplier: any) => (
                             <div className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink cursor-pointer">
                               <div className="col-span-2 flex items-center justify-center">
@@ -547,7 +575,9 @@ const NewPurchaseOrder = ({}: Props) => {
                                 </div>
                               </div>
                             </div>
-                          ))}
+                          )):<div className="text-center border-slate-400 border rounded-lg">
+                          <p className="text-[red] text-sm py-4">Supplier Not Found!</p>
+                        </div>}
                         <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4">
                           <AddSupplierModal page="purchase" />
                         </div>
@@ -722,15 +752,15 @@ const NewPurchaseOrder = ({}: Props) => {
                       {openDropdownIndex === "customer" && (
                         <div
                           ref={dropdownRef}
-                          className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2   space-y-1 max-w-72 overflow-y-auto  hide-scrollbar"
-                          style={{ width: "80%" }}
+                          className="absolute z-10 bg-white  shadow  rounded-md mt-1 p-2  space-y-1 max-w-72 overflow-y-auto  hide-scrollbar"
+                          style={{width:"50%"}}
                         >
                           <SearchBar
                             searchValue={searchValue}
                             onSearchChange={setSearchValue}
                             placeholder="Serach customer"
                           />
-                          {filteredCustomer ? (
+                          {filteredCustomer.length>0 ? (
                             filteredCustomer.map((customer: any) => (
                               <div
                                 className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg bg-lightPink"
@@ -765,7 +795,9 @@ const NewPurchaseOrder = ({}: Props) => {
                               </div>
                             ))
                           ) : (
-                            <></>
+                            <div className="text-center border-slate-400 border rounded-lg">
+                            <p className="text-[red] text-sm py-4">Customer Not Found!</p>
+                          </div>
                           )}
                           <div className="hover:bg-gray-100 cursor-pointe border border-slate-400 rounded-lg py-4">
                             <NewCustomerModal page="purchase" />
@@ -932,7 +964,8 @@ const NewPurchaseOrder = ({}: Props) => {
                       <CehvronDown color="gray" />
                     </div>
                   </div>
-                </div><div>
+                </div>
+                {/* <div>
                   <label className="block text-sm mb-1 text-labelColor">
                     Tax Type
                   </label>
@@ -946,7 +979,7 @@ const NewPurchaseOrder = ({}: Props) => {
                       <option value="" className="text-gray">
                         Select Tax Type
                       </option>
-                      <option value="GST" className="text-gray">
+                      <option value="GST" className="text-gray" >
                         GST
                       </option>{" "}
                       <option value="Non Taxable" className="text-gray">
@@ -957,7 +990,7 @@ const NewPurchaseOrder = ({}: Props) => {
                       <CehvronDown color="gray" />
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
              
               <div className="border-b w-[20%] flex items-center justify-center text-textColor gap-3 my-5 py-2 border-[#EAECF0] text-sm">
@@ -980,7 +1013,7 @@ const NewPurchaseOrder = ({}: Props) => {
                         setOpenDropdownIndex(null);
                         setPurchaseOrderState((prevData: any) => ({
                           ...prevData,
-                          discountType: "Item Line",
+                          discountType: "Item line",
                         }));
                       }}
                     >
@@ -993,7 +1026,7 @@ const NewPurchaseOrder = ({}: Props) => {
                         setOpenDropdownIndex(null);
                         setPurchaseOrderState((prevData: any) => ({
                           ...prevData,
-                          discountType: "Transaction Line",
+                          discountType: "Transaction line",
                           transactionDiscountType:"percentage"
                         }));
                       }}
@@ -1087,7 +1120,7 @@ const NewPurchaseOrder = ({}: Props) => {
                   <div className="w-full text-end">
                     {" "}
                     <p className="text-end">
-                      Rs{" "}
+                      {oneOrganization?.baseCurrency}{" "}
                       {purchaseOrderState.subTotal
                         ? purchaseOrderState.subTotal
                         : "0.00"}{" "}
@@ -1115,6 +1148,31 @@ const NewPurchaseOrder = ({}: Props) => {
                     <div className="w-[150%]">
                       {" "}
                       <p>Bill Discount</p>
+                      <div className="">
+                {discountType !== "Item Line" && (
+    beforeTax ? (
+      <button
+        className="text-darkRed cursor-pointer "
+        onClick={(e) => {
+          e.preventDefault(); 
+          setBeforeTax(false);
+        }}
+      >
+        Apply After Tax
+      </button>
+    ) : (
+      <button
+        className="text-darkRed cursor-pointer"
+        onClick={(e) => {
+          e.preventDefault(); 
+          setBeforeTax(true);
+        }}
+      >
+        Apply Before Tax
+      </button>
+    )
+  )}
+             </div>
                     </div>
   
                     <div className=" ">
@@ -1134,7 +1192,7 @@ const NewPurchaseOrder = ({}: Props) => {
                           name="transactionDiscountType"
                         >
                           <option value="percentage">%</option>
-                          <option value={oneOrganization.baseCurrency}>
+                          <option value="currency">
                             {oneOrganization.baseCurrency}
                           </option>
                         </select>
@@ -1143,7 +1201,7 @@ const NewPurchaseOrder = ({}: Props) => {
                         </div>
                       </div>
                     </div>
-                    <div className="w-full text-end">
+                    <div className="w-full text-end ">
                       {" "}
                       <p className="text-end">
                         <p className="text-end">
@@ -1156,29 +1214,7 @@ const NewPurchaseOrder = ({}: Props) => {
                     </div>
                   </div>
                 )}
-              {discountType !== "Item Line" && (
-  beforeTax ? (
-    <button
-      className="text-darkRed cursor-pointer"
-      onClick={(e) => {
-        e.preventDefault(); 
-        setBeforeTax(false);
-      }}
-    >
-      Apply After Tax
-    </button>
-  ) : (
-    <button
-      className="text-darkRed cursor-pointer"
-      onClick={(e) => {
-        e.preventDefault(); 
-        setBeforeTax(true);
-      }}
-    >
-      Apply Before Tax
-    </button>
-  )
-)}
+          
 
 {discountType !== "Transaction Line" && (
   <div className="flex ">
@@ -1194,63 +1230,65 @@ const NewPurchaseOrder = ({}: Props) => {
   </div>
 )}
 
-  
-                {isIntraState ? (
-                  <div className="flex ">
-                    <div className="w-[75%]">
-                      {" "}
-                      <p> IGST</p>
-                    </div>
-                    <div className="w-full text-end">
-                      {" "}
-                      <p className="text-end">
-                        {oneOrganization.baseCurrency}{" "}
-                        {purchaseOrderState.igst
-                          ? purchaseOrderState.igst
-                          : "0.00"}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <>
+<div>
+    
+                  {isIntraState ? (
                     <div className="flex ">
                       <div className="w-[75%]">
                         {" "}
-                        <p> SGST</p>
+                        <p> IGST</p>
                       </div>
                       <div className="w-full text-end">
                         {" "}
                         <p className="text-end">
                           {oneOrganization.baseCurrency}{" "}
-                          {purchaseOrderState.sgst
-                            ? purchaseOrderState.sgst
+                          {purchaseOrderState.igst
+                            ? purchaseOrderState.igst
                             : "0.00"}
                         </p>
                       </div>
                     </div>
-  
-                    <div className="flex ">
-                      <div className="w-[75%]">
-                        {" "}
-                        <p> CGST</p>
+                  ) : (
+                    <>
+                      <div className="flex ">
+                        <div className="w-[75%]">
+                          {" "}
+                          <p> SGST</p>
+                        </div>
+                        <div className="w-full text-end">
+                          {" "}
+                          <p className="text-end">
+                            {oneOrganization.baseCurrency}{" "}
+                            {purchaseOrderState.sgst
+                              ? purchaseOrderState.sgst
+                              : "0.00"}
+                          </p>
+                        </div>
                       </div>
-                      <div className="w-full text-end">
-                        {" "}
-                        <p className="text-end">
-                          {oneOrganization.baseCurrency}{" "}
-                          {purchaseOrderState.cgst
-                            ? purchaseOrderState.cgst
-                            : "0.00"}
-                        </p>
+    
+                      <div className="flex ">
+                        <div className="w-[75%]">
+                          {" "}
+                          <p> CGST</p>
+                        </div>
+                        <div className="w-full text-end">
+                          {" "}
+                          <p className="text-end">
+                            {oneOrganization.baseCurrency}{" "}
+                            {purchaseOrderState.cgst
+                              ? purchaseOrderState.cgst
+                              : "0.00"}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
+  </div>
   
                 <div className="flex ">
                   <div className="w-[75%]">
                     {" "}
-                    <p> Total Taxed Amount</p>
+               <p> Total Taxable Amount</p>
                   </div>
                   <div className="w-full text-end">
                     {" "}
@@ -1269,8 +1307,8 @@ const NewPurchaseOrder = ({}: Props) => {
                   <div className="w-full text-end">
                     {" "}
                     <p className="text-end">
-                      Rs{" "}
-                      {purchaseOrderState.otherExpense
+                    {oneOrganization?.baseCurrency}{" "}
+                    {purchaseOrderState.otherExpense
                         ? purchaseOrderState.otherExpense
                         : "0.00"}
                     </p>
@@ -1284,8 +1322,8 @@ const NewPurchaseOrder = ({}: Props) => {
                   <div className="w-full text-end">
                     {" "}
                     <p className="text-end">
-                      Rs{" "}
-                      {purchaseOrderState.freight
+                    {oneOrganization?.baseCurrency}{" "}
+                    {purchaseOrderState.freight
                         ? purchaseOrderState.freight
                         : "0.00"}
                     </p>
