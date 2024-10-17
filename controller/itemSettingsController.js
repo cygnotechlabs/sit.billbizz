@@ -1,5 +1,7 @@
-const Organization = require("../database/model/organization")
-const Settings = require("../database/model/settings")
+const Organization = require("../database/model/organization");
+const Settings = require("../database/model/settings");
+const ItemTrack = require("../database/model/itemTrack");
+
 
 
 exports.addItemSettings = async (req, res) => {
@@ -44,3 +46,68 @@ exports.addItemSettings = async (req, res) => {
     }
   };
 
+
+
+
+
+
+
+  // Get all items
+exports.getAllItemTrack = async (req, res) => {
+  try {
+    const organizationId = req.user.organizationId;
+
+
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+    
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+
+    const allItem = await ItemTrack.find({ organizationId });
+    if (allItem.length > 0) {
+      const AllItem = allItem.map((history) => {
+        const { organizationId, ...rest } = history.toObject(); // Convert to plain object and omit organizationId
+        return rest;
+      });
+      res.status(200).json(AllItem);
+    } else {
+      return res.status(404).json("No Items Track found.");
+    }
+  } catch (error) {
+    console.error("Error fetching Items:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
+
+// Get a particular item
+exports.getAItemTrack = async (req, res) => {
+    const itemId = req.params;
+    const organizationId = req.user.organizationId;
+
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+ 
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+
+  try {
+    const singleItem = await ItemTrack.findById(itemId);
+    if (singleItem) {
+      res.status(200).json(singleItem);
+    } else {
+      res.status(404).json({ message: "Item Track not found." });
+    }
+  } catch (error) {
+    console.error("Error fetching Item:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};

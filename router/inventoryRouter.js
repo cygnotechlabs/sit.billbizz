@@ -61,8 +61,9 @@ router.put('/add-item-settings',verifyToken,checkPermission('Setup/Modified Item
 
 
 
-
-
+//Item Track
+router.get('/get-all-item-track',verifyToken,checkPermission('Viewed Item Information'), itemSettingsController.getAllItemTrack);
+router.get('/get-one-item-track/:itemId',verifyToken,checkPermission('Viewed Item Information'), itemSettingsController.getAItemTrack)
 
 
 
