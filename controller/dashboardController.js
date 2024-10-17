@@ -96,10 +96,13 @@ const moment = require("moment-timezone");
 exports.calculateTotalInventoryValue = async (req, res) => {
   try {
     const organizationId = req.user.organizationId;
+    // const organizationId = req.body.organizationId;
+    console.log(organizationId);
+    
     // Get the start and end of the current month
     const startOfMonth = moment().startOf('month').toDate();
     const endOfMonth = moment().endOf('month').toDate();
-    const topSellingProducts = await topSellingProductsUtil(organizationId);
+    const topSelling = await topSellingProductsUtil(organizationId);
     // Fetch all items for the given organizationId
     const items = await Item.find({ organizationId });
 
@@ -153,22 +156,28 @@ exports.calculateTotalInventoryValue = async (req, res) => {
     const recentlyAddedItemsCount = recentlyAddedItems.length;
 
     // Use your total stock count function
-    const {date} = req.body
+    // const {date} = req.body
+    const { date } = req.params;
+
 
 
     const totalStockCount = await getTotalInventoryValues(items, organizationId, date);
     const { inventoryValueChange , salesValueChange} = totalStockCount
+    const { topSellingProducts , stockLevels ,frequentlyOrderedItems} = topSelling
+  
     // Send the response with all calculated data
     res.status(200).json({
       totalInventoryValue, // Calculated using costPrice
       totalSaleValue, // Calculated using sellingPrice
-      underStockItems, // Items where totalStock <= reorderPoint
+      // underStockItems, // Items where totalStock <= reorderPoint
       underStockItemsCount, // Count of underStockItems
-      recentlyAddedItems, // Items added in the current month
+      // recentlyAddedItems, // Items added in the current month
       recentlyAddedItemsCount, // Count of items added in the current month
       inventoryValueChange,
         salesValueChange ,
-        topSellingProducts
+        topSellingProducts,
+        frequentlyOrderedItems,
+        stockLevels,
       // totalStockCount
     });
 
@@ -184,19 +193,27 @@ const topSellingProductsUtil = async (organizationId) => {
     const items = await Item.find({ organizationId });
 
     if (items.length === 0) {
-      return [];
+      return { topSellingProducts: [], stockLevel: [] };
     }
 
-    let topSellingProducts = [];
+    let topSellingProduct = [];
+    let stockLevel = [];
 
     for (const item of items) {
-      // Find all sales (action: 'Sale') for this item in ItemTrack
+      // Find all sales (action: 'Sale') for this item in ItemTrack for top-selling products
       const salesTracks = await ItemTrack.find({
         itemId: item._id,
         organizationId: organizationId,
-        action: "Sale",
+        action: "Sale", // This is required only for topSellingProducts
       });
 
+      // For stockLevel, we remove the action filter
+      const latestTrack = await ItemTrack.findOne({
+        itemId: item._id,
+        organizationId: organizationId,
+      }).sort({ _id: -1 }); // Get the most recent entry for stock
+
+      // Proceed with top-selling product calculations if there are sales records
       if (salesTracks.length > 0) {
         // Calculate the total units sold (sum of debitQuantity)
         const unitSold = salesTracks.reduce((total, track) => total + track.debitQuantity, 0);
@@ -204,34 +221,50 @@ const topSellingProductsUtil = async (organizationId) => {
         // Calculate the sale volume (unitSold * sellingPrice)
         const saleVolume = unitSold * (item.sellingPrice || 0);
 
-        // Determine the stock status by checking the last entry for this item in ItemTrack
-        const latestTrack = await ItemTrack.findOne({
-          itemId: item._id,
-          organizationId: organizationId,
-        }).sort({ _id: -1 }); // Get the most recent entry
-
-        const status = latestTrack.currentStock < 0 ? "Out Of Stock" : "In Stock";
+        // Determine the stock status
+        const status = latestTrack && latestTrack.currentStock < 0 ? "Out Of Stock" : "In Stock";
 
         // Add the product details to the topSellingProducts array
-        topSellingProducts.push({
-          itemName: item.name,
+        topSellingProduct.push({
+          itemName: item.itemName,
           itemId: item._id,
           saleVolume: saleVolume,
           unitSold: unitSold,
           status: status,
+          itemImage: item.itemImage, // Assuming itemImage is available in the Item collection
+        });
+      }
+
+      // Add the stock information to the stockLevel array regardless of sales
+      if (latestTrack) {
+        stockLevel.push({
+          stock: latestTrack.currentStock,
+          itemName: item.itemName,
+          itemId: item._id,
         });
       }
     }
+    
+    const frequentlyOrderedItems = topSellingProduct.sort((a, b) => b.unitSold - a.unitSold).slice(0, 4);
 
-    // Sort the products by unitSold in descending order to get the top-selling items
-    topSellingProducts.sort((a, b) => b.unitSold - a.unitSold);
+    // Sort the topSellingProducts by unitSold in descending order
+    const topSellingProducts = topSellingProduct.sort((a, b) => b.saleVolume - a.saleVolume).slice(0, 5);
+    
 
-    return topSellingProducts;
+    // Sort the stockLevel array by stock value (currentStock) in descending order
+    const stockLevels = stockLevel.sort((a, b) => b.stock - a.stock).slice(0, 5);
+    console.log( "stockLevels",stockLevels);
+    console.log( "frequentlyOrderedItems",frequentlyOrderedItems)
+
+    // Return both topSellingProducts and stockLevel
+    return { topSellingProducts, stockLevels , frequentlyOrderedItems};
   } catch (error) {
-    console.error("Error fetching top-selling products:", error);
-    throw new Error("An error occurred while calculating top-selling products.");
+    console.error("Error fetching top-selling products or stock levels:", error);
+    throw new Error("An error occurred while calculating top-selling products or stock levels.");
   }
 };
+
+
 
 
 const getTotalInventoryValues = async (items, organizationId, dateFromReq) => {

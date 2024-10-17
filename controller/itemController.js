@@ -20,6 +20,14 @@ const dataExist = async (organizationId) => {
   return { organizationExists, taxExists, allItem, settingsExist };
 };
 
+const dataExists = async (organizationId) => {
+  const [newItems] = await Promise.all([
+    Item.find({ organizationId}, { _id: 1, itemName: 1, taxPreference: 1, sellingPrice: 1, taxRate: 1, cgst: 1, sgst: 1, igst: 1, vat: 1 }),
+  ]);
+  return { newItems};
+};
+
+
 // BMCR existing data
 const bmcrDataExist = async (organizationId) => {
   const [brandExist, manufacturerExist, categoriesExist, rackExist] = await Promise.all([
@@ -152,6 +160,38 @@ exports.getAllItem = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+
+exports.newgetAllItem = async (req, res) => {
+  try {
+    const organizationId = req.user.organizationId;
+
+
+    // Check if an Organization already exists
+    const existingOrganization = await Organization.findOne({ organizationId });
+    
+    if (!existingOrganization) {
+      return res.status(404).json({
+        message: "No Organization Found.",
+      });
+    }
+
+    const { newItems } = await dataExists(organizationId);
+
+    if (newItems.length > 0) {
+      const AllItem = newItems.map((history) => {
+        const { organizationId, ...rest } = history.toObject(); // Convert to plain object and omit organizationId
+        return rest;
+      });
+      res.status(200).json(AllItem);
+    } else {
+      return res.status(404).json("No Items found.");
+    }
+  } catch (error) {
+    console.error("Error fetching Items:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 
 
 
