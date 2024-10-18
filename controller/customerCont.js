@@ -10,6 +10,40 @@ const TrialBalance = require("../database/model/trialBalance");
 const CustomerHistory = require("../database/model/customerHistory");
 const Settings = require("../database/model/settings")
   
+
+exports.getCustomerTransactions = async (req, res) => {
+  try {
+      const { customerId } = req.params;
+      const { organizationId, id: userId, userName } = req.user; 
+
+    console.log(organizationId,customerId)
+      // Step 1: Find the customer's account code in the Account collection
+      const customer = await Customer.findOne({ _id:customerId, organizationId});
+      if (!customer) {
+          return res.status(404).json({ message: "Customer not found" });
+      }
+      console.log("customer",customer)
+
+      const account = await Account.findOne({ accountCode: customerId , organizationId });
+      if (!account) {
+          return res.status(404).json({ message: "Account not found for this customer" });
+      }
+      console.log("account",account)
+
+      // Step 2: Use account _id to find matching transactions in the TrialBalance collection
+      const customerTransactions = await TrialBalance.find({ accountId: account._id , organizationId });
+      console.log("trialbalance ",customerTransactions)
+
+      // Step 3: Send the customer transactions as a response
+      return res.status(200).json({ customerTransactions });
+  } catch (error) {
+      console.error("Error fetching customer transactions:", error);
+      return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
 // Fetch existing data
 const dataExist = async (organizationId) => {
     const [organizationExists, taxExists, currencyExists, allCustomer , settings] = await Promise.all([
@@ -61,7 +95,7 @@ const dataExist = async (organizationId) => {
 
       await checkDuplicateCustomerFields( duplicateCheck, customerDisplayName, customerEmail, mobile, organizationId, errors);  
       if (errors.length) {
-      return res.status(200).json({ message: errors }); }
+      return res.status(409).json({ message: errors }); }
 
       const savedCustomer = await createNewCustomer(cleanedData, openingDate, organizationId);
       
@@ -82,15 +116,19 @@ exports.editCustomer = async (req, res) => {
     console.log("Edit Customer:", req.body);
     try {
       const { organizationId, id: userId, userName } = req.user;
-
+      const duplicateCustomerDisplayName = true;
+      const duplicateCustomerEmail = true;
+      const duplicateCustomerMobile = true;
       const cleanedData = cleanCustomerData(req.body);
 
       const { customerId } = req.params;
   
-      const { customerDisplayName } = cleanedData;
+      const { customerDisplayName ,customerEmail ,mobile} = cleanedData;
   
-      const { organizationExists, taxExists, currencyExists } = await dataExist(organizationId);
-  
+      const { organizationExists, taxExists, currencyExists ,settings} = await dataExist(organizationId);
+      // checking values from Customer settings
+      // const { duplicateCustomerDisplayName , duplicateCustomerEmail , duplicateCustomerMobile } = settings[0]
+       
       if (!validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res)) return;
       
       const openingDate = generateOpeningDate(organizationExists);
@@ -104,7 +142,12 @@ exports.editCustomer = async (req, res) => {
       const oldCustomerDisplayName = existingCustomer.customerDisplayName;
 
       if (!validateInputs(cleanedData, currencyExists, taxExists, organizationExists, res)) return;
+      const errors = [];
+      const duplicateCheck = { duplicateCustomerDisplayName, duplicateCustomerEmail, duplicateCustomerMobile };
 
+      await checkDuplicateCustomerFieldsEdit( duplicateCheck, customerDisplayName, customerEmail, mobile, organizationId,customerId, errors);  
+      if (errors.length) {
+      return res.status(409).json({ message: errors }); }
   
       // Update customer fields
       Object.assign(existingCustomer, cleanedData);
@@ -478,7 +521,7 @@ exports.getOneCustomerHistory = async (req, res) => {
   }
  
 
-//Duplication check
+//Duplication check for add item
 async function checkDuplicateCustomerFields( duplicateCheck, customerDisplayName, customerEmail, mobile, organizationId, errors ) {
           const checks = [
             {
@@ -513,6 +556,44 @@ async function checkDuplicateCustomerFields( duplicateCheck, customerDisplayName
           
         }
 
+//Duplication check for edit item 
+        async function checkDuplicateCustomerFieldsEdit(duplicateCheck,customerDisplayName, customerEmail, mobile, organizationId,customerId, errors
+        ) {
+          const checks = [
+            {
+              condition: duplicateCheck.duplicateCustomerDisplayName && customerDisplayName !== undefined,
+              field: 'customerDisplayName',
+              value: customerDisplayName,
+              errorMessage: `Customer with the provided display name already exists: ${customerDisplayName}`,
+            },
+            {
+              condition: duplicateCheck.duplicateCustomerEmail && customerEmail !== undefined,
+              field: 'customerEmail',
+              value: customerEmail,
+              errorMessage: `Customer with the provided email already exists: ${customerEmail}`,
+            },
+            {
+              condition: duplicateCheck.duplicateCustomerMobile && mobile !== undefined,
+              field: 'mobile',
+              value: mobile,
+              errorMessage: `Customer with the provided phone number already exists: ${mobile}`,
+            },
+          ];
+        
+          for (const { condition, field, value, errorMessage } of checks) {
+            if (condition) {
+              // Modify query to exclude the supplier with the given supplierId
+              const existingRecord = await Customer.findOne({
+                [field]: value,
+                organizationId,
+                _id: { $ne: customerId }, // Exclude the document with the same supplierId
+              });
+              if (existingRecord) {
+                errors.push(errorMessage);
+              }
+            }
+          }
+        }
 
 //Validate inputs
   function validateInputs(data, currencyExists, taxExists, organizationExists, res) {

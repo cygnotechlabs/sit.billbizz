@@ -16,6 +16,11 @@ const { verifyToken } = require('../controller/middleware');
 
 //Basic
 
+
+
+router.get('/get-Customer-Trandactions/:customerId',verifyToken,customerController.getCustomerTransactions);
+
+
 router.get('/get-Customer-Dashboard/:date',verifyToken,dashboardController.getCustomerStats);
 
 
