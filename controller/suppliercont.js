@@ -94,9 +94,11 @@ const dataExist = async (organizationId) => {
   
         //Duplication Check
         const errors = [];
-        await checkDuplicateSupplierFields( duplicateSupplierDisplayName, duplicateSupplierEmail, duplicateSupplierMobile, supplierDisplayName, supplierEmail, mobile, organizationId, errors);  
+        const duplicateCheck = { duplicateSupplierDisplayName, duplicateSupplierEmail, duplicateSupplierMobile };
+
+        await checkDuplicateSupplierFields( duplicateCheck, supplierDisplayName, supplierEmail, mobile, organizationId, errors);  
         if (errors.length) {
-        return res.status(200).json({ message: errors }); }
+        return res.status(409).json({ message: errors }); }
   
         const savedSupplier = await createNewSupplier(cleanedData, openingDate, organizationId);
         
@@ -120,13 +122,17 @@ const dataExist = async (organizationId) => {
         const duplicateSupplierDisplayName = true;
         const duplicateSupplierEmail = false;
         const duplicateSupplierMobile = false;
+
         const cleanedData = cleanSupplierData(req.body);
   
         const {   supplierId } = req.params;
     
         const { supplierDisplayName, supplierEmail, mobile } = cleanedData;
     
-        const { organizationExists, taxExists, currencyExists } = await dataExist(organizationId);
+        const { organizationExists, taxExists, currencyExists , settings} = await dataExist(organizationId);
+        
+         // checking values from supplier settings
+        // const { duplicateSupplierDisplayName , duplicateSupplierEmail , duplicateSupplierMobile } = settings[0]
         
         
         if (!validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res)) return;
@@ -145,9 +151,11 @@ const dataExist = async (organizationId) => {
   
         //Duplication Check
         const errors = [];
-        await checkDuplicateSupplierFieldsEdit( duplicateSupplierDisplayName, duplicateSupplierEmail, duplicateSupplierMobile, supplierDisplayName, supplierEmail, mobile, organizationId,supplierId, errors);  
+        const duplicateCheck = { duplicateSupplierDisplayName, duplicateSupplierEmail, duplicateSupplierMobile };
+
+        await checkDuplicateSupplierFieldsEdit( duplicateCheck, supplierDisplayName, supplierEmail, mobile, organizationId,supplierId, errors);  
         if (errors.length) {
-        return res.status(200).json({ message: errors }); }
+        return res.status(409).json({ message: errors }); }
         // Update customer fields
         Object.assign(existingSupplier, cleanedData);
         const savedSupplier = await existingSupplier.save();
@@ -546,22 +554,22 @@ const dataExist = async (organizationId) => {
     }
     
   //Duplication check for add item 
-  async function checkDuplicateSupplierFields( duplicateSupplierDisplayName, duplicateSupplierEmail, duplicateSupplierMobile, supplierDisplayName, supplierEmail, mobile, organizationId, errors ) {
+  async function checkDuplicateSupplierFields( duplicateCheck, supplierDisplayName, supplierEmail, mobile, organizationId, errors ) {
             const checks = [
               {
-                condition: duplicateSupplierDisplayName && supplierDisplayName !== undefined,
+                condition: duplicateCheck.duplicateSupplierDisplayName && supplierDisplayName !== undefined,
                 field: 'supplierDisplayName',
                 value: supplierDisplayName,
                 errorMessage: `Supplier with the provided display name already exists: ${supplierDisplayName}`,
               },
               {
-                condition: duplicateSupplierEmail && supplierEmail !== undefined,
+                condition: duplicateCheck.duplicateSupplierEmail && supplierEmail !== undefined,
                 field: 'supplierEmail',
                 value: supplierEmail,
                 errorMessage: `Supplier with the provided email already exists: ${supplierEmail}`,
               },
               {
-                condition: duplicateSupplierMobile && mobile !== undefined,
+                condition: duplicateCheck.duplicateSupplierMobile && mobile !== undefined,
                 field: 'mobile',
                 value: mobile,
                 errorMessage: `Supplier with the provided phone number already exists: ${mobile}`,
@@ -581,9 +589,7 @@ const dataExist = async (organizationId) => {
           }
           //Duplication check for edit item 
           async function checkDuplicateSupplierFieldsEdit(
-            duplicateSupplierDisplayName,
-            duplicateSupplierEmail,
-            duplicateSupplierMobile,
+            duplicateCheck,
             supplierDisplayName,
             supplierEmail,
             mobile,
@@ -593,19 +599,19 @@ const dataExist = async (organizationId) => {
           ) {
             const checks = [
               {
-                condition: duplicateSupplierDisplayName && supplierDisplayName !== undefined,
+                condition: duplicateCheck.duplicateSupplierDisplayName && supplierDisplayName !== undefined,
                 field: 'supplierDisplayName',
                 value: supplierDisplayName,
                 errorMessage: `Supplier with the provided display name already exists: ${supplierDisplayName}`,
               },
               {
-                condition: duplicateSupplierEmail && supplierEmail !== undefined,
+                condition: duplicateCheck.duplicateSupplierEmail && supplierEmail !== undefined,
                 field: 'supplierEmail',
                 value: supplierEmail,
                 errorMessage: `Supplier with the provided email already exists: ${supplierEmail}`,
               },
               {
-                condition: duplicateSupplierMobile && mobile !== undefined,
+                condition: duplicateCheck.duplicateSupplierMobile && mobile !== undefined,
                 field: 'mobile',
                 value: mobile,
                 errorMessage: `Supplier with the provided phone number already exists: ${mobile}`,
