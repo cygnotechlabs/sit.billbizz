@@ -13,7 +13,7 @@ import PlusCircle from "../../../assets/icons/PlusCircle";
 import Trash2 from "../../../assets/icons/Trash2";
 import Upload from "../../../assets/icons/Upload";
 import { SupplierResponseContext } from "../../../context/ContextShare";
-import { SupplierData } from "./SupplierData";
+import { SupplierData } from "../../../Types/Supplier";
 
 type Props = {
   supplier?: SupplierData | null;

@@ -80,6 +80,9 @@ GET_ALL_ITEMS_Dropdown: `get-itemDropdown`,
   // Inventory
   GET_INVENTORY_DASHBOARD:`/get-inventory-Dashboard`,
 
+  // Item Tracking
+  GET_ALL_ITEM_TRANKING:`get-all-item-track`,
+
   // Settings/Taxes
   // Gst
   GET_ALL_TAX: "get-tax",

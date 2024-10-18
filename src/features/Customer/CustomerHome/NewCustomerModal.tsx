@@ -881,14 +881,15 @@ const NewCustomerModal = ({ page }: Props) => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="">Date of Birth</label>
+                  <label htmlFor="dob">Date of Birth</label>
                   <input
                     type="date"
                     name="dob"
-                    className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
+                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
                     placeholder="Value"
                     value={customerdata.dob}
                     onChange={handleChange}
+                    max={new Date().toISOString().split("T")[0]} // Set max to today's date
                   />
                 </div>
               </div>

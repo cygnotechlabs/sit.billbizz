@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-import ArrowDownIcon from '../../../assets/icons/ArrowDownIcon';
-import ArrowUpIcon from '../../../assets/icons/ArrowUpIcon';
-import Ellipsis from '../../../assets/icons/Ellipsis';
-import RefreshIcon from '../../../assets/icons/RefreshIcon';
+import { useEffect, useRef, useState } from "react";
+import ArrowDownIcon from "../../../assets/icons/ArrowDownIcon";
+import ArrowUpIcon from "../../../assets/icons/ArrowUpIcon";
+import RefreshIcon from "../../../assets/icons/RefreshIcon";
 import BarChart from "../../../Components/charts/BarChart";
-import HoriBarChart from '../../../Components/charts/HoriBarChart';
-import PieCharts from '../../../Components/charts/Piechart';
-import TopDataTable from '../../../Components/charts/TopDataTable';
-import useApi from '../../../Hooks/useApi';
-import { endponits } from '../../../Services/apiEndpoints';
-import InventoryCards from './InventoryCards';
+import HoriBarChart from "../../../Components/charts/HoriBarChart";
+import PieCharts from "../../../Components/charts/Piechart";
+import TopDataTable from "../../../Components/charts/TopDataTable";
+import useApi from "../../../Hooks/useApi";
+import { endponits } from "../../../Services/apiEndpoints";
+import InventoryCards from "./InventoryCards";
+import MonthYearDropdown from "../../../Components/dropdown/MonthYearDropdown"; 
 
 type Props = {};
 
@@ -19,8 +19,9 @@ function DashboardHome({}: Props) {
   const { request: getDashboard } = useApi("get", 5003);
   const [data, setData] = useState<any>(null);
 
-  const getDashboards = async () => {
-    const url = `${endponits.GET_INVENTORY_DASHBOARD}/2024-10-10`;
+  const getDashboards = async (month: number, year: number) => {
+    const formattedMonth = (month + 1).toString().padStart(2, "0");
+    const url = `${endponits.GET_INVENTORY_DASHBOARD}/${year}-${formattedMonth}-01`;
     try {
       const apiResponse = await getDashboard(url);
       const { response, error } = apiResponse;
@@ -38,9 +39,16 @@ function DashboardHome({}: Props) {
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
       setIsDropdownOpen(false);
     }
+  };
+
+  const handleDateChange = (month: number, year: number) => {
+    getDashboards(month, year);
   };
 
   useEffect(() => {
@@ -51,7 +59,9 @@ function DashboardHome({}: Props) {
   }, []);
 
   useEffect(() => {
-    getDashboards();
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    getDashboards(currentMonth, currentYear);
   }, []);
 
   const dropdownItems = [
@@ -81,24 +91,27 @@ function DashboardHome({}: Props) {
       text: "Refresh List",
       onClick: () => {
         console.log("Refresh List clicked");
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+        getDashboards(currentMonth, currentYear); // Refresh the data
       },
     },
   ];
 
   return (
-    <div className='px-6 space-y-8 text-[#303F58]'>
+    <div className="px-6 space-y-8 text-[#303F58]">
       <div className="flex items-center relative">
         <div>
-          <h3 className="font-bold text-2xl text-textColor">Inventory Overview</h3>
-          <p className="text-sm text-gray mt-1">
-            Lorem ipsum dolor sit amet consectetur. Commodo enim odio fringilla egestas consectetur amet.
-          </p>
+          <h3 className="font-bold text-2xl text-textColor">
+            Inventory Overview
+          </h3>
+   
         </div>
         <div className="ml-auto gap-3 flex items-center">
+          <MonthYearDropdown onDateChange={handleDateChange} />
           <div onClick={toggleDropdown} className="cursor-pointer">
-            <Ellipsis />
+            {/* Add your ellipsis icon here if needed */}
           </div>
-
           {isDropdownOpen && (
             <div
               ref={dropdownRef}
@@ -135,13 +148,11 @@ function DashboardHome({}: Props) {
           <BarChart />
         </div>
         <div className="col-span-2 flex justify-center">
-          {data && data.stockLevels && (
-            <HoriBarChart data={data.stockLevels} />
-          )}
+          {data && data.stockLevels && <HoriBarChart data={data.stockLevels} />}
         </div>
         <div className="flex justify-center">
-          {data && data.frequentlyOrderedItems && ( // Ensure frequentlyOrderedItems is present
-            <PieCharts frequentlyOrderedItems={data.frequentlyOrderedItems} /> // Pass the frequentlyOrderedItems here
+          {data && data.frequentlyOrderedItems && (
+            <PieCharts frequentlyOrderedItems={data.frequentlyOrderedItems} />
           )}
         </div>
       </div>
