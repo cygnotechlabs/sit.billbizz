@@ -8,11 +8,20 @@ const supplierCont = require('../controller/suppliercont');
 const supplierSettings = require('../controller/suplierSettings')
 
 const importController = require('../controller/importSupplier')
+const dashboardController = require("../controller/dashboardController")
+
 
 const checkPermission = require('../controller/permission')
 const { verifyToken } = require('../controller/middleware');
 
 // supplier
+
+router.get('/get-Supplier-Trandactions/:supplierId',verifyToken,supplierCont.getSupplierTransactions);
+
+
+router.get('/get-Supplier-Dashboard/:date',verifyToken,dashboardController.getSupplierStats);
+
+
 router.post('/add-suppliers',verifyToken,checkPermission('Created a New Supplier'), supplierCont.addSupplier);
 
 router.get('/get-all-supplier',verifyToken,checkPermission('Viewed Supplier Details'), supplierCont.getAllSuppliers);

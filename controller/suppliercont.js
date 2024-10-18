@@ -8,6 +8,40 @@ const TrialBalance = require("../database/model/trialBalance");
 const SupplierHistory = require("../database/model/supplierHistory");
 const Settings = require("../database/model/settings")
 // Fetch existing data
+
+exports.getSupplierTransactions = async (req, res) => {
+  try {
+      const { supplierId } = req.params;
+      const { organizationId, id: userId, userName } = req.user; 
+
+    console.log(organizationId,supplierId)
+      // Step 1: Find the customer's account code in the Account collection
+      const supplier = await Supplier.findOne({ _id:supplierId, organizationId});
+      if (!supplier) {
+          return res.status(404).json({ message: "Supplier not found" });
+      }
+      console.log("customer",supplier)
+
+      const account = await Account.findOne({ accountCode: supplierId , organizationId });
+      if (!account) {
+          return res.status(404).json({ message: "Account not found for this Supplier" });
+      }
+      console.log("account",account)
+
+      // Step 2: Use account _id to find matching transactions in the TrialBalance collection
+      const supplierTransactions = await TrialBalance.find({ accountId: account._id , organizationId });
+      console.log("trialbalance ",supplierTransactions)
+
+      // Step 3: Send the customer transactions as a response
+      return res.status(200).json({ supplierTransactions });
+  } catch (error) {
+      console.error("Error fetching customer transactions:", error);
+      return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
 const dataExist = async (organizationId) => {
     const [organizationExists, taxExists, currencyExists, allSupplier ,settings] = await Promise.all([
       Organization.findOne({ organizationId }),
@@ -18,6 +52,11 @@ const dataExist = async (organizationId) => {
     ]);
     return { organizationExists, taxExists, currencyExists, allSupplier , settings };
   };
+
+//   const dataExistsExclude = async (organizationId, supplierId) => {
+//     const allSuppliers = await Supplier.find({ organizationId, _id: { $ne: supplierId } });
+//     return allSuppliers;
+// };
   
     // Add Customer
     exports.addSupplier = async (req, res) => {
@@ -88,7 +127,8 @@ const dataExist = async (organizationId) => {
         const { supplierDisplayName, supplierEmail, mobile } = cleanedData;
     
         const { organizationExists, taxExists, currencyExists } = await dataExist(organizationId);
-    
+        
+        
         if (!validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res)) return;
         
         const openingDate = generateOpeningDate(organizationExists);
@@ -105,7 +145,7 @@ const dataExist = async (organizationId) => {
   
         //Duplication Check
         const errors = [];
-        await checkDuplicateSupplierFields( duplicateSupplierDisplayName, duplicateSupplierEmail, duplicateSupplierMobile, supplierDisplayName, supplierEmail, mobile, organizationId, errors);  
+        await checkDuplicateSupplierFieldsEdit( duplicateSupplierDisplayName, duplicateSupplierEmail, duplicateSupplierMobile, supplierDisplayName, supplierEmail, mobile, organizationId,supplierId, errors);  
         if (errors.length) {
         return res.status(200).json({ message: errors }); }
         // Update customer fields
@@ -505,7 +545,7 @@ const dataExist = async (organizationId) => {
       return date.dateTime;
     }
     
-  //Duplication check
+  //Duplication check for add item 
   async function checkDuplicateSupplierFields( duplicateSupplierDisplayName, duplicateSupplierEmail, duplicateSupplierMobile, supplierDisplayName, supplierEmail, mobile, organizationId, errors ) {
             const checks = [
               {
@@ -539,7 +579,55 @@ const dataExist = async (organizationId) => {
   
             
           }
-  
+          //Duplication check for edit item 
+          async function checkDuplicateSupplierFieldsEdit(
+            duplicateSupplierDisplayName,
+            duplicateSupplierEmail,
+            duplicateSupplierMobile,
+            supplierDisplayName,
+            supplierEmail,
+            mobile,
+            organizationId,
+            supplierId, // Added supplierId
+            errors
+          ) {
+            const checks = [
+              {
+                condition: duplicateSupplierDisplayName && supplierDisplayName !== undefined,
+                field: 'supplierDisplayName',
+                value: supplierDisplayName,
+                errorMessage: `Supplier with the provided display name already exists: ${supplierDisplayName}`,
+              },
+              {
+                condition: duplicateSupplierEmail && supplierEmail !== undefined,
+                field: 'supplierEmail',
+                value: supplierEmail,
+                errorMessage: `Supplier with the provided email already exists: ${supplierEmail}`,
+              },
+              {
+                condition: duplicateSupplierMobile && mobile !== undefined,
+                field: 'mobile',
+                value: mobile,
+                errorMessage: `Supplier with the provided phone number already exists: ${mobile}`,
+              },
+            ];
+          
+            for (const { condition, field, value, errorMessage } of checks) {
+              if (condition) {
+                // Modify query to exclude the supplier with the given supplierId
+                const existingRecord = await Supplier.findOne({
+                  [field]: value,
+                  organizationId,
+                  _id: { $ne: supplierId }, // Exclude the document with the same supplierId
+                });
+                if (existingRecord) {
+                  errors.push(errorMessage);
+                }
+              }
+            }
+          }
+          
+
   //Validate inputs
     function validateInputs(data, currencyExists, taxExists, organizationExists, res) {
       const validCurrencies = currencyExists.map((currency) => currency.currencyCode);
@@ -711,7 +799,8 @@ const dataExist = async (organizationId) => {
       const errors = [];
   
       //Basic Info
-      // validateCustomerType(data.customerType, errors);
+      // validateCustomerType(data.customerType, errors);\
+      validateReqFields( data,  errors);
       validateSalutation(data.salutation, errors);
       validateNames(['firstName', 'lastName'], data, errors);
       validateEmail(data.supplierEmail, errors);
@@ -719,8 +808,8 @@ const dataExist = async (organizationId) => {
   
       //OtherDetails
       validateAlphanumericFields(['pan'], data, errors);
-      validateIntegerFields(['creditDays', 'creditLimits', 'interestPercentage'], data, errors);
-      validateFloatFields(['debitOpeningBalance', 'creditOpeningBalance'], data, errors);
+      validateIntegerFields(['creditDays', 'creditLimits'], data, errors);
+      validateFloatFields(['debitOpeningBalance', 'creditOpeningBalance', 'interestPercentage'], data, errors);
       validateAlphabetsFields(['department', 'designation'], data, errors);
   
       //Tax Details
@@ -737,6 +826,16 @@ const dataExist = async (organizationId) => {
       return errors;
     }
     
+    function validateReqFields( data, errors ) {
+      if (typeof data.supplierDisplayName === 'undefined' ) {
+        errors.push("Supplier Display Name required");
+      }
+      const interestPercentage = parseFloat(data.interestPercentage);
+      if ( interestPercentage > 100 ) {
+        errors.push("Interest Percentage cannot exceed 100%");
+      }
+    }
+
     // Field validation utility
     function validateField(condition, errorMsg, errors) {
       if (condition) errors.push(errorMsg);
