@@ -105,6 +105,12 @@ ADD_BRMC:`add-bmcr`,
 UPDATE_BRMC:`update-bmcr`,
 DELETE_BRMC:`delete-bmcr`,
 GET_ONE_BRMC:`get-a-bmcr`,
+ADD_UNIT:`add-unit`,
+GET_ALL_UNIT:`get-all-unit`,
+UPDATE_UNIT:`edit-unit`,
+DELETE_UNIT:`delete-unit`,
+GET_ONE_UNIT:`/get-one-unit`,
+
 
 
 // Purchase order
@@ -114,7 +120,9 @@ GET_ONE_BRMC:`get-a-bmcr`,
  
   // Login
   LOGIN : "/login",
-  GET_OTP :"/verify-otp"
+  GET_OTP :"/verify-otp",
+
+
  
   
 };
