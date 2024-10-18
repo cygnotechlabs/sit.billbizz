@@ -16,6 +16,7 @@ const InventoryRoutes: RouteObject[] = [
   { path: "/inventory/unit", element: <UnitHome /> },
   { path: "/inventory/unit/unit-conversion", element: <Unitconversion /> },
   { path: "/inventory/item-tracking", element: <ItemTrackingHome /> },
+ 
 ];
 
 export default InventoryRoutes;
