@@ -186,7 +186,12 @@ const AddItem = ({}: Props) => {
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = event.target;
-
+  
+    // If the input type is "number" and the value is negative, set it to zero
+    if (type === "number" && parseFloat(value) < 0) {
+      return;
+    }
+  
     setInitialItemData((prev) => ({
       ...prev,
       [name]:
@@ -195,6 +200,7 @@ const AddItem = ({}: Props) => {
           : value,
     }));
   };
+  
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
