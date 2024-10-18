@@ -116,9 +116,9 @@ exports.editCustomer = async (req, res) => {
     console.log("Edit Customer:", req.body);
     try {
       const { organizationId, id: userId, userName } = req.user;
-      const duplicateCustomerDisplayName = true;
-      const duplicateCustomerEmail = true;
-      const duplicateCustomerMobile = true;
+      // const duplicateCustomerDisplayName = true;
+      // const duplicateCustomerEmail = true;
+      // const duplicateCustomerMobile = true;
       const cleanedData = cleanCustomerData(req.body);
 
       const { customerId } = req.params;
@@ -126,8 +126,9 @@ exports.editCustomer = async (req, res) => {
       const { customerDisplayName ,customerEmail ,mobile} = cleanedData;
   
       const { organizationExists, taxExists, currencyExists ,settings} = await dataExist(organizationId);
+      
       // checking values from Customer settings
-      // const { duplicateCustomerDisplayName , duplicateCustomerEmail , duplicateCustomerMobile } = settings[0]
+      const { duplicateCustomerDisplayName , duplicateCustomerEmail , duplicateCustomerMobile } = settings[0]
        
       if (!validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res)) return;
       
