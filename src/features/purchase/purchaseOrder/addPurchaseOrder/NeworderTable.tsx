@@ -26,7 +26,7 @@ type Row = {
 
 type Props = {
   purchaseOrderState?: PurchaseOrder;
-  isIntraState?: Boolean;
+  isInterState?: Boolean;
   setPurchaseOrderState?: (value: any) => void;
   oneOrganization?: any;
   isNonTaxable?: Boolean;
@@ -35,7 +35,7 @@ type Props = {
 const NewOrderTable = ({
   purchaseOrderState,
   setPurchaseOrderState,
-  isIntraState,
+  isInterState,
   oneOrganization,
 }: Props) => {
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
@@ -96,54 +96,44 @@ const NewOrderTable = ({
   };
 
   const handleItemSelect = (item: any, index: number) => {
+    console.log(item,"item");
+    
     setOpenDropdownId(null);
     setOpenDropdownType(null);
-
     const newRows = [...rows];
     newRows[index].itemName = item.itemName;
     newRows[index].itemImage = item.itemImage;
     newRows[index].itemSellingPrice = item.sellingPrice || "0";
     newRows[index].itemQuantity = "1";
     newRows[index].itemId = item._id;
-
+  
     const sellingPrice = parseFloat(newRows[index].itemSellingPrice);
     const discountedPrice = calculateDiscountPrice(
       sellingPrice,
       newRows[index].itemDiscount,
       newRows[index].itemDiscountType
     );
-
-    const { itemAmount, cgstAmount, sgstAmount, igstAmount } = calculateTax(
-      discountedPrice,
-      items,
-      index,
-      isIntraState as boolean
-    );
-    console.log(item, "item");
-
-    if (item.taxPreference === "Non-taxable") {
-      newRows[index].itemAmount = itemAmount;
-      newRows[index].itemCgst = "0";
-      newRows[index].itemSgst = "0";
-      newRows[index].itemIgst = "0";
-
-    setPurchaseOrderState?.((prevData: any) => ({
-      ...prevData,
-      itemTable: newRows.map((row) => {
-        const updatedItem = { ...row };
-        delete updatedItem.itemImage;
-        return updatedItem;
-      }),
-    }));
-    } else {
+  
+    if (item.taxPreference === "Taxable") {
+      const { itemAmount, cgstAmount, sgstAmount, igstAmount } = calculateTax(
+        discountedPrice,
+        items,
+        index,
+        isInterState as boolean
+      );
       newRows[index].itemAmount = itemAmount;
       newRows[index].itemCgst = cgstAmount;
       newRows[index].itemSgst = sgstAmount;
       newRows[index].itemIgst = igstAmount;
+    } else {
+      newRows[index].itemAmount = discountedPrice.toFixed(2);
+      newRows[index].itemCgst = "0.00";
+      newRows[index].itemSgst = "0.00";
+      newRows[index].itemIgst = "0.00";
     }
+  
     setRows(newRows);
-
-    // Update the entire itemTable with all rows
+  
     setPurchaseOrderState?.((prevData: any) => ({
       ...prevData,
       itemTable: newRows.map((row) => {
@@ -153,32 +143,34 @@ const NewOrderTable = ({
       }),
     }));
   };
-
+  
   const calculateDiscountPrice = (
     totalSellingPrice: number,
     discountValue: string,
     discountType: string
-  ) => {
+): number => {
     let discount = parseFloat(discountValue) || 0;
-  
+
     if (discount < 0) {
-      toast.error("Discount cannot be negative");
-      return totalSellingPrice; 
+        toast.error("Discount cannot be negative");
+        return totalSellingPrice; 
     }
-      if (discountType === "percentage") {
-      if (discount > 100) {
-        discount = 100; 
-        toast.error("Discount cannot exceed 100%");
-      }
-      return totalSellingPrice - (totalSellingPrice * discount) / 100;
+
+    if (discountType === "percentage") {
+        if (discount > 100) {
+            discount = 100; 
+            toast.error("Discount cannot exceed 100%");
+        }
+        return totalSellingPrice - (totalSellingPrice * discount) / 100;
     } else {
-      if (discount > totalSellingPrice) {
-        discount = totalSellingPrice; 
-        toast.error("Discount cannot exceed the selling price");
-      }
-      return totalSellingPrice - discount;
+        if (discount > totalSellingPrice) {
+            discount = totalSellingPrice; 
+            toast.error("Discount cannot exceed the selling price");
+        }
+        return totalSellingPrice - discount;
     }
-  };
+};
+
   
   
 
@@ -188,10 +180,22 @@ const NewOrderTable = ({
     index: number,
     isIntraState: boolean
   ) => {
+    const taxPreference = items[index]?.taxPreference;
+  
+    // Check if the item is taxable
+    if (taxPreference !== "Taxable") {
+      return {
+        itemAmount: discountedPrice.toFixed(2),
+        cgstAmount: "0.00",
+        sgstAmount: "0.00",
+        igstAmount: "0.00",
+      };
+    }
+  
     const cgstPercentage = items[index]?.cgst || 0;
     const sgstPercentage = items[index]?.sgst || 0;
     const igstPercentage = items[index]?.igst || 0;
-
+  
     if (!isIntraState) {
       const cgstAmount = ((discountedPrice * cgstPercentage) / 100).toFixed(2);
       const sgstAmount = ((discountedPrice * sgstPercentage) / 100).toFixed(2);
@@ -211,36 +215,43 @@ const NewOrderTable = ({
       };
     }
   };
+  
 
   const handleRowChange = (index: number, field: keyof Row, value: string) => {
     const newRows = [...rows];
     newRows[index] = { ...newRows[index], [field]: value };
-
+  
     const quantity = parseFloat(newRows[index].itemQuantity) || 0;
     const sellingPrice = parseFloat(newRows[index].itemSellingPrice) || 0;
-
-   
-
     const totalSellingPrice = quantity * sellingPrice;
+  
     const discountedPrice = calculateDiscountPrice(
       totalSellingPrice,
       newRows[index].itemDiscount,
       newRows[index].itemDiscountType
     );
-
-    const { itemAmount, cgstAmount, sgstAmount, igstAmount } = calculateTax(
-      discountedPrice,
-      items,
-      index,
-      isIntraState as boolean
-    );
-    newRows[index].itemAmount = itemAmount;
-    newRows[index].itemCgst = cgstAmount;
-    newRows[index].itemSgst = sgstAmount;
-    newRows[index].itemIgst = igstAmount;
-
+  
+    const taxPreference = items[index]?.taxPreference;
+    if (taxPreference === "Taxable") {
+      const { itemAmount, cgstAmount, sgstAmount, igstAmount } = calculateTax(
+        discountedPrice,
+        items,
+        index,
+        isInterState as boolean
+      );
+      newRows[index].itemAmount = itemAmount;
+      newRows[index].itemCgst = cgstAmount;
+      newRows[index].itemSgst = sgstAmount;
+      newRows[index].itemIgst = igstAmount;
+    } else {
+      newRows[index].itemAmount = discountedPrice.toFixed(2);
+      newRows[index].itemCgst = "0.00";
+      newRows[index].itemSgst = "0.00";
+      newRows[index].itemIgst = "0.00";
+    }
+  
     setRows(newRows);
-
+  
     setPurchaseOrderState?.((prevData: any) => ({
       ...prevData,
       itemTable: newRows.map((row) => {
@@ -250,6 +261,8 @@ const NewOrderTable = ({
       }),
     }));
   };
+  
+  
 
   console.log(rows, "rows");
 
@@ -298,7 +311,7 @@ const NewOrderTable = ({
 
   const calculateTotalSGST = () => {
     return rows.reduce((total, row) => {
-      const sgst = !isIntraState ? parseFloat(row.itemSgst) || 0 : 0;
+      const sgst = !isInterState ? parseFloat(row.itemSgst) || 0 : 0;
       return total + sgst;
     }, 0);
   };
@@ -308,7 +321,7 @@ const NewOrderTable = ({
     return rows.reduce((total, row) => {
       // console.log(row.itemCgst,"cgst");
 
-      const cgst = !isIntraState ? parseFloat(row.itemCgst) || 0 : 0;
+      const cgst = !isInterState ? parseFloat(row.itemCgst) || 0 : 0;
       return total + cgst;
     }, 0);
   };
@@ -316,7 +329,7 @@ const NewOrderTable = ({
   // Function to calculate total IGST
   const calculateTotalIGST = () => {
     return rows.reduce((total, row) => {
-      const igst = isIntraState ? parseFloat(row.itemIgst) || 0 : 0;
+      const igst = isInterState ? parseFloat(row.itemIgst) || 0 : 0;
       return total + igst;
     }, 0);
   };
@@ -386,7 +399,7 @@ const NewOrderTable = ({
         discountedPrice,
         items,
         index,
-        isIntraState as boolean
+        isInterState as boolean
       );
       return {
         ...row,
@@ -402,7 +415,7 @@ const NewOrderTable = ({
     purchaseOrderState?.destinationOfSupply,
     purchaseOrderState?.sourceOfSupply,
     items,
-    isIntraState,
+    isInterState,
   ]);
 
   useEffect(() => {
@@ -443,7 +456,7 @@ const NewOrderTable = ({
       cgst: totalCGST,
       igst: totalIGST,
       subTotal: totalSellingPrice,
-      totalItemDiscount: totalDiscount,
+      totalDiscount: totalDiscount,
     }));
   }, [rows, setPurchaseOrderState]);
 
@@ -609,7 +622,7 @@ const NewOrderTable = ({
                    placeholder="0"
                    className="w-[50px] focus:outline-none text-center"
                    value={
-                     !isIntraState
+                     !isInterState
                        ? (
                            (parseFloat(row.itemCgst) || 0) + (parseFloat(row.itemSgst) || 0) === 0
                              ? "Nil"
