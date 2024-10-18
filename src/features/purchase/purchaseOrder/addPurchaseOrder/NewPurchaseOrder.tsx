@@ -21,7 +21,6 @@ type Props = {};
 const NewPurchaseOrder = ({}: Props) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [selected, setSelected] = useState<string | null>("organization");
-  const [discountType, setDiscoutType] = useState<string>("");
   const [supplierData, setSupplierData] = useState<[]>([]);
   const [customerData, setCustomerData] = useState<[]>([]);
   const [paymentTerms, setPaymentTerms] = useState<[]>([]);
@@ -31,8 +30,7 @@ const NewPurchaseOrder = ({}: Props) => {
   const [placeOfSupplyList, setPlaceOfSupplyList] = useState<any | []>([]);
   const [destinationList, setDestinationList] = useState<any | []>([]);
   const [countryData, setcountryData] = useState<any | any>([]);
-  const [isIntraState, setIsIntraState] = useState<boolean>(false);
-  const [beforeTax, setBeforeTax] = useState<boolean>(true);
+  const [isInterState, setIsInterState] = useState<boolean>(false);
 
   const { request: AllSuppliers } = useApi("get", 5009);
   const { request: AllCustomer } = useApi("get", 5002);
@@ -300,13 +298,12 @@ console.log(purchaseOrderState);
 
     // console.log(sgstValue, cgstValue, igstValue, "gst");
 
-    const taxAmount = isIntraState ? igstValue : sgstValue + cgstValue;
+    const taxAmount = isInterState ? igstValue : sgstValue + cgstValue;
     // console.log(taxAmount, "tax amount");
 
     let totalTaxedAmount = 0;
     let transactionDiscountValue = 0;
 
-    if (beforeTax) {
       const totalBeforeTax =
         subTotalValue  ;
  
@@ -327,32 +324,6 @@ console.log(purchaseOrderState);
       // console.log(totalTaxedAmount, "Before tax calculation with discount");
       purchaseOrderState.beforeTaxDiscountAmount = totalTaxedAmount.toFixed(2);
       purchaseOrderState.afterTaxDiscountAmount = ""
-
-
-    } else {
-      const totalAfterTax =
-        subTotalValue +
-        taxAmount ;
-      transactionDiscountValue =
-        transactionDiscountType === "percentage"
-          ? ((parseFloat(transactionDiscount) || 0) / 100) * totalAfterTax
-          : parseFloat(transactionDiscount) || 0;
-          if (purchaseOrderState.transactionDiscountAmount !== transactionDiscountValue.toFixed(2)) {
-            setPurchaseOrderState(prevState => ({
-              ...prevState,
-              transactionDiscountAmount: transactionDiscountValue.toFixed(2),
-
-            }));
-          }
-      // console.log(transactionDiscountValue, "transaction discount after tax");
-
-
-        totalTaxedAmount = totalAfterTax  -totalDiscountValue ;
-        purchaseOrderState.afterTaxDiscountAmount = totalTaxedAmount.toFixed(2);
-        purchaseOrderState.beforeTaxDiscountAmount = ""
-
-
-    }
 
   
 
@@ -391,39 +362,22 @@ console.log(purchaseOrderState);
     } catch (error) {}
   };
 
-  const handleDiscountType = () => {
-    if (discountType === "Item Line") {
-      setPurchaseOrderState((prevData: any) => ({
-        ...prevData,
-        transactionDiscount: "",
-        transactionDiscountType:""
-      }));
-    } else if (discountType === "Transaction Line") {
-      setPurchaseOrderState((prevData: any) => ({
-        ...prevData,
-        itemTable: prevData.itemTable.map((item:any) => ({
-          ...item,
-          itemDiscount: "" ,
-          itemDiscountType:""
-        }))
-      }));
-    }
-  };
+
 
 
 
 
   useEffect(() => {
     if (purchaseOrderState?.destinationOfSupply == "") {
-      setIsIntraState(false);
+      setIsInterState(false);
     } else {
       if (
         purchaseOrderState?.sourceOfSupply !==
         purchaseOrderState?.destinationOfSupply
       ) {
-        setIsIntraState(true);
+        setIsInterState(true);
       } else {
-        setIsIntraState(false);
+        setIsInterState(false);
       }
     }
   }, [
@@ -453,15 +407,6 @@ console.log(purchaseOrderState);
     getPurchaseOrderPrefix();
   }, []);
 
-  useEffect(() => {
-    if (purchaseOrderState?.discountType === "Item line") {
-      setPurchaseOrderState?.((prevData: any) => ({
-        ...prevData,
-        transactionDiscountType: "",   
-        transactionDiscountAmount: "",
-      }));
-    }
-  }, [purchaseOrderState?.discountType]);
   
   
   useEffect(() => {
@@ -484,9 +429,7 @@ console.log(purchaseOrderState);
   }, [purchaseOrderState.transactionDiscountAmount, purchaseOrderState.totalItemDiscount]);
 
 
-  useEffect(()=>{
-    handleDiscountType()
-  },[discountType])
+
   
 
   return (
@@ -588,13 +531,13 @@ console.log(purchaseOrderState);
                 <div className="grid grid-cols-2 mt-2 gap-4">
                   <div>
                     <label className="block text-sm mb-1 text-labelColor">
-                      Source Of Supply
+                      Destination Of Supply
                     </label>
                     <div className="relative w-full">
                       <select
                         onChange={handleChange}
-                        name="sourceOfSupply"
-                        value={purchaseOrderState.sourceOfSupply}
+                        name="destinationOfSupply"
+                        value={purchaseOrderState.destinationOfSupply}
                         className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                       >
                         <option value="">Select Source Of Supply</option>
@@ -616,13 +559,13 @@ console.log(purchaseOrderState);
                   </div>
                   <div>
                     <label className="block text-sm mb-1 text-labelColor">
-                      Destination Of Supply
+                     Source of Supply
                     </label>
                     <div className="relative w-full">
                       <select
                         onChange={handleChange}
-                        name="destinationOfSupply"
-                        value={purchaseOrderState.destinationOfSupply}
+                        name="sourceOfSupply"
+                        value={purchaseOrderState.sourceOfSupply}
                         className="block appearance-none w-full h-9  text-zinc-400 bg-white border border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                       >
                         <option value="">Select Source Of Supply</option>
@@ -992,70 +935,12 @@ console.log(purchaseOrderState);
                   </div>
                 </div> */}
               </div>
-             
-              <div className="border-b w-[20%] flex items-center justify-center text-textColor gap-3 my-5 py-2 border-[#EAECF0] text-sm">
-                <p>{discountType === "" ? "Discount Type" : discountType}</p>{" "}
-                <div
-                  className="border border-neutral-300 flex rounded-lg text-xs p-1"
-                  onClick={() => toggleDropdown("discountType")}
-                >
-                  <CehvronDown color="currentColor" width={15} height={15} />
-                </div>
-                {openDropdownIndex === "discountType" && (
-                  <div
-                    ref={dropdownRef}
-                    className=" absolute z-10 bg-white  shadow  rounded-md  p-2 mt-36 w-[28%] space-y-1 ms-10"
-                  >
-                    <div
-                      className=" p-2 hover:bg-red-50 cursor-pointe  rounded-lg py-3"
-                      onClick={() => {
-                        setDiscoutType("Item Line");
-                        setOpenDropdownIndex(null);
-                        setPurchaseOrderState((prevData: any) => ({
-                          ...prevData,
-                          discountType: "Item line",
-                        }));
-                      }}
-                    >
-                      Item Line
-                    </div>
-                    <div
-                      className=" p-2 hover:bg-red-50 cursor-pointe   rounded-lg  pt-3"
-                      onClick={() => {
-                        setDiscoutType("Transaction Line");
-                        setOpenDropdownIndex(null);
-                        setPurchaseOrderState((prevData: any) => ({
-                          ...prevData,
-                          discountType: "Transaction line",
-                          transactionDiscountType:"percentage"
-                        }));
-                      }}
-                    >
-                      Transaction Line
-                    </div>
-  
-                    <div
-                      className=" p-2 hover:bg-red-50 cursor-pointe  rounded-lg py-3"
-                      onClick={() => {
-                        setDiscoutType("Both");
-                        setOpenDropdownIndex(null);
-                        setPurchaseOrderState((prevData: any) => ({
-                          ...prevData,
-                          discountType: "Both",
-                        }));
-                      }}
-                    >
-                      Both
-                    </div>
-                    <div className="h-[.5px] bg-neutral-300"></div>
-                  </div>
-                )}
-              </div>
+        
               <p className="font-bold mt-3">Add Item</p>
               <NeworderTable
                 purchaseOrderState={purchaseOrderState}
                 setPurchaseOrderState={setPurchaseOrderState}
-                isIntraState={isIntraState}
+                isInterState={isInterState}
                 oneOrganization={oneOrganization}
               />
               <br />
@@ -1143,35 +1028,13 @@ console.log(purchaseOrderState);
                   </div>
                 </div>
   
-                {discountType !== "Item Line" && (
+             
                   <div className="flex ">
                     <div className="w-[150%]">
                       {" "}
                       <p>Bill Discount</p>
                       <div className="">
-                {discountType !== "Item Line" && (
-    beforeTax ? (
-      <button
-        className="text-darkRed cursor-pointer "
-        onClick={(e) => {
-          e.preventDefault(); 
-          setBeforeTax(false);
-        }}
-      >
-        Apply After Tax
-      </button>
-    ) : (
-      <button
-        className="text-darkRed cursor-pointer"
-        onClick={(e) => {
-          e.preventDefault(); 
-          setBeforeTax(true);
-        }}
-      >
-        Apply Before Tax
-      </button>
-    )
-  )}
+               
              </div>
                     </div>
   
@@ -1213,10 +1076,9 @@ console.log(purchaseOrderState);
                       </p>
                     </div>
                   </div>
-                )}
+                
           
 
-{discountType !== "Transaction Line" && (
   <div className="flex ">
     <div className="w-[75%]">
       <p> Total Discount</p>
@@ -1228,11 +1090,11 @@ console.log(purchaseOrderState);
       </p>
     </div>
   </div>
-)}
+
 
 <div>
     
-                  {isIntraState ? (
+                  {isInterState ? (
                     <div className="flex ">
                       <div className="w-[75%]">
                         {" "}
@@ -1266,7 +1128,7 @@ console.log(purchaseOrderState);
                         </div>
                       </div>
     
-                      <div className="flex ">
+                      <div className="flex mt-2">
                         <div className="w-[75%]">
                           {" "}
                           <p> CGST</p>
