@@ -61,7 +61,7 @@ const dataExist = async (organizationId) => {
 
       await checkDuplicateCustomerFields( duplicateCheck, customerDisplayName, customerEmail, mobile, organizationId, errors);  
       if (errors.length) {
-      return res.status(200).json({ message: errors }); }
+      return res.status(400).json({ message: errors }); }
 
       const savedCustomer = await createNewCustomer(cleanedData, openingDate, organizationId);
       
@@ -517,7 +517,7 @@ async function checkDuplicateCustomerFields( duplicateCheck, customerDisplayName
 //Validate inputs
   function validateInputs(data, currencyExists, taxExists, organizationExists, res) {
     const validCurrencies = currencyExists.map((currency) => currency.currencyCode);
-    const validTaxTypes = ["none", taxExists.taxType];
+    const validTaxTypes = ["Non-Tax", taxExists.taxType];
     const validationErrors = validateCustomerData(data, validCurrencies, validTaxTypes, organizationExists);
   
     if (validationErrors.length > 0) {
@@ -713,10 +713,11 @@ function generateTimeAndDateForDB(
     validateSalutation(data.salutation, errors);
     validateNames(['firstName', 'lastName'], data, errors);
     validateEmail(data.customerEmail, errors);
+    validateWebsite(data.websiteURL, errors);
     validatePhones(['workPhone', 'mobile', 'cardNumber','billingFaxNumber','shippingFaxNumber'], data, errors);
 
     //OtherDetails
-    validateAlphanumericFields(['pan'], data, errors);
+    validateAlphanumericFields(['pan','gstin_uin','vatNumber'], data, errors);
     validateIntegerFields(['creditDays', 'creditLimits', 'interestPercentage'], data, errors);
     validateFloatFields(['debitOpeningBalance', 'creditOpeningBalance'], data, errors);
     validateAlphabetsFields(['department', 'designation','billingAttention','shippingAttention'], data, errors);
@@ -770,6 +771,10 @@ function validateReqFields( data, errors ) {
   function validateEmail(email, errors) {
     validateField(email && !isValidEmail(email), "Invalid email: " + email, errors);
   }
+//Validate Website
+function validateWebsite(website, errors) {
+  validateField(website && !isValidURL(website), "Invalid Website: " + website, errors);
+}
 //Validate Phones
   function validatePhones(fields, data, errors) {
     fields.forEach((phone) => {
@@ -930,4 +935,7 @@ function isAlphanumeric(value) {
 
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+function isValidURL(value) {
+  return /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/.test(value);
 }
