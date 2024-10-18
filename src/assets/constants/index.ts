@@ -58,11 +58,11 @@ const navlist = [
   {
     nav: "Sales",
     icon: shoppingCart,
-    route: "/customer",
+    route: "/sales",
     subhead: [
       {
         headName: "Dashboard",
-        subRoute: "/customer",
+        subRoute: "/sales",
       },
       {
         headName: "Sales Order",

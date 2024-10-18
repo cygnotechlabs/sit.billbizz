@@ -12,7 +12,7 @@ import { SalesQuote } from "../../../Types/SalesQuote";
 
 type Row = {
   itemId: string;
-  itemImage?:string,
+  itemImage?: string,
   itemName: string;
   quantity: string;
   sellingPrice: string;
@@ -29,7 +29,7 @@ type Row = {
   discountType: string;
   discountAmount: string;
   amount: string;
-  itemStock:string;
+  itemStock: string;
 };
 
 type Props = {
@@ -53,29 +53,29 @@ const NewSalesQuoteTable = ({
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [rows, setRows] = useState<Row[]>([
     {
-  itemId: "",
-  itemImage:"",
-  itemName: "",
-  quantity: "",
-  sellingPrice:"",
-  taxPreference: "",
-  taxGroup: "",
-  cgst: "",
-  sgst: "",
-  igst: "",
-  cgstAmount:"",
-  sgstAmount:"",
-  igstAmount: "",
-  vatAmount: "",
-  itemTotaltax: "",
-  discountType: "percentage",
-  discountAmount: "",
-  amount: "",
-  itemStock:"",
+      itemId: "",
+      itemImage: "",
+      itemName: "",
+      quantity: "",
+      sellingPrice: "",
+      taxPreference: "",
+      taxGroup: "",
+      cgst: "",
+      sgst: "",
+      igst: "",
+      cgstAmount: "",
+      sgstAmount: "",
+      igstAmount: "",
+      vatAmount: "",
+      itemTotaltax: "",
+      discountType: "percentage",
+      discountAmount: "",
+      amount: "",
+      itemStock: "",
     },
   ]);
-  console.log(rows,"rows");
-  
+  console.log(rows, "rows");
+
 
   const toggleDropdown = (id: number | null, type: string | null, row: Row) => {
     if (!row.itemName) {
@@ -108,24 +108,24 @@ const NewSalesQuoteTable = ({
   const addRow = () => {
     const newRow: any = {
       itemId: "",
-      itemImage:"",
+      itemImage: "",
       itemName: "",
       quantity: "",
-      sellingPrice:"",
+      sellingPrice: "",
       taxPreference: "",
       taxGroup: "",
       cgst: "",
       sgst: "",
       igst: "",
-      cgstAmount:"",
-      sgstAmount:"",
+      cgstAmount: "",
+      sgstAmount: "",
       igstAmount: "",
       vatAmount: "",
       itemTotaltax: "",
       discountType: "percentage",
       discountAmount: "",
       amount: "",
-      itemStock:"",
+      itemStock: "",
     };
     const updatedRows = [...rows, newRow];
     setRows(updatedRows);
@@ -134,8 +134,6 @@ const NewSalesQuoteTable = ({
   const handleItemSelect = (item: any, index: number) => {
     setOpenDropdownId(null);
     setOpenDropdownType(null);
-console.log(item);
-    
 
     const newRows = [...rows];
     newRows[index].itemName = item.itemName;
@@ -163,7 +161,7 @@ console.log(item);
     newRows[index].sgst = sgstAmount;
     newRows[index].igst = igstAmount;
 
-    
+
 
     setRows(newRows);
 
@@ -171,7 +169,7 @@ console.log(item);
       const updatedItem = { ...newRows[index] };
       delete updatedItem.itemImage;
 
-      const updatedItemTable = prevData.itemTable?.map(
+      const updatedItemTable = prevData.items?.map(
         (row: any, idx: number) => {
           return idx === index ? updatedItem : row;
         }
@@ -179,7 +177,7 @@ console.log(item);
 
       return {
         ...prevData,
-        itemTable: updatedItemTable,
+        items: updatedItemTable,
       };
     });
   };
@@ -276,7 +274,7 @@ console.log(item);
       const updatedItem = { ...newRows[index] };
       delete updatedItem.itemImage;
 
-      const updatedItemTable = prevData.itemTable?.map(
+      const updatedItemTable = prevData.items?.map(
         (row: any, idx: number) => {
           return idx === index ? updatedItem : row;
         }
@@ -284,11 +282,11 @@ console.log(item);
 
       return {
         ...prevData,
-        itemTable: updatedItemTable,
+        items: updatedItemTable,
       };
     });
   };
-  
+
 
   useEffect(() => {
     const updatedRows = rows.map((row, index) => {
@@ -341,24 +339,24 @@ console.log(item);
       const newRows = [
         {
           itemId: "",
-          itemImage:"",
+          itemImage: "",
           itemName: "",
           quantity: "",
-          sellingPrice:"",
+          sellingPrice: "",
           taxPreference: "",
           taxGroup: "",
           cgst: "0",
           sgst: "0",
           igst: "0",
-          cgstAmount:"",
-          sgstAmount:"",
+          cgstAmount: "",
+          sgstAmount: "",
           igstAmount: "",
           vatAmount: "",
           itemTotaltax: "",
           discountType: "percentage",
           discountAmount: "",
           amount: "0",
-          itemStock:"",
+          itemStock: "",
         },
       ];
       setRows(newRows);
@@ -399,21 +397,19 @@ console.log(item);
   };
 
   const calculateDiscount = () => {
-    if (salesQuoteState?.discountType !== "Transaction Line") {
-      return rows.reduce((total, row) => {
-        const discount = parseFloat(row.discountAmount) || 0;
-        const quantity = parseFloat(row.quantity) || 0;
-        const sellingPrice = parseFloat(row.sellingPrice) || 0;
+    return rows.reduce((total, row) => {
+      const discount = parseFloat(row.discountAmount) || 0;
+      const quantity = parseFloat(row.quantity) || 0;
+      const sellingPrice = parseFloat(row.sellingPrice) || 0;
 
-        const totalSellingPrice = sellingPrice * quantity;
+      const totalSellingPrice = sellingPrice * quantity;
 
-        if (row.discountType === "percentage") {
-          return total + (totalSellingPrice * discount) / 100;
-        } else {
-          return total + discount;
-        }
-      }, 0);
-    }
+      if (row.discountType === "percentage") {
+        return total + (totalSellingPrice * discount) / 100;
+      } else {
+        return total + discount;
+      }
+    }, 0);
 
     return 0;
   };
@@ -459,20 +455,7 @@ console.log(item);
     });
   };
 
-  useEffect(() => {
-    if (salesQuoteState?.discountType === "Transaction Line") {
-      setRows((prevData: any) => {
-        if (Array.isArray(prevData)) {
-          return prevData.map((item) => ({
-            ...item,
-            itemDiscountType: "percentage",
-            itemDiscount: "",
-          }));
-        }
-        return [];
-      });
-    }
-  }, [salesQuoteState?.discountType]);
+
 
   useEffect(() => {
     getAllItems();
@@ -484,22 +467,15 @@ console.log(item);
         <table className="min-w-full bg-white rounded-lg relative pb-4 border-dropdownText">
           <thead className="text-[12px] text-center text-dropdownText">
             <tr className="bg-lightPink">
-              {newPurchaseOrderTableHead.map((item, index) => {
-                if (
-                  item === "Discount" &&
-                  salesQuoteState?.discountType === "Transaction Line"
-                ) {
-                  return null;
-                }
-                return (
-                  <th
-                    className="py-2 px-4 font-medium border-b border-tableBorder relative"
-                    key={index}
-                  >
-                    {item}
-                  </th>
-                );
-              })}
+              {newPurchaseOrderTableHead.map((item, index) => (
+                <th
+                  className="py-2 px-4 font-medium border-b border-tableBorder relative"
+                  key={index}
+                >
+                  {item}
+                </th>
+              ))}
+
             </tr>
           </thead>
           <tbody className="text-dropdownText text-center text-[13px] ">
@@ -623,52 +599,53 @@ console.log(item);
                     disabled
                     type="text"
                     placeholder="0"
-                    className="w-[50px]  focus:outline-none text-center"
+                    className="w-[50px] focus:outline-none text-center"
                     value={
                       !isIntraState
-                        ? (
-                            parseFloat(row.cgst) + parseFloat(row.sgst)
-                          ).toFixed(2)
-                        : row.igst
+                        ? parseFloat(row.cgst) + parseFloat(row.sgst) === 0
+                          ? "nil"
+                          : (parseFloat(row.cgst) + parseFloat(row.sgst)).toFixed(2)
+                        : parseFloat(row.igst) === 0 
+                          ? "nil"
+                          : row.igst
                     }
                   />
+
                 </td>
-                {salesQuoteState?.discountType !== "Transaction Line" && (
-                  <td className="py-2.5 px-4 border-y border-tableBorder">
-                    <div className="flex items-center justify-center gap-2 w-full">
-                      <input
-                        type="text"
-                        placeholder="0"
-                        className="w-[50px]  focus:outline-none text-center"
-                        value={row.discountAmount}
+                <td className="py-2.5 px-4 border-y border-tableBorder">
+                  <div className="flex items-center justify-center gap-2 w-full">
+                    <input
+                      type="text"
+                      placeholder="0"
+                      className="w-[50px]  focus:outline-none text-center"
+                      value={row.discountAmount}
+                      onChange={(e) =>
+                        handleRowChange(index, "discountAmount", e.target.value)
+                      }
+                    />
+                    <div className="relative">
+                      <select
                         onChange={(e) =>
-                          handleRowChange(index, "discountAmount", e.target.value)
+                          handleRowChange(
+                            index,
+                            "discountType",
+                            e.target.value
+                          )
                         }
-                      />
-                      <div className="relative">
-                        <select
-                          onChange={(e) =>
-                            handleRowChange(
-                              index,
-                              "discountType",
-                              e.target.value
-                            )
-                          }
-                          value={row.discountType}
-                          className="text-xs appearance-none w-[60px] p-1 text-zinc-400 bg-white border border-inputBorder rounded-lg"
-                        >
-                          <option value="percentage">%</option>
-                          <option value="currency">
-                            {oneOrganization?.baseCurrency}
-                          </option>
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                          <ChevronDown color="gray" height={15} width={15} />
-                        </div>
+                        value={row.discountType}
+                        className="text-xs appearance-none w-[60px] p-1 text-zinc-400 bg-white border border-inputBorder rounded-lg"
+                      >
+                        <option value="percentage">%</option>
+                        <option value="currency">
+                          {oneOrganization?.baseCurrency}
+                        </option>
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <ChevronDown color="gray" height={15} width={15} />
                       </div>
                     </div>
-                  </td>
-                )}
+                  </div>
+                </td>
 
                 <td className="py-2.5 px-4 border-y border-tableBorder">
                   <input

@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 type Props = {};
 
 const QuoteHome = ({}: Props) => {
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -78,13 +78,20 @@ const QuoteHome = ({}: Props) => {
     <div className="mx-12 my-4 overflow-x-hidden">
       <div className="flex items-center relative">
         <div>
-          <h3 className="font-bold text-xl text-textColor">Create Sales Quote</h3>
+          <h3 className="font-bold text-xl text-textColor">
+            Create Sales Quote
+          </h3>
           <p className="text-sm text-gray mt-1">
-            Lorem ipsum dolor sit amet consectetur. Commodo enim odio fringilla egestas consectetur amet.
+            Generate and manage invoices efficiently to ensure timely billing
+            and maintain accurate financial records
           </p>
         </div>
         <div className="ml-auto gap-3 flex items-center relative">
-          <Button onClick={()=>navigate("/sales/quote/new")} variant="primary" size="sm">
+          <Button
+            onClick={() => navigate("/sales/quote/new")}
+            variant="primary"
+            size="sm"
+          >
             <PlusCircle color="white" />
             <p className="text-sm">New Quote</p>
           </Button>
@@ -131,7 +138,11 @@ const QuoteHome = ({}: Props) => {
         </div>
         <div className="flex pl-3 pr-3 items-center gap-5">
           <div className="w-[90%]">
-            <SearchBar onSearchChange={setSearchValue} searchValue={searchValue} placeholder="Search Quote" />
+            <SearchBar
+              onSearchChange={setSearchValue}
+              searchValue={searchValue}
+              placeholder="Search Quote"
+            />
           </div>
           <SortBy />
           <Print />

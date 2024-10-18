@@ -13,7 +13,7 @@ import SearchBar from "../../../Components/SearchBar";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
 import Banner from "../banner/Banner";
-import CustomiseColmn from "./CustomiseColmn ";
+import CustomiseColmn from "../../../Components/CustomiseColum";
 
 // Define the data types
 type Column = {

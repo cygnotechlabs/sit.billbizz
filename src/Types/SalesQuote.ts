@@ -30,11 +30,11 @@ export interface SalesQuote {
   note: string;
   tc: string;
   totalDiscount:string;
-  discountType: string;
+  // discountType: string;
   discountTransactionType: string;
   discountTransactionAmount: string;
   transactionDiscount:string;
-  discountTax: string;
+  // discountTax: string;
   subTotal: string;
   totalItem: string;
   cgst: string;

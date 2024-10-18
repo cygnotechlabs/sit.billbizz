@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
+import SalesDashboard from "../features/sales/dashboard/SalesDashboard";
 
 // Lazy load your components
 const SalesOrder = lazy(() => import("../features/sales/salesOrder/SalesOrder"));
@@ -20,7 +21,8 @@ const AddReceiptForm = lazy(() => import("../features/sales/Receipt/AddReceiptFo
 const SalesInfo = lazy(() => import("../features/sales/SalesInfo"));
 
 const SalesRoutes: RouteObject[] = [
-  { path: "/sales/salesorder", element: <SalesOrder /> },
+  { path: "/sales", element: <SalesDashboard /> }, 
+  { path: "/sales/salesorder", element: <SalesOrder /> }, 
   { path: "/sales/viewsalesorder", element: <ViewSalesOrder /> },
   { path: "/sales/salesorder/new", element: <NewSalesOrder /> },
   { path: "/sales/invoice", element: <InvoiceHome /> },

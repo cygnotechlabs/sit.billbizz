@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useApi from "../../../Hooks/useApi";
 import { endponits } from "../../../Services/apiEndpoints";
-import CustomiseColmn from "./CustomiseColum";
+import CustomiseColmn from "../../../Components/CustomiseColum";
 import SearchBar from "../../../Components/SearchBar";
 import Print from "../../sales/salesOrder/Print";
 import ItemSort from "./ItemSort";
@@ -39,10 +39,8 @@ const ItemTable = () => {
     { id: "sku", label: "SKU", visible: true },
     { id: "purchaseDescription", label: "Description", visible: true },
     { id: "sellingPrice", label: "Sales Rate", visible: true },
-    { id: "costPrice", label: "Rate", visible: true },
     { id: "itemDetail", label: "Item Details", visible: true },
     { id: "costPrice", label: "Purchase Rate", visible: true },
-    // { id: "status", label: "Stock On Hand", visible: true },
   ];
 
   const [columns, setColumns] = useState<Column[]>(initialColumns);

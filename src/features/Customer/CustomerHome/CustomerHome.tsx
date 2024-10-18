@@ -14,8 +14,7 @@ function CustomerHome({}: Props) {
         <div>
           <h3 className="font-bold text-2xl text-textColor">Customer</h3>
           <p className="text-sm text-gray mt-1">
-            Lorem ipsum dolor sit amet consectetur. Commodo enim odio fringilla
-            egestas consectetur amet.
+          A customer is a compiled record of all individuals or entities who have purchased or interacted with business
           </p>
         </div>
         <div className="ml-auto gap-3 flex items-center">
