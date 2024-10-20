@@ -1,10 +1,14 @@
-import { FormEvent, useState } from "react";
+// import { FormEvent, 
+  // import useState from "react";
 import Button from "../../../Components/Button";
 import Pen from "../../../assets/icons/Pen";
 import CehvronDown from "../../../assets/icons/CehvronDown";
 import bgImage from "../../../assets/Images/6.png";
 import Modal from "../../../Components/model/Modal";
-import useApi from "../../../Hooks/useApi";
+import { useState } from "react";
+// import useApi from "../../../Hooks/useApi";
+// import { endponits } from "../../../Services/apiEndpoints";
+// import toast from "react-hot-toast";
 
 type Props = {};
 
@@ -21,7 +25,7 @@ const EditUnitConversion = ({}: Props) => {
   unitConversionR:"",
 });
 
-const {request:addEditunit}=useApi("post",5003);
+// const {request:addEditunit}=useApi("post",5003);
 console.log(editUnitData);
 
 
@@ -39,36 +43,36 @@ const handleInputChange = (
   const closeModal = () => {
     setModalOpen(false);
   };
-  const handleSave = async (e: FormEvent) => {
-    e.preventDefault();
+  // const handleSave = async (e: FormEvent) => {
+
 
     
-    try {
-      const url =  `${endponits.ADD_UNIT}`;
-      const body = initialUnitData;
+  //   try {
+  //     const url =  `${endponits.ADD_UNIT}`;
+  //     // const body = initialUnitData;
      
-      const { response, error } = await addnewunit(url, body);
-      if (!error && response) {
-        toast.success(response.data.message);
-     console.log(response);
-     setModalOpen(false);
-        setInitialUnitData(  {
-          unitName: "",
-            symbol: "",
-            quantityCode:"",
-            precision:"",
+  //     const { response, error } = await addnewunit(url, body);
+  //     if (!error && response) {
+  //       toast.success(response.data.message);
+  //    console.log(response);
+  //    setModalOpen(false);
+  //       // setInitialUnitData(  {
+  //       //   unitName: "",
+  //       //     symbol: "",
+  //       //     quantityCode:"",
+  //       //     precision:"",
           
-          });
+  //       //   });
 
 
-      } else {
-        console.log(error);
-        toast.error(error.response.data.message);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //     } else {
+  //       console.log(error);
+  //       toast.error(error.response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
   return (
     <div>
       <Button variant="secondary" onClick={openModal} size="sm">
@@ -107,7 +111,7 @@ const handleInputChange = (
                 <input
                     type="text"
                   name="symbol"
-                    value={initialUnitData.symbol}
+                    // value={initialUnitData.symbol}
                     placeholder="Symbol"
                     onChange={handleInputChange}
                     className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-10"

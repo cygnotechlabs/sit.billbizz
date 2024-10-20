@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Button from "../../../Components/Button";
-import CirclePlus from "../../../assets/icons/circleplus";
+
 import CehvronDown from "../../../assets/icons/CehvronDown";
 import bgImage from "../../../assets/Images/Frame 6.png";
 import Modal from "../../../Components/model/Modal";
@@ -9,9 +9,9 @@ type Props = {};
 const NewUnitConverstion = ({}: Props) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const openModal = () => {
-    setModalOpen(true);
-  };
+  // const openModal = () => {
+  //   setModalOpen(true);
+  // };
 
   const closeModal = () => {
     setModalOpen(false);
