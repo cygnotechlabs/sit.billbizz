@@ -15,7 +15,7 @@ const unitSchema = new Schema({
     unitName: {type: String},
     symbol: {type: String},
     quantityCode: {type: String},
-    // precision: {type: String},
+    precision: {type: String},
 
     // unitConversion: [unitConversionSchema],
 });

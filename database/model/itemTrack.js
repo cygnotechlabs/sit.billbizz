@@ -12,6 +12,8 @@ const itemTrackSchema = new Schema({
 
     itemId: {type:String},
     itemName: {type:String},
+    sellingPrice:{ type:String },
+    costPrice: { type: String },
 
     creditQuantity: {type:Number},
     debitQuantity: {type:Number},
@@ -19,7 +21,7 @@ const itemTrackSchema = new Schema({
     currentStock: {type:Number},
     
     remark: {type:String},
-});
+}); 
 
 const ItemTrack = mongoose.model("ItemTrack", itemTrackSchema);
 
