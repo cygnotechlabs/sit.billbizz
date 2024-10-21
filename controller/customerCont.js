@@ -47,10 +47,10 @@ exports.getCustomerTransactions = async (req, res) => {
 // Fetch existing data
 const dataExist = async (organizationId) => {
     const [organizationExists, taxExists, currencyExists, settings, allCustomer ] = await Promise.all([
-      Organization.findOne({ organizationId },{ timeZoneExp: 1, dateFormatExp: 1, dateSplit: 1, dateSplit: 1, organizationCountry: 1 }),
-      Tax.findOne({ organizationId },{ taxType: 1}),
+      Organization.findOne({ organizationId },{ timeZoneExp: 1, dateFormatExp: 1, dateSplit: 1, organizationCountry: 1 }),
+      Tax.findOne({ organizationId },{ taxType: 1 }),
       Currency.find({ organizationId }, { currencyCode: 1, _id: 1 }),
-      Settings.find({ organizationId },{ duplicateCustomerDisplayName: 1, duplicateCustomerEmail: 1,duplicateCustomerMobile: 1 }),
+      Settings.find({ organizationId },{ duplicateCustomerDisplayName: 1, duplicateCustomerEmail: 1, duplicateCustomerMobile: 1 }),
       Customer.find({ organizationId }),
     ]);
     return { organizationExists, taxExists, currencyExists, settings, allCustomer };
