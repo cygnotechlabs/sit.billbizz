@@ -3,11 +3,23 @@
 const Organization = require("../database/model/organization");
 const Account = require("../database/model/account")
 const TrialBalance = require("../database/model/trialBalance")
+const Currency = require("../database/model/currency");
 const crypto = require('crypto');
 const moment = require('moment-timezone');
 
 const key = Buffer.from(process.env.ENCRYPTION_KEY, 'utf8'); 
 const iv = Buffer.from(process.env.ENCRYPTION_IV, 'utf8'); 
+
+
+// Fetch existing data
+const dataExist = async (organizationId) => {
+  const [ existingOrganization, currencyExists ] = await Promise.all([
+    Organization.findOne({ organizationId }),
+    Currency.find({ organizationId }, { currencyCode: 1, _id: 0 }),
+  ]);
+  return { existingOrganization, currencyExists };
+};
+
 
 
 
@@ -20,31 +32,17 @@ exports.addAccount = async (req, res) => {
       const organizationId = req.user.organizationId;
 
       const cleanedData = cleanCustomerData(req.body);
-      
-      const { accountName, accountSubhead, accountHead, accountGroup } = cleanedData;
 
-      // Validate account structure
-    const isValidAccountStructure = validateAccountStructure( accountGroup, accountHead, accountSubhead );
-    if (!isValidAccountStructure) {
-      console.log("Invalid account group, head, or subhead.");
-      return res.status(400).json({ message: "Invalid account group, head, or subhead.", });
-    }
+      const { existingOrganization, currencyExists } = await dataExist(organizationId);
 
-    const bankDetails = { bankAccNum: cleanedData.bankAccNum, bankIfsc: cleanedData.bankIfsc, bankCurrency: cleanedData.bankCurrency };
+      //Data Exist Validation
+      if (!validateOrganizationTaxCurrency( existingOrganization, currencyExists, res)) return;     
+  
 
-    // Validate bank details if accountSubhead is "Bank"
-    const isValidBankDetails = validateBankDetails( accountSubhead, bankDetails );
-    if (!isValidBankDetails) {
-      return res.status(400).json({ message: "Bank Details (Account Number, IFSC, Currency) are required", });
-    }
+     //Validate Inputs  
+     if (!validateInputs( cleanedData, organizationId, currencyExists, res )) return;
 
-    const { bankAccNum, bankIfsc, bankCurrency } = bankDetails;
 
-    // Check if an Organization already exists
-    const existingOrganization = await Organization.findOne({ organizationId }); 
-    if (!existingOrganization) {
-      return res.status(404).json({ message: "No Organization Found.", });
-    }
 
     const generatedDateTime = generateTimeAndDateForDB(existingOrganization.timeZoneExp, existingOrganization.dateFormatExp, existingOrganization.dateSplit);
     const openingDate = generatedDateTime.dateTime;    
@@ -52,25 +50,39 @@ exports.addAccount = async (req, res) => {
   
       // Check if an accounts with the same name already exists
       const existingAccount = await Account.findOne({
-        accountName: accountName,
+        accountName: cleanedData.accountName,
         organizationId: organizationId,
         });  
       if (existingAccount) {
+        console.log("Account with the provided Account Name already exists");
         return res.status(409).json({
           message: "Account with the provided Account Name already exists.",
-        });
+        });        
       }
+      
 
       // Encrypt bankAccNum before storing it
-      let encryptedBankAccNum = undefined;
-      if(bankAccNum){ encryptedBankAccNum = encrypt(bankAccNum); }
+      if(cleanedData.bankAccNum){ cleanedData.bankAccNum = encrypt(cleanedData.bankAccNum); }
 
-      const newAccount = new Account({ ...cleanedData, organizationId, openingDate, bankAccNum: encryptedBankAccNum, bankIfsc, bankCurrency });      
+      const newAccount = new Account({ ...cleanedData, organizationId, openingDate });      
       await newAccount.save();
+
+      const trialEntry = new TrialBalance({
+        organizationId: organizationId,
+        operationId: newAccount._id,
+        date: openingDate,
+        accountId: newAccount._id,
+        accountName: newAccount.accountName,
+        action: "Opening Balance",
+        debitAmount: cleanedData.debitOpeningBalance,
+        creditAmount: cleanedData.creditOpeningBalance,
+        remark: newAccount.remark,
+      });
+      await trialEntry.save();
   
       
       res.status(201).json({ message: "Account created successfully." });
-      console.log("Account created successfully",newAccount);
+      console.log("Account created successfully",newAccount,trialEntry);
     } catch (error) {
       console.error("Error creating Account:", error);
       res.status(500).json({ message: "Internal server error." });
@@ -78,6 +90,69 @@ exports.addAccount = async (req, res) => {
     const endTime = Date.now();
     const responseTime = endTime - startTime;
     console.log(`Response time: ${responseTime} ms`); 
+};
+
+
+//Edit account
+exports.editAccount = async (req, res) => {
+  console.log("Edit Account:", req.body);
+  try {
+    const { accountId } = req.params;
+    const organizationId = req.user.organizationId;
+
+    const cleanedData = cleanCustomerData(req.body);
+
+    const { existingOrganization, currencyExists } = await dataExist(organizationId);
+
+    //Data Exist Validation
+    if (!validateOrganizationTaxCurrency( existingOrganization, currencyExists, res)) return;     
+  
+
+    //Validate Inputs  
+    if (!validateInputs( cleanedData, organizationId, currencyExists, res )) return;
+     
+     
+
+    // Check if an account with the given organizationId and accountId exists
+    const account = await Account.findOne({
+      _id: accountId,
+      organizationId: organizationId,
+    });
+
+    if (!account) {
+      console.log("Account not found for the provided Account ID");
+      return res.status(404).json({
+        message:
+          "Account not found for the provided Account ID",
+      });
+    }
+    // Encrypt bankAccNum before storing it
+    if(cleanedData.bankAccNum){ cleanedData.bankAccNum = encrypt(bankAccNum); }
+
+    // Update account fields
+    account.accountName = cleanedData.accountName;
+    account.accountCode = cleanedData.accountCode;
+
+    account.accountSubhead = cleanedData.accountSubhead;
+    account.accountHead = cleanedData.accountHead;
+    account.accountGroup = cleanedData.accountGroup;
+
+    account.description = cleanedData.description;
+    account.bankAccNum = cleanedData.bankAccNum;
+    account.bankIfsc = cleanedData.bankIfsc;
+    account.bankCurrency = cleanedData.bankCurrency;
+
+    // Save updated account
+    await account.save();
+
+    res.status(200).json({
+      message: "Account updated successfully.",
+    });
+    console.log("Account updated successfully:");
+  } catch (error) {
+    console.error("Error updating Account:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
 };
 
 
@@ -103,6 +178,7 @@ exports.getAllAccount = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+
 
 //Get one Account for a given organizationId
 exports.getOneAccount = async (req, res) => {
@@ -163,131 +239,6 @@ exports.getBankAccNum = async (req, res) => {
 };
 
 
-
-//Edit account
-exports.editAccount = async (req, res) => {
-  console.log("Edit Account:", req.body);
-  try {
-    const { accountId } = req.params;
-    const organizationId = req.user.organizationId;
-
-    const {
-      accountName,
-      accountCode,
-
-      accountSubhead,
-      accountHead,
-      accountGroup,    
-      
-      description,
-      bankAccNum,
-      bankIfsc,
-      bankCurrency,
-    } = req.body;
-
-    // Define valid groups, heads, and subheads
-    const validStructure = {
-      Asset: {
-        Asset: [
-          "Asset",
-          "Current asset",
-          "Cash",
-          "Bank",
-          "Fixed asset",
-          "Stock",
-          "Payment Clearing",
-          "Sundry Debtors",
-        ],
-        Equity: ["Equity"],
-        Income: ["Income", "Other Income"],
-      },
-      Liability: {
-        Liabilities: [
-          "Current Liability",
-          "Credit Card",
-          "Long Term Liability",
-          "Other Liability",
-          "Overseas Tax Payable",
-          "Sundry Creditors",
-        ],
-        Expenses: ["Expense", "Cost of Goods Sold", "Other Expense"],
-      },
-    };
-
-    // Validate accountGroup, accountHead, and accountSubhead
-    // if (!validStructure[accountGroup] || !validStructure[accountGroup][accountHead] || !validStructure[accountGroup][accountHead].includes(accountSubhead)) {
-    //   console.log("Invalid account group, head, or subhead.");
-    //   return res.status(400).json({
-    //     message: "Invalid account group, head, or subhead.",
-    //   });
-
-    // }
-if (!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead)) {
-  console.log("Invalid account group, head, or subhead.");
-  return res.status(400).json({
-    message: "Invalid account group, head, or subhead.",
-  });
-}
-
-    // Validate bank details if accountSubhead is "Bank"
-    if (
-      accountSubhead === "Bank" &&
-      (!bankAccNum || !bankIfsc || !bankCurrency)
-    ) {
-      return res.status(400).json({
-        message: "Bank Details (Account Number, IFSC, Currency) are required",
-      });
-    }
-
-
-    
-
-    // Check if an account with the given organizationId and accountId exists
-    const account = await Account.findOne({
-      _id: accountId,
-      organizationId: organizationId,
-    });
-
-    if (!account) {
-      return res.status(404).json({
-        message:
-          "Account not found for the provided Account ID.",
-      });
-    }
-    // Encrypt bankAccNum before storing it
-    let encryptedBankAccNum = null;
-    if(bankAccNum){
-      encryptedBankAccNum = encrypt(bankAccNum);        
-    }
-
-    // Update account fields
-    account.accountName = accountName;
-    account.accountCode = accountCode;
-
-    account.accountSubhead = accountSubhead;
-    account.accountHead = accountHead;
-    account.accountGroup = accountGroup;
-
-
-
-      account.description = description;
-      account.bankAccNum = encryptedBankAccNum;
-      account.bankIfsc = bankIfsc;
-      account.bankCurrency = bankCurrency;
-
-    // Save updated account
-    await account.save();
-
-    res.status(200).json({
-      message: "Account updated successfully.",
-    });
-    console.log("Account updated successfully:");
-  } catch (error) {
-    console.error("Error updating Account:", error);
-    res.status(500).json({ message: "Internal server error." });
-  }
-};
-
 //Delete account
 exports.deleteAccount = async (req, res) => {
   try {
@@ -326,9 +277,7 @@ exports.deleteAccount = async (req, res) => {
 exports.getOneTrailBalance = async (req, res) => {
   try {
       const { accountId } = req.params;
-      const organizationId = req.user.organizationId;
-      console.log(accountId);
-      
+      const organizationId = req.user.organizationId;      
 
       // Find the TrialBalance by accountId and organizationId
       const trialBalance = await TrialBalance.find({
@@ -348,6 +297,11 @@ exports.getOneTrailBalance = async (req, res) => {
       res.status(500).json({ message: "Internal server error." });
   }
 };
+
+
+
+
+
 
 
 //Account Structure
@@ -378,10 +332,6 @@ const validStructure = {
     Expenses: ["Expense", "Cost of Goods Sold", "Other Expense"],
   },
 };
-
-
-
-
 
 
 //Encrpytion 
@@ -470,7 +420,6 @@ function generateTimeAndDateForDB(
 }
 
 
-
 // Validation function for account structure
 function validateAccountStructure(accountGroup, accountHead, accountSubhead) {
   return (
@@ -489,4 +438,214 @@ function validateBankDetails(accountSubhead, bankDetails) {
   // Set bank details to undefined if not "Bank"
   bankDetails.bankAccNum = bankDetails.bankIfsc = bankDetails.bankCurrency = undefined;
   return true;
+}
+
+
+  // Validate Organization Tax Currency
+  function validateOrganizationTaxCurrency( existingOrganization, currencyExists, res) {
+    if (!existingOrganization) {
+      res.status(404).json({ message: "Organization not found" });
+      return false;
+    }
+    if (!currencyExists) {
+      res.status(404).json({ message: "Currency not found" });
+      return false;
+    }
+    
+    return true;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Validate inputs
+function validateInputs( data,  organizationId, currencyExists, res ) {
+  const validCurrencies = currencyExists.map((currency) => currency.currencyCode);
+  const validationErrors = validateItemData( data, organizationId, validCurrencies );
+
+ if (validationErrors.length > 0) {
+   res.status(400).json({ message: validationErrors.join(", ") });
+   return false;
+ }
+ return true;
+}
+
+
+// Field validation utility
+function validateField(condition, errorMsg, errors) {
+  if (condition) {
+    console.log(errorMsg);      
+    errors.push(errorMsg)};
+}
+
+
+
+//Validate Data
+function validateItemData( data, organizationId, validCurrencies ) {  
+  
+  const errors = [];
+
+  //Basic Info
+
+  //OtherDetails
+  validateReqFields( data, errors);
+  validateAccountStructure(data.accountGroup, data.accountHead, data.accountSubhead, errors);
+
+
+  validateAlphanumericFields(['bankIfsc'], data, errors);
+  validateIntegerFields(['bankAccNum'], data, errors);
+  //validateFloatFields([''], data, errors);
+  //validateAlphabetsFields([''], data, errors);
+
+  //Currency
+  validateCurrency(data.bankCurrency, validCurrencies, errors);
+
+  //Tax Details
+
+  return errors;
+}
+
+
+
+
+
+
+//Valid Req Fields
+function validateReqFields( data, errors ) { 
+  if (typeof data.accountName === 'undefined' ) {
+    errors.push("Account Name required");
+  }
+  if (typeof data.accountSubhead === 'undefined' ) {
+  errors.push(" Account Subhead required");
+  }
+  if (typeof data.accountHead === 'undefined' ) {
+  errors.push("Account Head required");
+  }
+  if (typeof data.accountGroup === 'undefined' ) {
+    errors.push("Account Group required");
+  }
+  if (typeof data.accountHead === 'undefined' ) {
+    errors.push("Account Head required");
+  }
+  if (typeof data.debitOpeningBalance === 'undefined' && typeof data.creditOpeningBalance === 'undefined') {
+    errors.push("Opening Balance required");
+  }
+  if (typeof data.debitOpeningBalance !== 'undefined' && typeof data.creditOpeningBalance !== 'undefined') {
+    errors.push("Select Credit or Debit Opening Balance");
+  }
+
+  if (data.accountSubhead === "Bank" && typeof data.bankAccNum === 'undefined' ) {
+  errors.push("Bank Account Number required");
+  }
+  if (data.accountSubhead === "Bank" && typeof data.bankIfsc === 'undefined' ) {
+    errors.push("IFSC required");
+  }
+  if (data.accountSubhead === "Bank" && typeof data.bankCurrency === 'undefined' ) {
+    errors.push("Currency required");
+  }
+}
+
+
+// Validation function for account structure
+function validateAccountStructure(accountGroup, accountHead, accountSubhead, errors) {
+  validateField(!validStructure[accountGroup]?.[accountHead]?.includes(accountSubhead) || false,
+    "Invalid Account Group, Head, or Subhead.", errors);
+}
+
+
+//Valid Alphanumeric Fields
+function validateAlphanumericFields(fields, data, errors) {
+  fields.forEach((field) => {
+    validateField(data[field] && !isAlphanumeric(data[field]), "Invalid " + field + ": " + data[field], errors);
+  });
+}
+
+// Validate Integer Fields
+function validateIntegerFields(fields, data, errors) {
+fields.forEach(field => {
+  validateField(data[field] && !isInteger(data[field]), `Invalid ${field}: ${data[field]}`, errors);
+});
+}
+
+//Valid Float Fields  
+function validateFloatFields(fields, data, errors) {
+  fields.forEach((balance) => {
+    validateField(data[balance] && !isFloat(data[balance]),
+      "Invalid " + balance.replace(/([A-Z])/g, " $1") + ": " + data[balance], errors);
+  });
+}
+
+//Valid Alphabets Fields 
+function validateAlphabetsFields(fields, data, errors) {
+  fields.forEach((field) => {
+    if (data[field] !== undefined) {
+      validateField(!isAlphabets(data[field]),
+        field.charAt(0).toUpperCase() + field.slice(1) + " should contain only alphabets.", errors);
+    }
+  });
+}
+
+
+//Validate Currency
+function validateCurrency(currency, validCurrencies, errors) {
+  validateField(currency && !validCurrencies.includes(currency), "Invalid Currency: " + currency, errors);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Validation helpers
+function isAlphabets(value) {
+  return /^[A-Za-z\s]+$/.test(value);
+}
+
+function isFloat(value) {
+  return /^-?\d+(\.\d+)?$/.test(value);
+}
+
+function isInteger(value) {
+  return /^\d+$/.test(value);
+}
+
+function isAlphanumeric(value) {
+  return /^[A-Za-z0-9]+$/.test(value);
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }

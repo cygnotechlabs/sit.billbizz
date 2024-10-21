@@ -189,7 +189,7 @@ exports.getOneJournal = async (req, res) => {
 
         // Find the journal where id and organizationId matches
         const journal = await Journal.findOne({ _id: id, organizationId: organizationId });
-
+        
         if (!journal) {
             return res.status(404).json({
                 message: "Journal not found for the provided ID and organization ID.",
