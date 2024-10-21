@@ -10,6 +10,7 @@ import ExpenseRoutes from './routes/ExpenseRoutes';
 import StaffRoutes from './routes/StaffRoutes';
 import SupplierRoutes from './routes/SupplierRoutes';
 import SettingsRoutes from './routes/SettingsRoutes';
+import LayoutSkeleton from './Components/skeleton/LayoutSkeleton';
 
 // Lazy imports of components
 const Login = lazy(() => import('./features/login/Login'));
@@ -71,7 +72,7 @@ const App: React.FC = () => {
   const element = useRoutes(routes);
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div><LayoutSkeleton/></div>}>
       {element}
     </Suspense>
   );

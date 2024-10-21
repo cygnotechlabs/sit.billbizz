@@ -73,7 +73,7 @@ function Dashboard({}: Props) {
         <div>
           <h3 className="font-bold text-2xl text-textColor ">Customer Overview</h3>
           <p className="text-sm text-gray mt-1">
-            Lorem ipsum dolor sit amet consectetur. Commodo enim odio fringilla egestas consectetur amet.
+          A customer overview is a high level description that provides key insights into business customer base.
           </p>
         </div>
         <div className="ml-auto gap-3 flex items-center">

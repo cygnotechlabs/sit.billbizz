@@ -141,8 +141,7 @@ const NewManufacture = forwardRef<HTMLDivElement, Props>(({ onClose }, ref) => {
                 Manage Manufacturer
               </h3>
               <p className="text-dropdownText font-semibold text-sm mt-2">
-                Have an insight on the profit or loss incurred due to the change
-                in exchange rates
+              Have an insight on the profit or loss incurred due to the change in exchange rates
               </p>
             </div>
             <div
