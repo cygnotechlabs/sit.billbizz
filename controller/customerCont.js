@@ -22,17 +22,17 @@ exports.getCustomerTransactions = async (req, res) => {
       if (!customer) {
           return res.status(404).json({ message: "Customer not found" });
       }
-      console.log("customer",customer)
+      //console.log("Customer",customer)
 
       const account = await Account.findOne({ accountCode: customerId , organizationId });
       if (!account) {
           return res.status(404).json({ message: "Account not found for this customer" });
       }
-      console.log("account",account)
+      //console.log("Account",account)
 
       // Step 2: Use account _id to find matching transactions in the TrialBalance collection
       const customerTransactions = await TrialBalance.find({ accountId: account._id , organizationId });
-      console.log("trialbalance ",customerTransactions)
+      //console.log("Trialbalance ",customerTransactions)
 
       // Step 3: Send the customer transactions as a response
       return res.status(200).json({ customerTransactions });
@@ -46,39 +46,30 @@ exports.getCustomerTransactions = async (req, res) => {
 
 // Fetch existing data
 const dataExist = async (organizationId) => {
-    const [organizationExists, taxExists, currencyExists, allCustomer , settings] = await Promise.all([
-      Organization.findOne({ organizationId }),
-      Tax.findOne({ organizationId }),
-      Currency.find({ organizationId }, { currencyCode: 1, _id: 0 }),
+    const [organizationExists, taxExists, currencyExists, settings, allCustomer ] = await Promise.all([
+      Organization.findOne({ organizationId },{ timeZoneExp: 1, dateFormatExp: 1, dateSplit: 1, dateSplit: 1, organizationCountry: 1 }),
+      Tax.findOne({ organizationId },{ taxType: 1}),
+      Currency.find({ organizationId }, { currencyCode: 1, _id: 1 }),
+      Settings.find({ organizationId },{ duplicateCustomerDisplayName: 1, duplicateCustomerEmail: 1,duplicateCustomerMobile: 1 }),
       Customer.find({ organizationId }),
-      Settings.find({ organizationId })
     ]);
-    return { organizationExists, taxExists, currencyExists, allCustomer , settings };
+    return { organizationExists, taxExists, currencyExists, settings, allCustomer };
   };
-
   // Add Customer
   exports.addCustomer = async (req, res) => {
     console.log("Add Customer:", req.body);
     try {
       const { organizationId, id: userId, userName } = req.user; 
-      // const organizationId ="INDORG0001";
-      // const userId ="45454";
-      // const userName ="Thaha";
-      // console.log("organizationId :",organizationId);
-
-      const duplicateCustomerDisplayName = true;
-      const duplicateCustomerEmail = true;
-      const duplicateCustomerMobile = true;
-
+      
       //Clean Data
       const cleanedData = cleanCustomerData(req.body);
 
       const { customerEmail, debitOpeningBalance, creditOpeningBalance, customerDisplayName, mobile } = cleanedData;
   
-      const { organizationExists, taxExists, currencyExists , settings } = await dataExist(organizationId);
+      const { organizationExists, taxExists, currencyExists, allCustomer , settings } = await dataExist(organizationId);
       
       // checking values from Customer settings
-      // const { duplicateCustomerDisplayName , duplicateCustomerEmail , duplicateCustomerMobile } = settings[0]
+      const { duplicateCustomerDisplayName , duplicateCustomerEmail , duplicateCustomerMobile } = settings[0]
         
       //Data Exist Validation
       if (!validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res)) return;     
@@ -99,7 +90,7 @@ const dataExist = async (organizationId) => {
 
       const savedCustomer = await createNewCustomer(cleanedData, openingDate, organizationId);
       
-      const savedAccount = await createNewAccount(customerDisplayName, openingDate, organizationId, savedCustomer._id);
+      const savedAccount = await createNewAccount(customerDisplayName, openingDate, organizationId, allCustomer );
   
       await saveTrialBalanceAndHistory(savedCustomer, savedAccount, debitOpeningBalance, creditOpeningBalance, cleanedData, openingDate, userId, userName );
   
@@ -616,11 +607,18 @@ async function checkDuplicateCustomerFields( duplicateCheck, customerDisplayName
   }
   
 // Create New Account
-  function createNewAccount(customerDisplayName, openingDate, organizationId, customerId) {
+  function createNewAccount( customerDisplayName, openingDate, organizationId, allCustomer ) {
+
+    // Count existing organizations to generate the next organizationId
+
+    const nextIdNumber = allCustomer.length + 1;    
+    const count = `CU${nextIdNumber.toString().padStart(4, '0')}`;
+
+
     const newAccount = new Account({
       organizationId,
       accountName: customerDisplayName,
-      accountCode: customerId,
+      accountCode: count,
       accountSubhead: "Sundry Debtors",
       accountHead: "Asset",
       accountGroup: "Asset",
