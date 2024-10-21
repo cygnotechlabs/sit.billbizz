@@ -347,7 +347,7 @@ const updateOpeningBalanceInItemTrack = async (openingStock, itemTrackAll, prevS
     return;
   }
 
-  const diff = openingStock - prevStock;
+  const diff = openingStock - prevStock || 0;
   console.log( "Difference : ", diff );
   
 
@@ -537,8 +537,8 @@ function validateItemData( data, taxExists, organizationId, bmcr ) {
   validateBMCRFields( data.brand, data.manufacturer, data.categories, data.rack, bmcr, errors);
 
 
-  //validateAlphanumericFields([''], data, errors);
-  //validateIntegerFields([''], data, errors);
+  validateAlphanumericFields(['mpn','isbn'], data, errors);
+  validateIntegerFields(['upc','ean'], data, errors);
   validateFloatFields(['length', 'width', 'height', 'weight', 'sellingPrice', 'saleMrp', 'costPrice', 'openingStock', 'openingStockRatePerUnit', 'reorderPoint'], data, errors);
   //validateAlphabetsFields([''], data, errors);
 
@@ -595,16 +595,16 @@ function validateReqFields( itemName, sellingPrice, taxPreference, taxRate , err
 //Valid BMCR field
 function validateBMCRFields(brand, manufacturer, categories, rack, bmcr, errors) {
     const validBrandNames = bmcr.brandExist.map(item => item.brandName);
-    validateField(brand && !validBrandNames.includes(brand), "Invalid Brand: " + brand, errors);
+    validateField(brand && !validBrandNames.includes(brand), "Invalid Brand: " + brand+" Choose a valid brand", errors);
 
     const validManufacturerNames = bmcr.manufacturerExist.map(item => item.manufacturerName);
-    validateField(manufacturer && !validManufacturerNames.includes(manufacturer), "Invalid Manufacturer: " + manufacturer, errors);
+    validateField(manufacturer && !validManufacturerNames.includes(manufacturer), "Invalid Manufacturer: " + manufacturer+" Choose a valid manufacturer", errors);
 
     const validCategoryNames = bmcr.categoriesExist.map(item => item.categoriesName);
-    validateField(categories && !validCategoryNames.includes(categories), "Invalid Category: " + categories, errors);
+    validateField(categories && !validCategoryNames.includes(categories), "Invalid Category: " + categories+" Choose a valid category", errors);
 
     const validRackNames = bmcr.rackExist.map(item => item.rackName);
-    validateField(rack && !validRackNames.includes(rack), "Invalid Rack: " + rack, errors);  
+    validateField(rack && !validRackNames.includes(rack), "Invalid Rack: "+ rack +" Choose a valid rack", errors);  
 }
 
 
