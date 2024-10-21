@@ -453,7 +453,6 @@ const handleRowChange = (index: number, field: keyof Row, value: string) => {
     const totalSellingPrice = calculateTotalSubtotal();
     const totalDiscount = calculateDiscount();
   
-    console.log(totalDiscount, "Total Qu");
   
     setPurchaseOrderState?.((prevData: PurchaseOrder) => ({
       ...prevData,
