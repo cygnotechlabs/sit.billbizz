@@ -1,15 +1,16 @@
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent,useEffect,useState } from "react";
 import Button from "../../../Components/Button";
-import CirclePlus from "../../../assets/icons/circleplus";
+
 import bgImage from "../../../assets/Images/12.png";
 
 import Modal from "../../../Components/model/Modal";
 import { endponits } from "../../../Services/apiEndpoints";
 import useApi from "../../../Hooks/useApi";
 import toast, { Toaster } from "react-hot-toast";
-import { UnitResponseContext } from "../../../context/ContextShare";
+import Pen from "../../../assets/icons/Pen";
+// import { UnitResponseContext } from "../../../context/ContextShare";
 
-type Props = {};
+type Props = {unit:any};
 
 interface UnitData  {
   unitName: string;
@@ -19,13 +20,8 @@ interface UnitData  {
 }
 
 
-const NewUnit = ({}: Props) => {
+const EditUnitMeasurement = ({unit}: Props) => {
   const [isModalOpen, setModalOpen] = useState(false);
-
-
-  const { setUnitResponse } = useContext(UnitResponseContext)!;
-  const { request: addnewunit} = useApi("post", 5003);
-
 
   const [initialUnitData, setInitialUnitData] = useState<UnitData>(
     {
@@ -36,20 +32,15 @@ const NewUnit = ({}: Props) => {
     
     });
     
+    // const {setUnitResponse}=useContext(UnitResponseContext)!;
    
+console.log(unit,"unit");
 
-  
+  const{ request :addnewunit}=useApi("post",5003); 
+  const{ request :getoneunit}=useApi("get",5003); 
 
   console.log(initialUnitData);
 
-
-  const openModal = () => {
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-  };
 
 
   const handleInputChange = (
@@ -60,27 +51,64 @@ const NewUnit = ({}: Props) => {
    setInitialUnitData({...initialUnitData,[name]:value})
   };
 
+console.log(unit,"unit");
+
 
  
+
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+
+  const saveInFeild = async () => {
+
+
+    
+    try {
+      const url =  `${endponits.GET_ONE_UNIT}/${unit._id}`;
+      const body = initialUnitData;
+     
+      const { response, error } = await getoneunit(url, body);
+      if (!error && response) {
+        setInitialUnitData(response.data);
+     console.log(response);
+        
+        
+
+
+      } else {
+        console.log(error);
+        toast.error(error.response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
 
     
     try {
       const url =  `${endponits.ADD_UNIT}`;
-      const body = initialUnitData;
      
-      const { response, error } = await addnewunit(url, body);
+     
+      const { response, error } = await addnewunit(url);
       if (!error && response) {
         toast.success(response.data.message);
      console.log(response);
      setModalOpen(false);
-    
-          setUnitResponse((prevUnitResponse: any) => ({
-            ...prevUnitResponse,
-            ...body,
-          }));
-        
+        setInitialUnitData(  {
+          unitName: "",
+            symbol: "",
+            quantityCode:"",
+            precision:"",
+          
+          });
 
 
       } else {
@@ -93,21 +121,26 @@ const NewUnit = ({}: Props) => {
   };
 
 
+useEffect(() => {
+     saveInFeild()
+  }, []);
+
   return (
     <div>
       <div>
-        <Button
-          onClick={openModal}
-          variant="primary"
-          className="flex items-center"
-          size="sm"
-        >
-          <CirclePlus color="white" size="14" />{" "}
-          <p className="text-md">New Unit</p>
-        </Button>
+    
+
+      <button onClick={() => openModal()} className="flex items-center">
+  <div className="flex items-center mb-1"> {/* Adjust margin-bottom as needed */}
+    <Pen color={"blue"} />
+  </div>
+</button>
+
+
+
 
         <Modal open={isModalOpen} onClose={closeModal}  style={{width:"39%"}}>
-          <div className="p-5 mt-3">
+          <div className="p-5 mt-3 text-start">
             <div className="mb-5 flex p-4 rounded-xl bg-CreamBg relative overflow-hidden">
               <div
                 className="absolute top-0 -right-8 w-[178px] h-[89px]"
@@ -118,7 +151,7 @@ const NewUnit = ({}: Props) => {
               ></div>
               <div className="relative z-10">
                 <h3 className="text-xl font-bold text-textColor">
-                  Create Unit
+                  Edit Unit of Measurement
                 </h3>
                 <p className="text-dropdownText font-semibold text-sm mt-2">
                   Quantify and manage the quantities of products{" "}
@@ -136,7 +169,7 @@ const NewUnit = ({}: Props) => {
               <div className="">
                 <div className="mb-4">
                   <label className="block text-sm mb-1 text-labelColor">
-                    Name
+                    Unit Name
                   </label>
                   <input
                     type="text"
@@ -220,4 +253,4 @@ name= "precision"
   );
 };
 
-export default NewUnit;
+export default EditUnitMeasurement;

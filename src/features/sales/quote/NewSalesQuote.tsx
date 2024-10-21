@@ -11,11 +11,16 @@ import useApi from "../../../Hooks/useApi";
 import { SalesQuote } from "../../../Types/SalesQuote";
 import toast from "react-hot-toast";
 import Upload from "../../../assets/icons/Upload";
-import  NewSalesQuoteTable from "./NewSalesQuoteTable"
-
+import NewSalesQuoteTable from "./NewSalesQuoteTable"
+ 
 type Props = {};
-
-const NewSalesQuote = ({}: Props) => {
+ 
+interface Customer {
+  taxType: string;
+ 
+}
+ 
+const NewSalesQuote = ({ }: Props) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -23,72 +28,68 @@ const NewSalesQuote = ({}: Props) => {
   const [placeOfSupplyList, setPlaceOfSupplyList] = useState<any | []>([]);
   const [countryData, setcountryData] = useState<any | any>([]);
   const [customerData, setCustomerData] = useState<[]>([]);
-  const [selectedCustomer, setSelecetdCustomer] = useState<string>("");
+  const [selectedCustomer, setSelecetdCustomer] = useState<any>("");
   const [prefix, setPrifix] = useState("")
-  const [discountType, setDiscoutType] = useState<string>("");
   const [isIntraState, setIsIntraState] = useState<boolean>(false);
-  const [beforeTax, setBeforeTax] = useState<boolean>(true);
-
-
+ 
+ 
   const { request: getOneOrganization } = useApi("get", 5004);
   const { request: getCountries } = useApi("get", 5004);
   const { request: AllCustomer } = useApi("get", 5002);
   const { request: getPrfix } = useApi("get", 5007);
-
+ 
   const [salesQuoteState, setSalesQuoteState] = useState<SalesQuote>({
-  customerId: "",
-  customerName: "",
-  placeOfSupply:"",
-  reference: "",
+    customerId: "",
+    customerName: "",
+    placeOfSupply: "",
+    reference: "",
+    salesQuoteDate: "",
+    expiryDate: "",
+    subject: "",
  
-  salesQuoteDate: "",
-  expiryDate: "",
+    items: [
+      {
+        itemId: "",
+        itemName: "",
+        quantity: "",
+        sellingPrice: "",
+        taxPreference: "",
+        taxGroup: "",
+        cgst: "",
+        sgst: "",
+        igst: "",
+        cgstAmount: "",
+        sgstAmount: "",
+        igstAmount: "",
+        vatAmount: "",
+        itemTotaltax: "",
+        discountType: "",
+        discountAmount: "",
+        amount: ""
+      },
+    ],
+    totalItemDiscount: "",
+    note: "",
+    tc: "",
+    totalDiscount: "",
+    // discountType: "",
+    discountTransactionType: "percentage",
+    discountTransactionAmount: "",
+    // discountTax: "",
+    transactionDiscount: "",
+    subTotal: "",
+    totalItem: "",
  
-  subject: "",
- 
-  items: [
-    {
-      itemId: "",
-      itemName: "",
-      quantity: "",
-      sellingPrice: "",
-      taxPreference:"",
-      taxGroup: "",
-      cgst: "",
-      sgst: "",
-      igst: "",
-      cgstAmount: "",
-      sgstAmount: "",
-      igstAmount: "",
-      vatAmount: "",
-      itemTotaltax: "",
-      discountType: "",
-      discountAmount: "",
-      amount:""
-    },
-  ],
-  totalItemDiscount:"",
-  note: "",
-  tc: "",
-  totalDiscount:"",
-  discountType: "",
-  discountTransactionType: "percentage",
-  discountTransactionAmount: "",
-  discountTax: "",
-  transactionDiscount:"",
-  subTotal: "",
-  totalItem: "",
-
-  cgst: "",
-  sgst: "",
-  igst: "",
-  vat: "",
-  totalTax: "",
-  totalAmount: ""
+    cgst: "",
+    sgst: "",
+    igst: "",
+    vat: "",
+    totalTax: "",
+    totalAmount: ""
   });
-  console.log(salesQuoteState);
-  
-
+ 
+console.log(salesQuoteState,"dfghjklkjhgfkl");
+ 
   const fetchData = async (
     url: string,
     setData: React.Dispatch<React.SetStateAction<any>>,
@@ -103,14 +104,14 @@ const NewSalesQuote = ({}: Props) => {
       console.error("Error fetching data:", error);
     }
   };
-
+ 
   const toggleDropdown = (key: string | null) => {
     setOpenDropdownIndex(key === openDropdownIndex ? null : key);
     const customerUrl = `${endponits.GET_ALL_CUSTOMER}`;
-
+ 
     fetchData(customerUrl, setCustomerData, AllCustomer);
   };
-
+ 
   const handleClickOutside = (event: MouseEvent) => {
     if (
       dropdownRef.current &&
@@ -119,7 +120,7 @@ const NewSalesQuote = ({}: Props) => {
       setOpenDropdownIndex(null);
     }
   };
-
+ 
   const fetchCountries = async () => {
     try {
       const url = `${endponits.GET_COUNTRY_DATA}`;
@@ -131,13 +132,13 @@ const NewSalesQuote = ({}: Props) => {
       console.log("Error in fetching Country", error);
     }
   };
-
-
+ 
+ 
   const getSalesQuotePrefix = async () => {
     try {
       const prefixUrl = `${endponits.GET_LAST_SALES_QUOTE_PREFIX}`;
       const { response, error } = await getPrfix(prefixUrl);
-
+ 
       if (!error && response) {
         setPrifix(response.data)
       } else {
@@ -147,10 +148,9 @@ const NewSalesQuote = ({}: Props) => {
       console.log("Error in fetching Purchase Order Prefix", error);
     }
   };
-
+ 
   const calculateTotal = () => {
     const {
-      
       subTotal,
       sgst,
       cgst,
@@ -159,63 +159,46 @@ const NewSalesQuote = ({}: Props) => {
       discountTransactionType,
       transactionDiscount,
     } = salesQuoteState;
-
-   
+ 
+ 
     const subTotalValue = parseFloat(subTotal) || 0;
     const sgstValue = parseFloat(sgst) || 0;
     const cgstValue = parseFloat(cgst) || 0;
     const igstValue = parseFloat(igst) || 0;
     const totalDiscountValue = parseFloat(totalDiscount) || 0;
-
+ 
+ 
     const taxAmount = isIntraState ? igstValue : sgstValue + cgstValue;
     // console.log(taxAmount, "tax amount");
-
+ 
     let totalTaxedAmount = 0;
     let transactionDiscountValue = 0;
-
-    if (beforeTax) {
-      const totalBeforeTax =
-        subTotalValue  ;
  
-      transactionDiscountValue =
+ 
+    const totalBeforeTax =
+      subTotalValue;
+ 
+ 
+    transactionDiscountValue =
       discountTransactionType === "percentage"
-          ? ((parseFloat(transactionDiscount) || 0) / 100) * totalBeforeTax
-          : parseFloat(transactionDiscount) || 0;
-          if (salesQuoteState.discountTransactionAmount !== transactionDiscountValue.toFixed(2)) {
-            setSalesQuoteState(prevState => ({
-              ...prevState,
-              discountTransactionAmount: transactionDiscountValue.toFixed(2),
-            }));
-          }
-
-      // console.log(transactionDiscountValue, "transaction discount before tax");
-
-      totalTaxedAmount = totalBeforeTax  + taxAmount- totalDiscountValue;
-      // console.log(totalTaxedAmount, "Before tax calculation with discount");
-
-
-    } else {
-      const totalAfterTax =
-        subTotalValue +
-        taxAmount ;
-      transactionDiscountValue =
-      discountTransactionType === "percentage"
-          ? ((parseFloat(transactionDiscount) || 0) / 100) * totalAfterTax
-          : parseFloat(transactionDiscount) || 0;
-          if (salesQuoteState.discountTransactionAmount !== transactionDiscountValue.toFixed(2)) {
-            setSalesQuoteState(prevState => ({
-              ...prevState,
-              discountTransactionAmount: transactionDiscountValue.toFixed(2),
-
-            }));
-          }
-        totalTaxedAmount = totalAfterTax  -totalDiscountValue ;
-
+        ? ((parseFloat(transactionDiscount) || 0) / 100) * totalBeforeTax
+        : parseFloat(transactionDiscount) || 0;
+    if (salesQuoteState.discountTransactionAmount !== transactionDiscountValue.toFixed(2)) {
+      setSalesQuoteState(prevState => ({
+        ...prevState,
+        discountTransactionAmount: transactionDiscountValue.toFixed(2),
+      }));
     }
+ 
+    // console.log(transactionDiscountValue, "transaction discount before tax");
+ 
+    totalTaxedAmount = totalBeforeTax + taxAmount - totalDiscountValue;
+    // console.log(totalTaxedAmount, "Before tax calculation with discount");
+ 
     salesQuoteState.totalTax = totalTaxedAmount.toFixed(2);
-    return  totalTaxedAmount.toFixed(2)
+    return totalTaxedAmount.toFixed(2)
   };
-
+ 
   const handleplaceofSupply = () => {
     if (oneOrganization.organizationCountry) {
       const country = countryData.find(
@@ -239,16 +222,18 @@ const NewSalesQuote = ({}: Props) => {
       console.log("No country selected");
     }
   };
+  console.log(customerData, "cd");
+ 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-
+ 
+ 
     if (name === "transactionDiscount") {
       let discountValue = parseFloat(value) || 0;
-
       const totalAmount = parseFloat(salesQuoteState.subTotal) || 0;
-
+ 
       if (salesQuoteState.discountTransactionType === "percentage") {
         if (discountValue > 100) {
           discountValue = 100;
@@ -260,7 +245,7 @@ const NewSalesQuote = ({}: Props) => {
           toast.error("Discount cannot exceed the subtotal amount");
         }
       }
-
+ 
       setSalesQuoteState((prevState: any) => ({
         ...prevState,
         [name]: discountValue.toString(),
@@ -281,14 +266,14 @@ const NewSalesQuote = ({}: Props) => {
       item[displayNameKey]?.toLowerCase().includes(searchValue.toLowerCase())
     );
   };
-
+ 
   const filteredCustomer = filterByDisplayName(
     customerData,
     "customerDisplayName",
     searchValue
   );
   useEffect(() => {
-
+ 
     if (
       salesQuoteState?.placeOfSupply !==
       oneOrganization.state
@@ -296,27 +281,27 @@ const NewSalesQuote = ({}: Props) => {
       setIsIntraState(true);
     } else {
       setIsIntraState(false);
-
+ 
     }
   }, [
     salesQuoteState?.placeOfSupply,
   ]);
-
+ 
   useEffect(() => {
-    setSalesQuoteState((prevState:any) => ({
+    setSalesQuoteState((prevState: any) => ({
       ...prevState,
       totalDiscount: (parseFloat(prevState.totalItemDiscount) || 0) + (parseFloat(prevState.discountTransactionAmount) || 0),
     }));
   }, [salesQuoteState.discountTransactionAmount, salesQuoteState.totalItemDiscount]);
-
-
+ 
+ 
   useEffect(() => {
     if (openDropdownIndex !== null) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-
+ 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -326,37 +311,31 @@ const NewSalesQuote = ({}: Props) => {
     fetchCountries();
     getSalesQuotePrefix()
   }, [oneOrganization]);
-
+ 
   useEffect(() => {
     const organizationUrl = `${endponits.GET_ONE_ORGANIZATION}`;
-
+ 
     fetchData(organizationUrl, setOneOrganization, getOneOrganization);
     console.log(oneOrganization.state);
-
+ 
   }, []);
-
-  const handleDiscountType = () => {
-    if (discountType === "Item Line") {
-      setSalesQuoteState((prevData: any) => ({
-        ...prevData,
-        discountTransactionAmount: "",
-        discountTransactionType: ""
-      }));
-    } else if (discountType === "Transaction Line") {
-      setSalesQuoteState((prevData: any) => ({
-        ...prevData,
-        itemTable: prevData.itemTable?.map((item: any) => ({
-          ...item,
-          itemDiscount: "",
-          itemDiscountType: ""
-        }))
-      }));
+  const [isPlaceOfSupplyVisible, setIsPlaceOfSupplyVisible] = useState<boolean>(false);
+ 
+  const checkTaxType = (customer: Customer) => {
+    if (customer.taxType === "GST") {
+      setIsPlaceOfSupplyVisible(true);
+    } else {
+      setIsPlaceOfSupplyVisible(false); // Hide the Place of Supply field
     }
   };
+ 
   useEffect(() => {
-    handleDiscountType()
-  }, [discountType])
-
+    if (selectedCustomer) {
+      checkTaxType(selectedCustomer);
+    }
+  }, [selectedCustomer]);
+ 
+ 
   return (
     <div className="px-8">
       <div className="flex gap-5">
@@ -371,13 +350,13 @@ const NewSalesQuote = ({}: Props) => {
           </h4>
         </div>
       </div>
-
+ 
       <div className="grid grid-cols-12 gap-4 py-5 rounded-lg">
         <div className="col-span-8">
           <div className="bg-[#FFFFFF] p-5 min-h-max rounded-xl relative ">
             <div className=" mt-5 space-y-4">
               <div className="grid grid-cols-12 gap-4">
-                <div className="col-span-5  ">
+              <div className={`col-span-${isPlaceOfSupplyVisible ? "5" : "7"}`}>
                   <label className="text-sm mb-1 text-labelColor">
                     Customer Name
                   </label>
@@ -411,12 +390,12 @@ const NewSalesQuote = ({}: Props) => {
                       {filteredCustomer ? (
                         filteredCustomer.map((customer: any) => (
                           <div
-                            className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe 
+                            className="grid grid-cols-12 gap-1 p-2 hover:bg-gray-100 cursor-pointe
                                 border border-slate-400 rounded-lg bg-lightPink"
                             onClick={() => {
                               setSalesQuoteState((prevState) => ({
                                 ...prevState,
-                                customerId: customer._id,
+                                customerId: customer._id, customerName: customer.customerDisplayName
                               }));
                               setOpenDropdownIndex(null);
                               setSelecetdCustomer(customer);
@@ -452,42 +431,43 @@ const NewSalesQuote = ({}: Props) => {
                     </div>
                   )}
                 </div>
-                <div className="col-span-7">
-                  <label className="block text-sm mb-1 text-labelColor">
-                    Place Of Supply
-                  </label>
-                  <div className="relative w-full">
-                    <select
-                      name="placeOfSupply"
-                      onChange={handleChange}
-                      value={salesQuoteState.placeOfSupply}
-                      className="block appearance-none w-full h-9  text-zinc-400 bg-white border
-                         border-inputBorder text-sm  pl-2 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                    >
-                      <option value="">Select place Of Supply</option>
-                      {placeOfSupplyList &&
-                        placeOfSupplyList.map((item: any, index: number) => (
-                          <option
-                            key={index}
-                            value={item}
-                            className="text-gray"
-                          >
-                            {item}
-                          </option>
-                        ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <CehvronDown color="gray" />
+                {isPlaceOfSupplyVisible && (
+                  <div className="col-span-7">
+                    <label className="block text-sm mb-1 text-labelColor">
+                      Place Of Supply
+                    </label>
+                    <div className="relative w-full">
+                      <select
+                        name="placeOfSupply"
+                        onChange={handleChange}
+                        value={salesQuoteState.placeOfSupply}
+                        className="block appearance-none w-full h-9 text-zinc-400 bg-white border
+        border-inputBorder text-sm pl-2 pr-8 rounded-md leading-tight
+        focus:outline-none focus:bg-white focus:border-gray-500"
+                      >
+                        <option value="">Select place Of Supply</option>
+                        {placeOfSupplyList &&
+                          placeOfSupplyList.map((item: any, index: number) => (
+                            <option key={index} value={item} className="text-gray">
+                              {item}
+                            </option>
+                          ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <CehvronDown color="gray" />
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div className="col-span-5 ">
+                )}
+ 
+ 
+ 
+                <div className={`col-span-${isPlaceOfSupplyVisible ? "5" : "5"}`}>
                   <label className="block text-sm mb-1 text-labelColor">
                     Quote#
                   </label>
                   <div className=" flex items-center border rounded-lg border-inputBorder">
-
+ 
                     <input
                       readOnly
                       value={prefix}
@@ -499,19 +479,22 @@ const NewSalesQuote = ({}: Props) => {
                     </div>
                   </div>
                 </div>
-
+ 
                 <div className="col-span-7">
                   <label className="block text-sm mb-1 text-labelColor">
                     Reference#
                   </label>
                   <input
+                  name="reference"
                     placeholder="reference"
                     type="text"
                     className="border-inputBorder w-full text-sm border rounded p-1.5 pl-2 h-9"
+                    onChange={handleChange}
+                    value={salesQuoteState.reference}
                   />
                 </div>
-
-
+ 
+ 
                 <div className="col-span-5">
                   <label className="block text-sm mb-1 text-labelColor">
                     Quote Date
@@ -523,9 +506,9 @@ const NewSalesQuote = ({}: Props) => {
                     />
                   </div>
                 </div>
-
-
-
+ 
+ 
+ 
                 <div className="col-span-7 relative">
                   <label className="block text-sm mb-1 text-labelColor">
                     Expiry Date
@@ -537,7 +520,7 @@ const NewSalesQuote = ({}: Props) => {
                     />
                   </div>
                 </div>
-
+ 
                 <div className="col-span-5">
                   <label className="block text-sm mb-1 text-labelColor">
                     Subject
@@ -593,76 +576,20 @@ const NewSalesQuote = ({}: Props) => {
                   )}
                 </div>
               </div>
-
-              <div className="border-b w-[20%] flex items-center justify-center text-textColor gap-3 my-5 py-2 border-[#EAECF0] text-sm">
-                <p>{discountType === "" ? "Discount Type" : discountType}</p>{" "}
-                <div
-                  className="border border-neutral-300 flex rounded-lg text-xs p-1"
-                  onClick={() => toggleDropdown("discountType")}
-                >
-                  <CehvronDown color="currentColor" width={15} height={15} />
-                </div>
-                {openDropdownIndex === "discountType" && (
-                  <div
-                    ref={dropdownRef}
-                    className=" absolute z-10 bg-white  shadow  rounded-md  p-2 mt-48 w-[24%] space-y-1 ms-10 "
-                  >
-                    <div
-                      className=" p-2 hover:bg-red-50 cursor-pointe  rounded-lg py-3"
-                      onClick={() => {
-                        setDiscoutType("Item Line");
-                        setOpenDropdownIndex(null);
-                        setSalesQuoteState((prevData: any) => ({
-                          ...prevData,
-                          discountType: "Item Line",
-                        }));
-                      }}
-                    >
-                      Item Line
-                    </div>
-                    <div
-                      className=" p-2 hover:bg-red-50 cursor-pointe   rounded-lg  pt-3"
-                      onClick={() => {
-                        setDiscoutType("Transaction Line");
-                        setOpenDropdownIndex(null);
-                        setSalesQuoteState((prevData: any) => ({
-                          ...prevData,
-                          discountType: "Transaction Line",
-                          discountTransactionType: "percentage"
-                        }));
-                      }}
-                    >
-                      Transaction Line
-                    </div>
-                    <div className="h-[.5px] bg-neutral-300"></div>
-                    <div
-                      className=" p-2 hover:bg-red-50 cursor-pointe  rounded-lg py-3"
-                      onClick={() => {
-                        setDiscoutType("Both");
-                        setOpenDropdownIndex(null);
-                        setSalesQuoteState((prevData: any) => ({
-                          ...prevData,
-                          discountType: "Both",
-                        }));
-                      }}
-                    >
-                      Both
-                    </div>
-                  </div>
-                )}
-              </div>
-
-
+ 
+ 
+ 
+ 
               <p className="font-bold">Add Item</p>
-            <NewSalesQuoteTable
-             salesQuoteState={salesQuoteState}
-             setSalesQuoteState={setSalesQuoteState}
-             oneOrganization={oneOrganization}
-             isIntraState={isIntraState}
-            />
-
+              <NewSalesQuoteTable
+                salesQuoteState={salesQuoteState}
+                setSalesQuoteState={setSalesQuoteState}
+                oneOrganization={oneOrganization}
+                isIntraState={isIntraState}
+              />
+ 
               <br />
-
+ 
             </div>
           </div>
         </div>
@@ -707,9 +634,9 @@ const NewSalesQuote = ({}: Props) => {
                 <input type="file" className="hidden" name="documents" />
               </label>
             </div>
-
+ 
             <div className=" pb-4  text-dropdownText border-b-2 border-slate-200 space-y-2">
-
+ 
               <div className="flex ">
                 <div className="w-[75%]">
                   {" "}
@@ -725,7 +652,7 @@ const NewSalesQuote = ({}: Props) => {
                   </p>
                 </div>
               </div>
-
+ 
               <div className="flex ">
                 <div className="w-[75%]">
                   {" "}
@@ -740,90 +667,63 @@ const NewSalesQuote = ({}: Props) => {
                   </p>
                 </div>
               </div>
-
-              {discountType !== "Item Line" && (
-                <div className="flex ">
-                  <div className="w-[150%]">
-                    {" "}
-                    <p>Bill Discount</p>
-                  </div>
-
-                  <div className=" ">
-                    <div className="border border-inputBorder rounded-lg flex items-center justify-center p-1 gap-1">
-                      <input
-                        onChange={handleChange}
-                        name="transactionDiscount"
-                        type="text"
-                        placeholder="0"
-                        className="w-[30px]  focus:outline-none text-center"
-                      />
-                      <select
-                        className="text-xs   text-zinc-400 bg-white relative"
-                        onChange={handleChange}
-                        name="transactionDiscountType"
-                      >
-                        <option value="percentage">%</option>
-                        <option value="currency">
-                          {oneOrganization.baseCurrency}
-                        </option>
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center  text-gray-700 ms-1">
-                        <CehvronDown color="gray" height={15} width={15} />
-                      </div>
+ 
+              <div className="flex ">
+                <div className="w-[150%]">
+                  {" "}
+                  <p>Bill Discount</p>
+                </div>
+ 
+                <div className=" ">
+                  <div className="border border-inputBorder rounded-lg flex items-center justify-center p-1 gap-1">
+                    <input
+                      onChange={handleChange}
+                      name="transactionDiscount"
+                      type="text"
+                      placeholder="0"
+                      className="w-[30px]  focus:outline-none text-center"
+                    />
+                    <select
+                      className="text-xs   text-zinc-400 bg-white relative"
+                      onChange={handleChange}
+                      name="transactionDiscountType"
+                    >
+                      <option value="percentage">%</option>
+                      <option value="currency">
+                        {oneOrganization.baseCurrency}
+                      </option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center  text-gray-700 ms-1">
+                      <CehvronDown color="gray" height={15} width={15} />
                     </div>
                   </div>
-                  <div className="w-full text-end">
-                    {" "}
-                    <p className="text-end">
-                      <p className="text-end">
-                        {oneOrganization.baseCurrency}{" "}
-                        {salesQuoteState.discountTransactionAmount
-                          ? salesQuoteState.discountTransactionAmount
-                          : "0111.00"}
-                      </p>
-                    </p>
-                  </div>
                 </div>
-              )}
-              {discountType !== "Item Line" && (
-                beforeTax ? (
-                  <button
-                    className="text-darkRed cursor-pointer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setBeforeTax(false);
-                    }}
-                  >
-                    Apply After Tax
-                  </button>
-                ) : (
-                  <button
-                    className="text-darkRed cursor-pointer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setBeforeTax(true);
-                    }}
-                  >
-                    Apply Before Tax
-                  </button>
-                )
-              )}
-
-              {discountType !== "Transaction Line" && (
-                <div className="flex ">
-                  <div className="w-[75%]">
-                    <p> Total Discount</p>
-                  </div>
-                  <div className="w-full text-end">
+                <div className="w-full text-end">
+                  {" "}
+                  <p className="text-end">
                     <p className="text-end">
                       {oneOrganization.baseCurrency}{" "}
-                      {salesQuoteState.totalDiscount ? salesQuoteState.totalDiscount : "0.00"}
+                      {salesQuoteState.discountTransactionAmount
+                        ? salesQuoteState.discountTransactionAmount
+                        : "0111.00"}
                     </p>
-                  </div>
+                  </p>
                 </div>
-              )}
-
-
+              </div>
+ 
+              <div className="flex ">
+                <div className="w-[75%]">
+                  <p> Total Discount</p>
+                </div>
+                <div className="w-full text-end">
+                  <p className="text-end">
+                    {oneOrganization.baseCurrency}{" "}
+                    {salesQuoteState.totalDiscount ? salesQuoteState.totalDiscount : "0.00"}
+                  </p>
+                </div>
+              </div>
+ 
+ 
               {isIntraState ? (
                 <div className="flex ">
                   <div className="w-[75%]">
@@ -857,7 +757,7 @@ const NewSalesQuote = ({}: Props) => {
                       </p>
                     </div>
                   </div>
-
+ 
                   <div className="flex ">
                     <div className="w-[75%]">
                       {" "}
@@ -875,7 +775,7 @@ const NewSalesQuote = ({}: Props) => {
                   </div>
                 </>
               )}
-
+ 
               <div className="flex ">
                 <div className="w-[75%]">
                   {" "}
@@ -920,7 +820,7 @@ const NewSalesQuote = ({}: Props) => {
                   </p>
                 </div>
               </div> */}
-
+ 
               {/* <div className="flex ">
                 <div className="w-[75%]">
                   {" "}
@@ -950,13 +850,14 @@ const NewSalesQuote = ({}: Props) => {
                 </p>
               </div>
             </div>
-
-
+ 
+ 
           </div>
         </div>
       </div>
     </div>
   );
 };
-
+ 
 export default NewSalesQuote;
+ 

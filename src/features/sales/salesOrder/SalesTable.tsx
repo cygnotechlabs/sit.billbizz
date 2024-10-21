@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CustomiseSalesColumn from "./CustomiseSalesColumn";
+import CustomiseColmn from "../../../Components/CustomiseColum";
 import { useNavigate } from "react-router-dom";
 import DotIcon from "../../../assets/icons/DotIcon";
 
@@ -71,7 +71,7 @@ const DebitTable = () => {
                                 )
                         )}
                         <th className="py-3 px-4 font-medium border-b border-tableBorder">
-                            <CustomiseSalesColumn columns={columns} setColumns={setColumns} />
+                            <CustomiseColmn columns={columns} setColumns={setColumns} />
                         </th>
                     </tr>
                 </thead>

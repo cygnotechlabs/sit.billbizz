@@ -40,6 +40,12 @@ interface CustomerResponseContextType {
 interface CustomerEditResponseContextType {
   customerEditResponse: any;
   setcustomereditResponse: React.Dispatch<React.SetStateAction<any>>;
+
+}
+
+interface unitResponseContextType{
+  unitResponse:any;
+ setUnitResponse: React.Dispatch<React.SetStateAction<any>>;
 }
 
 interface SettingsResponseType {
@@ -56,12 +62,14 @@ export const settingsdataResponseContext = createContext<SettingsResponseType | 
 export const SupplierResponseContext = createContext<SupplierResponseContextType | undefined>(undefined);
 export const CustomerResponseContext = createContext<CustomerResponseContextType | undefined>(undefined);
 export const CustomerEditResponseContext = createContext<CustomerEditResponseContextType | undefined>(undefined);
+export const UnitResponseContext=createContext<unitResponseContextType | undefined>(undefined);
 
 interface ContextShareProps {
   children: ReactNode;
 }
 
 const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
+
   const [cashResponse, setCashResponse] = useState<any>({});
   const [bankResponse, setBankResponse] = useState<any>({});
   const [currencyResponse, setCurrencyResponse] = useState<any>({});
@@ -72,6 +80,7 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
   const [supplierResponse, setsupplierResponse] = useState<any>({});
   const [customerResponse, setcustomerResponse] = useState<any>({});
   const [customerEditResponse, setcustomereditResponse] = useState<any>({});
+  const [unitResponse, setUnitResponse] =useState<any>({});
 
   const getSettingsData = async () => {
     try {
@@ -89,6 +98,7 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
   };
   
   return (
+    <UnitResponseContext.Provider value={{unitResponse,setUnitResponse }}>
     <cashResponseContext.Provider value={{ cashResponse, setCashResponse }}>
       <BankResponseContext.Provider value={{ bankResponse, setBankResponse }}>
         <CurrencyResponseContext.Provider value={{ currencyResponse, setCurrencyResponse }}>
@@ -108,6 +118,7 @@ const ContextShare: React.FC<ContextShareProps> = ({ children }) => {
         </CurrencyResponseContext.Provider>
       </BankResponseContext.Provider>
     </cashResponseContext.Provider>
+    </UnitResponseContext.Provider>
   );
 };
 

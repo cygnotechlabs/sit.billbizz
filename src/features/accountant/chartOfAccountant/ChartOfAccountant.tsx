@@ -16,7 +16,7 @@ const ChartOfAccountant = ({}: Props) => {
 
   useEffect(() => {
     fetchAllAccounts();
-  }, []);
+}, []);
 
   const fetchAllAccounts = async () => {
     try {
@@ -33,7 +33,7 @@ const ChartOfAccountant = ({}: Props) => {
 
   const HandleOnSave = () =>{
     fetchAllAccounts();
-    toast.success('Account successfully added!');
+    toast.success('Account successfully added!'); 
   }
 
   return (
@@ -43,8 +43,7 @@ const ChartOfAccountant = ({}: Props) => {
         <div className="head-frame">
           <h1>Chart Of Account</h1>
           <p className="text-sm">
-            Lorem ipsum dolor sit amet consectetur. Commodo enim odio fringilla
-            egestas consectetur amet.
+          It serves as a framework for organizing financial data and helps ensure accurate and consistent reporting 
           </p>
         </div>
         <div className="button-frame">

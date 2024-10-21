@@ -86,7 +86,7 @@ const EditCustomerModal = ({ customerDataPorps, addressEdit }: Props) => {
   const [taxselected, setTaxSelected] = useState<string | null>("Taxable");
   const [openingType, setOpeningtype] = useState<any | null>("Debit");
   const shippingAddressRef = useRef<HTMLDivElement | null>(null);
-const BillingAddressRef = useRef<HTMLDivElement | null>(null);
+  const BillingAddressRef = useRef<HTMLDivElement | null>(null);
   const [activeTab, setActiveTab] = useState<string>("otherDetails");
   const [paymentTerms, setPaymentTerms] = useState<any | []>([]);
   const [gstOrVat, setgstOrVat] = useState<any | []>([]);
@@ -411,7 +411,6 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
     }
   };
   const handleplaceofSupply = () => {
-
     if (oneOrganization.organizationCountry) {
       const country = countryData.find(
         (c: any) =>
@@ -433,7 +432,6 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
   };
 
   const getOneOrganization = async () => {
-
     try {
       const url = `${endponits.GET_ONE_ORGANIZATION}`;
       const apiResponse = await getOrganization(url);
@@ -449,11 +447,10 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
     }
   };
 
-
   useEffect(() => {
     getOneOrganization();
-    if(addressEdit){
-      setActiveTab("address")
+    if (addressEdit) {
+      setActiveTab("address");
     }
   }, []);
 
@@ -470,43 +467,39 @@ const BillingAddressRef = useRef<HTMLDivElement | null>(null);
     }
   }, [customerDataPorps]);
 
+  const addressscroll = () => {
+    if (addressEdit === "shippingAddressEdit" && shippingAddressRef.current) {
+      shippingAddressRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+    if (addressEdit === "billingAddressEdit" && BillingAddressRef.current) {
+      BillingAddressRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
-
-
-
-const addressscroll=()=>{
-  if (addressEdit === "shippingAddressEdit" && shippingAddressRef.current) {
-    shippingAddressRef.current.scrollIntoView({  behavior: 'smooth', block: 'start'});
-  }
-  if (addressEdit === "billingAddressEdit" && BillingAddressRef.current) {
-    BillingAddressRef.current.scrollIntoView({ behavior: 'smooth' });
-  }
-}
-
-useEffect(() => {
- addressscroll()
-}, [addressEdit,addressscroll]);
-
-  
+  useEffect(() => {
+    addressscroll();
+  }, [addressEdit, addressscroll]);
 
   return (
     <div>
-     {addressEdit  ? (
-  <button onClick={() => setModalOpen(true)} >
-    <Pen color={"#303F58"} />
-  </button>
-
-) : (
-  <Button
-    onClick={() => setModalOpen(true)}
-    variant="secondary"
-    size="sm"
-    className="text-[10px] h-6 px-5"
-  >
-    <Pen color={"#303F58"} />
-    Edit
-  </Button>
-)}
+      {addressEdit ? (
+        <button onClick={() => setModalOpen(true)}>
+          <Pen color={"#303F58"} />
+        </button>
+      ) : (
+        <Button
+          onClick={() => setModalOpen(true)}
+          variant="secondary"
+          size="sm"
+          className="text-[10px] h-6 px-5"
+        >
+          <Pen color={"#303F58"} />
+          Edit
+        </Button>
+      )}
 
       <Modal
         open={isModalOpen}
@@ -515,7 +508,6 @@ useEffect(() => {
         style={{ width: "80%" }}
       >
         <>
-
           <div className="p-5 mt-3">
             <div className="mb-5 flex p-2 rounded-xl bg-CreamBg relative overflow-hidden items-center">
               <div className="relative ">
@@ -846,14 +838,15 @@ useEffect(() => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="">Date of Birth</label>
+                  <label htmlFor="dob">Date of Birth</label>
                   <input
                     type="date"
                     name="dob"
-                    className="pl-2 text-sm w-[100%] mt-1  rounded-md text-start bg-white border border-slate-300  h-9 p-2 text-[#818894]"
+                    className="pl-2 text-sm w-[100%] mt-1 rounded-md text-start bg-white border border-slate-300 h-9 p-2 text-[#818894]"
                     placeholder="Value"
                     value={customerdata.dob}
                     onChange={handleChange}
+                    max={new Date().toISOString().split("T")[0]} // Set max to today's date
                   />
                 </div>
               </div>
@@ -1374,7 +1367,10 @@ useEffect(() => {
                   {activeTab === "address" && (
                     <>
                       {/* Billing Address */}
-                      <div className="space-y-3 p-5 text-sm" ref={BillingAddressRef}>
+                      <div
+                        className="space-y-3 p-5 text-sm"
+                        ref={BillingAddressRef}
+                      >
                         <p>
                           <b>Billing Address</b>
                         </p>
@@ -1556,8 +1552,11 @@ useEffect(() => {
                       </div>
 
                       {/* Shipping Address */}
-                      <div className="space-y-3 p-5 text-sm"ref={shippingAddressRef} >
-                        <div className="flex" >
+                      <div
+                        className="space-y-3 p-5 text-sm"
+                        ref={shippingAddressRef}
+                      >
+                        <div className="flex">
                           <p>
                             <b>Shipping Address</b>
                           </p>

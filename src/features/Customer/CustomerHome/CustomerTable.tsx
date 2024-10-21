@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import CustomiseColmn from "./CustomiseColmn";
+import CustomiseColmn from "../../../Components/CustomiseColum";
 import Button from "../../../Components/Button";
 import { Link } from "react-router-dom";
 import useApi from "../../../Hooks/useApi";
@@ -29,7 +29,7 @@ const Table = () => {
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [customerData, setCustomerData] = useState<any[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
-const {customerResponse}=useContext(CustomerResponseContext)!;
+  const { customerResponse } = useContext(CustomerResponseContext)!;
   const { request: AllCustomers } = useApi("get", 5002);
 
   const fetchAllCustomers = async () => {
@@ -38,11 +38,9 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
       const { response, error } = await AllCustomers(url);
       if (!error && response) {
         setCustomerData(response.data);
-        console.log(response,"all customers");
-      }
-      else{
-      console.log(error,"all customers error");
-      
+        console.log(response, "all customers");
+      } else {
+        console.log(error, "all customers error");
       }
     } catch (error) {
       console.error("Error fetching accounts:", error);
@@ -57,7 +55,9 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
     const searchValueLower = searchValue.toLowerCase();
     return (
       account?.billingAttention?.toLowerCase().startsWith(searchValueLower) ||
-      account?.customerDisplayName?.toLowerCase().startsWith(searchValueLower) ||
+      account?.customerDisplayName
+        ?.toLowerCase()
+        .startsWith(searchValueLower) ||
       account?.companyName?.toLowerCase().startsWith(searchValueLower) ||
       account?.mobile?.toLowerCase().startsWith(searchValueLower) ||
       account?.customerEmail?.toLowerCase().startsWith(searchValueLower) ||
@@ -79,23 +79,28 @@ const {customerResponse}=useContext(CustomerResponseContext)!;
           </Link>
         </div>
       );
-    }
-    else if(colId=="status"){
+    } else if (colId == "status") {
       return (
-        <p className={`${item.status=='Active'?"bg-[#78AA86]": "bg-zinc-400"} py-1 text-[13px] rounded items-center ms-auto text-white  h-[18px] flex justify-center`}>{item.status}</p>
+        <p
+          className={`${
+            item.status == "Active" ? "bg-[#78AA86]" : "bg-zinc-400"
+          } py-1 text-[13px] rounded items-center ms-auto text-white  h-[18px] flex justify-center`}
+        >
+          {item.status}
+        </p>
       );
     }
-    return item[colId as keyof typeof item];
-  };
+    return item[colId as keyof typeof item];
+  };
   return (
     <div>
       <div className="flex items-center justify-between">
         <div className="w-[82.5%]">
-        <SearchBar
-        placeholder="Search"
-        searchValue={searchValue}
-        onSearchChange={setSearchValue}
-      />
+          <SearchBar
+            placeholder="Search"
+            searchValue={searchValue}
+            onSearchChange={setSearchValue}
+          />
         </div>
         <div className="flex gap-4">
           <SortBy />
