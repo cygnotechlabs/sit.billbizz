@@ -10,6 +10,7 @@ const paymentTermCont = require("../controller/settings/paymentTermCont")
 const prefixController = require("../controller/settings/prefixController")
 const settingController = require("../controller/settings/settingController")
 const taxController = require("../controller/settings/taxController")
+const deafalutController = require("../controller/settings/defaultAccCont")
 
 
 
@@ -113,6 +114,15 @@ router.delete('/delete-prefix',verifyToken,checkPermission('Deleted Prefix'),pre
 
 router.put('/status-prefix',verifyToken,checkPermission('Modified Prefix Status'),prefixController.setPrefixSeriesStatusTrue)
 
+
+
+
+
+//Default Account
+
+router.post('/add-default-account',verifyToken,deafalutController.addDefaultAccount)
+
+router.get('/get-default-account',verifyToken,deafalutController.getDefaultAccount)
 
 
 
