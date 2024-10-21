@@ -20,8 +20,7 @@ exports.addAccount = async (req, res) => {
       const organizationId = req.user.organizationId;
 
       const cleanedData = cleanCustomerData(req.body);
-      console.log(cleanedData);
-
+      
       const { accountName, accountSubhead, accountHead, accountGroup } = cleanedData;
 
       // Validate account structure
