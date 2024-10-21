@@ -44,11 +44,11 @@ exports.getSupplierTransactions = async (req, res) => {
 
 const dataExist = async (organizationId) => {
     const [organizationExists, taxExists, currencyExists, allSupplier ,settings] = await Promise.all([
-      Organization.findOne({ organizationId }),
-      Tax.findOne({ organizationId }),
+      Organization.findOne({ organizationId },{ timeZoneExp: 1, dateFormatExp: 1, dateSplit: 1, organizationCountry: 1 }),
+      Tax.findOne({ organizationId },{ taxType: 1 }),
       Currency.find({ organizationId }, { currencyCode: 1, _id: 0 }),
       Supplier.find({ organizationId }),
-      Settings.find({ organizationId })
+      Settings.find({ organizationId },{ duplicateSupplierDisplayName: 1, duplicateSupplierEmail: 1, duplicateSupplierMobile: 1 })
     ]);
     return { organizationExists, taxExists, currencyExists, allSupplier , settings };
   };
@@ -63,25 +63,17 @@ const dataExist = async (organizationId) => {
       console.log("Add Supplier:", req.user.userName);
       try {
         const { organizationId, id: userId, userName } = req.user;
-        // const organizationId ="INDORG0001";
-      // const userId ="45454";
-      // const userName ="Thaha";
-        // console.log("organizationId :",organizationId);
-        // if true it is unique
-        const duplicateSupplierDisplayName = true;
-        const duplicateSupplierEmail = true;
-        const duplicateSupplierMobile = true;
   
         //Clean Data
         const cleanedData = cleanSupplierData(req.body);
-        //console.log(cleanedData);            
+                   
   
         const { supplierEmail, debitOpeningBalance, creditOpeningBalance, supplierDisplayName, mobile } = cleanedData;
     
         const { organizationExists, taxExists, currencyExists , settings} = await dataExist(organizationId);
         
         // checking values from supplier settings
-        // const { duplicateSupplierDisplayName , duplicateSupplierEmail , duplicateSupplierMobile } = settings[0]
+        const { duplicateSupplierDisplayName , duplicateSupplierEmail , duplicateSupplierMobile } = settings[0]
         
         //Data Exist Validation
         if (!validateOrganizationTaxCurrency(organizationExists, taxExists, currencyExists, res)) return;     
